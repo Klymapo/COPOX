@@ -1,0 +1,222 @@
+{
+  "captured_on": "2026-10-12",
+  "purpose": "Restaurar una rama mediante su SHA completo; no implica aprobación del modelo",
+  "branches": [
+    {
+      "name": "assets/theo-v10",
+      "sha": "1ec53b493a9666d9b118c08dc8fed1e83d28954d"
+    },
+    {
+      "name": "audit/cleanup-2026-10-12",
+      "sha": "6623968fe8a9dd493a692a96d7e74fc76f55a96a"
+    },
+    {
+      "name": "avatares-chibi",
+      "sha": "3e87190972313af12c942c297140131c89a99b0b"
+    },
+    {
+      "name": "backup/archive-alastheo-full-git-2026-10-12",
+      "sha": "237361dd316c5f5a4373f400a6e797e62bb9265c"
+    },
+    {
+      "name": "bucle/joven_rubio_v1-1",
+      "sha": "5bd6ed946d9d3c7b331eae7fb4b55bbde7082643"
+    },
+    {
+      "name": "bucle/joven_rubio_v1-2",
+      "sha": "ba18b256f094a9e0c6585d72609f98dc9ffb68ef"
+    },
+    {
+      "name": "bucle/joven_rubio_v1-3",
+      "sha": "ce7a27b51a4c714a9f4b4a5ae1667f0c4b4d0f26"
+    },
+    {
+      "name": "bucle/joven_rubio-4",
+      "sha": "ea59c4ca189639070c7ef566f40adc26422bad17"
+    },
+    {
+      "name": "bucle/joven_rubio-7",
+      "sha": "ea418512d43cb4f96bbdd24429ebf87c289902c6"
+    },
+    {
+      "name": "bucle/joven_rubio-8",
+      "sha": "aa996d59e38eb050576e8923b778f21af9459414"
+    },
+    {
+      "name": "bucle/joven_rubio-11",
+      "sha": "96562107fca96b79b36d3934f9c28ba63e71b5b8"
+    },
+    {
+      "name": "ccr-cb57f2bd-bhu9oa",
+      "sha": "5a1dae89543572a17911c046466f5bd4150823b4"
+    },
+    {
+      "name": "chore/organizacion-2026-10-12",
+      "sha": "02a535288bdc3a562d6cab7600c97b79533969b5"
+    },
+    {
+      "name": "chsp-x-coherencia",
+      "sha": "0764da034a69a67dd36aa86a252f1c4cd3159be9"
+    },
+    {
+      "name": "claude/alth-meta-joven-rubio-dwlocz",
+      "sha": "8117eb177eb0dbbda1949e965a5abffd240d9346"
+    },
+    {
+      "name": "claude/awesome-fermi-hju7t3",
+      "sha": "a99927fc42352141b26f4cfe33736d22059f8302"
+    },
+    {
+      "name": "claude/bold-wozniak-2jr4zf",
+      "sha": "ac45bd5e3cd1f3bec87f35d50c8babf275712899"
+    },
+    {
+      "name": "claude/bucle-cualquier-ia",
+      "sha": "3e5aa8e8c4497dc1ac07390e69a743fcc7560beb"
+    },
+    {
+      "name": "claude/eager-carson-elu6q6",
+      "sha": "e2161aa0d63a123e51a8dd4cf5a24a466d297996"
+    },
+    {
+      "name": "claude/ecstatic-sagan-p2cjvm",
+      "sha": "714e57faba3197df500db1728df64190831458db"
+    },
+    {
+      "name": "claude/magical-shannon-3vmgjh",
+      "sha": "f322d2f3e53baf49b12636b18b31df55709f8a33"
+    },
+    {
+      "name": "claude/ropa-pelo-modular",
+      "sha": "a455186c65885c2b18c115209064ed9234f00f68"
+    },
+    {
+      "name": "claude/sam3d-proporciones-modeling-hbjhka",
+      "sha": "f58fa4a7c427c57d0b0cb2a6dc643d7e7d813df2"
+    },
+    {
+      "name": "claude/vigilant-feynman-o137fy",
+      "sha": "7a768d1979c41bc55205733ee981d3e8bec9e9a2"
+    },
+    {
+      "name": "consolidation/legacy-alastheo-alpha-2026-10-12",
+      "sha": "6a60863f5d93a0dc65134e588ba91e228899086a"
+    },
+    {
+      "name": "consolidation/stylized-anatomy-2026-10-12",
+      "sha": "78c58ac4b32cea3eb0c95c1d95f7b5ebfa696f95"
+    },
+    {
+      "name": "copox-finger-remodel-phase4",
+      "sha": "868bde3652362346a575dd946b3086eead1d3a29"
+    },
+    {
+      "name": "copox-finger-valley-carve",
+      "sha": "d2d6a880be203ad7ded599977d134d92bec39067"
+    },
+    {
+      "name": "copox-m5-technique-cycles",
+      "sha": "9f02ae04755f455a89224d4598948e5b5e9b1bed"
+    },
+    {
+      "name": "copox-model-maturity-phase2",
+      "sha": "fa8f8924cce6123f1801bc0cae1302673c6ee528"
+    },
+    {
+      "name": "copox-model-maturity-phase3",
+      "sha": "eb6e949e532d0fb3a6656a5c7327ff864059b08f"
+    },
+    {
+      "name": "copox-theo-alpha-seed",
+      "sha": "6f4795cc0d3751dba1119a37db5c9c3b0fe48d2d"
+    },
+    {
+      "name": "diagnostico-theo-28sep",
+      "sha": "9c0c6a82a052891f3a8a241cd3061bac814b9fd9"
+    },
+    {
+      "name": "docs/alastheo-wiki-manually-verified-2026-10-12",
+      "sha": "9d79e3e1e7b6f94a3cf08186bcac1012f6c3845c"
+    },
+    {
+      "name": "docs/archive-alastheo-review-2026-10-12",
+      "sha": "6bee1d3c475425fc71ab891c605a6e8bbd9425ce"
+    },
+    {
+      "name": "docs/history-local-links-2026-10-12",
+      "sha": "da407421be76bcc6f97d3b64a4e19d81cae14141"
+    },
+    {
+      "name": "docs/prototipos-ejemplos-stylizer-2026-10-12",
+      "sha": "66464af4f307e3c2eb58e34204bc7171bfbdc0e1"
+    },
+    {
+      "name": "docs/stylizer-backup-verified-2026-10-12",
+      "sha": "6ce468fb50bc58753e9db0384e317f9f64dd6bbc"
+    },
+    {
+      "name": "docs/verified-backups-2026-10-12",
+      "sha": "32154f4d59e2b31093a5b1b147602170045e8ad7"
+    },
+    {
+      "name": "etapa0-auditoria",
+      "sha": "c816972035e1fb9574863606699750173a68563a"
+    },
+    {
+      "name": "evidencia/linea-unica-etapa0-auditoria",
+      "sha": "ab42bc5bdace48ba98d03295bdea627fca779355"
+    },
+    {
+      "name": "experimentos/voxel-glb-codespaces",
+      "sha": "d3a867a48b55b89fbfeea3ac89a54649e0329384"
+    },
+    {
+      "name": "feat/integrate-public-stylizer-2026-10-12",
+      "sha": "bbc9472d988baf542d797bf55fe0c88abfdecd65"
+    },
+    {
+      "name": "fix-kaggle-verificacion",
+      "sha": "0c402fccbffae0b37e9f2a87c0d01c774666f0fb"
+    },
+    {
+      "name": "fix-token-issue",
+      "sha": "e2991ae5f5a5dc4681141d0cafa8dbd3c0f3f627"
+    },
+    {
+      "name": "progreso",
+      "sha": "0c680edbed39b49a8a50518b9b634520ef4e7169"
+    },
+    {
+      "name": "propuesta-copox-loop-engine",
+      "sha": "90937f999526256bccea581bfc7ef1ac16fce64e"
+    },
+    {
+      "name": "propuesta-copox-loop-engine-check",
+      "sha": "dc66b5babd601d2e756dd0bfef1e9d15ed085c5e"
+    },
+    {
+      "name": "propuesta-kaggle",
+      "sha": "a397a5d2bd119fd67f91a8925732c48ba617fea8"
+    },
+    {
+      "name": "propuesta-reconocimiento",
+      "sha": "6c91c0d4827ded8a838aed92335c105bc8cb8080"
+    },
+    {
+      "name": "propuesta-taller-ux-flujo",
+      "sha": "b9824d07c2e987714b0ed117d2fd09dccab8bf51"
+    },
+    {
+      "name": "propuesta-theo-ronda-unica",
+      "sha": "6d9c8d6b0d8b9b2111bacd6b7c9f3e899ee52510"
+    },
+    {
+      "name": "sam3d-proporciones-theo",
+      "sha": "cd486312ffda675b3c7103c1a5132c3311e5f268"
+    },
+    {
+      "name": "teacher3d-local-integration",
+      "sha": "317ca16ce9b3dfabc77bdbd74815aadb62bc5acf"
+    }
+  ]
+}
