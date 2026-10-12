@@ -1,6 +1,6 @@
 # Registro histórico Alpha (rama ALASTHEO)
 
-Esta carpeta es una **copia documental histórica**, no una promoción de modelos ni un cambio de baseline. Se rescató de la rama `assets/alpha-theo-alastor` del repositorio [ALASTHEO](https://github.com/Klymapo/ALASTHEO/tree/assets/alpha-theo-alastor), que ya se encuentra archivado.
+Esta carpeta es una **copia documental histórica**, no una promoción de modelos ni un cambio de baseline. Se rescató de la rama `assets/alpha-theo-alastor` del antiguo repositorio **ALASTHEO**, ya respaldado y eliminado. Su [informe de consolidación](../alastheo-branch-variants/READINESS.md) conserva la procedencia.
 
 - Origen de rama: `2ee53df478eb9a0497e024a48dca5226b834fb7c`.
 - Archivos: `SOURCE_README.md` y `manifest.json`, copias exactas de `models/alpha/README.md` y `models/alpha/manifest.json`.
