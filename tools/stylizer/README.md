@@ -1,6 +1,8 @@
 # Stylizer · Herramienta de generación 3D para ALTH-META
 
-**Estado:** versión integrada del código de Stylizer en el monorrepositorio público de AlasTheo. Herramienta auxiliar; no es el generador de assets aprobados ni sustituye COPOX/CHSP-X.
+**Estado: PROTOTIPO EXPERIMENTAL.** Versión integrada de Stylizer en AlasTheo, útil para aprender y probar ideas. Ningún modelo se declara definitivo. Los baselines son puntos de comparación y COPOX/CHSP-X conserva controles técnicos, no certificados artísticos finales.
+
+**[Ejemplo GLB gratis, reproducible](examples/README.md)** · **[Cuaderno de experimentos e historia](docs/HISTORIAL_EXPERIMENTAL.md)**
 
 ## Funciona como aplicación independiente dentro de esta carpeta
 
@@ -52,4 +54,4 @@ Este código se seleccionó del antiguo `Klymapo/stylizer` con autorización par
 - [Especificación vigente](../../spec/alth_spec.json)
 - [COPOX](../../copox/README.md)
 
-Para borrar `Klymapo/stylizer` como repositorio independiente, respaldar antes su historia Git con un bundle completo y decidir si conservar o descartar los binarios de ejemplo de ese repositorio, que no se trasladaron. **Este portado es de código, no un espejo de Git.**
+Para borrar `Klymapo/stylizer` como repositorio independiente, respaldar antes su **historial Git completo en un destino privado** y decidir qué hacer con sus antiguos binarios de muestra. Aquí se conservaron el código, la investigación STYLIZED, un ejemplo neutro reproducible y una cronología curada, **pero esto no equivale a un espejo de Git**.
