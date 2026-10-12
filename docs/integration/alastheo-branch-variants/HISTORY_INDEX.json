@@ -1,0 +1,214 @@
+{
+  "schema": 1,
+  "audited_on": "2026-10-12",
+  "source_repo": "Klymapo/ALASTHEO",
+  "source_archived": true,
+  "branches": [
+    {
+      "branch": "main",
+      "sha": "b62e518c70495a485fe95b91803e26fe2ccefbd2",
+      "count": 5
+    },
+    {
+      "branch": "assets/alpha-theo-alastor",
+      "sha": "2ee53df478eb9a0497e024a48dca5226b834fb7c",
+      "count": 8
+    },
+    {
+      "branch": "chore/repository-structure",
+      "sha": "0780626d9c98b7c391faf27eab9782669fd6b401",
+      "count": 3
+    },
+    {
+      "branch": "docs/visual-references-and-methods",
+      "sha": "e8a01211bd1176ba59627282869215038d0a98f7",
+      "count": 11
+    }
+  ],
+  "unique_commits": [
+    {
+      "sha": "af5d179ab7ae418350fe3b792beb12d1dd91db7b",
+      "date": "2026-09-24T17:41:54Z",
+      "message": "Add files via upload",
+      "parents": []
+    },
+    {
+      "sha": "755951f2ea0892fd5b65b5d3031458571726798f",
+      "date": "2026-09-24T17:43:51Z",
+      "message": "Add files via upload",
+      "parents": [
+        "af5d179ab7ae418350fe3b792beb12d1dd91db7b"
+      ]
+    },
+    {
+      "sha": "0780626d9c98b7c391faf27eab9782669fd6b401",
+      "date": "2026-09-30T11:49:45Z",
+      "message": "chore: organize repository structure",
+      "parents": [
+        "755951f2ea0892fd5b65b5d3031458571726798f"
+      ]
+    },
+    {
+      "sha": "8fe9ae4df43ff64545aed4445964cf1c23f7b5eb",
+      "date": "2026-09-30T11:50:14Z",
+      "message": "chore: organize repository structure",
+      "parents": [
+        "755951f2ea0892fd5b65b5d3031458571726798f"
+      ]
+    },
+    {
+      "sha": "fdd255996aa91745ff09fe328f975bfe8ddc943c",
+      "date": "2026-09-30T11:56:19Z",
+      "message": "docs: add visual reference index",
+      "parents": [
+        "8fe9ae4df43ff64545aed4445964cf1c23f7b5eb"
+      ]
+    },
+    {
+      "sha": "ef0410b324c5ebfdd353cd75f01ed7c9a6083428",
+      "date": "2026-09-30T11:56:33Z",
+      "message": "docs: add Theo visual references",
+      "parents": [
+        "fdd255996aa91745ff09fe328f975bfe8ddc943c"
+      ]
+    },
+    {
+      "sha": "27d9fe98df7ea1e288e916a28f1e44be42e3012b",
+      "date": "2026-09-30T11:56:44Z",
+      "message": "docs: add Detective visual references",
+      "parents": [
+        "ef0410b324c5ebfdd353cd75f01ed7c9a6083428"
+      ]
+    },
+    {
+      "sha": "18afdcfd9fd36506a59fec7338121d7484b9d206",
+      "date": "2026-09-30T11:56:55Z",
+      "message": "docs: add scale reference catalog",
+      "parents": [
+        "27d9fe98df7ea1e288e916a28f1e44be42e3012b"
+      ]
+    },
+    {
+      "sha": "688cbf920f469de50d271cd2b1949c504235f0bb",
+      "date": "2026-09-30T11:57:07Z",
+      "message": "docs: index SAM 3D proportion references",
+      "parents": [
+        "18afdcfd9fd36506a59fec7338121d7484b9d206"
+      ]
+    },
+    {
+      "sha": "3b4518f10cf10bf32901bf2ce4a9986d688bca22",
+      "date": "2026-09-30T11:58:54Z",
+      "message": "docs: document attempted 3D methods and outcomes",
+      "parents": [
+        "688cbf920f469de50d271cd2b1949c504235f0bb"
+      ]
+    },
+    {
+      "sha": "7dc6c2ab79dab6d50a543646aeab4465dcbcd1fa",
+      "date": "2026-09-30T11:59:11Z",
+      "message": "docs: connect assets to visual reference catalog",
+      "parents": [
+        "3b4518f10cf10bf32901bf2ce4a9986d688bca22"
+      ]
+    },
+    {
+      "sha": "e8a01211bd1176ba59627282869215038d0a98f7",
+      "date": "2026-09-30T11:59:37Z",
+      "message": "docs: link references and method history from root README",
+      "parents": [
+        "7dc6c2ab79dab6d50a543646aeab4465dcbcd1fa"
+      ]
+    },
+    {
+      "sha": "de50876221bb547065cea2a234aaeb50b40777f8",
+      "date": "2026-09-30T12:00:20Z",
+      "message": "Documenta referencias visuales y métodos 3D probados",
+      "parents": [
+        "8fe9ae4df43ff64545aed4445964cf1c23f7b5eb"
+      ]
+    },
+    {
+      "sha": "bcb0348e7593bbf71158675a993e51c4ba546dee",
+      "date": "2026-09-30T13:17:52Z",
+      "message": "Registra Theo y Alastor como versiones Alpha",
+      "parents": [
+        "de50876221bb547065cea2a234aaeb50b40777f8"
+      ]
+    },
+    {
+      "sha": "accce4f2e53e53b6b13c1df57786256dee229b65",
+      "date": "2026-09-30T13:19:11Z",
+      "message": "Prepara materialización de binarios Alpha",
+      "parents": [
+        "bcb0348e7593bbf71158675a993e51c4ba546dee"
+      ]
+    },
+    {
+      "sha": "f95b628e3f8269937ce6e72e29b22c14cd818b17",
+      "date": "2026-09-30T13:22:36Z",
+      "message": "Añade manifiesto de versiones Alpha",
+      "parents": [
+        "accce4f2e53e53b6b13c1df57786256dee229b65"
+      ]
+    },
+    {
+      "sha": "2ee53df478eb9a0497e024a48dca5226b834fb7c",
+      "date": "2026-09-30T13:22:57Z",
+      "message": "Retira workflow temporal de materialización Alpha",
+      "parents": [
+        "f95b628e3f8269937ce6e72e29b22c14cd818b17"
+      ]
+    },
+    {
+      "sha": "b62e518c70495a485fe95b91803e26fe2ccefbd2",
+      "date": "2026-10-01T16:30:41Z",
+      "message": "Point AlasTheo production to audited unified ALTH repository",
+      "parents": [
+        "de50876221bb547065cea2a234aaeb50b40777f8"
+      ]
+    }
+  ],
+  "issues_and_prs": [
+    {
+      "type": "issue",
+      "number": 1,
+      "title": "Organiza la estructura base del repositorio",
+      "body": "## Resumen\n\nOrganiza ALASTHEO como repositorio de producción visual y 3D antes de que crezca.\n\n### Cambios\n- añade README principal y mapa de estructura;\n- separa assets, modelos, scripts, tests, documentación y archivo histórico;\n- mueve el libro de producción a `docs/production/` sin modificar su contenido;\n- añade convenciones de nombres y versionado;\n- añade guía de contribución y plantilla de Pull Request;\n- amplía `.gitignore` para Godot, Python, Blender, IDE y archivos temporales;\n- marca formatos binarios relevantes en `.gitattributes`.\n\nNo cambia código funcional ni contenido del libro de producción.",
+      "state": "closed",
+      "merged_at": null,
+      "comments": 0
+    },
+    {
+      "type": "issue",
+      "number": 2,
+      "title": "Documenta referencias visuales y métodos 3D probados",
+      "body": "## Resumen\n\nCompleta la memoria visual y técnica de ALASTHEO.\n\n### Referencias\n- crea `assets/references/` como índice maestro visual;\n- añade páginas para Theo, Detective/Alastor, escala y SAM 3D;\n- enlaza las imágenes fuente existentes en `alth-meta/refs/` sin duplicar binarios;\n- documenta la jerarquía de autoridad entre turnaround, referencia individual, medidas y renders intermedios.\n\n### Métodos\n- añade `docs/METHODS.md` con los procesos probados o preparados;\n- resume objetivo, resultado, limitaciones y estado de cada enfoque;\n- incluye ALTH-META procedural, SAM 3D, proxy v5, TripoSR, limpieza de GLB, Pixal3D, Blender manual, Stylizer, CHSP-X/COPOX, agentes y derivación de Detective.\n\nTambién actualiza los README de raíz y `assets/` para que estas rutas sean fáciles de encontrar.",
+      "state": "closed",
+      "merged_at": null,
+      "comments": 0
+    },
+    {
+      "type": "pr",
+      "number": 1,
+      "title": "Organiza la estructura base del repositorio",
+      "body": "## Resumen\n\nOrganiza ALASTHEO como repositorio de producción visual y 3D antes de que crezca.\n\n### Cambios\n- añade README principal y mapa de estructura;\n- separa assets, modelos, scripts, tests, documentación y archivo histórico;\n- mueve el libro de producción a `docs/production/` sin modificar su contenido;\n- añade convenciones de nombres y versionado;\n- añade guía de contribución y plantilla de Pull Request;\n- amplía `.gitignore` para Godot, Python, Blender, IDE y archivos temporales;\n- marca formatos binarios relevantes en `.gitattributes`.\n\nNo cambia código funcional ni contenido del libro de producción.",
+      "state": "closed",
+      "merged_at": "2026-09-30T11:50:15Z",
+      "comments": 0
+    },
+    {
+      "type": "pr",
+      "number": 2,
+      "title": "Documenta referencias visuales y métodos 3D probados",
+      "body": "## Resumen\n\nCompleta la memoria visual y técnica de ALASTHEO.\n\n### Referencias\n- crea `assets/references/` como índice maestro visual;\n- añade páginas para Theo, Detective/Alastor, escala y SAM 3D;\n- enlaza las imágenes fuente existentes en `alth-meta/refs/` sin duplicar binarios;\n- documenta la jerarquía de autoridad entre turnaround, referencia individual, medidas y renders intermedios.\n\n### Métodos\n- añade `docs/METHODS.md` con los procesos probados o preparados;\n- resume objetivo, resultado, limitaciones y estado de cada enfoque;\n- incluye ALTH-META procedural, SAM 3D, proxy v5, TripoSR, limpieza de GLB, Pixal3D, Blender manual, Stylizer, CHSP-X/COPOX, agentes y derivación de Detective.\n\nTambién actualiza los README de raíz y `assets/` para que estas rutas sean fáciles de encontrar.",
+      "state": "closed",
+      "merged_at": "2026-09-30T12:00:21Z",
+      "comments": 0
+    }
+  ],
+  "notes": [
+    "Metadata export of all accessible branch commit histories, issues and PR descriptions; NOT a git bundle or complete preservation of Git trees/objects and full repository history.",
+    "Branch snapshot files are stored alongside this ledger."
+  ]
+}
