@@ -1,0 +1,7 @@
+2ee53df478eb9a0497e024a48dca5226b834fb7c refs/heads/assets/alpha-theo-alastor
+0780626d9c98b7c391faf27eab9782669fd6b401 refs/heads/chore/repository-structure
+e8a01211bd1176ba59627282869215038d0a98f7 refs/heads/docs/visual-references-and-methods
+b62e518c70495a485fe95b91803e26fe2ccefbd2 refs/heads/main
+0780626d9c98b7c391faf27eab9782669fd6b401 refs/pull/1/head
+e8a01211bd1176ba59627282869215038d0a98f7 refs/pull/2/head
+b62e518c70495a485fe95b91803e26fe2ccefbd2 HEAD
