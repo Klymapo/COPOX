@@ -233,7 +233,7 @@ La arquitectura modular es buena: cada proveedor puede cambiarse sin romper todo
 ### Limitación para Theo
 Un pipeline general de image-to-3D no garantiza likeness estilizado ni consistencia multivista. Debe evaluarse contra las referencias maestras.
 
-Origen histórico: `Klymapo/stylizer`. Ubicación consolidada del prototipo: [`tools/stylizer/`](../tools/stylizer/README.md).
+Repositorio: `Klymapo/stylizer`.
 
 Estado: **EXPERIMENTAL para Theo**, útil como infraestructura general.
 
@@ -320,7 +320,7 @@ Estado: **PENDIENTE DE VALIDACIÓN**.
 # Fuentes históricas principales
 
 - `Klymapo/alth-meta` — referencias, medidas, ALTH procedural, SAM 3D, CHSP-X y agentes.
-- `Klymapo/stylizer` (origen histórico, respaldado en privado) → [`tools/stylizer/`](../tools/stylizer/README.md), ahora dentro de ALTH-META — pipeline modular idea/imagen → 3D.
+- `Klymapo/stylizer` — pipeline modular idea/imagen → 3D.
 - Notebooks de Colab del proyecto — TripoSR y Pixal3D.
 - Conversaciones de producción del proyecto 3D — refinamiento manual, teacher cleanup y derivación de Detective.
 
