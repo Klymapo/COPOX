@@ -1,0 +1,5 @@
+-r requirements.txt
+fastapi==0.141.1
+uvicorn==0.54.0
+# Blender 4.5 uses Python 3.11. The Docker image supplies that runtime.
+bpy==4.5.3

@@ -1,0 +1,19 @@
+services:
+  stylizer:
+    platform: linux/amd64
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:7860:7860"
+    environment:
+      STYLIZER_USER: ${STYLIZER_USER:-atatoriz}
+      STYLIZER_PASSWORD: ${STYLIZER_PASSWORD:?Define una contraseña de al menos 12 caracteres}
+      STYLIZER_PORT: "7860"
+      HF_TOKEN: ${HF_TOKEN:-}
+      AGNES_API_KEY: ${AGNES_API_KEY:-}
+    volumes:
+      - stylizer-data:/app/storage
+    stop_grace_period: 30s
+
+volumes:
+  stylizer-data:
