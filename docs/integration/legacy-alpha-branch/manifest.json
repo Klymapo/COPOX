@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "status": "alpha",
+  "branch": "assets/alpha-theo-alastor",
+  "characters": {
+    "theo": {
+      "canonical_name": "Theo Alpha",
+      "source_version": "Theo v11 rehecha",
+      "model_file": "theo_v11_rehecha.glb",
+      "model_size_bytes": 8839380,
+      "model_sha256": "cfb273facedbdbadcc9f018754dea582107c025a92c6ea529063a18f74048d0a",
+      "preview_file": "theo_v11_4vistas.png",
+      "preview_size_bytes": 1031310,
+      "preview_sha256": "99538dcbe1fc6eec837e7120ad69546245227e739862533bdea7f552824d314c",
+      "pose": "T-pose",
+      "rigged": false
+    },
+    "alastor": {
+      "canonical_name": "Alastor Alpha",
+      "aliases": ["Detective Alpha"],
+      "source_version": "Detective v3 likeness",
+      "model_file": "detective_v3_likeness_t_pose.glb",
+      "model_size_bytes": 1725948,
+      "model_sha256": "aff422bb653a3d9c610a1698aa47390a363c6019dbcfc57d871697f89363d9a9",
+      "preview_file": "detective_v3_likeness_t_pose_4vistas.png",
+      "preview_size_bytes": 716050,
+      "preview_sha256": "2064819089f1a84b3ea50b1808eb8cab695178e21241f23450daea7c5e4f72c8",
+      "pose": "T-pose",
+      "rigged": false
+    }
+  },
+  "rule": "No sobrescribir una Alpha aprobada. Cualquier cambio debe generar una nueva revisión o una nueva etapa de versión."
+}
