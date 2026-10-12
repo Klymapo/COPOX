@@ -14,6 +14,13 @@ Se modelan con scripts de Blender que corren sin interfaz en sesiones de Claude 
 | `refs/` | Referencias visuales: personajes, escenas e infografías |
 | `data/medidas.csv` | Registro que recalibra los factores de conversión |
 
+## Alcance y repositorios relacionados
+
+- **Este repositorio** es la fuente principal de los assets, especificaciones y auditorías de ALTH-META/AlasTheo.
+- [ALASTHEO](https://github.com/Klymapo/ALASTHEO) se conserva como origen **histórico** ya integrado; evitar iniciar producción nueva allí.
+- El videojuego en Godot y los experimentos de anatomía paramétrica o generación 3D tienen sus propios repositorios. No mezclar sus historiales automáticamente.
+- Theo Alpha y otros elementos protegidos solo cambian mediante el proceso documentado de revisión/aprobación.
+
 ## Producción unificada de AlasTheo
 
 Se incorporó el contenido de [Klymapo/ALASTHEO](https://github.com/Klymapo/ALASTHEO) en su commit `de50876221bb547065cea2a234aaeb50b40777f8`: [referencias](assets/references/README.md), [memoria técnica](docs/METHODS.md), [estructura vigente](docs/STRUCTURE.md), [nombres](docs/NAMING.md) y [libro de producción](<docs/production/AlasTheo - Libro de producción.xlsx>). La procedencia de cada archivo está en [el manifiesto](docs/integration/alastheo-import.json).
