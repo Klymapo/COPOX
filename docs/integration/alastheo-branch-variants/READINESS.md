@@ -10,7 +10,7 @@ Fecha: 2026-10-12. Esta auditoría no elimina el repositorio archivado.
 - Entre las restantes variantes de rama se conservan aquí tres blobs documentales históricos: `structure-README.snapshot.txt`, `structure-assets-README.snapshot.txt`, `visual-methods-README.snapshot.txt`. Su SHA Git coincide exactamente con los originales.
 - **Cuatro ramas:** `main`, `assets/alpha-theo-alastor`, `chore/repository-structure`, `docs/visual-references-and-methods`.
 - **18 commits únicos accesibles** en esas ramas y metadatos de **2 Issues cerrados, 2 PR fusionados**, ambos sin comentarios, preservados en [HISTORY_INDEX.json](HISTORY_INDEX.json).
-- Según la API al auditar: **sin releases, sin Pages y sin forks**; `has_wiki=true` pero el contenido de un posible Wiki no ha sido auditado y podría constituir información adicional.
+- Según la API al auditar: **sin releases, sin Pages y sin forks**. El indicador `has_wiki=true` solo señalaba la función habilitada; el **12 de octubre de 2026**, el propietario abrió `https://github.com/Klymapo/ALASTHEO/wiki` en su navegador autenticado y aportó captura que muestra la pantalla predeterminada «¡Bienvenidos a la wiki de ALASTHEO!» sin lista de páginas. El workflow de respaldo también encontró inaccesible/no inicializado el repositorio `.wiki.git`. **Conclusión operativa: Wiki sin páginas publicadas y sin contenido propio identificado para exportar.**
 - Todo el material documental incorporado es histórico; **no sustituye** el asset Theo Alpha ni su SHA actual.
 
 ## Respaldo Git original completado ✅
@@ -26,9 +26,9 @@ El archivo [ALASTHEO-2026-10-12.bundle](../git-backups/ALASTHEO-2026-10-12.bundl
 - [x] Índice de 18 commits y 2 Issues + 2 PR con sus descripciones preservado.
 - [x] Bundle Git **auténtico** completo de los refs accesibles, verificado y restaurado.
 - [x] Enlaces del dashboard del perfil redirigidos a la documentación conservada en ALTH-META.
-- [ ] Confirmar que el antiguo Wiki esté vacío: el workflow intentó clonarlo, pero **no encontró una Wiki accesible**; `has_wiki=true` solo indica que la función está habilitada. Si tiene páginas, exportarlas antes de borrar.
+- [x] Wiki revisada visualmente por el propietario (captura del 2026-10-12): pantalla de bienvenida predeterminada sin páginas; no hay contenido Wiki identificado que falte respaldar.
 - [ ] Aceptar que URLs antiguas de Issues y PR, estrellas y ajustes del repositorio no se preservan íntegramente en el bundle.
 
-**Dictamen:** los contenidos Git, las ramas y el historial recuperable están respaldados. Puede eliminarse el repositorio archivado `ALASTHEO` una vez revisado el Wiki y aceptada la pérdida de URLs/metadatos del repositorio original. No se ha efectuado el borrado administrativo.
+**Dictamen:** los contenidos Git, las ramas y el historial recuperable están respaldados. La Wiki ya fue revisada y el repositorio archivado `ALASTHEO` es técnicamente prescindible para recuperar el contenido Git. Resta únicamente la decisión del propietario de aceptar la pérdida de URLs/metadatos de GitHub antes de borrarlo. No se ha efectuado el borrado administrativo.
 
 Consulta oficial: https://git-scm.com/docs/git-bundle
