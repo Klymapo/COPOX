@@ -14,6 +14,14 @@ Se modelan con scripts de Blender que corren sin interfaz en sesiones de Claude 
 | `refs/` | Referencias visuales: personajes, escenas e infografías |
 | `data/medidas.csv` | Registro que recalibra los factores de conversión |
 
+## Stylizer · Herramienta de AlasTheo
+
+El generador 3D [**Stylizer**](tools/stylizer/README.md) está incorporado como herramienta opcional dentro de `tools/stylizer/`, con su código Python, pruebas y entorno propio. Produce propuestas que **no** están aprobadas. Su nuevo puente `alth_bridge.py` puede crear manifiestos verificables sin cambiar GLB ni assets y siempre marca las salidas como `UNREVIEWED`.
+
+- La especificación y autoridad sobre modelos siguen en `spec/alth_spec.json`, COPOX y CHSP-X.
+- No se activan proveedores de pago, servidores ni aprobaciones automáticas por esta incorporación.
+- El código fuente seleccionado proviene del antiguo repositorio privado Stylizer con autorización para publicarlo. No se importan contraseñas, sesiones, outputs personales ni modelos de demostración.
+
 ## Alcance y repositorios relacionados
 
 - **Este repositorio** es la fuente principal de los assets, especificaciones y auditorías de ALTH-META/AlasTheo.
