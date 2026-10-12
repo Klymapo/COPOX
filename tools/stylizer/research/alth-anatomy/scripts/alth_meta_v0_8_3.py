@@ -1,0 +1,685 @@
+# ============================================================
+# ALTH_META — Chibi Low-Poly Base
+# v0.8.3 — STYLIZED ANATOMY
+#
+# Blender 4.x
+# Text Editor -> Alt+P
+# ============================================================
+
+import bpy
+import bmesh
+import math
+from mathutils import Vector, Euler
+
+MM = 0.001
+COLLECTION_NAME = "ALTH_META"
+REMOVE_OLD = True
+ADD_FACE = True
+ADD_HANDS = True
+ALTURA_TOTAL = 95.0
+
+M = {
+    "cabeza": {
+        "ancho": 40.0,
+        "alto": 34.5,
+        "prof": 31.0,
+        "mandibula_ancho": 37.5,
+        "mandibula_prof": 29.5,
+    },
+    "cuello": {"ancho": 9.5, "prof": 8.5, "alto": 4.5},
+    "torso": {
+        "pecho": 30.0,
+        "cintura": 25.5,
+        "cadera": 25.5,
+        "prof_pecho": 18.0,
+        "prof_cintura": 16.8,
+        "prof_cadera": 17.2,
+        "alto": 19.0,
+    },
+    "pelvis": {"ancho": 25.5, "prof": 17.5, "alto": 7.5},
+    "brazo": {
+        "upper_largo": 11.0,
+        "fore_largo": 10.0,
+        "hombro_h": 9.8,
+        "hombro_d": 8.4,
+        "biceps_h": 9.2,
+        "biceps_d": 7.8,
+        "codo_h": 8.1,
+        "codo_d": 7.1,
+        "fore_h": 8.6,
+        "fore_d": 7.2,
+        "muneca_h": 7.1,
+        "muneca_d": 6.3,
+    },
+    "palma": {
+        "largo": 6.8,
+        "ancho_muneca": 6.0,
+        "ancho_dedos": 8.6,
+        "prof_muneca": 3.3,
+        "prof_dedos": 3.8,
+    },
+    "dedos": {
+        "indice": {"largo": 5.1, "ancho": 1.8},
+        "medio": {"largo": 5.6, "ancho": 1.9},
+        "anular": {"largo": 5.1, "ancho": 1.8},
+        "menique": {"largo": 4.3, "ancho": 1.65},
+        "pulgar": {"largo": 4.7, "ancho": 2.0},
+        "prof": 1.8,
+    },
+    "pierna": {
+        "largo": 24.0,
+        "hip_w": 11.2,
+        "hip_d": 9.0,
+        "thigh_w": 10.7,
+        "thigh_d": 8.7,
+        "knee_w": 9.3,
+        "knee_d": 7.8,
+        "calf_w": 9.5,
+        "calf_d": 8.0,
+        "ankle_w": 8.4,
+        "ankle_d": 7.4,
+    },
+    "zapato": {"largo": 16.5, "ancho": 11.8, "alto": 9.0, "suela": 1.8},
+    "oreja": {"ancho": 6.0, "prof": 3.7, "alto": 8.0},
+    "ojo": {"ancho": 8.1, "alto": 9.5, "prof": 1.2, "radio": 2.2, "centro_x": 6.1},
+    "iris": {"ancho": 3.9, "alto": 6.5, "prof": 0.75},
+    "ceja": {"ancho": 9.2, "alto": 1.9, "prof": 0.85},
+    "nariz": {"ancho": 3.8, "alto": 2.7, "prof": 1.8},
+    "boca": {"ancho": 7.5, "grosor": 0.42},
+}
+
+Z = {
+    "suelo": 0.0,
+    "zapato_ini": 0.0,
+    "zapato_fin": 9.0,
+    "pierna_ini": 8.3,
+    "pierna_fin": 32.3,
+    "pelvis_ini": 30.8,
+    "pelvis_fin": 38.3,
+    "torso_ini": 36.5,
+    "torso_fin": 55.5,
+    "cuello_ini": 54.5,
+    "cuello_fin": 59.0,
+    "cabeza_ini": 60.5,
+    "cabeza_fin": 95.0,
+    "hombro": 52.5,
+    "ojos": 78.5,
+    "cejas": 84.0,
+    "nariz": 72.8,
+    "boca": 68.3,
+    "orejas": 77.0,
+}
+
+X = {"hombro": 15.2, "cadera": 8.2, "ojo": 6.1, "oreja": 20.3}
+
+STYLE = {
+    "head_bevel": 4.3,
+    "head_segments": 4,
+    "torso_bevel": 2.4,
+    "torso_segments": 3,
+    "pelvis_bevel": 1.8,
+    "arm_bevel": 1.6,
+    "leg_bevel": 1.5,
+    "hand_bevel": 0.9,
+    "finger_bevel": 0.45,
+    "shoe_bevel": 1.6,
+    "ear_bevel": 1.2,
+    "nose_bevel": 0.65,
+    "shoe_angle": 4.5,
+}
+
+
+def material(name, rgba):
+    mat = bpy.data.materials.get(name)
+    if mat is None:
+        mat = bpy.data.materials.new(name)
+    mat.diffuse_color = rgba
+    return mat
+
+
+MAT_SKIN = material("META_Skin", (0.72, 0.47, 0.36, 1))
+MAT_BODY = material("META_Body", (0.38, 0.43, 0.50, 1))
+MAT_SHOE = material("META_Shoe", (0.055, 0.055, 0.06, 1))
+MAT_DARK = material("META_Dark", (0.035, 0.025, 0.020, 1))
+MAT_WHITE = material("META_EyeWhite", (0.94, 0.94, 0.92, 1))
+MAT_EYE = material("META_Eye", (0.12, 0.055, 0.025, 1))
+
+
+def limpiar():
+    if not REMOVE_OLD:
+        return
+    for ob in list(bpy.data.objects):
+        if ob.name.startswith("META_") or ob.name.startswith("ALTH_"):
+            bpy.data.objects.remove(ob, do_unlink=True)
+
+
+def get_collection():
+    col = bpy.data.collections.get(COLLECTION_NAME)
+    if col is None:
+        col = bpy.data.collections.new(COLLECTION_NAME)
+    if col.name not in [c.name for c in bpy.context.scene.collection.children]:
+        bpy.context.scene.collection.children.link(col)
+    return col
+
+
+def mesh_obj(name, bm, col):
+    mesh = bpy.data.meshes.new(name + "_Mesh")
+    bm.to_mesh(mesh)
+    bm.free()
+    ob = bpy.data.objects.new(name, mesh)
+    col.objects.link(ob)
+    return ob
+
+
+def set_material(ob, mat):
+    if mat is None:
+        return
+    if len(ob.data.materials) == 0:
+        ob.data.materials.append(mat)
+    else:
+        ob.data.materials[0] = mat
+
+
+def add_bevel(ob, width_mm, segments=2):
+    if width_mm <= 0:
+        return ob
+    mod = ob.modifiers.new("META_Bevel", "BEVEL")
+    mod.width = width_mm * MM
+    mod.segments = segments
+    mod.limit_method = "ANGLE"
+    mod.angle_limit = math.radians(25)
+    mod.use_clamp_overlap = True
+    for poly in ob.data.polygons:
+        poly.use_smooth = False
+    return ob
+
+
+def create_box(name, dims, loc, col, bevel=0, segments=2, mat=None, rot=(0, 0, 0)):
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1.0)
+    bmesh.ops.scale(
+        bm,
+        vec=Vector((dims[0] * MM, dims[1] * MM, dims[2] * MM)),
+        verts=bm.verts[:],
+    )
+    ob = mesh_obj(name, bm, col)
+    ob.location = Vector((loc[0] * MM, loc[1] * MM, loc[2] * MM))
+    ob.rotation_euler = Euler(
+        (math.radians(rot[0]), math.radians(rot[1]), math.radians(rot[2])), "XYZ"
+    )
+    set_material(ob, mat)
+    add_bevel(ob, bevel, segments)
+    return ob
+
+
+def create_profile_body(
+    name,
+    profiles,
+    height,
+    bottom_z,
+    col,
+    bevel,
+    segments,
+    mat,
+    loc_x=0.0,
+    loc_y=0.0,
+):
+    bm = bmesh.new()
+    rings = []
+    for t, width, depth in profiles:
+        z = t * height * MM
+        w = width / 2 * MM
+        d = depth / 2 * MM
+        ring = [
+            bm.verts.new((-w, -d, z)),
+            bm.verts.new((w, -d, z)),
+            bm.verts.new((w, d, z)),
+            bm.verts.new((-w, d, z)),
+        ]
+        rings.append(ring)
+    for i in range(len(rings) - 1):
+        a = rings[i]
+        b = rings[i + 1]
+        for j in range(4):
+            k = (j + 1) % 4
+            bm.faces.new((a[j], a[k], b[k], b[j]))
+    bm.faces.new(rings[0][::-1])
+    bm.faces.new(rings[-1])
+    bm.normal_update()
+    ob = mesh_obj(name, bm, col)
+    ob.location = Vector((loc_x * MM, loc_y * MM, bottom_z * MM))
+    set_material(ob, mat)
+    add_bevel(ob, bevel, segments)
+    return ob
+
+
+def create_profile_segment(name, p0, p1, profiles, col, bevel, segments, mat):
+    p0 = Vector(p0)
+    p1 = Vector(p1)
+    vec = p1 - p0
+    length = vec.length
+    if length <= 0:
+        raise ValueError(name + ": zero length")
+    bm = bmesh.new()
+    rings = []
+    for t, width, depth in profiles:
+        z = (t - 0.5) * length * MM
+        w = width / 2 * MM
+        d = depth / 2 * MM
+        ring = [
+            bm.verts.new((-w, -d, z)),
+            bm.verts.new((w, -d, z)),
+            bm.verts.new((w, d, z)),
+            bm.verts.new((-w, d, z)),
+        ]
+        rings.append(ring)
+    for i in range(len(rings) - 1):
+        a = rings[i]
+        b = rings[i + 1]
+        for j in range(4):
+            k = (j + 1) % 4
+            bm.faces.new((a[j], a[k], b[k], b[j]))
+    bm.faces.new(rings[0][::-1])
+    bm.faces.new(rings[-1])
+    bm.normal_update()
+    ob = mesh_obj(name, bm, col)
+    center = (p0 + p1) / 2
+    ob.location = center * MM
+    quat = Vector((0, 0, 1)).rotation_difference(vec.normalized())
+    ob.rotation_mode = "QUATERNION"
+    ob.rotation_quaternion = quat
+    set_material(ob, mat)
+    add_bevel(ob, bevel, segments)
+    return ob
+
+
+def create_rounded_rect_prism(
+    name, width, height, depth, radius, loc, col, mat, corner_segments=4
+):
+    radius = min(radius, width / 2, height / 2)
+    hw = width / 2
+    hh = height / 2
+    corners = [
+        (hw - radius, hh - radius, 0, 90),
+        (-hw + radius, hh - radius, 90, 180),
+        (-hw + radius, -hh + radius, 180, 270),
+        (hw - radius, -hh + radius, 270, 360),
+    ]
+    outline = []
+    for cx, cz, a0, a1 in corners:
+        for i in range(corner_segments + 1):
+            if len(outline) > 0 and i == 0:
+                continue
+            t = i / corner_segments
+            angle = math.radians(a0 + (a1 - a0) * t)
+            outline.append((cx + radius * math.cos(angle), cz + radius * math.sin(angle)))
+    bm = bmesh.new()
+    yf = -depth / 2 * MM
+    yb = depth / 2 * MM
+    front = []
+    back = []
+    for x, z in outline:
+        front.append(bm.verts.new((x * MM, yf, z * MM)))
+        back.append(bm.verts.new((x * MM, yb, z * MM)))
+    bm.faces.new(front[::-1])
+    bm.faces.new(back)
+    n = len(front)
+    for i in range(n):
+        j = (i + 1) % n
+        bm.faces.new((front[i], front[j], back[j], back[i]))
+    bm.normal_update()
+    ob = mesh_obj(name, bm, col)
+    ob.location = Vector((loc[0] * MM, loc[1] * MM, loc[2] * MM))
+    set_material(ob, mat)
+    return ob
+
+
+def create_ellipse_prism(name, width, height, depth, loc, col, mat, segments=16):
+    bm = bmesh.new()
+    front = []
+    back = []
+    yf = -depth / 2 * MM
+    yb = depth / 2 * MM
+    for i in range(segments):
+        angle = 2 * math.pi * i / segments
+        x = math.cos(angle) * width / 2 * MM
+        z = math.sin(angle) * height / 2 * MM
+        front.append(bm.verts.new((x, yf, z)))
+        back.append(bm.verts.new((x, yb, z)))
+    bm.faces.new(front[::-1])
+    bm.faces.new(back)
+    for i in range(segments):
+        j = (i + 1) % segments
+        bm.faces.new((front[i], front[j], back[j], back[i]))
+    bm.normal_update()
+    ob = mesh_obj(name, bm, col)
+    ob.location = Vector((loc[0] * MM, loc[1] * MM, loc[2] * MM))
+    set_material(ob, mat)
+    return ob
+
+
+def create_hand(side, wrist, col, root):
+    sign = 1 if side == "R" else -1
+    palm_end = Vector((wrist.x + sign * M["palma"]["largo"], wrist.y, wrist.z))
+
+    palm = create_profile_segment(
+        f"META_Palm_{side}",
+        wrist,
+        palm_end,
+        [
+            (0.00, M["palma"]["ancho_muneca"], M["palma"]["prof_muneca"]),
+            (0.35, 7.1, 3.5),
+            (1.00, M["palma"]["ancho_dedos"], M["palma"]["prof_dedos"]),
+        ],
+        col,
+        STYLE["hand_bevel"],
+        2,
+        MAT_SKIN,
+    )
+    palm.parent = root
+
+    fingers = [
+        ("Index", M["dedos"]["indice"], 2.75),
+        ("Middle", M["dedos"]["medio"], 0.92),
+        ("Ring", M["dedos"]["anular"], -0.92),
+        ("Pinky", M["dedos"]["menique"], -2.75),
+    ]
+
+    for finger_name, finger, z_off in fingers:
+        length = finger["largo"]
+        center_x = palm_end.x + sign * (length / 2 - 0.55)
+        ob = create_box(
+            f"META_{finger_name}_{side}",
+            (length, M["dedos"]["prof"], finger["ancho"]),
+            (center_x, palm_end.y, palm_end.z + z_off),
+            col,
+            STYLE["finger_bevel"],
+            2,
+            MAT_SKIN,
+        )
+        ob.parent = root
+
+    thumb_start = Vector((wrist.x + sign * 2.0, wrist.y, wrist.z - 3.1))
+    thumb_end = Vector((thumb_start.x + sign * 3.7, thumb_start.y, thumb_start.z - 2.9))
+
+    thumb = create_profile_segment(
+        f"META_Thumb_{side}",
+        thumb_start,
+        thumb_end,
+        [(0.00, 2.1, 2.0), (1.00, 1.7, 1.7)],
+        col,
+        STYLE["finger_bevel"],
+        2,
+        MAT_SKIN,
+    )
+    thumb.parent = root
+
+
+def create_mouth(col, root):
+    curve = bpy.data.curves.new("META_MouthCurve", "CURVE")
+    curve.dimensions = "3D"
+    curve.resolution_u = 1
+    curve.bevel_depth = M["boca"]["grosor"] * MM
+    curve.bevel_resolution = 0
+    spline = curve.splines.new("POLY")
+    spline.points.add(2)
+    face_y = -M["cabeza"]["prof"] / 2 - 0.45
+    coords = [
+        (-M["boca"]["ancho"] / 2, face_y, Z["boca"] + 0.3),
+        (0, face_y - 0.05, Z["boca"] - 0.25),
+        (M["boca"]["ancho"] / 2, face_y, Z["boca"] + 0.1),
+    ]
+    for point, co in zip(spline.points, coords):
+        point.co = (co[0] * MM, co[1] * MM, co[2] * MM, 1)
+    ob = bpy.data.objects.new("META_Mouth", curve)
+    col.objects.link(ob)
+    ob.data.materials.append(MAT_DARK)
+    ob.parent = root
+
+
+def hide_relationship_lines():
+    try:
+        for area in bpy.context.screen.areas:
+            if area.type != "VIEW_3D":
+                continue
+            for space in area.spaces:
+                if space.type == "VIEW_3D":
+                    space.overlay.show_relationship_lines = False
+    except Exception:
+        pass
+
+
+def build_meta():
+    limpiar()
+    col = get_collection()
+
+    root = bpy.data.objects.new("META_ROOT", None)
+    col.objects.link(root)
+    root.empty_display_type = "PLAIN_AXES"
+    root.empty_display_size = 6 * MM
+
+    # Shoes
+    for side, sign in (("R", 1), ("L", -1)):
+        x = sign * X["cadera"]
+        shoe_y = -3.5
+        shoe = create_profile_body(
+            f"META_Shoe_{side}",
+            [
+                (0.00, M["zapato"]["ancho"], M["zapato"]["largo"]),
+                (0.25, 11.6, 16.2),
+                (1.00, 10.0, 13.5),
+            ],
+            M["zapato"]["alto"],
+            0,
+            col,
+            STYLE["shoe_bevel"],
+            3,
+            MAT_SHOE,
+            loc_x=x,
+            loc_y=shoe_y,
+        )
+        shoe.rotation_euler.z = math.radians(-sign * STYLE["shoe_angle"])
+        shoe.parent = root
+
+        sole = create_box(
+            f"META_Sole_{side}",
+            (M["zapato"]["ancho"] + 0.8, M["zapato"]["largo"] + 0.8, M["zapato"]["suela"]),
+            (x, shoe_y, M["zapato"]["suela"] / 2),
+            col,
+            0.45,
+            2,
+            MAT_DARK,
+            rot=(0, 0, -sign * STYLE["shoe_angle"]),
+        )
+        sole.parent = root
+
+    # Legs
+    for side, sign in (("R", 1), ("L", -1)):
+        leg = create_profile_body(
+            f"META_Leg_{side}",
+            [
+                (0.00, M["pierna"]["ankle_w"], M["pierna"]["ankle_d"]),
+                (0.20, 8.9, 7.7),
+                (0.38, M["pierna"]["calf_w"], M["pierna"]["calf_d"]),
+                (0.52, M["pierna"]["knee_w"], M["pierna"]["knee_d"]),
+                (0.78, M["pierna"]["thigh_w"], M["pierna"]["thigh_d"]),
+                (1.00, M["pierna"]["hip_w"], M["pierna"]["hip_d"]),
+            ],
+            M["pierna"]["largo"],
+            Z["pierna_ini"],
+            col,
+            STYLE["leg_bevel"],
+            3,
+            MAT_BODY,
+            loc_x=sign * X["cadera"],
+        )
+        leg.parent = root
+
+    pelvis = create_profile_body(
+        "META_Pelvis",
+        [(0.00, 24.5, 16.8), (0.45, 25.5, 17.5), (1.00, 25.0, 17.0)],
+        M["pelvis"]["alto"],
+        Z["pelvis_ini"],
+        col,
+        STYLE["pelvis_bevel"],
+        3,
+        MAT_BODY,
+    )
+    pelvis.parent = root
+
+    torso = create_profile_body(
+        "META_Torso",
+        [
+            (0.00, 25.5, 17.2),
+            (0.25, 25.0, 16.8),
+            (0.42, M["torso"]["cintura"], M["torso"]["prof_cintura"]),
+            (0.72, 28.5, 17.5),
+            (1.00, M["torso"]["pecho"], M["torso"]["prof_pecho"]),
+        ],
+        M["torso"]["alto"],
+        Z["torso_ini"],
+        col,
+        STYLE["torso_bevel"],
+        STYLE["torso_segments"],
+        MAT_BODY,
+    )
+    torso.parent = root
+
+    neck = create_box(
+        "META_Neck",
+        (M["cuello"]["ancho"], M["cuello"]["prof"], M["cuello"]["alto"]),
+        (0, 0, (Z["cuello_ini"] + Z["cuello_fin"]) / 2),
+        col,
+        1.3,
+        3,
+        MAT_SKIN,
+    )
+    neck.parent = root
+
+    head = create_profile_body(
+        "META_Head",
+        [
+            (0.00, M["cabeza"]["mandibula_ancho"], M["cabeza"]["mandibula_prof"]),
+            (0.12, 38.0, 30.0),
+            (0.30, 39.3, 30.7),
+            (0.60, 40.0, 31.0),
+            (1.00, 39.5, 30.3),
+        ],
+        M["cabeza"]["alto"],
+        Z["cabeza_ini"],
+        col,
+        STYLE["head_bevel"],
+        STYLE["head_segments"],
+        MAT_SKIN,
+    )
+    head.parent = root
+
+    for side, sign in (("R", 1), ("L", -1)):
+        ear = create_box(
+            f"META_Ear_{side}",
+            (M["oreja"]["ancho"], M["oreja"]["prof"], M["oreja"]["alto"]),
+            (sign * X["oreja"], 0.5, Z["orejas"]),
+            col,
+            STYLE["ear_bevel"],
+            3,
+            MAT_SKIN,
+        )
+        ear.parent = root
+
+    total_arm = M["brazo"]["upper_largo"] + M["brazo"]["fore_largo"]
+
+    for side, sign in (("R", 1), ("L", -1)):
+        shoulder = Vector((sign * (X["hombro"] - 0.8), 0, Z["hombro"]))
+        wrist = Vector((shoulder.x + sign * total_arm, 0, shoulder.z))
+
+        arm = create_profile_segment(
+            f"META_Arm_{side}",
+            shoulder,
+            wrist,
+            [
+                (0.00, M["brazo"]["hombro_h"], M["brazo"]["hombro_d"]),
+                (0.10, 9.6, 8.2),
+                (0.32, M["brazo"]["biceps_h"], M["brazo"]["biceps_d"]),
+                (0.52, M["brazo"]["codo_h"], M["brazo"]["codo_d"]),
+                (0.72, M["brazo"]["fore_h"], M["brazo"]["fore_d"]),
+                (1.00, M["brazo"]["muneca_h"], M["brazo"]["muneca_d"]),
+            ],
+            col,
+            STYLE["arm_bevel"],
+            3,
+            MAT_SKIN,
+        )
+        arm.parent = root
+
+        if ADD_HANDS:
+            create_hand(side, wrist, col, root)
+
+    if ADD_FACE:
+        face_y = -M["cabeza"]["prof"] / 2
+
+        for side, sign in (("R", 1), ("L", -1)):
+            eye_x = sign * M["ojo"]["centro_x"]
+
+            eye = create_rounded_rect_prism(
+                f"META_EyeWhite_{side}",
+                M["ojo"]["ancho"],
+                M["ojo"]["alto"],
+                M["ojo"]["prof"],
+                M["ojo"]["radio"],
+                (eye_x, face_y - 0.65, Z["ojos"]),
+                col,
+                MAT_WHITE,
+                corner_segments=4,
+            )
+            eye.parent = root
+
+            iris = create_ellipse_prism(
+                f"META_Iris_{side}",
+                M["iris"]["ancho"],
+                M["iris"]["alto"],
+                M["iris"]["prof"],
+                (eye_x + sign * 0.20, face_y - 1.35, Z["ojos"] - 0.30),
+                col,
+                MAT_EYE,
+                segments=16,
+            )
+            iris.parent = root
+
+            brow = create_box(
+                f"META_Brow_{side}",
+                (M["ceja"]["ancho"], M["ceja"]["prof"], M["ceja"]["alto"]),
+                (eye_x, face_y - 0.85, Z["cejas"]),
+                col,
+                0.45,
+                2,
+                MAT_DARK,
+                rot=(0, 0, sign * 2),
+            )
+            brow.parent = root
+
+        nose = create_box(
+            "META_Nose",
+            (M["nariz"]["ancho"], M["nariz"]["prof"], M["nariz"]["alto"]),
+            (0, face_y - M["nariz"]["prof"] / 2 - 0.25, Z["nariz"]),
+            col,
+            STYLE["nose_bevel"],
+            3,
+            MAT_SKIN,
+        )
+        nose.parent = root
+        create_mouth(col, root)
+
+    hide_relationship_lines()
+    bpy.ops.object.select_all(action="DESELECT")
+    root.select_set(True)
+    bpy.context.view_layer.objects.active = root
+
+    print("✅ ALTH_META v0.8.3 — STYLIZED ANATOMY")
+    print("Head: 40 × 31 × 34.5 mm")
+    print("Chest: 30 mm")
+    print("Leg: 24 mm continuous profile")
+    print("Palm: 6.8 mm, width 6.0 -> 8.6 mm")
+    print("Shoes: 16.5 × 11.8 × 9 mm")
+
+
+build_meta()
