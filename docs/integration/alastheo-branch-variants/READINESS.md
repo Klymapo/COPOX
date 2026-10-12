@@ -13,33 +13,22 @@ Fecha: 2026-10-12. Esta auditoría no elimina el repositorio archivado.
 - Según la API al auditar: **sin releases, sin Pages y sin forks**; `has_wiki=true` pero el contenido de un posible Wiki no ha sido auditado y podría constituir información adicional.
 - Todo el material documental incorporado es histórico; **no sustituye** el asset Theo Alpha ni su SHA actual.
 
-## Límite de la copia
+## Respaldo Git original completado ✅
 
-El índice preserva textos de tickets, mensajes/identificadores/relaciones de commits y snapshots de versiones importantes. **No es un espejo Git**: al eliminar ALASTHEO se perderían los objetos originales de commits y árboles, además de metadatos históricos accesibles desde las URLs del repositorio. No se han exportado posibles contenidos del Wiki.
+El archivo [ALASTHEO-2026-10-12.bundle](../git-backups/ALASTHEO-2026-10-12.bundle) se generó mediante GitHub Actions, se comprobó con `git bundle verify`, se clonó para probar su restauración y se verificaron los encabezados de las ramas. La [lista de refs](../git-backups/ALASTHEO-refs.txt) conserva todas las ramas históricas, incluidos los refs de PR que ofreció el servidor. La [suma SHA-256](../git-backups/ALASTHEO-2026-10-12.bundle.sha256) acompaña al respaldo.
 
-### Puerta para borrado definitivo
+**El bundle ya está almacenado en el repositorio superviviente `alth-meta`**, además de haber sido generado como artifact de una ejecución de Actions. Un artifact por sí solo puede caducar; el archivo versionado en `main` es la copia persistente.
 
-- [x] Contenido del árbol principal incorporado/adaptado.
-- [x] Archivos exclusivos de ramas y versiones documentales divergentes conservados.
-- [x] Metadatos de ramas, commits, Issues y PRs conservados.
-- [x] Sin releases, Pages ni forks registrados.
-- [ ] Crear y verificar **bundle Git completo** de `ALASTHEO` con todos los refs de ramas/tags; guardarlo **fuera del repositorio que se borrará**.
-- [ ] Comprobar el posible GitHub Wiki y exportarlo si contiene páginas.
-- [ ] Confirmar el destino de enlaces externos a ALASTHEO y aceptar que URLs de commits/Issues/PR dejarán de funcionar.
+### Checklist de eliminación
 
-**Dictamen:** documentación y contenido de trabajo rescatados. Borrado irreversible **pendiente de respaldo Git completo y revisión de Wiki**. No declarar la eliminación libre de riesgo antes de estas verificaciones.
+- [x] Contenido actual del árbol principal y modelos Alpha documentales consolidados.
+- [x] Variantes documentales exclusivas preservadas y verificadas por SHA.
+- [x] Índice de 18 commits y 2 Issues + 2 PR con sus descripciones preservado.
+- [x] Bundle Git **auténtico** completo de los refs accesibles, verificado y restaurado.
+- [x] Enlaces del dashboard del perfil redirigidos a la documentación conservada en ALTH-META.
+- [ ] Confirmar que el antiguo Wiki esté vacío: el workflow intentó clonarlo, pero **no encontró una Wiki accesible**; `has_wiki=true` solo indica que la función está habilitada. Si tiene páginas, exportarlas antes de borrar.
+- [ ] Aceptar que URLs antiguas de Issues y PR, estrellas y ajustes del repositorio no se preservan íntegramente en el bundle.
 
-## Respaldo restaurable sin instalar Git en tu laptop
+**Dictamen:** los contenidos Git, las ramas y el historial recuperable están respaldados. Puede eliminarse el repositorio archivado `ALASTHEO` una vez revisado el Wiki y aceptada la pérdida de URLs/metadatos del repositorio original. No se ha efectuado el borrado administrativo.
 
-Usando una terminal de GitHub Codespaces con sesión autorizada para leer este repositorio, ejecuta:
-
-```bash
-gh repo clone Klymapo/ALASTHEO ALASTHEO.git -- --mirror
-git -C ALASTHEO.git bundle create ../ALASTHEO-2026-10-12.bundle --all
-git -C ALASTHEO.git bundle verify ../ALASTHEO-2026-10-12.bundle
-git -C ALASTHEO.git bundle list-heads ../ALASTHEO-2026-10-12.bundle
-```
-
-Descarga el archivo `.bundle` a un lugar seguro fuera del Codespace y prueba su restauración con `git clone ALASTHEO-2026-10-12.bundle ALASTHEO-restore-test`. Un bundle conserva los objetos Git alcanzables por refs, no Issues/PRs ni un posible Wiki; esos datos están tratados por separado. La posibilidad de iniciar Codespaces y de clonar desde él depende del acceso del usuario al repositorio.
-
-Referencia: https://git-scm.com/docs/git-bundle
+Consulta oficial: https://git-scm.com/docs/git-bundle
