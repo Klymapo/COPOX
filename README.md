@@ -17,6 +17,8 @@ Se modelan con scripts de Blender que corren sin interfaz en sesiones de Claude 
 | `refs/` | Referencias visuales: personajes, escenas e infografías |
 | `data/medidas.csv` | Registro que recalibra los factores de conversión |
 
+[Auditoría del laboratorio y control de workflows](docs/AUDITORIA_2026-10-12.md) · comprobación gratuita: `python scripts/audit_workflows.py`. El scheduler de COPOX continúa solo manual.
+
 ## Stylizer · Herramienta de AlasTheo
 
 El generador 3D [**Stylizer**](tools/stylizer/README.md) está incorporado como herramienta opcional dentro de `tools/stylizer/`, con su código Python, pruebas y entorno propio. Produce propuestas que **no** están aprobadas. Su nuevo puente `alth_bridge.py` puede crear manifiestos verificables sin cambiar GLB ni assets y siempre marca las salidas como `UNREVIEWED`.
