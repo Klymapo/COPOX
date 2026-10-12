@@ -44,11 +44,12 @@ python alth_bridge.py --input /ruta/modelo.glb --output-dir /ruta/candidatos --a
 
 ## Ubicación y privacidad
 
-Este código se seleccionó del antiguo `Klymapo/stylizer` con autorización para hacerlo público. Se conservaron módulos ejecutables, pruebas, Dockerfile, requisitos y manual original, pero **no** los binarios generados, GLB de ejemplo, PNG, estado de las colas, contraseñas, credenciales ni propuestas de alojamiento de pago. Los archivos importados se compararon por SHA Git con su origen.
+Este código se seleccionó del antiguo `Klymapo/stylizer` con autorización para hacerlo público. Se conservaron módulos ejecutables, pruebas, Dockerfile, requisitos y manual original, incluyendo además los **12 documentos, scripts y registros originales de investigación STYLIZED**, verificados por SHA. No se importan GLB/PNG de demostración, estado de colas, contraseñas, credenciales ni propuestas de alojamiento de pago. Los archivos importados se compararon por SHA Git con su origen.
 
+- [Investigación anatómica histórica STYLIZED](research/alth-anatomy/README.md) — candidatos, no estándar aprobado
 - [Manual original](docs/ORIGINAL_STYLIZER_README.md)
 - [Flujo original AlasTheo](docs/ORIGINAL_ALASTHEO_TOOLCHAIN.md)
 - [Especificación vigente](../../spec/alth_spec.json)
 - [COPOX](../../copox/README.md)
 
-Para borrar `Klymapo/stylizer` como repositorio independiente, respaldar antes su historia Git con un bundle completo y decidir el destino de los materiales de investigación `research/alth-anatomy/` y los binarios de ejemplo. **Este portado es de código, no un espejo de Git.**
+Para borrar `Klymapo/stylizer` como repositorio independiente, respaldar antes su historia Git con un bundle completo y decidir si conservar o descartar los binarios de ejemplo de ese repositorio, que no se trasladaron. **Este portado es de código, no un espejo de Git.**
