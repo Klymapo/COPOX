@@ -1,0 +1,7 @@
+# Versiones utilizadas en la verificación local.
+gradio==6.28.0
+gradio_client==2.7.1
+requests==2.34.2
+Pillow==12.3.0
+python-dotenv==1.2.3
+filelock==4.0.3
