@@ -54,4 +54,4 @@ Este código se seleccionó del antiguo `Klymapo/stylizer` con autorización par
 - [Especificación vigente](../../spec/alth_spec.json)
 - [COPOX](../../copox/README.md)
 
-Para borrar `Klymapo/stylizer` como repositorio independiente, respaldar antes su **historial Git completo en un destino privado** y decidir qué hacer con sus antiguos binarios de muestra. Aquí se conservaron el código, la investigación STYLIZED, un ejemplo neutro reproducible y una cronología curada, **pero esto no equivale a un espejo de Git**.
+**Respaldo privado ya verificado (2026-10-12):** el historial Git original de `Klymapo/stylizer` se exportó a un bundle completo, se restauró y se guardó en el Google Drive creativo privado, separado de este repositorio público. Se preservaron 12 ramas originales y 25 refs verificadas, incluidos los antiguos binarios en la historia privada. [Informe de consolidación y puerta de retirada](../../docs/integration/STYLIZER-EXIT-READINESS.md). **Esto no publica el historial privado ni autoriza automáticamente el borrado del repositorio original.**
