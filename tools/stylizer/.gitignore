@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+.gradio/
+.env
+.env.*
+!.env.example
+.stylizer/
+outputs/
+
+# Root-level generated experiments (existing tracked assets are unaffected)
+/model_20*.glb
+/output_20*.png
+/stylized_20*.json

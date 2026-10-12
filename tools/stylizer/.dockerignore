@@ -1,0 +1,22 @@
+# Send only the application source, never user files or local credentials.
+**
+!Dockerfile
+!requirements.txt
+!requirements-server.txt
+!app.py
+!server.py
+!config.py
+!jobs.py
+!pipeline_core.py
+!artifacts.py
+!fidelity.py
+!mesh_service.py
+!mesh_generator.py
+!mesh_generator_threews.py
+!prompt_stylizer.py
+!image_generator_agnes.py
+!prepare_godot.py
+!blender_prepare.py
+!doctor.py
+!docs/
+!docs/GODOT_IMPORT.md
