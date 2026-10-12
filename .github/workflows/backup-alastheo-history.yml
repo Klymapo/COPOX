@@ -1,0 +1,83 @@
+name: Respaldo Git completo · ALASTHEO histórico
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/backup-alastheo-history.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backup-alastheo-history
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: Crear, verificar y guardar bundle histórico
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Respaldar todas las ramas y probar restauración
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/integration/git-backups
+          git clone --mirror https://github.com/Klymapo/ALASTHEO.git /tmp/alastheo-mirror.git
+          bundle="$GITHUB_WORKSPACE/docs/integration/git-backups/ALASTHEO-2026-10-12.bundle"
+          git -C /tmp/alastheo-mirror.git bundle create "$bundle" --all
+          git -C /tmp/alastheo-mirror.git bundle verify "$bundle"
+          git -C /tmp/alastheo-mirror.git bundle list-heads "$bundle" | tee docs/integration/git-backups/ALASTHEO-refs.txt
+          git clone --mirror "$bundle" /tmp/alastheo-restore.git
+          while read -r sha ref; do
+            case "$ref" in refs/heads/*)
+              test "$(git -C /tmp/alastheo-restore.git rev-parse "$ref")" = "$sha" ;;
+            esac
+          done < docs/integration/git-backups/ALASTHEO-refs.txt
+          (cd docs/integration/git-backups && sha256sum ALASTHEO-2026-10-12.bundle > ALASTHEO-2026-10-12.bundle.sha256)
+          ls -lh "$bundle"
+          echo "PASS: full Git bundle restored and branch heads verified"
+
+      - name: Respaldar Wiki cuando exista
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-remote https://github.com/Klymapo/ALASTHEO.wiki.git HEAD >/dev/null 2>&1; then
+            git clone --mirror https://github.com/Klymapo/ALASTHEO.wiki.git /tmp/alastheo-wiki.git
+            wiki="$GITHUB_WORKSPACE/docs/integration/git-backups/ALASTHEO-WIKI-2026-10-12.bundle"
+            git -C /tmp/alastheo-wiki.git bundle create "$wiki" --all
+            git -C /tmp/alastheo-wiki.git bundle verify "$wiki"
+            git clone --mirror "$wiki" /tmp/alastheo-wiki-restore.git
+            (cd docs/integration/git-backups && sha256sum ALASTHEO-WIKI-2026-10-12.bundle > ALASTHEO-WIKI-2026-10-12.bundle.sha256)
+            echo "PASS: GitHub Wiki mirrored and restored"
+          else
+            echo "Wiki repository not accessible or not initialized; verify manually before deleting ALASTHEO"
+          fi
+
+      - name: Subir copia descargable de emergencia
+        uses: actions/upload-artifact@v4
+        with:
+          name: alastheo-git-bundle-2026-10-12
+          path: docs/integration/git-backups/ALASTHEO-*
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Conservar bundle en el repositorio superviviente
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/integration/git-backups
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "archive: preservar bundle Git restaurable de ALASTHEO"
+            git push origin HEAD:main
+          fi
