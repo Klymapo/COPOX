@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-12",
+  "reason": "Cierre de refs exactas con PR aprobado. No incluir experimentos, COPOX, bucles ni progreso.",
+  "branches": [
+    {
+      "name": "audit/cleanup-2026-10-12",
+      "sha": "6623968fe8a9dd493a692a96d7e74fc76f55a96a",
+      "pr": 30
+    },
+    {
+      "name": "backup/archive-alastheo-full-git-2026-10-12",
+      "sha": "237361dd316c5f5a4373f400a6e797e62bb9265c",
+      "pr": 24
+    },
+    {
+      "name": "ccr-cb57f2bd-bhu9oa",
+      "sha": "5a1dae89543572a17911c046466f5bd4150823b4",
+      "pr": 16
+    },
+    {
+      "name": "chore/organizacion-2026-10-12",
+      "sha": "02a535288bdc3a562d6cab7600c97b79533969b5",
+      "pr": 20
+    },
+    {
+      "name": "consolidation/legacy-alastheo-alpha-2026-10-12",
+      "sha": "6a60863f5d93a0dc65134e588ba91e228899086a",
+      "pr": 21
+    },
+    {
+      "name": "docs/alastheo-wiki-manually-verified-2026-10-12",
+      "sha": "9d79e3e1e7b6f94a3cf08186bcac1012f6c3845c",
+      "pr": 29
+    },
+    {
+      "name": "docs/archive-alastheo-review-2026-10-12",
+      "sha": "6bee1d3c475425fc71ab891c605a6e8bbd9425ce",
+      "pr": 22
+    },
+    {
+      "name": "docs/history-local-links-2026-10-12",
+      "sha": "da407421be76bcc6f97d3b64a4e19d81cae14141",
+      "pr": 23
+    },
+    {
+      "name": "docs/prototipos-ejemplos-stylizer-2026-10-12",
+      "sha": "66464af4f307e3c2eb58e34204bc7171bfbdc0e1",
+      "pr": 27
+    },
+    {
+      "name": "docs/stylizer-backup-verified-2026-10-12",
+      "sha": "6ce468fb50bc58753e9db0384e317f9f64dd6bbc",
+      "pr": 28
+    },
+    {
+      "name": "docs/verified-backups-2026-10-12",
+      "sha": "32154f4d59e2b31093a5b1b147602170045e8ad7",
+      "pr": 26
+    },
+    {
+      "name": "feat/integrate-public-stylizer-2026-10-12",
+      "sha": "bbc9472d988baf542d797bf55fe0c88abfdecd65",
+      "pr": 25
+    },
+    {
+      "name": "fix-kaggle-verificacion",
+      "sha": "0c402fccbffae0b37e9f2a87c0d01c774666f0fb",
+      "pr": 19
+    },
+    {
+      "name": "fix-token-issue",
+      "sha": "e2991ae5f5a5dc4681141d0cafa8dbd3c0f3f627",
+      "pr": 17
+    },
+    {
+      "name": "organizacion/guia-clara-2026-10-12",
+      "sha": "c345cfc71a8c64a69cb24cca0f3ee99186477810",
+      "pr": 31
+    }
+  ]
+}
