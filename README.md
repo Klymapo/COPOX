@@ -1,6 +1,9 @@
 # ALTH-META / AlasTheo
 
 Assets 3D en estilo **ALTH-META** (chibi-soft low-poly) para un videojuego en Godot.
+
+**Estado de todo este laboratorio: EXPERIMENTAL.** Los modelos, los scripts y las medidas son bases de prueba que podrán cambiar. Los marcadores internos de *baseline* o *aprobado para esta iteración* sirven para comparar resultados y proteger la reproducibilidad; **no significan versión definitiva**.
+
 Se modelan con scripts de Blender que corren sin interfaz en sesiones de Claude Code o GitHub Actions.
 
 | Carpeta | Contenido |
@@ -18,7 +21,8 @@ Se modelan con scripts de Blender que corren sin interfaz en sesiones de Claude 
 
 El generador 3D [**Stylizer**](tools/stylizer/README.md) está incorporado como herramienta opcional dentro de `tools/stylizer/`, con su código Python, pruebas y entorno propio. Produce propuestas que **no** están aprobadas. Su nuevo puente `alth_bridge.py` puede crear manifiestos verificables sin cambiar GLB ni assets y siempre marca las salidas como `UNREVIEWED`.
 
-- La especificación y autoridad sobre modelos siguen en `spec/alth_spec.json`, COPOX y CHSP-X.
+- [Cubo GLB de ejemplo sin credenciales](tools/stylizer/examples/README.md) y [bitácora de Stylizer](tools/stylizer/docs/HISTORIAL_EXPERIMENTAL.md), para aprender de los intentos anteriores sin acumular renders descartables.
+- La especificación de trabajo y los controles de modelos siguen en `spec/alth_spec.json`, COPOX y CHSP-X.
 - No se activan proveedores de pago, servidores ni aprobaciones automáticas por esta incorporación.
 - El código fuente seleccionado proviene del antiguo repositorio privado Stylizer con autorización para publicarlo. No se importan contraseñas, sesiones, outputs personales ni modelos de demostración.
 
