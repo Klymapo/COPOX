@@ -1,6 +1,6 @@
 # Stylizer como página web independiente de tu PC
 
-La interfaz ya permite cargar imágenes, generar modelos, consultar la cola, revisar resultados y descargar archivos desde un navegador. `server.py` permite alojar todo el servicio fuera de tu computadora, con una dirección HTTPS proporcionada por el alojamiento.
+> **Documento histórico del prototipo independiente.** No constituye un despliegue activo ni una opción gratuita confirmada. Las instrucciones de Render y los enlaces a `Klymapo/stylizer` describen el origen privado antes de la consolidación. El código vivo está en [`tools/stylizer/`](../README.md); no desplegar el `render.yaml` histórico de pago.\n\nLa interfaz ya permite cargar imágenes, generar modelos, consultar la cola, revisar resultados y descargar archivos desde un navegador. `server.py` permite alojar todo el servicio fuera de tu computadora, con una dirección HTTPS proporcionada por el alojamiento.
 
 ## Qué está implementado y qué falta activar
 
