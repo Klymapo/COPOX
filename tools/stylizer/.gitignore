@@ -12,3 +12,7 @@ outputs/
 /model_20*.glb
 /output_20*.png
 /stylized_20*.json
+
+# Ejemplos generados: reproducibles; no versionar resultados
+/examples/*.glb
+/examples/reports/
