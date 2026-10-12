@@ -1,5 +1,7 @@
 # ALTH-META / AlasTheo
 
+**Para orientarte:** [guía sencilla](docs/GUIA_RAPIDA.md) · [mapa de ramas](docs/RAMAS_2026-10-12.md).
+
 Assets 3D en estilo **ALTH-META** (chibi-soft low-poly) para un videojuego en Godot.
 
 **Estado de todo este laboratorio: EXPERIMENTAL.** Los modelos, los scripts y las medidas son bases de prueba que podrán cambiar. Los marcadores internos de *baseline* o *aprobado para esta iteración* sirven para comparar resultados y proteger la reproducibilidad; **no significan versión definitiva**.
