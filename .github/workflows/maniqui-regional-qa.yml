@@ -1,0 +1,72 @@
+name: COPOX · QA regional · nuca independiente
+on:
+  push:
+    branches: [experimentos/maniqui-g2c2-contorno-facial]
+    paths:
+      - 'copox/geometry/regional_acceptance.py'
+      - 'copox/geometry/partial_loft.py'
+      - 'tests/test_regional_acceptance.py'
+      - 'tests/test_partial_loft.py'
+      - 'tools/maniqui/region_nuca_probe.py'
+      - '.github/workflows/maniqui-regional-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: copox-nuca-regional
+  cancel-in-progress: true
+jobs:
+  local-nape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free pinned tools
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 Pillow==10.4.0
+      - name: QA by anatomical region, not whole GLB
+        run: |
+          python -m unittest discover -s tests -p 'test_regional_acceptance.py' -v
+          python -m unittest discover -s tests -p 'test_partial_loft.py' -v
+      - name: Isolated real GLB nape candidate, original r3 untouched
+        run: |
+          python -m tools.maniqui.region_nuca_probe
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          r=json.loads(Path('docs/maniqui/regions/nuca/REGIONAL_QA.json').read_text())
+          assert r['original_face_mesh_untouched']
+          assert r['other_body_mesh_primitives_untouched']
+          assert r['source_not_modified'] and r['skeleton_56_bones_preserved']
+          assert r['clip_definitions_29_preserved']
+          assert r['regional_decisions']['regions']['nuca']['status']=='NEEDS_EVIDENCE'
+          assert r['regional_decisions']['regions']['rostro']['status']=='REJECTED_LOCAL'
+          assert not r['regional_decisions']['promotion_allowed']
+          assert hashlib.sha256(Path(r['nuca_candidate_path']).read_bytes()).hexdigest()==r['candidate_sha256']
+          assert Path(r['capture_sheet']).exists()
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: g2c2-nuca-regional-glb-real-y-4-vistas
+          path: |
+            assets/maniqui/maniqui_v0_3_r3_nuca_regional_probe.glb
+            docs/maniqui/regions/nuca/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Record local evidence, never auto-promote model
+        run: |
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/maniqui/regions/nuca/REGIONAL_QA.json docs/maniqui/regions/nuca/NUCA_ANTES_DESPUES_4V.png
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(regions): isolated nape candidate, facial failure independent"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin experimentos/maniqui-g2c2-contorno-facial
+              git rebase origin/experimentos/maniqui-g2c2-contorno-facial
+              if git push origin HEAD:experimentos/maniqui-g2c2-contorno-facial; then exit 0; fi
+              sleep 2
+            done
+            exit 1
+          fi
