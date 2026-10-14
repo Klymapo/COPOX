@@ -28,7 +28,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_g2_anatomic_roi.py' -v
           python -m unittest discover -s tests -p 'test_visual_geometry_planner.py' -v
-      - name: Modelo real: tres hipótesis sin editar GLB
+      - name: 'Modelo real: tres hipótesis sin editar GLB'
         run: |
           python -m tools.maniqui.g2_anatomic_dryrun
           python - <<'PY'
