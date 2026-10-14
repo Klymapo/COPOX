@@ -1,0 +1,26 @@
+{
+  "baseline": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "baseline_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "candidates": [
+    {
+      "path": "assets/maniqui/maniqui_v0_3_r3_g2_cut_probe.glb",
+      "sha256": "4ec9217c0758e473993e7665f4fbbefa83844798702f131beb3470666e081b94",
+      "bones": 56,
+      "clips": 29,
+      "rig_animation_original_bytes_equal": true,
+      "all_body_primitives_equal": true,
+      "original_face_attribute_prefix_equal": true,
+      "protected_feature_triangles": 1357,
+      "missing_feature_triangles": 0,
+      "protected_ear_triangles": 481,
+      "missing_ear_triangles": 0,
+      "cap_min_triangle_area_m2": 2.7908497881851674e-05,
+      "cap_degenerate_triangles": 0,
+      "cap_nonmanifold_edges": 0,
+      "cap_boundary_edges": 128,
+      "cap_watertight": false,
+      "cap_face_seam_welded": false,
+      "preservation_pass": true
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "state": "CUT_ONLY_PROBE_UNAPPROVED",
+  "baseline": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "baseline_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "output": "assets/maniqui/maniqui_v0_3_r3_g2_cut_probe.glb",
+  "candidate_sha256": "4ec9217c0758e473993e7665f4fbbefa83844798702f131beb3470666e081b94",
+  "removed_face_triangles": 167,
+  "protected_face_triangles_preserved": 2946,
+  "protected_face_triangles_lost": 0,
+  "face_triangles_after": 3727,
+  "borders_before": {
+    "edges": 3310,
+    "nonmanifold": 0
+  },
+  "borders_after": {
+    "edges": 3165,
+    "nonmanifold": 0
+  },
+  "buffers_prefix_unmodified": true,
+  "bones": 56,
+  "clips": 29,
+  "unchanged_original_animation_definitions": true,
+  "feature_attributes_untouched": true,
+  "no_stitch": true,
+  "skull_128_boundary_open": true,
+  "not_ready_for_production": true,
+  "limitations": [
+    "El recorte conserva facciones predefinidas, pero NO limpia toda la isla principal",
+    "La transición a la cúpula sigue abierta; no es retopología craneofacial completa",
+    "Falta reimportación Godot, pruebas de movimientos continuos, intersecciones y comparación con identidad artística confirmada"
+  ]
+}
