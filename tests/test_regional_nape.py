@@ -33,6 +33,31 @@ class LocalPatchTests(unittest.TestCase):
         with self.assertRaises(GeometryError):
             rear_nape_patch(v,f,drop_m=-.1)
 
+    def test_eased_profile_preserves_original_and_softens_band_ends(self):
+        v,f=cap()
+        flat=rear_nape_patch(v,f)
+        eased=rear_nape_patch(v,f,profile="eased")
+        n=len(eased.source_edges)+1
+        self.assertEqual(eased.report["profile"],"eased")
+        self.assertEqual(eased.report["patch_rows"],2)
+        self.assertEqual(eased.report["added_triangles"],flat.report["added_triangles"]*2)
+        self.assertEqual(len(eased.positions),len(v)+2*n)
+        np.testing.assert_array_equal(eased.positions[:len(v)],v)
+        np.testing.assert_array_equal(eased.faces[:len(f)],f)
+        self.assertEqual(eased.report["remaining_open_edges"],flat.report["remaining_open_edges"])
+        original_y=v[eased.ancestry[-n:],1]
+        drops=original_y-eased.positions[-n:,1]
+        self.assertGreater(float(drops[n//2]),float(drops[0]))
+        self.assertGreater(float(drops[n//2]),float(drops[-1]))
+        self.assertTrue(np.all(drops>0))
+        self.assertTrue(np.all(eased.positions[len(v):,2]<-.075))
+        self.assertFalse(eased.report["global_watertight"])
+
+    def test_profile_invalid_is_fail_closed(self):
+        v,f=cap()
+        with self.assertRaises(GeometryError):
+            rear_nape_patch(v,f,profile="unchecked")
+
     def test_region_failure_does_not_reject_independent_nape(self):
         regions={
           "nuca":RegionVerdict("nuca","PASS","IMPROVED",True,True),

@@ -27,7 +27,8 @@ def rear_nape_patch(positions, faces, *,
                     lateral_x_max=.18,
                     drop_m=.045,
                     radial_scale=.96,
-                    min_edges=8):
+                    min_edges=8,
+                    profile="flat"):
     """Extend a connected back arc. No cap, no weld to facial mesh.
 
     The original vertex prefix and all original triangles are untouched.
@@ -43,6 +44,8 @@ def rear_nape_patch(positions, faces, *,
         not np.isfinite([rear_z_max,lateral_x_max,drop_m,radial_scale,*center_xz]).all()
         or lateral_x_max<=0 or min_edges<2):
         raise GeometryError("Parámetros locales de nuca inválidos")
+    if profile not in ("flat", "eased"):
+        raise GeometryError("Perfil de nuca desconocido")
     rings=boundary_loops(f)
     if len(rings)!=1:
         raise GeometryError("La primitiva craneal debe tener exactamente un contorno simple")
@@ -65,22 +68,36 @@ def rear_nape_patch(positions, faces, *,
     chosen=np.asarray(arc,dtype=np.int64)
     base=v[chosen].copy()
     radial=np.stack((base[:,0]-cx,base[:,2]-cz),axis=1)
-    target=np.stack((cx+radial[:,0]*radial_scale,
-                     base[:,1]-drop_m,
-                     cz+radial[:,1]*radial_scale),axis=1)
-    # Ensure patch only in the rear ROI; never enter the face/front/ears.
-    if (np.any(target[:,2]>=rear_z_max) or
-        np.any(np.abs(target[:,0]-cx)>=lateral_x_max) or
-        np.any(base[:,2]>=rear_z_max)):
-        raise GeometryError("La extensión invade una región no permitida")
-    all_positions=np.vstack([v,target])
-    new_ids=np.arange(len(v),len(v)+len(chosen))
+    # Flat is the original local probe. Eased is a separate candidate,
+    # extending two curved rings without moving an original vertex.
+    if profile=="eased":
+        u=np.linspace(0.0,1.0,len(chosen))
+        envelope=.5+.5*np.sin(np.pi*u)**2
+        levels=(.40,1.0)
+    else:
+        envelope=np.ones(len(chosen))
+        levels=(1.0,)
+    layers=[]
+    for level in levels:
+        scale=1.0+(radial_scale-1.0)*level
+        target=np.stack((cx+radial[:,0]*scale,
+                         base[:,1]-drop_m*envelope*level,
+                         cz+radial[:,1]*scale),axis=1)
+        if (np.any(target[:,2]>=rear_z_max) or
+            np.any(np.abs(target[:,0]-cx)>=lateral_x_max)):
+            raise GeometryError("La extensión invade una región no permitida")
+        layers.append(target)
+    all_positions=np.vstack([v,*layers])
+    new_id_rows=[np.arange(len(v)+i*len(chosen),
+                           len(v)+(i+1)*len(chosen))
+                 for i in range(len(layers))]
     faces_new=[]
-    for j in range(count):
-        a,b=int(chosen[j]),int(chosen[j+1])
-        na,nb=int(new_ids[j]),int(new_ids[j+1])
-        # reverse boundary (a,b) for a consistent oriented attachment
-        faces_new.extend([[b,a,na],[b,na,nb]])
+    for layer_idx,new_ids in enumerate(new_id_rows):
+        prev=chosen if layer_idx==0 else new_id_rows[layer_idx-1]
+        for j in range(count):
+            a,b=int(prev[j]),int(prev[j+1])
+            na,nb=int(new_ids[j]),int(new_ids[j+1])
+            faces_new.extend([[b,a,na],[b,na,nb]])
     nf=np.asarray(faces_new,dtype=np.int64)
     tri=all_positions[nf]
     areas=np.linalg.norm(np.cross(tri[:,1]-tri[:,0],
@@ -117,10 +134,14 @@ def rear_nape_patch(positions, faces, *,
             "new_geometry_entirely_rear":True,
             "max_drop_m":float(drop_m),
             "radial_scale":float(radial_scale),
+            "profile":profile,
+            "patch_rows":len(layers),
+            "edge_taper_min":float(envelope.min()),
+            "measured_max_vertical_drop_m":float((base[:,1]-layers[-1][:,1]).max()),
             "global_watertight":False,
             "face_primitive_changed":False,
             "original_rig_changed":False,
             "artistic_nape_improvement_proven":False,
             "join_to_face_complete":False,
             "status":"LOCAL_TECHNICAL_CANDIDATE"}
-    return PartialPatch(all_positions,output_faces,chosen,nf,old_e,report)
+    return PartialPatch(all_positions,output_faces,np.tile(chosen,len(layers)),nf,old_e,report)

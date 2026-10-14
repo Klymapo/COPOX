@@ -24,7 +24,13 @@ CAND=Path("assets/maniqui/maniqui_v0_3_r3_nuca_local_prototipo.glb")
 EVIDENCE=Path("docs/maniqui/g2c2/nuca")
 
 
-def make():
+def make(profile="flat"):
+    if profile not in ("flat","eased"):
+        raise ValueError("Perfil de nuca desconocido")
+    CAND=(Path("assets/maniqui/maniqui_v0_3_r3_nuca_local_suavizada.glb")
+          if profile=="eased" else Path("assets/maniqui/maniqui_v0_3_r3_nuca_local_prototipo.glb"))
+    EVIDENCE=(Path("docs/maniqui/g2c2/nuca/suavizada") if profile=="eased"
+              else Path("docs/maniqui/g2c2/nuca"))
     if not SRC.is_file() or hashlib.sha256(SRC.read_bytes()).hexdigest()!=EXPECTED:
         raise RuntimeError("Baseline original no verificado")
     if CAND.exists():
@@ -45,7 +51,8 @@ def make():
         raise RuntimeError("Atributos extra no previstos: no descartarlos")
     f=render.acc(j,b,cap["indices"]).astype(np.int64).reshape((-1,3))
     patch=rear_nape_patch(attrs["POSITION"],f,drop_m=.042,radial_scale=.970,
-                          rear_z_max=-.083,lateral_x_max=.175,min_edges=8)
+                          rear_z_max=-.083,lateral_x_max=.175,min_edges=8,
+                          profile=profile)
     # Ancestry is the exact original rim source for the new vertices.
     newattrs={}
     for key,data in attrs.items():
@@ -105,7 +112,7 @@ def make():
         for col,(view,angle) in enumerate(views):
             frame=render.render(tris,angle,W=390,H=438,bounds=bounds)
             canvas.paste(frame,(col*390,row*468+30))
-            draw.text((col*390+10,row*468+7),label+" | "+view,fill=(25,38,52))
+            draw.text((col*390+10,row*468+7),label+" "+profile.upper()+" | "+view,fill=(25,38,52))
     EVIDENCE.mkdir(parents=True,exist_ok=True)
     canvas.save(EVIDENCE/"NUCA_LOCAL_ANTES_DESPUES_4V.png")
     # Truthful visual QA: highlight ONLY triangles appended at the back.
@@ -137,7 +144,7 @@ def make():
     },target_region="nuca")
     result={
        "source":str(SRC),"source_sha256":EXPECTED,
-       "derived_glb":str(CAND),
+       "derived_glb":str(CAND),"profile":profile,
        "derived_sha256":hashlib.sha256(CAND.read_bytes()).hexdigest(),
        "bones":56,"animation_definitions":29,
        "face_unchanged":True,"rest_of_body_unchanged":True,

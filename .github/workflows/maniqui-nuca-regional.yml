@@ -32,6 +32,7 @@ jobs:
       - name: 'Generar GLB real de nuca y cuatro vistas, sin alterar cara'
         run: |
           python -m tools.maniqui.g2c2_nuca_cassette
+          python -c "from tools.maniqui.g2c2_nuca_cassette import make; make(profile='eased')"
           python - <<'PY'
           import json,hashlib
           from pathlib import Path
@@ -45,6 +46,13 @@ jobs:
           assert a['local_patch_metrics']['new_geometry_entirely_rear']
           assert hashlib.sha256(Path(a['derived_glb']).read_bytes()).hexdigest()==a['derived_sha256']
           assert Path(a['comparison']).is_file()
+          b=json.loads(Path('docs/maniqui/g2c2/nuca/suavizada/REPORTE_NUCA.json').read_text())
+          assert b['profile']=='eased' and b['face_unchanged'] and b['rest_of_body_unchanged']
+          assert b['local_patch_metrics']['added_triangles']==2*a['local_patch_metrics']['added_triangles']
+          assert b['local_patch_metrics']['remaining_open_edges']>0
+          assert not b['regional_review']['global_model_approved']
+          assert Path(b['comparison']).is_file() and Path(b['patch_highlight']).is_file()
+          assert hashlib.sha256(Path(b['derived_glb']).read_bytes()).hexdigest()==b['derived_sha256']
           print('NUCA aislada: candidato verificable, cero cambios faciales, no aprobado')
           PY
       - name: Entregar GLB sin aprobación y evidencia de cuatro vistas
@@ -53,6 +61,7 @@ jobs:
           name: maniqui-nuca-regional-no-approved-glb
           path: |
             assets/maniqui/maniqui_v0_3_r3_nuca_local_prototipo.glb
+            assets/maniqui/maniqui_v0_3_r3_nuca_local_suavizada.glb
             docs/maniqui/g2c2/nuca/
           retention-days: 30
           if-no-files-found: error
@@ -62,7 +71,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/maniqui/g2c2/nuca/NUCA_LOCAL_ANTES_DESPUES_4V.png \
                   docs/maniqui/g2c2/nuca/NUCA_SOLO_TRIANGULOS_NUEVOS_4V.png \
-                  docs/maniqui/g2c2/nuca/REPORTE_NUCA.json
+                  docs/maniqui/g2c2/nuca/REPORTE_NUCA.json \
+                  docs/maniqui/g2c2/nuca/suavizada/NUCA_LOCAL_ANTES_DESPUES_4V.png \
+                  docs/maniqui/g2c2/nuca/suavizada/NUCA_SOLO_TRIANGULOS_NUEVOS_4V.png \
+                  docs/maniqui/g2c2/nuca/suavizada/REPORTE_NUCA.json
           if ! git diff --cached --quiet; then
             git commit -m "evidence(regional): nuca local 4 vistas y gates; cara congelada"
             for attempt in 1 2 3 4 5; do
