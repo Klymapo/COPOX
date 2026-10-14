@@ -1,0 +1,53 @@
+{
+  "base": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "candidatos": [
+    {
+      "iteracion": 1,
+      "conserva_rig": true,
+      "conserva_facciones": true,
+      "recortes": 0,
+      "desplazamiento_max_mm": 10.05,
+      "silueta_vs_r3": {
+        "Frente": 100.0,
+        "3/4": 99.989,
+        "Perfil": 99.98,
+        "Espalda": 100.0
+      },
+      "umbral_todas_vistas": true,
+      "estado": "NO APROBADO: requiere evaluacion visual y validacion Godot"
+    },
+    {
+      "iteracion": 2,
+      "conserva_rig": true,
+      "conserva_facciones": true,
+      "recortes": 0,
+      "desplazamiento_max_mm": 18.25,
+      "silueta_vs_r3": {
+        "Frente": 100.0,
+        "3/4": 99.978,
+        "Perfil": 99.964,
+        "Espalda": 100.0
+      },
+      "umbral_todas_vistas": true,
+      "estado": "NO APROBADO: requiere evaluacion visual y validacion Godot"
+    },
+    {
+      "iteracion": 3,
+      "conserva_rig": true,
+      "conserva_facciones": true,
+      "recortes": 0,
+      "desplazamiento_max_mm": 18.25,
+      "silueta_vs_r3": {
+        "Frente": 100.0,
+        "3/4": 99.978,
+        "Perfil": 99.964,
+        "Espalda": 100.0
+      },
+      "umbral_todas_vistas": true,
+      "estado": "NO APROBADO: requiere evaluacion visual y validacion Godot"
+    }
+  ],
+  "no_promocion_automatica": true,
+  "topologia": "Borde inferior del craneo sigue superpuesto, no soldado",
+  "costo": "runner estandar Github Actions en repo publico"
+}

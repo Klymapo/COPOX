@@ -1,0 +1,324 @@
+{
+  "candidate": "assets/maniqui/experimental/v04/maniqui_v04_i2.glb",
+  "baseline": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "silhouette": [
+    {
+      "view": "Frente",
+      "iou": 1.0
+    },
+    {
+      "view": "3/4",
+      "iou": 0.9997819783286459
+    },
+    {
+      "view": "Perfil",
+      "iou": 0.9996369526362824
+    },
+    {
+      "view": "Espalda",
+      "iou": 1.0
+    }
+  ],
+  "all_views_iou_at_least_95": true,
+  "clips_sampled": [
+    {
+      "clip": "Sit-pose",
+      "times": [
+        0,
+        0.01666666753590107,
+        0.03333333507180214
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "Idle-loop",
+      "times": [
+        0,
+        4.0,
+        8.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "IdleFace-loop",
+      "times": [
+        0,
+        4.0,
+        8.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "IdlePockets-loop",
+      "times": [
+        0,
+        4.0,
+        8.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "IdlePocketsFace-loop",
+      "times": [
+        0,
+        4.0,
+        8.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "HandsBehind-loop",
+      "times": [
+        0,
+        4.0,
+        8.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "HandsBehindFace-loop",
+      "times": [
+        0,
+        4.0,
+        8.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "TalkGesture-loop",
+      "times": [
+        0,
+        3.0,
+        6.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "TalkGestureFace-loop",
+      "times": [
+        0,
+        3.0,
+        6.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "GlassesPush",
+      "times": [
+        0,
+        0.949999988079071,
+        1.899999976158142
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "GlassesPushFace",
+      "times": [
+        0,
+        0.949999988079071,
+        1.899999976158142
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "TieAdjust",
+      "times": [
+        0,
+        1.100000023841858,
+        2.200000047683716
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "TieAdjustFace",
+      "times": [
+        0,
+        1.100000023841858,
+        2.200000047683716
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "Think",
+      "times": [
+        0,
+        1.399999976158142,
+        2.799999952316284
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "ThinkFace",
+      "times": [
+        0,
+        1.399999976158142,
+        2.799999952316284
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "Shrug",
+      "times": [
+        0,
+        0.8500000238418579,
+        1.7000000476837158
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "ShrugFace",
+      "times": [
+        0,
+        0.8500000238418579,
+        1.7000000476837158
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "Nod",
+      "times": [
+        0,
+        0.550000011920929,
+        1.100000023841858
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "NodFace",
+      "times": [
+        0,
+        0.550000011920929,
+        1.100000023841858
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "HeadShake",
+      "times": [
+        0,
+        0.699999988079071,
+        1.399999976158142
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "HeadShakeFace",
+      "times": [
+        0,
+        0.699999988079071,
+        1.399999976158142
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "Laugh",
+      "times": [
+        0,
+        0.800000011920929,
+        1.600000023841858
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "LaughFace",
+      "times": [
+        0,
+        0.800000011920929,
+        1.600000023841858
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "Point",
+      "times": [
+        0,
+        0.949999988079071,
+        1.899999976158142
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "PointFace",
+      "times": [
+        0,
+        0.949999988079071,
+        1.899999976158142
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "Wave",
+      "times": [
+        0,
+        1.0,
+        2.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "WaveFace",
+      "times": [
+        0,
+        1.0,
+        2.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "Talk-loop",
+      "times": [
+        0,
+        3.0,
+        6.0
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    },
+    {
+      "clip": "Blink",
+      "times": [
+        0,
+        0.15000000596046448,
+        0.30000001192092896
+      ],
+      "finite": true,
+      "body_and_face_vertices_identical": true
+    }
+  ],
+  "samples_total": 87,
+  "renderer": "render.py CPU numpy z-buffer; real GLB triangles; flat shading",
+  "pose_interpolation": "LINEAR translation/scale and quaternion SLERP",
+  "not_verified": [
+    "Godot",
+    "collision/self-intersection",
+    "all continuous animation frames",
+    "artistic approval"
+  ]
+}

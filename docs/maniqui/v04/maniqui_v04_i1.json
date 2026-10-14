@@ -1,0 +1,30 @@
+{
+  "status": "CANDIDATO EXPERIMENTAL NO APROBADO",
+  "iteration": 1,
+  "base": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "base_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "candidate": "assets/maniqui/experimental/v04/maniqui_v04_i1.glb",
+  "candidate_sha256": "9b00a6947be675aa021ed0970ca6d0f9ed9018e1ac0d4f9afda2465af3e375ae",
+  "bones": 56,
+  "clips": 29,
+  "skin_and_animations_equal": true,
+  "body_equal": true,
+  "face_positions_originals_preserved": true,
+  "protected_face_triangles_missing": 0,
+  "protected_ear_triangles_missing": 0,
+  "removed_nape_side_triangles": 0,
+  "altered_cap_vertices": 802,
+  "max_cap_shift_m": 0.010049875621120901,
+  "params": {
+    "nape_drop": 0.01,
+    "side_drop": 0.004,
+    "nape_inset": 0.001,
+    "trim": false,
+    "side_trim": false
+  },
+  "limitations": [
+    "Conserva aristas abiertas del borde inferior",
+    "No afirma soldadura de la cara",
+    "Requiere cuatro vistas, poses y evaluacion de Admin"
+  ]
+}

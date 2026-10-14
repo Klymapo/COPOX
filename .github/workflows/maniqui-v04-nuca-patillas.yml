@@ -1,0 +1,84 @@
+name: COPOX · v0.4 nuca y patillas
+on:
+  push:
+    branches: [experimentos/maniqui-v04-nuca-patillas]
+    paths:
+      - 'tools/maniqui/nuca_patillas_v04.py'
+      - '.github/workflows/maniqui-v04-nuca-patillas.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: maniqui-v04-nuca-patillas
+  cancel-in-progress: true
+jobs:
+  candidatos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencias gratuitas (solo CPU)
+        run: python -m pip install numpy scipy pillow
+      - name: Crear tres candidatos hermanos desde r3
+        run: |
+          mkdir -p assets/maniqui/experimental/v04/previews docs/maniqui/v04
+          for i in 1 2 3; do
+            python tools/maniqui/nuca_patillas_v04.py \
+              assets/maniqui/maniqui_v0_3_r3.glb \
+              assets/maniqui/experimental/v04/maniqui_v04_i${i}.glb \
+              docs/maniqui/v04/maniqui_v04_i${i}.json --iteration "${i}"
+          done
+      - name: Auditoria estructural de preservacion
+        run: |
+          python tools/maniqui/auditar_v03.py assets/maniqui/maniqui_v0_3_r3.glb \
+            docs/maniqui/v04/auditoria_v04.json \
+            assets/maniqui/experimental/v04/maniqui_v04_i1.glb \
+            assets/maniqui/experimental/v04/maniqui_v04_i2.glb \
+            assets/maniqui/experimental/v04/maniqui_v04_i3.glb
+      - name: Capturas reales, poses y 87 muestras por candidato
+        run: |
+          for i in 1 2 3; do
+            python tools/maniqui/evaluar_v03.py \
+              assets/maniqui/maniqui_v0_3_r3.glb \
+              assets/maniqui/experimental/v04/maniqui_v04_i${i}.glb \
+              assets/maniqui/experimental/v04/previews/i${i}
+          done
+      - name: Generar resumen cuantitativo de la ronda
+        run: |
+          python - <<'PY'
+          import json, pathlib, hashlib
+          root=pathlib.Path('assets/maniqui/experimental/v04/previews')
+          audit=json.loads(pathlib.Path('docs/maniqui/v04/auditoria_v04.json').read_text())
+          rows=[]
+          for i in (1,2,3):
+              p=json.loads(pathlib.Path(f'docs/maniqui/v04/maniqui_v04_i{i}.json').read_text())
+              ev=json.loads((root/f'i{i}'/'evaluacion.json').read_text())
+              a=audit['candidates'][i-1]
+              vals={x['view']:round(100*x['iou'],3) for x in ev['silhouette']}
+              rows.append(dict(iteracion=i,conserva_rig=p['skin_and_animations_equal'],
+                conserva_facciones=a['preservation_pass'],recortes=p['removed_nape_side_triangles'],
+                desplazamiento_max_mm=round(p['max_cap_shift_m']*1000,2),
+                silueta_vs_r3=vals,umbral_todas_vistas=ev['all_views_iou_at_least_95'],
+                estado='NO APROBADO: requiere evaluacion visual y validacion Godot'))
+          summary={'base':'assets/maniqui/maniqui_v0_3_r3.glb',
+           'candidatos':rows,'no_promocion_automatica':True,
+           'topologia':'Borde inferior del craneo sigue superpuesto, no soldado',
+           'costo':'runner estandar Github Actions en repo publico'}
+          pathlib.Path('docs/maniqui/v04/RESUMEN_V04.json').write_text(json.dumps(summary,indent=2,ensure_ascii=False)+'\n')
+          print(json.dumps(summary,ensure_ascii=False,indent=2))
+          PY
+      - name: Commit de resultados experimentales (sin tocar main)
+        run: |
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f assets/maniqui/experimental/v04 docs/maniqui/v04
+          if ! git diff --cached --quiet; then
+            git commit -m "experiment(maniqui): tres variantes v0.4 con poses y auditoria"
+            git pull --rebase origin experimentos/maniqui-v04-nuca-patillas
+            git push origin HEAD:experimentos/maniqui-v04-nuca-patillas
+          fi
