@@ -20,8 +20,11 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     P = lambda n: jp[side + n]
     # ----- antebrazo: del puño de la manga (donde termina BrazoX) a la muñeca
     wrist = P('Hand'); cuff = np.array([sgn * (cuff_x + 0.012), wrist[1], wrist[2]])
-    pieces.append(('Antebrazo' + side[0], tube([cuff, cuff + (wrist - cuff) * 0.5, wrist], [0.036, 0.034, 0.030],
-                   [wj((side + 'LowerArm', 1)), wj((side + 'LowerArm', 0.7), (side + 'Hand', 0.3)), wj((side + 'Hand', 1))], seg=24, cap_top=False, cap_bot=False)))
+    # anillos elípticos: del puño (r 3.4) a la muñeca (2.1 de grueso × 2.7 de ancho ≈ 0.75 del ancho de palma, como la referencia)
+    EYa, EZa = np.array([0, 1.0, 0]), np.array([0, 0, 1.0])
+    fa = [(cuff, 0.034, 0.034, wj((side + 'LowerArm', 1))), (cuff + (wrist - cuff) * 0.5, 0.027, 0.030, wj((side + 'LowerArm', 0.7), (side + 'Hand', 0.3))),
+          (wrist - (wrist - cuff) * 0.08, 0.021, 0.027, wj((side + 'Hand', 1))), (wrist + (wrist - cuff) * 0.12, 0.020, 0.028, wj((side + 'Hand', 1)))]
+    pieces.append(('Antebrazo' + side[0], loft([(np.array(c), ry, rz, EYa, EZa) for c, ry, rz, _ in fa], [w for *_, w in fa], seg=24, cap_top=False, cap_bot=False)))
     # ----- palma: de la muñeca a los nudillos, aplanada (grosor en y, ancho en z)
     fingers = ['Index', 'Middle', 'Ring', 'Little']
     kn = np.array([P(f + 'Proximal') for f in fingers]); zc = kn[:, 2].mean(); zw = (kn[:, 2].max() - kn[:, 2].min()) / 2 + 0.012
@@ -41,13 +44,13 @@ for side, sgn in (('Left', 1), ('Right', -1)):
                    [wj((side + 'Hand', 1)), wj((side + 'ThumbMetacarpal', 1)), wj((side + 'ThumbProximal', 1)), wj((side + 'ThumbDistal', 1)), wj((side + 'ThumbDistal', 1))], seg=12, p=3.2)))
     # ----- pie: anillos en el plano x-y a lo largo de z (talón → punta), base plana en y=0
     ank, toe = P('Foot'), P('Toes'); EX = np.array([1.0, 0, 0])
-    prof = [(ank[2] - 0.070, 0.060, 0.038, 0.038, wj((side + 'Foot', 1))),          # botas ALTH (Theo: 0.16 ancho × 0.10 alto × 0.22 largo de la altura)
-            (ank[2] - 0.050, 0.072, 0.050, 0.050, wj((side + 'Foot', 1))),
-            (ank[2] + 0.010, 0.075, 0.052, 0.052, wj((side + 'Foot', 1))),
-            (ank[2] + 0.060, 0.075, 0.052, 0.052, wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))),
-            (toe[2] + 0.030, 0.073, 0.050, 0.050, wj((side + 'Toes', 1))),
-            (toe[2] + 0.070, 0.066, 0.044, 0.044, wj((side + 'Toes', 1))),
-            (toe[2] + 0.088, 0.050, 0.032, 0.032, wj((side + 'Toes', 1)))]
+    prof = [(ank[2] - 0.055, 0.034, 0.052, 0.034, wj((side + 'Foot', 1))),          # (z, cy, rx, ry): botas a proporción 13 ancho × 9 alto × 19 largo
+            (ank[2] - 0.038, 0.045, 0.062, 0.045, wj((side + 'Foot', 1))),
+            (ank[2] + 0.010, 0.046, 0.065, 0.046, wj((side + 'Foot', 1))),
+            (ank[2] + 0.050, 0.046, 0.065, 0.046, wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))),
+            (toe[2] + 0.020, 0.044, 0.063, 0.044, wj((side + 'Toes', 1))),
+            (toe[2] + 0.052, 0.039, 0.057, 0.039, wj((side + 'Toes', 1))),
+            (toe[2] + 0.068, 0.028, 0.044, 0.028, wj((side + 'Toes', 1)))]
     rings = [(np.array([ank[0], cy, z]), rx, ry, EX, EY, 3.6) for z, cy, rx, ry, _ in prof]
     pieces.append(('Pie' + side[0], loft(rings, [w for *_, w in prof], seg=24)))
 
