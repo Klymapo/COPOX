@@ -1,0 +1,53 @@
+name: COPOX · Skills 3D · Auditoría multirreferencia
+on:
+  push:
+    branches: [propuesta/skills-3d-critica-completa]
+    paths:
+      - 'copox/visual/**'
+      - 'tests/test_visual_all_references.py'
+      - '.codex/skills/visual-critic/**'
+      - '.codex/skills/rig-architect/**'
+      - '.codex/skills/motion-lab/**'
+      - '.codex/skills/facial-acting/**'
+      - '.codex/skills/cloth-dynamics/**'
+      - '.codex/skills/scene-director/**'
+      - '.claude/skills/visual-critic/**'
+      - '.claude/skills/rig-architect/**'
+      - '.claude/skills/motion-lab/**'
+      - '.claude/skills/facial-acting/**'
+      - '.claude/skills/cloth-dynamics/**'
+      - '.claude/skills/scene-director/**'
+      - '.github/workflows/copox-visual-skills.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free visual dependencies
+        run: python -m pip install numpy scipy pillow
+      - name: Strict coverage, metric and multiview anomaly tests
+        run: |
+          python -m compileall -q copox/visual
+          python -m unittest discover -s tests -p 'test_visual_all_references.py' -v
+      - name: Skills frontmatter and Codex/Claude mirrors
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          names=['visual-critic','rig-architect','motion-lab','facial-acting','cloth-dynamics','scene-director']
+          for name in names:
+              a=Path(f'.codex/skills/{name}/SKILL.md')
+              b=Path(f'.claude/skills/{name}/SKILL.md')
+              assert a.is_file() and b.is_file(), name
+              raw=a.read_text(encoding='utf-8')
+              assert raw==b.read_text(encoding='utf-8'),name
+              assert raw.startswith('---\nname: '+name+'\ndescription:'), name
+              assert 'visual-critic' in raw.lower() or name=='visual-critic', name
+          print('6 skills validas, espejadas y vinculadas al protocolo multivista')
+          PY
