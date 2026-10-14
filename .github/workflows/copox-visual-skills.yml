@@ -5,6 +5,7 @@ on:
     paths:
       - 'copox/visual/**'
       - 'tests/test_visual_all_references.py'
+      - 'tests/test_visual_geometry_planner.py'
       - '.codex/skills/visual-critic/**'
       - '.codex/skills/rig-architect/**'
       - '.codex/skills/motion-lab/**'
@@ -36,6 +37,7 @@ jobs:
         run: |
           python -m compileall -q copox/visual
           python -m unittest discover -s tests -p 'test_visual_all_references.py' -v
+          python -m unittest discover -s tests -p 'test_visual_geometry_planner.py' -v
       - name: Skills frontmatter and Codex/Claude mirrors
         run: |
           python - <<'PY'
