@@ -89,11 +89,12 @@ def _audit_candidate(cassette: Cassette, ctx: dict[str, str], env: dict[str, str
                                 "reason": "other_region_not_a_veto",
                                 "critical": bool(auditor.get("critical", False))})
                 continue
-            local_auditor_count += int(is_local)
-            safety_auditor_count += int(is_safety)
         if auditor.get("applicable", True) is False:
             results.append({"id": auditor["id"], "status": "N-A", "critical": bool(auditor.get("critical", False))})
             continue
+        if region is not None:
+            local_auditor_count += int(is_local)
+            safety_auditor_count += int(is_safety)
         applicable_count += 1
         local_ctx = dict(ctx)
         local_ctx["auditor_id"] = str(auditor["id"])
