@@ -41,3 +41,6 @@ No ejecutar planes cuando hay referencias faltantes, contradicciones, mediciones
 
 ## Protocolo G2-C de correspondencia de contornos
 Enlazar `contour-extractor` para obtener un **contorno facial ARTÍSTICAMENTE identificado** a partir de todas las vistas correctas del mismo personaje; las vistas contextuales de personajes distintos no sustituyen landmarks. No declarar topología correcta sólo porque una costura cierre 0 loops. Tras `stitch-advancing-front`, comparar todos los rendes por ángulo y gestos/poses correspondientes; obligar a `gltf-rig-guardian` a verificar pesos UV materiales y Godot, y `geometry-profiler` a evaluar rendimiento sin sustituir validez geométrica. Autointersección no medida o export glTF sin certificar → bloquear.
+
+## G2-C2 · Criterio del cliente: sin lentes
+Evaluar **la ausencia de montura, cristales, puente y patillas de gafas** en frontal, tres cuartos y ambos perfiles, y si hay referencias de espalda también. Diferenciar accesorio removido de geometría residual fusionada con la cara. El objetivo es retirar lentes, NO ojos/cejas/párpados ni pestañas. En `anomaly_cross_view_matrix` incluir `eyewear_frame_residue` y `glasses_temple_residue` si aún son visibles; cualquier duda en referencias o en la identidad del personaje mantiene el resultado en `REVIEW_REQUIRED`, sin promoción.
