@@ -1,0 +1,47 @@
+{
+  "version": "G2-B",
+  "source": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "source_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "review_date": "2026-10-14",
+  "evidence": "docs/maniqui/g2b/G2B_lamina_4v_candidatos.png",
+  "images_from": "actual r3 and 5 rebuilt GLB meshes rendered with render.py, fixed cameras and bounds",
+  "references_checked_for_artistic_likeness": false,
+  "technical_facts": "All five cranial shells reimported as closed primitive with shared rim indices and 56 bones/29 animation definitions in glTF. Facial primitive still separate.",
+  "candidacies": [
+    {
+      "id": "r1_short",
+      "visual": "Too little correction of the nape and temples; forehead transitions still disconnected",
+      "verdict": "NO_PROMOTION"
+    },
+    {
+      "id": "r2_deep",
+      "visual": "Nape continuity visibly smoother, but skull skirt obscures too much of lower face and its original anatomy",
+      "verdict": "NO_PROMOTION"
+    },
+    {
+      "id": "r3_deep_cut",
+      "visual": "Deep shell plus 167-face cut does not restore the brows or craniofacial seam; parts are still separate",
+      "verdict": "REJECTED"
+    },
+    {
+      "id": "r4_rear_focus",
+      "visual": "Deep nape improves background continuity, but conspicuous dark/interpenetrating patches appear around brow, eyes, nose",
+      "verdict": "REJECTED_VISUAL_REGRESSION"
+    },
+    {
+      "id": "r5_rear_focus_soft",
+      "visual": "Same frontal interference as r4; keeping face near original profile alone is not enough",
+      "verdict": "REJECTED_VISUAL_REGRESSION"
+    }
+  ],
+  "approved_candidate": null,
+  "cannot_be_claimed": [
+    "single welded head including original face",
+    "no self intersections",
+    "artistic likeness across all source references",
+    "usable in Godot until Godot import validation passes"
+  ],
+  "next_step": "G2-C regionwise silhouette-based seam repair: derive per-view contours from the correct Alastor reference, trim original face main island with protected eye/ear masks, create a NEW boundary with explicit correspondence, stitch inside one indexed primitive with weights/UV, verify against all references and animation frames",
+  "no_historical_model_replaced": true,
+  "no_merge": true
+}
