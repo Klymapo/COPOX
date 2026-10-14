@@ -1,0 +1,159 @@
+{
+  "source": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "up": "Y",
+  "front": "+Z",
+  "units": "m",
+  "rig_bones": 56,
+  "clips": 29,
+  "face_triangles_original": 3894,
+  "protection_policy": "Si algun vértice de un triángulo cae dentro de una región protegida, el triángulo completo queda congelado",
+  "all_original_files_preserved": true,
+  "generated_glb": false,
+  "artistic_references_authoritative": false,
+  "note": "Sólo pruebas de máscaras. No se afirma que la banda extraída forme un contorno homólogo",
+  "recommendation": {
+    "status": "RESEARCH_REQUIRED",
+    "next_step": "Identificar el borde cuttable de la isla principal, proteger facciones en cada vista y construir una línea cerrada de corte con topología sin bifurcaciones",
+    "no_candidate_promoted": true,
+    "stitch_not_allowed": true,
+    "required_before_glb": [
+      "referencias_del_mismo_personaje",
+      "mascara_proteccion_verificada",
+      "loop_cerrado_anatomico",
+      "atributos_uv_skin_validados",
+      "reimportacion_glb_y_prueba_godot"
+    ]
+  },
+  "profiles": [
+    {
+      "profile": "conservador",
+      "faces_total": 3894,
+      "protected": 2946,
+      "review": 162,
+      "candidate": 167,
+      "unaffected": 619,
+      "candidate_rim_sectors": 33,
+      "total_rim_sectors": 128,
+      "rim_sector_coverage": 0.2578125,
+      "band_distance_m": 0.015,
+      "clearance_m": 0.008,
+      "candidate_max_distance_m": 0.014925529173708684,
+      "protected_preserved_by_construction": true,
+      "cut_allowed": false,
+      "limitations": [
+        "Angular/cKDTree selection is a corridor, not an anatomical edge loop",
+        "Semantic boxes must be artist-verified with every reference",
+        "Removing candidate faces can create new open boundaries"
+      ],
+      "protection_counts_overlapping": {
+        "cejas_ojos": 745,
+        "nariz": 747,
+        "boca": 653,
+        "oreja_izquierda": 266,
+        "oreja_derecha": 305,
+        "mandibula": 525,
+        "nuca_baja": 938
+      },
+      "boundary_before_indices": {
+        "edges": 3310,
+        "nonmanifold": 0
+      },
+      "boundary_if_candidate_faces_removed": {
+        "edges": 3165,
+        "nonmanifold": 0
+      },
+      "triangles_removed_in_hypothesis": 167,
+      "protected_triangles_removed": 0,
+      "remaining_original_face_triangles": 3727,
+      "cut_gate_status": "BLOCKED_FOR_REVIEW",
+      "why_not_cut": "No hay máscara anatómica respaldada por vistas de la cabeza base ni contorno 128 a 128; la región tiene discontinuidades"
+    },
+    {
+      "profile": "intermedio",
+      "faces_total": 3894,
+      "protected": 2946,
+      "review": 252,
+      "candidate": 268,
+      "unaffected": 428,
+      "candidate_rim_sectors": 46,
+      "total_rim_sectors": 128,
+      "rim_sector_coverage": 0.359375,
+      "band_distance_m": 0.026,
+      "clearance_m": 0.016,
+      "candidate_max_distance_m": 0.025908065147704294,
+      "protected_preserved_by_construction": true,
+      "cut_allowed": false,
+      "limitations": [
+        "Angular/cKDTree selection is a corridor, not an anatomical edge loop",
+        "Semantic boxes must be artist-verified with every reference",
+        "Removing candidate faces can create new open boundaries"
+      ],
+      "protection_counts_overlapping": {
+        "cejas_ojos": 745,
+        "nariz": 747,
+        "boca": 653,
+        "oreja_izquierda": 266,
+        "oreja_derecha": 305,
+        "mandibula": 525,
+        "nuca_baja": 938
+      },
+      "boundary_before_indices": {
+        "edges": 3310,
+        "nonmanifold": 0
+      },
+      "boundary_if_candidate_faces_removed": {
+        "edges": 3116,
+        "nonmanifold": 0
+      },
+      "triangles_removed_in_hypothesis": 268,
+      "protected_triangles_removed": 0,
+      "remaining_original_face_triangles": 3626,
+      "cut_gate_status": "BLOCKED_FOR_REVIEW",
+      "why_not_cut": "No hay máscara anatómica respaldada por vistas de la cabeza base ni contorno 128 a 128; la región tiene discontinuidades"
+    },
+    {
+      "profile": "amplio",
+      "faces_total": 3894,
+      "protected": 2946,
+      "review": 350,
+      "candidate": 334,
+      "unaffected": 264,
+      "candidate_rim_sectors": 50,
+      "total_rim_sectors": 128,
+      "rim_sector_coverage": 0.390625,
+      "band_distance_m": 0.042,
+      "clearance_m": 0.024,
+      "candidate_max_distance_m": 0.04176533648534291,
+      "protected_preserved_by_construction": true,
+      "cut_allowed": false,
+      "limitations": [
+        "Angular/cKDTree selection is a corridor, not an anatomical edge loop",
+        "Semantic boxes must be artist-verified with every reference",
+        "Removing candidate faces can create new open boundaries"
+      ],
+      "protection_counts_overlapping": {
+        "cejas_ojos": 745,
+        "nariz": 747,
+        "boca": 653,
+        "oreja_izquierda": 266,
+        "oreja_derecha": 305,
+        "mandibula": 525,
+        "nuca_baja": 938
+      },
+      "boundary_before_indices": {
+        "edges": 3310,
+        "nonmanifold": 0
+      },
+      "boundary_if_candidate_faces_removed": {
+        "edges": 3068,
+        "nonmanifold": 0
+      },
+      "triangles_removed_in_hypothesis": 334,
+      "protected_triangles_removed": 0,
+      "remaining_original_face_triangles": 3560,
+      "cut_gate_status": "BLOCKED_FOR_REVIEW",
+      "why_not_cut": "No hay máscara anatómica respaldada por vistas de la cabeza base ni contorno 128 a 128; la región tiene discontinuidades"
+    }
+  ]
+}
