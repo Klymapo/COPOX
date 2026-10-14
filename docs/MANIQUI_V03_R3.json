@@ -1,0 +1,42 @@
+{
+  "iteration": 3,
+  "source": "assets/maniqui/maniqui_v0_3.glb",
+  "target": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "source_sha256": "3c4374a0238537d838bfadc6819ed9f56da07f405401914c402ff1313b285dd8",
+  "sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "bones": 56,
+  "clips": 29,
+  "original_binary_prefix_unchanged": true,
+  "nodes_skin_animation_materials_unchanged": true,
+  "body_unchanged": true,
+  "face_original_attribute_prefix_unchanged": true,
+  "clipped_triangles": 1824,
+  "protected_triangles": 3853,
+  "kept_face_triangles": 3894,
+  "removed_band_triangles": 1624,
+  "new_cap_vertices": 4097,
+  "new_cap_triangles": 8064,
+  "center": [
+    -3.8206577312671606e-05,
+    0.7120139505680723,
+    -0.010536585916560044
+  ],
+  "radii": [
+    0.2409144109645951,
+    0.25055047783253165,
+    0.25011494648321675
+  ],
+  "parameters": {
+    "front": 0.775,
+    "side": 0.701,
+    "sigma": 3.0,
+    "blend_height": 0.94,
+    "overlap_min_max_m": [
+      0.005,
+      0.029
+    ]
+  },
+  "protected_feature_triangles_removed": 0,
+  "status": "EXPERIMENTAL",
+  "limitation": "Borde inferior solapado; no soldado topológicamente"
+}

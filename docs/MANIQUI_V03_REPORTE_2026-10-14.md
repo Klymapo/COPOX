@@ -29,3 +29,7 @@ Se añadieron 38 triángulos (22 vértices) sobre 19 aristas del borde craneal, 
 - **2026-10-14** · Diagnóstico no destructivo por pieza: bordes, pesos, clips y límites espaciales.
 - **2026-10-14** · Implementado parche v0.3 conservador de línea frontal; GLB generado en CI, 4 vistas y Wave; **rechazado provisionalmente como versión aprobada** por defectos faciales residuales.
 - **2026-10-14** · Automatizadas capturas comparativas v0.2b/v0.3 mediante GitHub Actions gratuito; baseline protegido.
+
+## Continuación registrada · 14 oct 2026
+
+PR #34 continuado desde v0.3 con tres candidatos hermanos r1/r2/r3 y evaluación real de cuatro vistas, acercamientos y poses. Se preservan originales, 56 huesos y 29 clips. r1/r2 rechazados por pérdida de triángulos protegidos; r3 conserva facciones/orejas, pero presenta defectos de unión y perfil IoU 94.78%. Estado **PLATEAU / NO APROBADO**, sin fusión. Detalle, criterios, límites y bitácora completa: [MANIQUI_V03_CONTINUACION_2026-10-14.md](MANIQUI_V03_CONTINUACION_2026-10-14.md).
