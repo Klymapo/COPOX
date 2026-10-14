@@ -114,3 +114,14 @@ Código/reporte del repo Klymapo/COPOX (`PR #34`, `PR #36`).
 
 ## Registro de cambios
 - 2026-10-14 · Argos: auditoría profunda del pipeline Codex, mapeo al motor COPOX existente, propuesta de nuevas familias geométricas, preflight temprano y contrato inactivo. No fusionado, no activado, sin cambios a modelos.
+
+
+## Ampliación de la propuesta, 2026-10-14
+
+**Motor matemático nuevo:** `copox/geometry/kernel.py` implementa `fit_axis_ellipsoid` (mínimos cuadrados robustos), `resample_closed` (arco), `boundary_loops` (bordes topológicos orientados por índices) y `bridge_equal_loops` (superficie conectada entre dos contornos de igual tamaño y de UNA sola malla). Es código nuevo y general, sin dependencia del archivo Gamma ni del servicio Hunyuan. **Aún no corrige r3** porque éste distribuye Cara y Craneo entre primitivas GLB distintas; tampoco resuelve UV, morph, pesos de skin ni autointersecciones para un bridge entre primitivas. Esas precondiciones provocan rechazo y no una aparente soldadura.
+
+**Skills portables:** `.codex/skills/copox-geometria`, `copox-auditoria-3d`, `copox-procedencia-3d`, reflejadas en `.claude/skills/`. Son instrucciones para agentes compatibles, no plugins activos de ChatGPT ni cassettes productivos.
+
+**Filtro de procedencia:** `copox/geometry/provenance_gate.py` recorre ancestros declarados y veta una declaración limpia cuando aparece Gamma, un origen tercero/desconocido o falta respaldo documental. Un expediente sin bloqueos sólo alcanza `ORIGIN_REVIEW_READY`, nunca certificación legal ni publicación aprobada. Ver `docs/COPOX_PROCEDENCIA_HUNYUAN_2026-10-14.md`.
+
+**Pruebas:** `tests/test_geometry_kernel.py` (elipsoide sintético, loops y puente manifold), `tests/test_geometry_provenance.py` (linaje Gamma, fuentes propias, incertidumbre/ciclos), `tests/test_geometry_preflight.py` preexistente. CI sin IA ni GPU, `.github/workflows/copox-geometria-kernel-test.yml`. Ninguna malla existente fue reemplazada o aprobada.
