@@ -1,0 +1,110 @@
+name: COPOX · G2-C3 · Nuca visible y rapado
+on:
+  push:
+    branches: [experimentos/g2c3-nuca-superficie-visible]
+    paths:
+      - 'tools/maniqui/g2c3_surface_rebuild.py'
+      - '.github/workflows/maniqui-g2c3-visible-nape.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: copox-g2c3-visible-nape
+  cancel-in-progress: false
+jobs:
+  modelar-validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Instalar solo librerías gratuitas
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 Pillow==10.4.0
+      - name: Comprobar sintaxis, código de geometría y rig heredado
+        run: |
+          python -m py_compile tools/maniqui/g2c3_surface_rebuild.py
+          python -m unittest discover -s tests -p 'test_regional_nape.py' -v
+      - name: Construir DOS candidatos independientes desde r3 real
+        run: python -m tools.maniqui.g2c3_surface_rebuild
+      - name: Verificar visibilidad real y protección facial
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          x=json.loads(Path('docs/maniqui/g2c3/visible/REPORTE_G2C3.json').read_text())
+          assert x['status']=='G2C3_VISIBILITY_MEASURED__ARTISTIC_REVIEW_REQUIRED'
+          assert not x['candidates']['completo']['model_approved']
+          assert x['original_glb_untouched']
+          for c in x['candidates'].values():
+              assert c['shave']['protected_triangles_removed']==0
+              assert c['shave']['removed_rear_hair_triangles']>=40
+              assert c['dome']['added_vertices']>=160
+              assert c['visual_difference']['NUCA']['changed_fraction']>=.025
+              assert c['rig_bones']==56 and c['animation_definitions']==29
+              assert hashlib.sha256(Path(c['glb']).read_bytes()).hexdigest()==c['sha256']
+          for file in (x['comparison'],x['new_surface_mask']):
+              assert Path(file).stat().st_size>10000
+          print('OK: nuca visualmente distinta, protegidos triángulos del rostro y orejas')
+          PY
+      - name: Saneamiento glTF para importador Godot sin tocar fuentes
+        run: |
+          mkdir -p "$RUNNER_TEMP/g2c3_godot"
+          printf '[application]\nconfig/name="COPOX G2C3 QA"\n' > "$RUNNER_TEMP/g2c3_godot/project.godot"
+          cp tests/regional_nape_godot.gd "$RUNNER_TEMP/g2c3_godot/validate.gd"
+          python tools/maniqui/gltf_sanitize.py assets/maniqui/maniqui_v0_3_r3.glb "$RUNNER_TEMP/g2c3_godot/baseline.glb" "$RUNNER_TEMP/g2c3_godot/baseline_sanitizer.json"
+          python tools/maniqui/gltf_sanitize.py assets/maniqui/maniqui_v0_3_r3_g2c3_nuca_conservador_SIN_APROBAR.glb "$RUNNER_TEMP/g2c3_godot/nuca.glb" "$RUNNER_TEMP/g2c3_godot/conservador_sanitizer.json"
+          python tools/maniqui/gltf_sanitize.py assets/maniqui/maniqui_v0_3_r3_g2c3_nuca_completo_SIN_APROBAR.glb "$RUNNER_TEMP/g2c3_godot/nuca_eased.glb" "$RUNNER_TEMP/g2c3_godot/completo_sanitizer.json"
+      - name: Godot 4.7.2 oficial
+        run: |
+          curl --fail --location --retry 3 --silent --show-error -o "$RUNNER_TEMP/godot.zip" https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP"
+          chmod +x "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64"
+          timeout 240s "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" --headless --path "$RUNNER_TEMP/g2c3_godot" --import 2>&1 | tee "$RUNNER_TEMP/g2c3_godot/import.log"
+          timeout 180s "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" --headless --path "$RUNNER_TEMP/g2c3_godot" --script res://validate.gd 2>&1 | tee "$RUNNER_TEMP/g2c3_godot/qa.log"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          j=json.loads((Path(os.environ['RUNNER_TEMP'])/'g2c3_godot/result.json').read_text())
+          assert j['checks_passed'] and len(j['models'])==3
+          print('Godot comparó r3, conservador, completo sin cambios al rig')
+          PY
+      - name: Preparar evidencias Godot
+        if: always()
+        run: |
+          mkdir -p docs/maniqui/g2c3/visible/godot
+          for f in baseline_sanitizer.json conservador_sanitizer.json completo_sanitizer.json import.log qa.log result.json; do
+            test ! -f "$RUNNER_TEMP/g2c3_godot/$f" || cp "$RUNNER_TEMP/g2c3_godot/$f" docs/maniqui/g2c3/visible/godot/
+          done
+      - name: Entregar candidatos y renders reales - SIN aprobación
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g2c3-nuca-visible-rapado-candidatos-no-aprobados
+          path: |
+            assets/maniqui/*g2c3*SIN_APROBAR.glb
+            docs/maniqui/g2c3/visible/
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Publicar SOLO informe e imágenes en rama experimental
+        if: success()
+        run: |
+          git fetch origin experimentos/g2c3-nuca-superficie-visible
+          publish="$RUNNER_TEMP/g2c3_publish"
+          git worktree add --detach "$publish" origin/experimentos/g2c3-nuca-superficie-visible
+          mkdir -p "$publish/docs/maniqui/g2c3/visible"
+          cp -a docs/maniqui/g2c3/visible/. "$publish/docs/maniqui/g2c3/visible/"
+          git -C "$publish" config user.name "COPOX CI"
+          git -C "$publish" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$publish" add docs/maniqui/g2c3/visible/
+          if ! git -C "$publish" diff --cached --quiet; then
+            git -C "$publish" commit -m "evidence(g2c3): comparativas reales 6 vistas, rapado y Godot"
+            for n in 1 2 3 4 5; do
+              git -C "$publish" fetch origin experimentos/g2c3-nuca-superficie-visible
+              git -C "$publish" rebase origin/experimentos/g2c3-nuca-superficie-visible
+              if git -C "$publish" push origin HEAD:experimentos/g2c3-nuca-superficie-visible; then exit 0; fi
+              sleep 2
+            done
+            exit 1
+          fi
