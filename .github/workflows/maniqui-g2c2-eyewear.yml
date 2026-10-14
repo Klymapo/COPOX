@@ -6,6 +6,7 @@ on:
       - 'copox/geometry/eyewear_guard.py'
       - 'tests/test_g2c2_eyewear_guard.py'
       - 'tools/maniqui/g2c2_no_glasses.py'
+      - 'tools/maniqui/g2c2_eyewear_residue.py'
       - '.github/workflows/maniqui-g2c2-eyewear.yml'
   workflow_dispatch:
 permissions:
@@ -44,12 +45,29 @@ jobs:
           assert Path(a['visual_comparison']).is_file()
           print('Accesorio fuera; ojos/cejas/orejas intactos; residuos sin etiquetar pendientes')
           PY
+      - name: Evaluar restos incrustados con protección de ojos y cuatro vistas
+        run: |
+          python -m tools.maniqui.g2c2_eyewear_residue
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('docs/maniqui/g2c2')
+          j=json.loads((root/'G2C2_RESIDUE_REPORT.json').read_text())
+          assert j['assessment']=='REVIEW_REQUIRED'
+          assert j['triangles_deleted']==0
+          assert j['presumed_eyewear_triangle_deletion_allowed']==False
+          assert Path(j['visual_sheet']).exists()
+          assert len(j['radius_reports'])==3
+          print('Eye protection + three proximity thresholds completed; no triangles touched')
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: g2c2-sin-lentes-glb-y-cuatro-vistas
           path: |
             assets/maniqui/ropa_alastor_g2c2_sin_lentes.glb
             docs/maniqui/g2c2/EYWEAR_GUARD.json
+            docs/maniqui/g2c2/G2C2_RESIDUE_REPORT.json
+            docs/maniqui/g2c2/G2C2_RESIDUOS_LENTES_4V.png
             docs/maniqui/g2c2/G2C2_LENTES_4V_COMPARATIVA.png
           retention-days: 30
           if-no-files-found: error
@@ -58,7 +76,9 @@ jobs:
           git config user.name "COPOX CI"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/maniqui/g2c2/EYWEAR_GUARD.json \
-                  docs/maniqui/g2c2/G2C2_LENTES_4V_COMPARATIVA.png
+                  docs/maniqui/g2c2/G2C2_LENTES_4V_COMPARATIVA.png \
+                  docs/maniqui/g2c2/G2C2_RESIDUE_REPORT.json \
+                  docs/maniqui/g2c2/G2C2_RESIDUOS_LENTES_4V.png
           if ! git diff --cached --quiet; then
             git commit -m "evidence(g2c2): 4 vistas reales y GLB de ropa sin lentes"
             for attempt in 1 2 3 4 5; do
