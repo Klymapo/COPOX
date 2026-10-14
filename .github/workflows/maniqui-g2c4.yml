@@ -1,0 +1,54 @@
+name: COPOX G2-C4 - reproducir candidatos y rechazos
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Dependencias gratuitas
+        run: |
+          python -m pip install numpy==1.26.4 scipy==1.13.1 Pillow==10.4.0
+          npm install --prefix "$RUNNER_TEMP/gltf-validator" --no-audit --no-fund gltf-validator@2.0.0-dev.3.10
+          sudo apt-get update -qq
+          sudo apt-get install -y xvfb
+      - name: Reconstruir V3 EXACTA antes de editar
+        run: python -m tools.maniqui.g2c3_v3_rapar_mechon_izquierdo
+      - name: Generar operaciones independientes y analizar intersecciones
+        run: |
+          python -m tools.maniqui.g2c4_inspect
+          python -m tools.maniqui.g2c4_candidates
+          python tools/maniqui/g2c4_refine.py
+          python tools/maniqui/g2c4_intersections.py
+          python tools/maniqui/g2c4_prepare_qa.py
+      - name: Capturas y poses Godot 4.7.2
+        run: |
+          curl -fLsS --retry 3 -o "$RUNNER_TEMP/godot.zip" https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP"
+          chmod +x "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64"
+          xvfb-run -a "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" --path build/g2c4/godot --rendering-method gl_compatibility --audio-driver Dummy --script res://qa.gd > build/g2c4/godot/qa_v3.log 2>&1
+      - name: Validación oficial y regresiones - no aprobación artística
+        run: |
+          NODE_PATH="$RUNNER_TEMP/gltf-validator/node_modules" node tools/maniqui/g2c4_validate.cjs
+          python -m unittest discover -s tests -p 'test_regional_nape.py' -v > build/g2c4/regional_tests.log 2>&1
+          python tools/maniqui/g2c4_sheets.py
+          python tools/maniqui/g2c4_finalize.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: g2c4-candidatos-rechazos-y-evidencias-sin-aprobar
+          path: |
+            build/g2c4/models/
+            build/g2c4/godot/
+            build/g2c4/laminas_finales/
+            docs/maniqui/g2c4/
+          retention-days: 30
