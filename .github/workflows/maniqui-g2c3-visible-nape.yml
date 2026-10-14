@@ -5,6 +5,11 @@ on:
     paths:
       - 'tools/maniqui/g2c3_surface_rebuild.py'
       - '.github/workflows/maniqui-g2c3-visible-nape.yml'
+  pull_request:
+    branches: [experimentos/g2c2-nuca-evaluacion-regional]
+    paths:
+      - 'tools/maniqui/g2c3_surface_rebuild.py'
+      - '.github/workflows/maniqui-g2c3-visible-nape.yml'
   workflow_dispatch:
 permissions:
   contents: write
