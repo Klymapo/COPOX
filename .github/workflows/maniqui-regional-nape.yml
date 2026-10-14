@@ -1,0 +1,81 @@
+name: COPOX · Regional QA · Nuca independiente
+on:
+  push:
+    branches: [experimentos/maniqui-g2c2-contorno-facial]
+    paths:
+      - 'copox/geometry/regional_acceptance.py'
+      - 'copox/geometry/regional_nape_patch.py'
+      - 'tests/test_regional_acceptance.py'
+      - 'tests/test_regional_nape_patch.py'
+      - 'tools/maniqui/g2c2_nape_only.py'
+      - '.github/workflows/maniqui-regional-nape.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: regional-nape-qa
+  cancel-in-progress: true
+jobs:
+  regional:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencias gratuitas reproducibles
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 Pillow==10.4.0
+      - name: Probar que errores de la cara no rechazan la nuca
+        run: |
+          python -m unittest discover -s tests -p 'test_regional_acceptance.py' -v
+          python -m unittest discover -s tests -p 'test_regional_nape_patch.py' -v
+      - name: Crear dos GLB de parche localizado y cuatro vistas reales
+        run: |
+          python -m tools.maniqui.g2c2_nape_only
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          d=json.loads(Path('docs/maniqui/regional/G2C2_NUCA_REGIONAL_REPORT.json').read_text())
+          assert d['regions']['regions']['nuca']['status']=='PASS_LOCAL_TECHNICAL'
+          assert d['regions']['regions']['rostro']['status']=='REJECTED_LOCAL'
+          assert not d['regions']['promotion_allowed']
+          assert len(d['variants'])==2
+          assert Path(d['comparison_png']).exists()
+          src=Path(d['baseline'])
+          assert hashlib.sha256(src.read_bytes()).hexdigest()==d['baseline_sha256']
+          for variant in d['variants']:
+              assert variant['original_face_primitive_untouched']
+              assert variant['original_other_body_parts_untouched']
+              assert variant['skin_56_bones_retained']
+              assert variant['animation_definitions_29_retained']
+              assert not variant['full_model_approved']
+              assert hashlib.sha256(Path(variant['glb']).read_bytes()).hexdigest()==variant['sha256']
+          print('REGIONAL PASS: Nuca independiente, rostro rechazado, cero promoción')
+          PY
+      - name: Entregar GLBs y capturas sin aprobación
+        uses: actions/upload-artifact@v4
+        with:
+          name: g2c2-nuca-local-dos-candidatos
+          path: |
+            assets/maniqui/maniqui_r3_nuca_local_*_NO_APROBADO.glb
+            docs/maniqui/regional/G2C2_NUCA_LOCAL_4V.png
+            docs/maniqui/regional/G2C2_NUCA_REGIONAL_REPORT.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Guardar sólo evidencia en rama experimental (no candidatos GLB)
+        run: |
+          git config user.name 'COPOX CI'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/maniqui/regional/G2C2_NUCA_LOCAL_4V.png \
+            docs/maniqui/regional/G2C2_NUCA_REGIONAL_REPORT.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'evidence(regional): dos parches sólo de nuca y evaluación independiente'
+            for attempt in 1 2 3 4 5; do
+              git fetch origin experimentos/maniqui-g2c2-contorno-facial
+              git rebase origin/experimentos/maniqui-g2c2-contorno-facial
+              if git push origin HEAD:experimentos/maniqui-g2c2-contorno-facial; then exit 0; fi
+              sleep 2
+            done
+            exit 1
+          fi

@@ -72,11 +72,29 @@ def _audit_candidate(cassette: Cassette, ctx: dict[str, str], env: dict[str, str
     applicable_count = 0
     pass_count = 0
     scores: list[float] = []
+    evaluation = cassette.data.get("evaluation", {})
+    region = evaluation.get("region") if evaluation.get("scope") == "region" else None
+    local_auditor_count = 0
+    safety_auditor_count = 0
 
     for auditor in cassette.auditors:
+        # Regional mode opts in explicitly. Global artistic defects are not
+        # considered when evaluating another region, but mandatory rig and
+        # neighbor-protection safety auditors STILL run.
+        if region is not None:
+            is_local = auditor.get("region") == region
+            is_safety = auditor.get("scope") == "global_safety"
+            if not (is_local or is_safety):
+                results.append({"id": auditor["id"], "status": "N-A",
+                                "reason": "other_region_not_a_veto",
+                                "critical": bool(auditor.get("critical", False))})
+                continue
         if auditor.get("applicable", True) is False:
             results.append({"id": auditor["id"], "status": "N-A", "critical": bool(auditor.get("critical", False))})
             continue
+        if region is not None:
+            local_auditor_count += int(is_local)
+            safety_auditor_count += int(is_safety)
         applicable_count += 1
         local_ctx = dict(ctx)
         local_ctx["auditor_id"] = str(auditor["id"])
@@ -98,6 +116,11 @@ def _audit_candidate(cassette: Cassette, ctx: dict[str, str], env: dict[str, str
             scores.append(float(score))
 
     unanimous = applicable_count > 0 and pass_count == applicable_count
+    if region is not None:
+        # Fail closed if regional cassette has no local check or skips the
+        # shared safety checks. No global "likeness" auditor is forced on
+        # unrelated parts.
+        unanimous = unanimous and local_auditor_count > 0 and safety_auditor_count > 0
     selection_score = sum(scores) / len(scores) if scores else (1.0 if unanimous else 0.0)
     return unanimous, selection_score, results
 
@@ -129,6 +152,7 @@ def run_campaign(cassette_path: str, output_root: str = ".copox/evidence") -> in
         "baseline": cassette.data["baseline"],
         "variables": cassette.data.get("variables", {}),
         "maturity": maturity,
+        "evaluation": cassette.data.get("evaluation", {"scope": "global"}),
         "started_at": int(time.time()),
         "status": "RUNNING",
         "candidates": [],
@@ -193,7 +217,9 @@ def run_campaign(cassette_path: str, output_root: str = ".copox/evidence") -> in
                         unanimous, score, audit_results = _audit_candidate(cassette, ctx, env)
                         record.update({"audit": audit_results, "score": score})
                         if unanimous:
-                            record["status"] = "ELIGIBLE"
+                            record["status"] = ("LOCAL_ELIGIBLE"
+                                                if cassette.data.get("evaluation", {}).get("scope") == "region"
+                                                else "ELIGIBLE")
                             passing.append(record)
                         else:
                             record.update({"status": "REJECTED", "reason": "auditor_veto"})
@@ -213,8 +239,21 @@ def run_campaign(cassette_path: str, output_root: str = ".copox/evidence") -> in
     if passing:
         winner = sorted(passing, key=lambda x: float(x.get("score", 0.0)), reverse=True)[0]
         manifest["winner"] = winner["id"]
-        manifest["status"] = "APPROVED_INTERNAL"
         winner_ctx = _candidate_context(cassette, run_dir, winner["id"])
+        # Never run the promotion command for regional achievements, even if
+        # a cassette supplies one. The result is evidence for manual review,
+        # not a replacement of the full GLB.
+        if cassette.data.get("evaluation", {}).get("scope") == "region":
+            manifest["status"] = "LOCAL_QA_READY_FOR_REVIEW"
+            manifest["promotion_allowed"] = False
+            manifest["finished_at"] = int(time.time())
+            _write_json(run_dir / "manifest.json", manifest)
+            report_command = cassette.data.get("commands", {}).get("report", [])
+            if report_command:
+                _run_command(list(report_command), winner_ctx, Path.cwd(), env)
+            print(f"[copox] LOCAL QA: {winner['id']} validado sin promoción global", flush=True)
+            return 0
+        manifest["status"] = "APPROVED_INTERNAL"
         promote = cassette.data.get("commands", {}).get("promote", [])
         if promote:
             _run_command(list(promote), winner_ctx, Path.cwd(), env)

@@ -22,3 +22,6 @@ Usar cuando sea necesario eliminar geometría defectuosa o sustituir una región
 
 ## Enlace con Visual Critic
 Solicitar `operator=Anatomic Cut` sólo cuando la matriz multivista identifique fragmentos y el diagnóstico de malla mida componentes desconectados/triángulos flotantes, plano de corte medido, atributos compatibles y protección de triángulos lista. Comparar **todas las vistas/poses** antes de elegir y después de cortar, incluyendo referencias contradictorias. No eliminar facciones por una única silueta lateral, no procesar morph targets sin soporte y no convertir el preflight en permiso de fusión.
+
+## G2-C2 · Retiro de lentes sin pérdida de facciones
+Primero ejecutar la extracción de accesorio `Lentes` por identidad glTF. Sólo si se demuestran **restos incrustados** en `Cabeza` proponer Anatomic Cut con máscara de fragmentos localizada y triangulación protegida. Ojos, cejas, párpados, nariz y orejas quedan congelados; no cortar una región por ser oscura o estar cerca de los ojos. Comprobar TODAS las vistas y preservar rig/UV antes de exportar cualquier corte. Sin pruebas suficientes, bloquear la operación.

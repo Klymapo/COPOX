@@ -1,0 +1,91 @@
+name: COPOX · G2-C2 · Alastor sin lentes
+on:
+  push:
+    branches: [experimentos/maniqui-g2c2-contorno-facial]
+    paths:
+      - 'copox/geometry/eyewear_guard.py'
+      - 'tests/test_g2c2_eyewear_guard.py'
+      - 'tools/maniqui/g2c2_no_glasses.py'
+      - 'tools/maniqui/g2c2_eyewear_residue.py'
+      - '.github/workflows/maniqui-g2c2-eyewear.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: g2c2-remove-eyewear
+  cancel-in-progress: true
+jobs:
+  g2c2-eyewear:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencias gratuitas
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 Pillow==10.4.0
+      - name: Probar extracción precisa de lentes sin borrar anatomía
+        run: python -m unittest discover -s tests -p 'test_g2c2_eyewear_guard.py' -v
+      - name: 'Ropa histórica: copiar SIN accesorio de lentes y 4 vistas reales'
+        run: |
+          python -m tools.maniqui.g2c2_no_glasses
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          p=Path('docs/maniqui/g2c2/EYWEAR_GUARD.json')
+          a=json.loads(p.read_text())
+          assert a['removed_primitive_count']==1
+          assert a['face_eye_eyebrow_ear_triangles_untouched']
+          assert a['wardrobe_skin_and_animations_equal']
+          assert a['source_models_modified'] is False
+          assert a['artistic_approval'] is False
+          assert a['unlabeled_eyewear_residue_multiview_audit']=='PENDING'
+          assert hashlib.sha256(Path(a['candidate_wardrobe']).read_bytes()).hexdigest()==a['candidate_sha256']
+          assert Path(a['visual_comparison']).is_file()
+          print('Accesorio fuera; ojos/cejas/orejas intactos; residuos sin etiquetar pendientes')
+          PY
+      - name: Evaluar restos incrustados con protección de ojos y cuatro vistas
+        run: |
+          python -m tools.maniqui.g2c2_eyewear_residue
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('docs/maniqui/g2c2')
+          j=json.loads((root/'G2C2_RESIDUE_REPORT.json').read_text())
+          assert j['assessment']=='REVIEW_REQUIRED'
+          assert j['triangles_deleted']==0
+          assert j['presumed_eyewear_triangle_deletion_allowed']==False
+          assert Path(j['visual_sheet']).exists()
+          assert len(j['radius_reports'])==3
+          print('Eye protection + three proximity thresholds completed; no triangles touched')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: g2c2-sin-lentes-glb-y-cuatro-vistas
+          path: |
+            assets/maniqui/ropa_alastor_g2c2_sin_lentes.glb
+            docs/maniqui/g2c2/EYWEAR_GUARD.json
+            docs/maniqui/g2c2/G2C2_RESIDUE_REPORT.json
+            docs/maniqui/g2c2/G2C2_RESIDUOS_LENTES_4V.png
+            docs/maniqui/g2c2/G2C2_LENTES_4V_COMPARATIVA.png
+          retention-days: 30
+          if-no-files-found: error
+      - name: Registrar sólo evidencia y no promocionar GLB
+        run: |
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/maniqui/g2c2/EYWEAR_GUARD.json \
+                  docs/maniqui/g2c2/G2C2_LENTES_4V_COMPARATIVA.png \
+                  docs/maniqui/g2c2/G2C2_RESIDUE_REPORT.json \
+                  docs/maniqui/g2c2/G2C2_RESIDUOS_LENTES_4V.png
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(g2c2): 4 vistas reales y GLB de ropa sin lentes"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin experimentos/maniqui-g2c2-contorno-facial
+              git rebase origin/experimentos/maniqui-g2c2-contorno-facial
+              if git push origin HEAD:experimentos/maniqui-g2c2-contorno-facial; then exit 0; fi
+              sleep 2
+            done
+            exit 1
+          fi

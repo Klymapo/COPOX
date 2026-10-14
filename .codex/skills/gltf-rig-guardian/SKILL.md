@@ -21,3 +21,5 @@ Antes y después de cualquier stitch, retopología, normal recalculation, UV bak
 ## Evidencia
 Reporte de diferencias fuente/candidato, SHA de cada GLB, capturas 4 vistas + poses/expresiones, pruebas Godot y decisión explícita de Admin. No fusionar ni elegir automáticamente.
 
+## G2-C2 · Eyewear Guardian
+Un candidato de Alastor **no debe incluir la primitiva de accesorio `Lentes`** al ensamblar prendas y cabeza. Removerla sólo por identidad inequívoca mediante `copox.geometry.eyewear_guard.remove_labeled_eyewear`, en GLB hermano y preservando buffers, `skins`, `animations`, nodos y materiales. El guard se niega a inferir lentes por color o cercanía a ojos (riesgo de borrar pestañas, cejas o nariz). Informe real `docs/maniqui/g2c2/EYWEAR_GUARD.json`; resultado `ACCESSORY_REMOVED` NO equivale a `ALL_EYEWEAR_RESIDUE_GONE`. Exigir capturas reales front/3-4/side/back para verificar patillas y puente antes de aprobar.

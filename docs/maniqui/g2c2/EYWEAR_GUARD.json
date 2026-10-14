@@ -1,0 +1,39 @@
+{
+  "head_source": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "head_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "wardrobe_source": "assets/maniqui/ropa_alastor_v0.glb",
+  "wardrobe_sha256": "1a1122a452a5443990b36021cb2c62a1fde3dd2ea1ee3d7ae228845f0a126af6",
+  "candidate_wardrobe": "assets/maniqui/ropa_alastor_g2c2_sin_lentes.glb",
+  "candidate_sha256": "2bd69c71d528678865ed8ba8c0c3ee110e4c806215c2bc7fb9ab9db85319337c",
+  "removed_primitive_names": [
+    "Lentes"
+  ],
+  "removed_primitive_count": 1,
+  "removed_primitive_details": [
+    {
+      "mesh": 0,
+      "primitive": 1,
+      "piece_label": [
+        "Lentes"
+      ],
+      "material_name": "GammaHead",
+      "source": "explicit_primitive_identity"
+    }
+  ],
+  "glasses_removed_only_from_separately_labeled_accessory": true,
+  "historical_head_geometry_untouched": true,
+  "wardrobe_buffers_unchanged": true,
+  "wardrobe_skin_and_animations_equal": true,
+  "face_eye_eyebrow_ear_triangles_untouched": true,
+  "all_four_views_compared_same_camera": true,
+  "visual_comparison": "docs/maniqui/g2c2/G2C2_LENTES_4V_COMPARATIVA.png",
+  "eyewear_goal": "no frame, no lenses, no bridge and no temple arms",
+  "risk": "Labeled accessories removed, but embedded unlabeled frame remnants inside face geometry are not yet ruled out",
+  "unlabeled_eyewear_residue_multiview_audit": "PENDING",
+  "anatomic_contour_for_stitch": "PENDING",
+  "artistic_approval": false,
+  "source_models_modified": false,
+  "candidate_production_ready": false,
+  "stage": "EYWEAR_ACCESSORY_REMOVED__FACE_RESIDUE_REVIEW_REQUIRED",
+  "notes": "After preview re-renders r3 head plus glasses-only triangles from historical wardrobe, not an artistic approval or stitched head"
+}

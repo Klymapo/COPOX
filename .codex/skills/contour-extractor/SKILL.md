@@ -23,3 +23,5 @@ GLB y SHA-256, selección inequívoca de pieza, índices y primitiva, `reference
 ## Salida
 JSON de contornos auténticos, máscaras y atribución a todas las vistas, SHA y acta `READY_FOR_STITCH` o `BLOCKED`. No aprobar por mera coincidencia de posiciones; no modificar el baseline.
 
+## G2-C2 · Alastor sin lentes (requisito artístico)
+El objetivo de la cabeza es **SIN montura, cristales, puente ni patillas de lentes**. Consultar `copox.geometry.eyewear_guard` y `tools.maniqui.g2c2_no_glasses` antes de delimitar el nuevo contorno. El maniquí histórico movió la pieza etiquetada `Lentes` al GLB separado `ropa_alastor_v0.glb`: NO reutilizar esa pieza al reconstruir frente o sienes. Si hay residuos sin etiqueta mezclados con los triángulos de Cara, clasificarlos como `REVIEW_REQUIRED` por zona, **no borrar ojos, cejas, párpados ni orejas** para quitarlos. Comparar cada vista original provista, y documentar si quedaron rastros de patillas sobre sienes.

@@ -92,6 +92,27 @@ def load_cassette(path: str | Path, repo_root: str | Path = ".") -> Cassette:
         profile_path = repo_root / profile_path
     profile = _load_json(profile_path)
 
+    evaluation = data.get("evaluation", {})
+    if evaluation:
+        if not isinstance(evaluation, dict):
+            raise ContractError("evaluation debe ser un objeto")
+        scope = evaluation.get("scope", "global")
+        if scope not in ("global", "region"):
+            raise ContractError("evaluation.scope inválido")
+        if scope == "region":
+            from copox.geometry.regional_acceptance import REGIONS
+            region = evaluation.get("region")
+            if region not in REGIONS:
+                raise ContractError("evaluation.region debe nombrar una región válida del GLB")
+            if not isinstance(profile.get("auditors"), list):
+                raise ContractError("Perfil regional sin auditores")
+            if not any(a.get("region") == region and a.get("applicable", True)
+                       for a in profile["auditors"]):
+                raise ContractError("Perfil regional sin auditor de la región objetivo")
+            if not any(a.get("scope") == "global_safety" and a.get("applicable", True)
+                       for a in profile["auditors"]):
+                raise ContractError("Perfil regional sin auditor obligatorio de protección compartida")
+
     strategy = data.get("strategy", {})
     tournament_size = int(strategy.get("tournament_size", 3))
     max_candidates = int(strategy.get("max_candidates", 6))
