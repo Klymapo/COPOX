@@ -44,14 +44,21 @@ def boundary_arc(positions, faces):
     selected=(p[:,2]<-.017) & (np.abs(p[:,0])<.212)
     edges=selected & np.roll(selected,-1)
     starts=np.flatnonzero(edges & ~np.roll(edges,1))
-    if len(starts)!=1: raise GeometryError("Arco de calva posterior no contiguo")
-    start=int(starts[0]); arc=[int(rim[start])]
-    i=start
-    while edges[i]:
-        arc.append(int(rim[(i+1)%len(rim)]))
-        i=(i+1)%len(rim)
-        if len(arc)>len(rim): raise GeometryError("Arco craneal ambiguo")
-    if len(arc)<30: raise GeometryError("Poco borde de calva posterior")
+    if not len(starts):raise GeometryError("Ningún borde posterior de calva")
+    runs=[]
+    for start in starts:
+        arc=[int(rim[start])]
+        i=int(start)
+        while edges[i]:
+            arc.append(int(rim[(i+1)%len(rim)]))
+            i=(i+1)%len(rim)
+            if len(arc)>len(rim):raise GeometryError("Arco craneal ambiguo")
+        runs.append(arc)
+    # r3 has several small non-contiguous rear segments. Choose only the
+    # widest genuine consecutive run; never bridge the gaps to ears/face.
+    arc=max(runs,key=len)
+    if len(arc)<20:raise GeometryError(
+        f"Poco borde de calva posterior; tramos {[len(a) for a in runs]}")
     return np.asarray(arc,dtype=int)
 
 def extend_visible_dome(p,f,params):
@@ -152,7 +159,8 @@ def write_candidate(profile,params,baseline,binary):
     orig_prims=original["meshes"][0]["primitives"]
     prims=j["meshes"][0]["primitives"]
     face,cap=prims[:2]
-    assert face.get("extras",{}).get("pieza")=="Cabeza" and cap.get("extras",{}).get("pieza")=="Craneo"
+    if face.get("extras",{}).get("pieza")!="Cabeza" or cap.get("extras",{}).get("pieza")!="Craneo":
+        raise RuntimeError("Se esperaban las primitivas Cabeza y Craneo")
     oldcap=orig_prims[1]
     cattr={name:render.acc(original,binary,idx) for name,idx in oldcap["attributes"].items()}
     if set(cattr)!={"POSITION","NORMAL","JOINTS_0","WEIGHTS_0"} or "targets" in cap:
