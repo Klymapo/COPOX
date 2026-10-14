@@ -4,6 +4,7 @@ on:
     branches: [experimentos/maniqui-r3-visual-critico]
     paths:
       - 'tools/maniqui/r3_visual_critic_real.py'
+      - 'tools/maniqui/r3_segment_islands.py'
       - '.github/workflows/maniqui-r3-critic-real.yml'
   workflow_dispatch:
 permissions:
@@ -37,6 +38,7 @@ jobs:
       - name: Análisis real de topología y referencias multivista
         run: |
           python -m tools.maniqui.r3_visual_critic_real
+          python -m tools.maniqui.r3_segment_islands
           python - <<'PY'
           import json
           from pathlib import Path
@@ -46,6 +48,8 @@ jobs:
           assert t['no_mutated_model'] and t['no_artistic_approval']
           assert t['open_cap_edges_by_index']>0
           assert (root/'visual_review/report.json').exists()
+          comp=json.loads((root/'face_islands.json').read_text())
+          assert comp['component_count']>=2 and comp['no_glb_modified']
           assert len(list((root/'visual_review').glob('comparison_*.png')))==6
           print('6 referencias cubiertas; Ninguna fusión ni edición')
           PY
@@ -66,7 +70,9 @@ jobs:
             docs/maniqui/r3_critic_real/mesh_measurements.json \
             docs/maniqui/r3_critic_real/geometry_plan.json \
             docs/maniqui/r3_critic_real/r3_fourviews.png \
-            docs/maniqui/r3_critic_real/r3_head_details.png
+            docs/maniqui/r3_critic_real/r3_head_details.png \
+            docs/maniqui/r3_critic_real/face_islands.json \
+            docs/maniqui/r3_critic_real/r3_face_islands_4views.png
           if ! git diff --cached --quiet; then
             git commit -m "evidence(maniqui): auditoria real r3, geometria, seis referencias y cuatro vistas"
             git pull --rebase origin experimentos/maniqui-r3-visual-critico
