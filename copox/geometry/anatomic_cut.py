@@ -46,7 +46,7 @@ def cut_plane(attributes: dict[str, np.ndarray], faces: np.ndarray,
     attrs = {k: np.asarray(v) for k, v in attributes.items()}
     pos = np.asarray(attrs["POSITION"], dtype=np.float64)
     idx = np.asarray(faces, dtype=np.int64)
-    n = np.asarray(normal, dtype=np.float64)
+    n = np.array(normal, dtype=np.float64, copy=True)
     if pos.ndim != 2 or pos.shape[1] != 3 or len(pos) < 3 or not np.isfinite(pos).all():
         raise GeometryError("POSITION inválido")
     if idx.ndim != 2 or idx.shape[1] != 3 or (len(idx) and (idx.min() < 0 or idx.max() >= len(pos))):
