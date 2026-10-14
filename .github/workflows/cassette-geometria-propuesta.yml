@@ -1,0 +1,36 @@
+name: COPOX · Geometria guiada · pruebas de propuesta
+on:
+  push:
+    branches: [propuesta/cassette-geometria-guiada]
+    paths:
+      - 'copox/geometry/**'
+      - 'tests/test_geometry_preflight.py'
+      - '.github/workflows/cassette-geometria-propuesta.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compilar y testear gate sin IA ni GLB ni GPU
+        run: |
+          python -m compileall -q copox/geometry/preflight_gate.py
+          python -m unittest discover -s tests -p 'test_geometry_preflight.py' -v
+      - name: Verificar receta experimental y no-activacion
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          q=Path('copox/geometry/maniqui_geometry_recipe.example.json')
+          d=json.loads(q.read_text())
+          assert d['status']=='EXPERIMENTAL_NOT_ENABLED'
+          assert d['no_auto_promote'] is True
+          assert not Path('copox/cassettes/enabled').exists()
+          print('Receta valida, no activada y sin promocion automatica')
+          PY
