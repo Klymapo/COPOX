@@ -8,6 +8,9 @@ on:
       - 'tests/test_g2c_advancing_stitch.py'
       - 'tests/test_g2c_surface_parts.py'
       - 'tools/maniqui/g2c_r3_preflight.py'
+      - 'tools/maniqui/g2c_benchmark.py'
+      - '.codex/skills/geometry-profiler/**'
+      - '.claude/skills/geometry-profiler/**'
       - '.github/workflows/maniqui-g2c.yml'
   workflow_dispatch:
 permissions:
@@ -30,6 +33,8 @@ jobs:
           python -m unittest discover -s tests -p 'test_geometry_kernel.py' -v
       - name: El r3 real NUNCA debe pasar sin su contorno homologado
         run: python -m tools.maniqui.g2c_r3_preflight
+      - name: Benchmark reproducible sin porcentajes inventados
+        run: python -m tools.maniqui.g2c_benchmark
       - name: Guardar evidencia de bloqueo seguro
         if: always()
         uses: actions/upload-artifact@v4
@@ -42,9 +47,9 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          for n in ('contour-extractor','stitch-advancing-front','gltf-rig-guardian'):
+          for n in ('contour-extractor','stitch-advancing-front','gltf-rig-guardian','geometry-profiler'):
               paths=[Path(f'.codex/skills/{n}/SKILL.md'),Path(f'.claude/skills/{n}/SKILL.md')]
               assert all(x.exists() for x in paths),n
               assert paths[0].read_text()==paths[1].read_text(),n
-          print('3 skills espejadas y reproducibles')
+          print('4 skills espejadas y reproducibles')
           PY
