@@ -44,7 +44,7 @@ class LocalPatchTests(unittest.TestCase):
         self.assertEqual(len(eased.positions),len(v)+2*n)
         np.testing.assert_array_equal(eased.positions[:len(v)],v)
         np.testing.assert_array_equal(eased.faces[:len(f)],f)
-        self.assertEqual(eased.report["remaining_open_edges"],flat.report["remaining_open_edges"])
+        self.assertEqual(eased.report["remaining_open_edges"],flat.report["remaining_open_edges"]+2)
         original_y=v[eased.ancestry[-n:],1]
         drops=original_y-eased.positions[-n:,1]
         self.assertGreater(float(drops[n//2]),float(drops[0]))

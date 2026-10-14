@@ -112,7 +112,7 @@ def make(profile="flat"):
         for col,(view,angle) in enumerate(views):
             frame=render.render(tris,angle,W=390,H=438,bounds=bounds)
             canvas.paste(frame,(col*390,row*468+30))
-            draw.text((col*390+10,row*468+7),label+" "+profile.upper()+" | "+view,fill=(25,38,52))
+            draw.text((col*390+10,row*468+7),label+(" "+profile.upper() if profile!="flat" else "")+" | "+view,fill=(25,38,52))
     EVIDENCE.mkdir(parents=True,exist_ok=True)
     canvas.save(EVIDENCE/"NUCA_LOCAL_ANTES_DESPUES_4V.png")
     # Truthful visual QA: highlight ONLY triangles appended at the back.
