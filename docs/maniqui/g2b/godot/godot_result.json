@@ -24,6 +24,37 @@
   "models": {
     "res://baseline.glb": {
       "animation_count": 29,
+      "animation_dynamic_track_counts": {
+        "Blink": 0,
+        "GlassesPush": 22,
+        "GlassesPushFace": 0,
+        "HandsBehind": 20,
+        "HandsBehindFace": 0,
+        "HeadShake": 7,
+        "HeadShakeFace": 0,
+        "Idle": 33,
+        "IdleFace": 0,
+        "IdlePockets": 20,
+        "IdlePocketsFace": 0,
+        "Laugh": 8,
+        "LaughFace": 0,
+        "Nod": 8,
+        "NodFace": 0,
+        "Point": 25,
+        "PointFace": 0,
+        "Shrug": 45,
+        "ShrugFace": 0,
+        "Sit-pose": 0,
+        "Talk": 0,
+        "TalkGesture": 42,
+        "TalkGestureFace": 0,
+        "Think": 25,
+        "ThinkFace": 0,
+        "TieAdjust": 41,
+        "TieAdjustFace": 0,
+        "Wave": 25,
+        "WaveFace": 0
+      },
       "animation_names": [
         "Blink",
         "GlassesPush",
@@ -55,7 +86,6 @@
         "Wave",
         "WaveFace"
       ],
-      "animation_names_not_equal_functional_clips": false,
       "animation_track_counts": {
         "Blink": 56,
         "GlassesPush": 56,
@@ -87,17 +117,68 @@
         "Wave": 56,
         "WaveFace": 56
       },
+      "clips_with_tracks_count": 29,
       "clips_without_tracks": [],
+      "clips_without_variable_keys": [
+        "Blink",
+        "GlassesPushFace",
+        "HandsBehindFace",
+        "HeadShakeFace",
+        "IdleFace",
+        "IdlePocketsFace",
+        "LaughFace",
+        "NodFace",
+        "PointFace",
+        "ShrugFace",
+        "Sit-pose",
+        "Talk",
+        "TalkGestureFace",
+        "ThinkFace",
+        "TieAdjustFace",
+        "WaveFace"
+      ],
+      "dynamic_key_clips_count": 13,
       "finite_bone_poses": true,
-      "functional_animation_count": 29,
       "mesh_surfaces": 24,
       "scene_imported": true,
       "skeletons": [
         56
-      ]
+      ],
+      "track_existence_does_not_prove_functional_animation": true
     },
     "res://r4_rear_focus.glb": {
       "animation_count": 29,
+      "animation_dynamic_track_counts": {
+        "Blink": 0,
+        "GlassesPush": 22,
+        "GlassesPushFace": 0,
+        "HandsBehind": 20,
+        "HandsBehindFace": 0,
+        "HeadShake": 7,
+        "HeadShakeFace": 0,
+        "Idle": 33,
+        "IdleFace": 0,
+        "IdlePockets": 20,
+        "IdlePocketsFace": 0,
+        "Laugh": 8,
+        "LaughFace": 0,
+        "Nod": 8,
+        "NodFace": 0,
+        "Point": 25,
+        "PointFace": 0,
+        "Shrug": 45,
+        "ShrugFace": 0,
+        "Sit-pose": 0,
+        "Talk": 0,
+        "TalkGesture": 42,
+        "TalkGestureFace": 0,
+        "Think": 25,
+        "ThinkFace": 0,
+        "TieAdjust": 41,
+        "TieAdjustFace": 0,
+        "Wave": 25,
+        "WaveFace": 0
+      },
       "animation_names": [
         "Blink",
         "GlassesPush",
@@ -129,7 +210,6 @@
         "Wave",
         "WaveFace"
       ],
-      "animation_names_not_equal_functional_clips": false,
       "animation_track_counts": {
         "Blink": 56,
         "GlassesPush": 56,
@@ -161,17 +241,68 @@
         "Wave": 56,
         "WaveFace": 56
       },
+      "clips_with_tracks_count": 29,
       "clips_without_tracks": [],
+      "clips_without_variable_keys": [
+        "Blink",
+        "GlassesPushFace",
+        "HandsBehindFace",
+        "HeadShakeFace",
+        "IdleFace",
+        "IdlePocketsFace",
+        "LaughFace",
+        "NodFace",
+        "PointFace",
+        "ShrugFace",
+        "Sit-pose",
+        "Talk",
+        "TalkGestureFace",
+        "ThinkFace",
+        "TieAdjustFace",
+        "WaveFace"
+      ],
+      "dynamic_key_clips_count": 13,
       "finite_bone_poses": true,
-      "functional_animation_count": 29,
       "mesh_surfaces": 24,
       "scene_imported": true,
       "skeletons": [
         56
-      ]
+      ],
+      "track_existence_does_not_prove_functional_animation": true
     },
     "res://r5_rear_focus_soft.glb": {
       "animation_count": 29,
+      "animation_dynamic_track_counts": {
+        "Blink": 0,
+        "GlassesPush": 22,
+        "GlassesPushFace": 0,
+        "HandsBehind": 20,
+        "HandsBehindFace": 0,
+        "HeadShake": 7,
+        "HeadShakeFace": 0,
+        "Idle": 33,
+        "IdleFace": 0,
+        "IdlePockets": 20,
+        "IdlePocketsFace": 0,
+        "Laugh": 8,
+        "LaughFace": 0,
+        "Nod": 8,
+        "NodFace": 0,
+        "Point": 25,
+        "PointFace": 0,
+        "Shrug": 45,
+        "ShrugFace": 0,
+        "Sit-pose": 0,
+        "Talk": 0,
+        "TalkGesture": 42,
+        "TalkGestureFace": 0,
+        "Think": 25,
+        "ThinkFace": 0,
+        "TieAdjust": 41,
+        "TieAdjustFace": 0,
+        "Wave": 25,
+        "WaveFace": 0
+      },
       "animation_names": [
         "Blink",
         "GlassesPush",
@@ -203,7 +334,6 @@
         "Wave",
         "WaveFace"
       ],
-      "animation_names_not_equal_functional_clips": false,
       "animation_track_counts": {
         "Blink": 56,
         "GlassesPush": 56,
@@ -235,14 +365,34 @@
         "Wave": 56,
         "WaveFace": 56
       },
+      "clips_with_tracks_count": 29,
       "clips_without_tracks": [],
+      "clips_without_variable_keys": [
+        "Blink",
+        "GlassesPushFace",
+        "HandsBehindFace",
+        "HeadShakeFace",
+        "IdleFace",
+        "IdlePocketsFace",
+        "LaughFace",
+        "NodFace",
+        "PointFace",
+        "ShrugFace",
+        "Sit-pose",
+        "Talk",
+        "TalkGestureFace",
+        "ThinkFace",
+        "TieAdjustFace",
+        "WaveFace"
+      ],
+      "dynamic_key_clips_count": 13,
       "finite_bone_poses": true,
-      "functional_animation_count": 29,
       "mesh_surfaces": 24,
       "scene_imported": true,
       "skeletons": [
         56
-      ]
+      ],
+      "track_existence_does_not_prove_functional_animation": true
     }
   }
 }
