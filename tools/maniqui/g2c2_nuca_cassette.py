@@ -108,6 +108,22 @@ def make():
             draw.text((col*390+10,row*468+7),label+" | "+view,fill=(25,38,52))
     EVIDENCE.mkdir(parents=True,exist_ok=True)
     canvas.save(EVIDENCE/"NUCA_LOCAL_ANTES_DESPUES_4V.png")
+    # Truthful visual QA: highlight ONLY triangles appended at the back.
+    # All colored faces originate from the reimported candidate GLB.
+    old_face_count=len(f)
+    if candidate[1][0].shape[0]!=old_face_count+len(patch.new_faces):
+        raise RuntimeError("Face count changed during rendered GLB reimport")
+    patch_tri=candidate[1][0][old_face_count:]
+    highlighted=(patch_tri,np.array([.08,.55,.86]),None,None,None)
+    older_cap=(candidate[1][0][:old_face_count],candidate[1][1],None,None,None)
+    marked=Image.new("RGB",(4*390,468),"white")
+    ink=ImageDraw.Draw(marked)
+    for col,(view,angle) in enumerate(views):
+        frame=render.render([candidate[0],older_cap,highlighted],angle,
+                            W=390,H=438,bounds=bounds)
+        marked.paste(frame,(col*390,30))
+        ink.text((col*390+10,7),view+" | NUEVOS TRIANGULOS AZULES",fill=(25,38,52))
+    marked.save(EVIDENCE/"NUCA_SOLO_TRIANGULOS_NUEVOS_4V.png")
     # A region can pass structural validation despite face being left unresolved.
     report=aggregate_regional_review({
        "nuca":RegionVerdict("nuca","PASS","REVIEW_REQUIRED",True,True),
@@ -131,6 +147,7 @@ def make():
        "local_patch_metrics":patch.report,
        "regional_review":report,
        "comparison":"docs/maniqui/g2c2/nuca/NUCA_LOCAL_ANTES_DESPUES_4V.png",
+       "patch_highlight":"docs/maniqui/g2c2/nuca/NUCA_SOLO_TRIANGULOS_NUEVOS_4V.png",
        "status":"NUCA_LOCAL_TECHNICAL_PASS__VISUAL_REVIEW_REQUIRED",
        "warning":"Es un parche parcial ABIERTO, no una cabeza soldada ni aprobación estética",
        "not_auto_promoted":True,
