@@ -61,6 +61,7 @@ jobs:
           git config user.name "COPOX CI"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/maniqui/g2c2/nuca/NUCA_LOCAL_ANTES_DESPUES_4V.png \
+                  docs/maniqui/g2c2/nuca/NUCA_SOLO_TRIANGULOS_NUEVOS_4V.png \
                   docs/maniqui/g2c2/nuca/REPORTE_NUCA.json
           if ! git diff --cached --quiet; then
             git commit -m "evidence(regional): nuca local 4 vistas y gates; cara congelada"
