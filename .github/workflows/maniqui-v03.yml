@@ -1,0 +1,54 @@
+name: COPOX · Maniqui v0.3 (auditoria experimental)
+on:
+  push:
+    branches:
+      - experimentos/maniqui-v03-reparacion-facial
+    paths:
+      - 'tools/maniqui/diagnostico_v03.py'
+      - 'tools/maniqui/reparar_v03.py'
+      - '.github/workflows/maniqui-v03.yml'
+  workflow_dispatch:
+concurrency:
+  group: maniqui-v03-experimental
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          ref: experimentos/maniqui-v03-reparacion-facial
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencias libres
+        run: python -m pip install numpy pillow
+      - name: Diagnostico de v0.2 sin cambios
+        run: python tools/maniqui/diagnostico_v03.py assets/maniqui/maniqui_v0_2.glb docs/MANIQUI_V03_DIAGNOSTICO.json
+      - name: Procesar v0.3 si existe reparador
+        run: |
+          if [ -f tools/maniqui/reparar_v03.py ]; then
+            python tools/maniqui/reparar_v03.py assets/maniqui/maniqui_v0_2.glb assets/maniqui/maniqui_v0_3.glb docs/MANIQUI_V03_VALIDACION.json
+            python tools/maniqui/render.py assets/maniqui/maniqui_v0_2.glb assets/maniqui/previews/maniqui_v0_2b_base_for_compare.png
+            python tools/maniqui/render.py assets/maniqui/maniqui_v0_3.glb assets/maniqui/previews/maniqui_v0_3.png
+            python tools/maniqui/comparar_v03.py assets/maniqui/previews/maniqui_v0_2b_base_for_compare.png assets/maniqui/previews/maniqui_v0_3.png assets/maniqui/previews/maniqui_v0_2b_vs_v0_3.png assets/maniqui/previews/maniqui_v0_2b_vs_v0_3_cabezas.png
+            python tools/maniqui/pose.py assets/maniqui/maniqui_v0_3.glb Wave 0.6 assets/maniqui/previews/maniqui_v0_3_wave.png
+            python tools/maniqui/diagnostico_v03.py assets/maniqui/maniqui_v0_3.glb docs/MANIQUI_V03_GEOMETRIA.json >/dev/null
+          fi
+      - name: Registrar resultados en rama experimental
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/MANIQUI_V03_DIAGNOSTICO.json
+          git add -f docs/MANIQUI_V03_VALIDACION.json docs/MANIQUI_V03_GEOMETRIA.json assets/maniqui/maniqui_v0_3.glb assets/maniqui/previews/maniqui_v0_3.png assets/maniqui/previews/maniqui_v0_3_wave.png assets/maniqui/previews/maniqui_v0_2b_base_for_compare.png assets/maniqui/previews/maniqui_v0_2b_vs_v0_3.png assets/maniqui/previews/maniqui_v0_2b_vs_v0_3_cabezas.png 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "test(maniqui): evidencia automatica v0.3 sin promover baseline"
+            git pull --rebase origin experimentos/maniqui-v03-reparacion-facial
+            git push origin HEAD:experimentos/maniqui-v03-reparacion-facial
+          fi

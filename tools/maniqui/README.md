@@ -22,3 +22,7 @@ Los scripts se importan entre sí por ruta relativa (`render.py`, `cuerpo.py`), 
 | `retex.py in out tamaño` | reescala texturas embebidas | — |
 
 Cada pieza nueva va etiquetada en `primitive.extras.pieza` (Cabeza, Craneo, Torso, PiernaL, DedoIndexL…).
+
+## Continuación v0.3 del PR #34
+
+`reconstruir_v03.py` genera hasta tres candidatos hermanos desde el SHA registrado de v0.3, sin sobrescribir destinos. `evaluar_v03.py` captura cuatro vistas, detalles y poses, y muestrea los 29 clips. `auditar_v03.py` verifica bytes de rig/animación y triángulos protegidos. Dependencias: numpy, scipy, pillow. Véanse comandos y límites en `docs/MANIQUI_V03_CONTINUACION_2026-10-14.md`. Resultado de esta campaña: PLATEAU, sin versión aprobada.

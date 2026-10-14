@@ -49,3 +49,7 @@ Herramientas de control: `render.py` (4 vistas), `measure.py` (IoU de silueta co
 3. Gestos faciales: la cabeza de Gamma va rígida al hueso `Head` y los 16 blendshapes de Beta se perdieron. Plan acordado con Admin: ojos como textura deslizante (iris arriba = "ojos en blanco" de Theo), mandíbula con hueso y shape key de boca ("soplar café" de Alastor).
 4. Manos y pies del maniquí son tubos lisos (funcionan con el rig, pero son primitivos). Pulirlos o sustituirlos por una mano canónica.
 5. Licencia: Gamma proviene de Hunyuan3D (Tencent Community License, **excluye UE, Reino Unido y Corea del Sur**). Todo lo derivado de Gamma hereda ese riesgo. Plan B: regenerar con TRELLIS.2 (MIT) y correr la misma cadena.
+
+## Continuación registrada · 14 oct 2026
+
+PR #34 continuado desde v0.3 con tres candidatos hermanos r1/r2/r3 y evaluación real de cuatro vistas, acercamientos y poses. Se preservan originales, 56 huesos y 29 clips. r1/r2 rechazados por pérdida de triángulos protegidos; r3 conserva facciones/orejas, pero presenta defectos de unión y perfil IoU 94.78%. Estado **PLATEAU / NO APROBADO**, sin fusión. Detalle, criterios, límites y bitácora completa: [MANIQUI_V03_CONTINUACION_2026-10-14.md](MANIQUI_V03_CONTINUACION_2026-10-14.md).
