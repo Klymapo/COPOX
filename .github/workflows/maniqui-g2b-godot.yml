@@ -80,8 +80,19 @@ jobs:
           result=json.loads(path.read_text())
           assert result['all_checks_passed']
           assert result['candidate_count']==2
-          print('Godot 4.7.2: r4/r5 pasan importación/rig/animación')
+          print('Godot 4.7.2: r4/r5 importan con rig, pero las animaciones faciales invalidas siguen vacias')
+          for key,model in result['models'].items():
+              print(key,'clipped_or_inert_animations',model.get('clips_without_tracks'))
           PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: g2b-godot-472-compat-glb-copies-not-approved
+          path: |
+            ${{ runner.temp }}/g2b_godot/baseline.glb
+            ${{ runner.temp }}/g2b_godot/r4_rear_focus.glb
+            ${{ runner.temp }}/g2b_godot/r5_rear_focus_soft.glb
+          retention-days: 30
+          if-no-files-found: error
       - name: Copiar informe y logs para evidencia
         if: always()
         run: |
