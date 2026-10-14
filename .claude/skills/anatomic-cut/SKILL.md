@@ -20,3 +20,5 @@ Usar cuando sea necesario eliminar geometría defectuosa o sustituir una región
 ## Comprobación
 `python -m unittest discover -s tests -p 'test_geometry_operations.py' -v`.
 
+## Enlace con Visual Critic
+Solicitar `operator=Anatomic Cut` sólo cuando la matriz multivista identifique fragmentos y el diagnóstico de malla mida componentes desconectados/triángulos flotantes, plano de corte medido, atributos compatibles y protección de triángulos lista. Comparar **todas las vistas/poses** antes de elegir y después de cortar, incluyendo referencias contradictorias. No eliminar facciones por una única silueta lateral, no procesar morph targets sin soporte y no convertir el preflight en permiso de fusión.
