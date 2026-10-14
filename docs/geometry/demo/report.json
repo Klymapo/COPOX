@@ -1,0 +1,37 @@
+{
+  "source": "100% parametric synthetic Python geometry; no Hunyuan input",
+  "scully": {
+    "changed_vertices": 84,
+    "maximum_displacement_m": 0.05224999999999999
+  },
+  "anatomic_cut": {
+    "clipped_faces": 96,
+    "removed_faces": 1152,
+    "added_vertices": 96
+  },
+  "surface_stitch": {
+    "bridge_triangles": 32,
+    "paired_vertices": 16,
+    "gap_max": 0.35,
+    "gap_mean": 0.35,
+    "remaining_open_loops": 0,
+    "same_mesh_shared_indices": true,
+    "self_intersection_checked": false,
+    "rig_weights_interpolated": false,
+    "original_vertices_retained": true,
+    "material_ids_preserved_per_face": true,
+    "exported_glb_verified": false,
+    "glb_export_warning": "Un export por primitivas puede volver a partir la topología"
+  },
+  "glb_demo": {
+    "path": "surface_stitch_sintetico.glb",
+    "sha256": "f2cd9e5be35b5d4711a142982d68dd45fff3d99849915ef2fd1b04a417304ba8",
+    "rigged": false,
+    "multiple_materials_exported": false
+  },
+  "limitations": [
+    "Synthetic demonstration, not Maniqui production",
+    "Surface Stitch GLB demo exports geometry without original material splits",
+    "No tested skeleton, facial morph targets or Godot"
+  ]
+}
