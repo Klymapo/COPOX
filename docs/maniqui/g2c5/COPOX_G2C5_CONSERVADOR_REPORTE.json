@@ -1,0 +1,29 @@
+{
+  "status": "CONSERVATIVE_COMBINED_NOT_APPROVED",
+  "file": "/mnt/data/COPOX_G2C5_REGIONALES_CONSERVADOR_SIN_APROBAR.glb",
+  "sha256": "34ccc30b0f5565204c2b16395daff8d6303da869dbf432ef51b8db6080e8e070",
+  "source": "V3 + B2 eyeglasses removed + C jaw proposal + A right ear selective surface inpainting",
+  "A_removed_faces": 156,
+  "A_rebuilt_inpaint_faces": 120,
+  "A_tuft_faces_still_shaved": 36,
+  "B2_removed_goggle_faces": 71,
+  "C_jaw_vertex_change_included": true,
+  "caveat": "Eye sockets and underside of chin still have original holes; not manifold or anatomically closed",
+  "rig_unchanged": true,
+  "baseline_hashes": {
+    "V3": "0a100a9400e87251cbdd64328c0c13ffc4bbf829ae4c85d5b54aee2c1e67565b",
+    "A": "e5660a56d9d611dec63209a22d0857947ea44cadb871fee9026d67d24438e308",
+    "B2": "daf3737d0cb5b6469fa407ffab5dc761b2fc0e0acd9c69652cb283d41b4b05ec",
+    "C": "3a045efdbef61dfe3f0f4c458ab1037ec2e815c7c6f46a3d1e74919bfc125bd9"
+  },
+  "oreja_stats": {
+    "input_right_hair_faces": 156,
+    "reconstructed_skin_faces": 120,
+    "isolated_fragments_left_shaved": 36,
+    "edited_interior_vertices": 84,
+    "protected_border_vertices": 19,
+    "max_smoothing_displacement_m": 0.019139735028147697,
+    "new_inversions": 0
+  },
+  "no_merge": true
+}
