@@ -36,8 +36,18 @@ class RegionCassette:
 
 
 class RegionEngineTests(unittest.TestCase):
-    def run_it(self,*,nuca_pass=True,safety_pass=True):
+    def run_it(self,*,nuca_pass=True,safety_pass=True,disable_safety=False):
         cass=RegionCassette()
+        if disable_safety:
+            class NoSafetyCassette(RegionCassette):
+                @property
+                def auditors(self):
+                    items=super().auditors
+                    for item in items:
+                        if item.get("scope")=="global_safety":
+                            item["applicable"]=False
+                    return items
+            cass=NoSafetyCassette()
         calls=[]
         with tempfile.TemporaryDirectory() as d:
             def simulate(command, ctx, cwd, env):
@@ -73,6 +83,12 @@ class RegionEngineTests(unittest.TestCase):
 
     def test_nape_fails_even_if_face_skipped(self):
         code,calls,manifest=self.run_it(nuca_pass=False)
+        self.assertEqual(code,2)
+        self.assertEqual(manifest["status"],"PLATEAU")
+        self.assertNotIn(("promote",),calls)
+
+    def test_disabled_shared_safety_cannot_count_as_passed(self):
+        code,calls,manifest=self.run_it(disable_safety=True)
         self.assertEqual(code,2)
         self.assertEqual(manifest["status"],"PLATEAU")
         self.assertNotIn(("promote",),calls)
