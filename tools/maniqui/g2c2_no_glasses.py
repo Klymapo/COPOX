@@ -9,6 +9,8 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+import copy
+import tempfile
 from pathlib import Path
 
 from PIL import Image,ImageDraw
@@ -73,16 +75,22 @@ def make_evidence():
 
     # Real glass primitive before removal; show 4 views of the same head
     # and identical camera in each row.
-    original_tris=render.gather(WARDROBE)
-    prims=cloth_doc["meshes"][0]["primitives"]
-    drawable=[p for p in prims if is_geom(p)]
-    if len(drawable)!=len(original_tris):
-        raise RuntimeError("Unexpected drawable primitive mapping")
-    glass_indices=[i for i,p in enumerate(drawable)
-                   if p.get("extras",{}).get("pieza")=="Lentes"]
-    if len(glass_indices)!=1:
-        raise RuntimeError("Could not associate glasses triangle group")
-    glasses=[original_tris[glass_indices[0]]]
+    # Render the *exact* named piece from a temporary view-only GLB.
+    # The source may include multiple meshes/nodes and primitive indexing in
+    # render.gather() isn't guaranteed to correspond to meshes[0].primitives.
+    with tempfile.TemporaryDirectory(prefix="copox_glasses_") as tmp:
+        accessory=copy.deepcopy(cloth_doc)
+        matches={(entry["mesh"],entry["primitive"]) for entry in removed}
+        for mi,mesh in enumerate(accessory["meshes"]):
+            mesh["primitives"]=[
+                p for pi,p in enumerate(mesh.get("primitives",[]))
+                if (mi,pi) in matches
+            ]
+        glass_only=Path(tmp)/"view_only_glasses.glb"
+        write_glb(glass_only,accessory,bytearray(cloth_bin))
+        glasses=[part for part in render.gather(glass_only) if len(part[0])]
+        if not glasses:
+            raise RuntimeError("No visible glasses triangles found in separately labeled source")
     head_tris=render.gather(HEAD)[:2]
     before=head_tris+glasses
     after=head_tris
