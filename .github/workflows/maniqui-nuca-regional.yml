@@ -1,0 +1,74 @@
+name: COPOX · Evaluación regional · NUCA
+on:
+  push:
+    branches: [experimentos/g2c2-nuca-evaluacion-regional]
+    paths:
+      - 'copox/geometry/partial_nape.py'
+      - 'copox/geometry/regional_review.py'
+      - 'tests/test_regional_nape.py'
+      - 'tools/maniqui/g2c2_nuca_cassette.py'
+      - '.github/workflows/maniqui-nuca-regional.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: copox-nuca-region
+  cancel-in-progress: true
+jobs:
+  nape-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencias libres fijas
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 Pillow==10.4.0
+      - name: Gates regionales y topologia
+        run: |
+          python -m unittest discover -s tests -p 'test_regional_nape.py' -v
+          python -m unittest discover -s tests -p 'test_g2b_craniofacial_loft.py' -v
+      - name: 'Generar GLB real de nuca y cuatro vistas, sin alterar cara'
+        run: |
+          python -m tools.maniqui.g2c2_nuca_cassette
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          a=json.loads(Path('docs/maniqui/g2c2/nuca/REPORTE_NUCA.json').read_text())
+          assert a['status']=='NUCA_LOCAL_TECHNICAL_PASS__VISUAL_REVIEW_REQUIRED'
+          assert a['face_unchanged'] and a['rest_of_body_unchanged']
+          assert a['material_defs_unchanged'] and a['original_binary_buffer_unchanged']
+          assert a['regional_review']['global_model_approved'] is False
+          assert a['regional_review']['local_result']=='REGION_READY_FOR_VISUAL_REVIEW'
+          assert a['local_patch_metrics']['remaining_open_edges']>0
+          assert a['local_patch_metrics']['new_geometry_entirely_rear']
+          assert hashlib.sha256(Path(a['derived_glb']).read_bytes()).hexdigest()==a['derived_sha256']
+          assert Path(a['comparison']).is_file()
+          print('NUCA aislada: candidato verificable, cero cambios faciales, no aprobado')
+          PY
+      - name: Entregar GLB sin aprobación y evidencia de cuatro vistas
+        uses: actions/upload-artifact@v4
+        with:
+          name: maniqui-nuca-regional-no-approved-glb
+          path: |
+            assets/maniqui/maniqui_v0_3_r3_nuca_local_prototipo.glb
+            docs/maniqui/g2c2/nuca/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Publicar SOLO evidencia de región (NO promocionar GLB)
+        run: |
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/maniqui/g2c2/nuca/NUCA_LOCAL_ANTES_DESPUES_4V.png \
+                  docs/maniqui/g2c2/nuca/REPORTE_NUCA.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(regional): nuca local 4 vistas y gates; cara congelada"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin experimentos/g2c2-nuca-evaluacion-regional
+              git rebase origin/experimentos/g2c2-nuca-evaluacion-regional
+              if git push origin HEAD:experimentos/g2c2-nuca-evaluacion-regional; then exit 0; fi
+              sleep 2
+            done
+            exit 1
+          fi
