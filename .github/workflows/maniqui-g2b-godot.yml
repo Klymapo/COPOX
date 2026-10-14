@@ -4,6 +4,7 @@ on:
     branches: [experimentos/maniqui-g2b-piel-craneofacial]
     paths:
       - 'tests/g2b_godot_validate.gd'
+      - 'tools/maniqui/gltf_sanitize.py'
       - '.github/workflows/maniqui-g2b-godot.yml'
   workflow_dispatch:
 permissions:
@@ -37,6 +38,17 @@ jobs:
           cp "$RUNNER_TEMP/g2b_payload/assets/maniqui/maniqui_v0_3_r3_g2b_r5_rear_focus_soft.glb" \
              "$RUNNER_TEMP/g2b_godot/r5_rear_focus_soft.glb"
           cp tests/g2b_godot_validate.gd "$RUNNER_TEMP/g2b_godot/validate.gd"
+      - name: Saneamiento estructural de copias GLB, sin editar el repositorio
+        run: |
+          mkdir -p docs/maniqui/g2b/godot
+          for name in baseline r4_rear_focus r5_rear_focus_soft; do
+            python tools/maniqui/gltf_sanitize.py \
+              "$RUNNER_TEMP/g2b_godot/$name.glb" \
+              "$RUNNER_TEMP/g2b_godot/${name}_clean.glb" \
+              "docs/maniqui/g2b/godot/${name}_sanitizer.json"
+            mv "$RUNNER_TEMP/g2b_godot/${name}_clean.glb" \
+               "$RUNNER_TEMP/g2b_godot/$name.glb"
+          done
       - name: Instalar binario oficial gratuito Godot 4.7.2
         run: |
           curl --fail --location --retry 3 --silent --show-error \
