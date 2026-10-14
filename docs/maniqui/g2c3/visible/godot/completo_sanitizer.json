@@ -1,0 +1,255 @@
+{
+  "source": "assets/maniqui/maniqui_v0_3_r3_g2c3_nuca_completo_SIN_APROBAR.glb",
+  "source_sha256": "ad4b9a787c23d07dfdf8212272b807c952c93dc0c932bb465b60fb7e78b57ee6",
+  "sanitized": "/home/runner/work/_temp/g2c3_godot/nuca_eased.glb",
+  "sanitized_sha256": "9747c47efc7cd283b1eab1a678e2dd2e840840a2e991c7986a79148eb8c71128",
+  "state": "SAFE_EMPTY_DATA_REMOVED",
+  "zero_count_accessors_removed": 16,
+  "zero_count_accessor_ids": [
+    1089,
+    1090,
+    1091,
+    1092,
+    1093,
+    1094,
+    1095,
+    1096,
+    1097,
+    1098,
+    1099,
+    1100,
+    1101,
+    1117,
+    1118,
+    1126
+  ],
+  "empty_primitives_removed": 10,
+  "empty_primitive_details": [
+    {
+      "mesh": 1,
+      "primitive": 0,
+      "position_count": 136,
+      "indices_count": 0,
+      "material": 0
+    },
+    {
+      "mesh": 1,
+      "primitive": 1,
+      "position_count": 1048,
+      "indices_count": 0,
+      "material": 3
+    },
+    {
+      "mesh": 1,
+      "primitive": 2,
+      "position_count": 1676,
+      "indices_count": 0,
+      "material": 4
+    },
+    {
+      "mesh": 1,
+      "primitive": 3,
+      "position_count": 1472,
+      "indices_count": 0,
+      "material": 5
+    },
+    {
+      "mesh": 1,
+      "primitive": 4,
+      "position_count": 524,
+      "indices_count": 0,
+      "material": 6
+    },
+    {
+      "mesh": 1,
+      "primitive": 5,
+      "position_count": 582,
+      "indices_count": 0,
+      "material": 7
+    },
+    {
+      "mesh": 1,
+      "primitive": 6,
+      "position_count": 576,
+      "indices_count": 0,
+      "material": 8
+    },
+    {
+      "mesh": 1,
+      "primitive": 7,
+      "position_count": 34,
+      "indices_count": 0,
+      "material": 9
+    },
+    {
+      "mesh": 1,
+      "primitive": 8,
+      "position_count": 15,
+      "indices_count": 0,
+      "material": 10
+    },
+    {
+      "mesh": 1,
+      "primitive": 9,
+      "position_count": 18,
+      "indices_count": 0,
+      "material": 11
+    }
+  ],
+  "empty_meshes_removed": [
+    1
+  ],
+  "orphan_morph_channels_removed": 15,
+  "orphan_morph_channels": [
+    {
+      "animation": "IdleFace-loop",
+      "animation_index": 2,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "IdlePocketsFace-loop",
+      "animation_index": 4,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "HandsBehindFace-loop",
+      "animation_index": 6,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "TalkGestureFace-loop",
+      "animation_index": 8,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "GlassesPushFace",
+      "animation_index": 10,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "TieAdjustFace",
+      "animation_index": 12,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "ThinkFace",
+      "animation_index": 14,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "ShrugFace",
+      "animation_index": 16,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "NodFace",
+      "animation_index": 18,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "HeadShakeFace",
+      "animation_index": 20,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "LaughFace",
+      "animation_index": 22,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "PointFace",
+      "animation_index": 24,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "WaveFace",
+      "animation_index": 26,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "Talk-loop",
+      "animation_index": 27,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    },
+    {
+      "animation": "Blink",
+      "animation_index": 28,
+      "channel_index": 0,
+      "node_index": 2,
+      "sampler": 0,
+      "reason": "weights target points to a zero-geometry mesh node"
+    }
+  ],
+  "animations_left_without_channels": [
+    "IdleFace-loop",
+    "IdlePocketsFace-loop",
+    "HandsBehindFace-loop",
+    "TalkGestureFace-loop",
+    "GlassesPushFace",
+    "TieAdjustFace",
+    "ThinkFace",
+    "ShrugFace",
+    "NodFace",
+    "HeadShakeFace",
+    "LaughFace",
+    "PointFace",
+    "WaveFace",
+    "Talk-loop",
+    "Blink"
+  ],
+  "original_accessor_count": 1298,
+  "new_accessor_count": 1282,
+  "original_mesh_count": 2,
+  "new_mesh_count": 1,
+  "all_nonempty_primitives_preserved": true,
+  "binary_buffer_unchanged": true,
+  "all_valid_joint_animation_channels_preserved": true,
+  "material_definitions_untouched": true,
+  "glb_zero_count_accessors_remaining": 0,
+  "compatibility_not_yet_proven_in_Godot": true,
+  "model_artistic_change": false,
+  "original_sha_unchanged_after": "ad4b9a787c23d07dfdf8212272b807c952c93dc0c932bb465b60fb7e78b57ee6",
+  "not_an_approval": true
+}

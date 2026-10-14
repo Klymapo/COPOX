@@ -1,0 +1,138 @@
+{
+  "checks_passed": true,
+  "engine": {
+    "build": "official",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (official)",
+    "timestamp": 0
+  },
+  "limitations": [
+    "Importación no garantiza animación facial funcional",
+    "No prueba auto-intersecciones ni unión con Cara",
+    "Sin evaluación artística de nuca",
+    "No autoriza sustitución de modelo ni fusión"
+  ],
+  "models": {
+    "res://baseline.glb": {
+      "animations": [
+        "Blink",
+        "GlassesPush",
+        "GlassesPushFace",
+        "HandsBehind",
+        "HandsBehindFace",
+        "HeadShake",
+        "HeadShakeFace",
+        "Idle",
+        "IdleFace",
+        "IdlePockets",
+        "IdlePocketsFace",
+        "Laugh",
+        "LaughFace",
+        "Nod",
+        "NodFace",
+        "Point",
+        "PointFace",
+        "Shrug",
+        "ShrugFace",
+        "Sit-pose",
+        "Talk",
+        "TalkGesture",
+        "TalkGestureFace",
+        "Think",
+        "ThinkFace",
+        "TieAdjust",
+        "TieAdjustFace",
+        "Wave",
+        "WaveFace"
+      ],
+      "finite_bone_positions": true,
+      "skeletons": [
+        56
+      ],
+      "surface_count": 24
+    },
+    "res://nuca.glb": {
+      "animations": [
+        "Blink",
+        "GlassesPush",
+        "GlassesPushFace",
+        "HandsBehind",
+        "HandsBehindFace",
+        "HeadShake",
+        "HeadShakeFace",
+        "Idle",
+        "IdleFace",
+        "IdlePockets",
+        "IdlePocketsFace",
+        "Laugh",
+        "LaughFace",
+        "Nod",
+        "NodFace",
+        "Point",
+        "PointFace",
+        "Shrug",
+        "ShrugFace",
+        "Sit-pose",
+        "Talk",
+        "TalkGesture",
+        "TalkGestureFace",
+        "Think",
+        "ThinkFace",
+        "TieAdjust",
+        "TieAdjustFace",
+        "Wave",
+        "WaveFace"
+      ],
+      "finite_bone_positions": true,
+      "skeletons": [
+        56
+      ],
+      "surface_count": 24
+    },
+    "res://nuca_eased.glb": {
+      "animations": [
+        "Blink",
+        "GlassesPush",
+        "GlassesPushFace",
+        "HandsBehind",
+        "HandsBehindFace",
+        "HeadShake",
+        "HeadShakeFace",
+        "Idle",
+        "IdleFace",
+        "IdlePockets",
+        "IdlePocketsFace",
+        "Laugh",
+        "LaughFace",
+        "Nod",
+        "NodFace",
+        "Point",
+        "PointFace",
+        "Shrug",
+        "ShrugFace",
+        "Sit-pose",
+        "Talk",
+        "TalkGesture",
+        "TalkGestureFace",
+        "Think",
+        "ThinkFace",
+        "TieAdjust",
+        "TieAdjustFace",
+        "Wave",
+        "WaveFace"
+      ],
+      "finite_bone_positions": true,
+      "skeletons": [
+        56
+      ],
+      "surface_count": 24
+    }
+  },
+  "scope": "nuca",
+  "status": "PASS_IMPORT_STRUCTURAL"
+}
