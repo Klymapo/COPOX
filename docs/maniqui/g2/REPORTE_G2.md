@@ -49,3 +49,16 @@ El último comando **no sobrescribe** un GLB anterior: si ya existe, sólo acept
 Ningún PR fusionado; r3 ni Delta ni Theo Alpha modificados; nada de esto se considera una nueva base aprobada. La línea de modelos sin Hunyuan se mantiene separada de estos experimentos históricos.
 
 **Cadena:** G2 PR #40 sobre #39 (Visual Critic real), depende de PR #38 (Visual Critic + kernel) y #37 (matemáticas). Resultados confirmados por [CI de máscaras y contornos](https://github.com/Klymapo/COPOX/actions/workflows/maniqui-g2.yml) y [CI de GLB](https://github.com/Klymapo/COPOX/actions/workflows/maniqui-g2-cut-probe.yml). Todos sus artefactos de Actions duran 30 días.
+
+
+## Veredicto visual definitivo del GLB Cut Probe
+**RECHAZADO POR REGRESIÓN VISUAL, aunque pasó integridad de huesos, clips y facciones congeladas.**
+
+Verificado con [comparativa real de cuatro acercamientos](probe_evidence/G2_comparativa_head.png) y [comparativa de cuerpo completo](probe_evidence/G2_comparativa_full.png).
+- En frente y tres cuartos apenas cambia el perfil general, pero se observan huecos cerca de la unión y placas laterales persistentes.
+- En perfil se hacen más visibles espacios claros bajo el cráneo y alrededor de la oreja. En espalda subsiste la fragmentación de la nuca.
+- IoU de silueta con r3 anterior: frontal 99.93095%, 3/4 99.99782%, perfil 99.78493%, espalda 99.93095%. El porcentaje alto **no demuestra mejoría**; aquí el cambio geométrico es pequeño y puede empeorar las cavidades.
+- Auditoría real `evaluar_v03.py` completó **87 muestras de 29 clips** sin alterar posiciones corporales originales; NO implica aprobación de continuidad de movimiento ni prueba Godot.
+- `docs/maniqui/g2/G2_VISUAL_VERDICT.json` registra estado `REJECTED_VISUAL_REGRESSION`, preserva el GLB rechazado y bloquea cualquier promoción.
+
+**Lección de ingeniería**: retirar material sin insertar la banda de piel sustitutiva sólo revela los huecos que el modelo ya tenía. Siguiente método: reconstruir superficie craneofacial con contorno guiado por facciones y generar una topología realmente compartida, con UV/skin y pruebas en Godot. No seguir ampliando máscaras de corte para perseguir más cobertura de sectores.
