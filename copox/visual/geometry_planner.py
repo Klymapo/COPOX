@@ -166,12 +166,12 @@ def propose(visual_report: dict, geometry_diagnostics: dict) -> dict:
         # Un reporte sin medición reproducible sólo debe producir hipótesis,
         # nunca un plan listo para probar automáticamente.
         provenance=measurements.get("measurement_provenance")
-        if not isinstance(provenance,dict) or not isinstance(provenance.get("source_sha256"),str) or len(provenance.get("source_sha256",""))!=64 or not provenance.get("measurement_method") or not provenance.get("coordinate_system"):
+        if not isinstance(provenance,dict) or not isinstance(provenance.get("source_sha256"),str) or len(provenance.get("source_sha256",""))!=64 or any(c not in "0123456789abcdefABCDEF" for c in provenance.get("source_sha256","")) or not provenance.get("measurement_method") or not provenance.get("coordinate_system"):
             blockers.append("missing_measurement_provenance")
         # No manual review means a geometrical hypothesis, not permission to modify.
         unreviewed=[c.get("reference_id") for c in comparisons if c.get("manual_review") is None]
         status="PLAN_READY_FOR_SANDBOX" if ready and not contradictory else "RESEARCH_REQUIRED"
-        if not ready or contradictory:
+        if blockers:
             status="RESEARCH_REQUIRED"
         result["recommendations"].append({
             "anomaly_id":aid,"region":anomaly.get("region"),
