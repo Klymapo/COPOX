@@ -106,17 +106,17 @@ def _oriented_triangles(v, a, b, *, max_gap, max_aspect_ratio):
         raise GeometryError(f"Triángulos muy alargados: ratio={np.max(ratio):.3f}")
     # Test EVERY cross-bridge triangle against user-defined distance, not
     # only the first nearest pair. The bridge edge is always the pair a-b.
-    aa=np.isin(tris,a)
-    bb=np.isin(tris,b)
-    if not np.all(aa.sum(axis=1)+bb.sum(axis=1)==3):
-        raise GeometryError("Triángulo incluye vértices externos al contorno")
-    bridge_edges=[]
-    for tri in tris:
-        # exactly one or two vertices from A; compare all cross-edges
-        av=tri[np.isin(tri,a)];bv=tri[np.isin(tri,b)]
-        for x in av:
-            for y in bv:
-                bridge_edges.append(np.linalg.norm(v[x]-v[y]))
+    is_from_a=np.zeros(len(v),dtype=bool)
+    is_from_a[a]=True
+    membership=is_from_a[tris]  # O(N+M), no repeated np.isin per face
+    if np.any((membership.sum(axis=1)!=1)&(membership.sum(axis=1)!=2)):
+        raise GeometryError("Triángulos fuera del par de anillos")
+    all_edges=np.concatenate((tris[:,[0,1]],tris[:,[1,2]],tris[:,[2,0]]),axis=0)
+    cross=is_from_a[all_edges[:,0]]!=is_from_a[all_edges[:,1]]
+    if np.count_nonzero(cross)!=2*len(tris):
+        raise GeometryError("Costura con aristas cruzadas inconsistentes")
+    mixed=all_edges[cross]
+    bridge_edges=np.linalg.norm(v[mixed[:,0]]-v[mixed[:,1]],axis=1)
     gap_max=float(np.max(bridge_edges))
     if gap_max>max_gap:
         raise GeometryError(f"Separación {gap_max:.6f} m excede {max_gap:.6f} m")
