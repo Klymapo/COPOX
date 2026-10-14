@@ -11,6 +11,9 @@
         "no_reference_support"
       ],
       "reference_coverage": {
+        "supports": [],
+        "contradicts": [],
+        "not_visible": [],
         "uncertain": [
           "detective_portrait",
           "alastor_pending",
@@ -18,10 +21,7 @@
           "pair_older_male",
           "turnaround_sheet",
           "character_comparison"
-        ],
-        "not_visible": [],
-        "supports": [],
-        "contradicts": []
+        ]
       }
     }
   ],
