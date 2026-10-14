@@ -28,7 +28,7 @@ def inspect_contour_graph(vertices: np.ndarray,faces: np.ndarray,
     ff=inv[f]
     if np.any((ff[:,0]==ff[:,1])|(ff[:,1]==ff[:,2])|(ff[:,0]==ff[:,2])):
         return {"state":"BLOCKED_DEGENERATE_WELD","closed_components":[],"stitch_ready":False}
-    e=np.sort(np.concatenate((ff[:,[0,1]],ff[:,[1,2]],ff[:,[2,0]])),axis=0),axis=1)
+    e=np.sort(np.concatenate((ff[:,[0,1]],ff[:,[1,2]],ff[:,[2,0]]),axis=0),axis=1)
     edges,counts=np.unique(e,axis=0,return_counts=True)
     boundary=edges[counts==1]
     nm=int(np.sum(counts>2))
