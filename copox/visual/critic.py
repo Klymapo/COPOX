@@ -79,13 +79,23 @@ def audit(manifest: dict, *, root: Path, output: Path, make_sheets: bool=True) -
     if not isinstance(manifest,dict):raise ValueError("Manifiesto JSON inválido")
     required=manifest.get("required_views",list(VIEW_DEFAULTS))
     refs=manifest.get("references")
+    inventory=manifest.get("provided_reference_files")
     candidate=manifest.get("candidate")
     if not isinstance(required,list) or not required or len(set(required))!=len(required) or not all(isinstance(v,str) and v for v in required):
         raise ValueError("required_views debe ser una lista única de vistas")
+    if not isinstance(inventory,list) or not inventory or not all(isinstance(p,str) and p.strip() for p in inventory):
+        raise ValueError("provided_reference_files: inventario obligatorio de TODAS las referencias aportadas")
+    if len(inventory)!=len(set(inventory)):
+        raise ValueError("provided_reference_files contiene duplicados")
     if not isinstance(refs,list) or not refs or not isinstance(candidate,dict) or not isinstance(candidate.get("views"),list):
         raise ValueError("Sin referencias o vistas de candidato; no se puede certificar")
     views=candidate["views"]
     issues=[];comparisons=[];seen_refs=set()
+    listed_images={row.get("image") for row in refs if isinstance(row,dict)}
+    unlisted=set(inventory)-listed_images
+    uninventoried=listed_images-set(inventory)
+    if unlisted:issues.append(f"Referencias entregadas OMITIDAS: {sorted(unlisted)}")
+    if uninventoried:issues.append(f"Referencias sin registrar en inventario: {sorted(uninventoried)}")
     candidates={}
     for row in views:
         if not isinstance(row,dict):
@@ -94,6 +104,11 @@ def audit(manifest: dict, *, root: Path, output: Path, make_sheets: bool=True) -
         if key in candidates:
             issues.append(f"Vista/pose duplicada del candidato: {key}")
         candidates[key]=row
+        try:
+            p=_inside_root(root,row.get("image"))
+            if not p.is_file():issues.append(f"Vista de candidato sin imagen: {key}: {p}")
+        except (ValueError,TypeError) as e:
+            issues.append(f"Vista de candidato inválida: {key}: {e}")
     for view in required:
         if (view,"rest") not in candidates:
             issues.append(f"Falta vista obligatoria: {view} / rest")
@@ -117,6 +132,10 @@ def audit(manifest: dict, *, root: Path, output: Path, make_sheets: bool=True) -
             issues.append(f"{ref_id}: falta candidato para vista={view}, pose={pose}");continue
         ref_rows.append((ref_id,reference,cam,view,pose,align))
     if not ref_rows:issues.append("No hay pares comparables")
+    referenced_keys={(view,pose) for _,_,_,view,pose,_ in ref_rows}
+    unreferenced_candidate_views=[
+        {"view":v,"pose":p} for v,p in candidates if (v,p) not in referenced_keys
+    ]
     output.mkdir(parents=True,exist_ok=True)
     for rid,reference,cand,view,pose,align in ref_rows:
         missing=[]
@@ -167,9 +186,10 @@ def audit(manifest: dict, *, root: Path, output: Path, make_sheets: bool=True) -
     unreviewed=[c["reference_id"] for c in comparisons if c["manual_review"] is None]
     conflicts=[c["reference_id"] for c in comparisons if c["manual_review"] and c["manual_review"]["verdict"]=="ISSUE"]
     all_iou=[x["metrics"]["iou"] for x in comparisons if x["metrics"] is not None]
-    result={"status":"INCOMPLETE" if issues else ("REVIEW_REQUIRED" if unreviewed else ("ISSUES_FOUND" if conflicts else "READY_FOR_ADMIN")),
+    result={"status":"INCOMPLETE" if issues else ("REVIEW_REQUIRED" if unreviewed or unreferenced_candidate_views else ("ISSUES_FOUND" if conflicts else "READY_FOR_ADMIN")),
         "automatically_approved":False, "all_references_accounted_for":not issues and evaluated_ids==seen_refs,
-        "required_views":required,"references_supplied":len(refs),"references_compared":len(comparisons),
+        "required_views":required,"references_supplied":len(inventory),"references_compared":len(comparisons),
+        "unreferenced_candidate_views":unreferenced_candidate_views,
         "issues":issues,"unreviewed_references":unreviewed,"problematic_references":conflicts,
         "worst_mask_iou":min(all_iou) if all_iou else None,
         "comparisons":comparisons,
