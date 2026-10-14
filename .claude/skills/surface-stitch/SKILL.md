@@ -20,3 +20,5 @@ Usar cuando dos superficies tengan bordes abiertos compatibles y deban conectars
 ## Comprobación
 `python -m unittest discover -s tests -p 'test_geometry_operations.py' -v`.
 
+## Enlace con Visual Critic
+Solicitar `operator=Surface Stitch` sólo si el diagnóstico mide bordes abiertos reales, dos loops de cardinalidad igual, winding correcto, atributos compatibles y distancia máxima segura. Confirmar el área afectada en **TODAS las referencias aportadas**. Un overlap visualmente limpio no es un cierre topológico; exigir pruebas sobre índices y reimportación GLB. La salida permanece experimental hasta comprobar export de materiales, rig, poses y Godot.
