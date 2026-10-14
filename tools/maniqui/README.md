@@ -16,6 +16,8 @@ Los scripts se importan entre sí por ruta relativa (`render.py`, `cuerpo.py`), 
 | `maniqui.py delta_v1_1 it4c maniqui_out ropa_out beta` | quita pelo y lentes, cráneo de bola, archivo de ropa | ver comentarios |
 | `cuerpo.py in out` | torso, brazos superiores y piernas sobre el esqueleto | perfiles en el código |
 | `manos_pies.py in out` | antebrazo, palma, dedos y pies | radios en el código |
+| `cabeza.py in out` | cabeza canónica paramétrica (bola medida de Gamma, cara aplanada, cuencas, nariz, boca, orejas) + cuello recto; reemplaza Cabeza/Craneo/Cuello | medidas en el código |
+| `headzoom.py in out [y_min]` / `facezoom.py in out` | acercamientos de cabeza (4 vistas) y cara (0/25/60°) | — |
 | `render.py in.glb out.png [zup]` | 4 vistas, sombreado plano | — |
 | `measure.py cand gamma beta prefijo` | IoU de silueta en 4 vistas + mapa de diferencias | — |
 | `pose.py in.glb clip t out.png` | posa un clip (skinning en numpy) | clips: Wave, Sit-pose, Nod… |

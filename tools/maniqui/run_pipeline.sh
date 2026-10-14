@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Reproduce la cadena Beta + Gamma -> Alastor Delta -> v1.1 -> maniquí v0.2 + ropa.
+# Reproduce la cadena Beta + Gamma -> Alastor Delta -> v1.1 -> maniquí v0.2 + ropa -> maniquí v0.7 (cabeza canónica).
 # Sin Blender: solo Python 3 + numpy + Pillow. Correr desde la raíz del repo:
 #   bash tools/maniqui/run_pipeline.sh [carpeta_salida]
 set -euo pipefail
@@ -25,6 +25,10 @@ echo "5/6 torso, brazos y piernas limpios (v0.1)"
 $PY cuerpo.py "$OUT/maniqui_v0.glb" "$OUT/maniqui_v0_1.glb"
 echo "6/6 manos con dedos y pies (v0.2)"
 $PY manos_pies.py "$OUT/maniqui_v0_1.glb" "$OUT/maniqui_v0_2.glb"
+
+echo "7/7 cabeza canónica paramétrica + cuello nuevo (v0.7)"
+$PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_7.glb"
+$PY facezoom.py "$OUT/maniqui_v0_7.glb" "$OUT/maniqui_v0_7_cara.png"
 
 echo "Previews:"
 $PY render.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_2_4vistas.png" >/dev/null

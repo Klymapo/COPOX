@@ -12,6 +12,7 @@ Autor: Elio (Claude), sesión de Claude Code. Rama `propuesta-maniqui-hibrido` (
 | `assets/alastor_delta/alastor_delta.glb` | **Alastor Delta**: cuerpo de Beta redondeado, más la cabeza, los faldones, el pantalón y los zapatos de Gamma. Rig y 29 clips de Beta. Silueta IoU 97.8 % contra Gamma (frente 98.1 · 3/4 97.3 · lado 97.4 · espalda 98.3). |
 | `assets/alastor_delta/alastor_delta_v1_1_cuello.glb` | Delta con el cuello remodelado (pieza nueva bajo la mandíbula). IoU 97.2 %. |
 | `assets/maniqui/maniqui_v0_2.glb` | **Primer avatar de la biblioteca**: gris, sin ropa, pelo ni lentes. Cabeza redonda, torso, brazos, piernas, manos con 5 dedos y pies generados sobre el esqueleto. 56 huesos, 29 clips, pesos válidos. |
+| `assets/maniqui/maniqui_v0_7.glb` | **Maniquí v0.7**: v0.2 con cabeza canónica paramétrica (una sola pieza cerrada: bola medida de Gamma, cara aplanada, cuencas, nariz, boca, orejas) y cuello recto nuevo. Sin restos de Gamma en la cabeza. Rama `propuesta-cabeza-canonica`. |
 | `assets/maniqui/ropa_alastor_v0.glb` | Ropa de Alastor en 10 piezas con el mismo esqueleto: pelo, lentes, gabardina (2), camisa, corbata, cinturón, hebilla, faldones+pantalón y zapatos. |
 | `assets/*/previews/` | Vistas finales (no renders de iteración). |
 | `tools/maniqui/` | Scripts y `run_pipeline.sh`. |
@@ -44,7 +45,7 @@ Herramientas de control: `render.py` (4 vistas), `measure.py` (IoU de silueta co
 
 ## Pendientes (prioridad)
 
-1. **Banda entre la ceja y la oreja del maniquí**: quedan restos de la cara de Gamma (piel en sombra y bordes de la línea del pelo) sin piel limpia debajo. Borrarlos deja la cara hueca. Solución propuesta: un **parche nuevo** (anillo entre el borde de la bola del cráneo y la cara), igual que el cuello.
+1. ~~Banda entre la ceja y la oreja del maniquí~~ **Resuelto en v0.7** (`tools/maniqui/cabeza.py`): se descartó la cabeza de Gamma completa. Tres intentos de conservar sus rasgos (recorte por cajas, parche continuo fundido, horneado por raycast) fallaron por los aros de los lentes fundidos en la malla y el ruido de la decimación. La cabeza ahora es paramétrica; los rasgos de cada personaje se ajustan con parámetros (separación de ojos, nariz, boca), no pegando malla. Pendiente: afinar esos parámetros para Alastor y bajar los 17k tris de la cabeza (SEG/RING) si Godot lo pide.
 2. Probar Delta y el maniquí en Godot 4.7 (GL Compatibility): sombreado suave, costura del cuello, faldones con `SpringBoneSimulator3D`.
 3. Gestos faciales: la cabeza de Gamma va rígida al hueso `Head` y los 16 blendshapes de Beta se perdieron. Plan acordado con Admin: ojos como textura deslizante (iris arriba = "ojos en blanco" de Theo), mandíbula con hueso y shape key de boca ("soplar café" de Alastor).
 4. Manos y pies del maniquí son tubos lisos (funcionan con el rig, pero son primitivos). Pulirlos o sustituirlos por una mano canónica.
