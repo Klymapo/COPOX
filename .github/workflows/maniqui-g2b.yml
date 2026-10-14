@@ -43,7 +43,7 @@ jobs:
               assert v['new_shell_watertight_as_one_primitive']
               assert not v['original_face_to_new_shell_welded']
               assert v['bones']==56 and v['clips']==29
-          print('Tres cascarones craneales comparten índices y están cerrados tras reimportar')
+          print('Cinco cascarones craneales comparten índices y están cerrados tras reimportar')
           PY
       - name: Reimportación independiente de los GLB con Trimesh
         run: |
@@ -70,7 +70,13 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/maniqui/g2b/G2B_lamina_4v_candidatos.png docs/maniqui/g2b/G2B_reporte.json
           if ! git diff --cached --quiet; then
-            git commit -m "evidence(g2b): 3 cascarones conectados, preview real y topología medida"
-            git pull --rebase origin experimentos/maniqui-g2b-piel-craneofacial
-            git push origin HEAD:experimentos/maniqui-g2b-piel-craneofacial
+            git commit -m "evidence(g2b): cinco perfiles craneofaciales, previews reales y métricas"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin experimentos/maniqui-g2b-piel-craneofacial
+              git rebase origin/experimentos/maniqui-g2b-piel-craneofacial
+              if git push origin HEAD:experimentos/maniqui-g2b-piel-craneofacial; then exit 0; fi
+              sleep 2
+            done
+            echo "No se pudo publicar capturas por cambios concurrentes" >&2
+            exit 1
           fi
