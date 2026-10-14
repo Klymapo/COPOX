@@ -55,3 +55,16 @@ La solución de compatibilidad no reconstruye expresión, parpadeo ni morph targ
 - `docs/maniqui/g2b/godot/`
 
 **Seguridad:** no se borró ni reemplazó r3, no se ejecutó Godot sobre el juego AlasTheo, no hubo commits de GLB aprobados y no se fusionó PR #41 ni sus dependencias. La procedencia histórica mixta de r3 se mantiene y el laboratorio no constituye autorización legal para su redistribución final.
+
+
+## Auditoría adicional de variación real de clips en Godot
+
+La ejecución oficial [Godot 4.7.2 #38611485007](https://github.com/Klymapo/COPOX/actions/runs/38611485007) finalizó **SUCCESS** para baseline/r4/r5 **en copias saneadas**. Además de 29 nombres y 56 pistas importadas por clip, `tests/g2b_godot_validate.gd` inspeccionó variación de los valores de las claves de animación:
+
+- **13/29 clips** contienen al menos alguna pista con valores de clave distintos.
+- **16/29 clips** no presentan variación entre claves; entre ellos `Blink`, `Talk` y la pose `Sit-pose`. Un clip estático puede representar una pose legítima, pero **no puede considerarse una animación facial dinámica demostrada**.
+- De los 16 sin variación, **15 canales faciales originales** estaban asociados a una malla sin vértices; sus curvas no pudieron importarse como expresiones funcionales. La lista auditada por el saneador está en `godot/baseline_sanitizer.json`.
+- Cada clip importado tiene 56 pistas porque el importador Godot puede completar pistas esqueléticas con la pose de reposo. **Tener 56 pistas no equivale a movimiento real.**
+- La comparación de transformaciones en cada fotograma ni la actuación facial se han verificado: sigue `FACIAL_ACTING_RECONSTRUCTION_REQUIRED`.
+
+Artifact compatible verificable (30 días): [Godot GLB corregidos sin aprobación](https://github.com/Klymapo/COPOX/actions/runs/38611485007/artifacts/11918071025) para r3/r4/r5. Este paquete no sustituye los históricos. Los cinco candidatos originales experimentales están en [artifacts #38610356268](https://github.com/Klymapo/COPOX/actions/runs/38610356268/artifacts/11917262829). `Godot import OK` es distinto de `Animación funcional OK` y de `Likeness aprobado`.
