@@ -22,6 +22,8 @@ func _initialize() -> void:
         var detail: Dictionary = {
             "skeletons": [],
             "animation_names": [],
+            "animation_track_counts": {},
+            "clips_without_tracks": [],
             "mesh_surfaces": 0,
             "finite_bone_poses": true,
             "scene_imported": true,
@@ -30,6 +32,8 @@ func _initialize() -> void:
         var names: Array = detail["animation_names"]
         names.sort()
         detail["animation_count"] = names.size()
+        detail["functional_animation_count"] = names.size() - (detail["clips_without_tracks"] as Array).size()
+        detail["animation_names_not_equal_functional_clips"] = ((detail["clips_without_tracks"] as Array).size() > 0)
         var bones: Array = detail["skeletons"]
         if bones.size() != 1 or bones[0] != 56:
             push_error("Skeleton not preserved: " + path + " = " + str(bones))
@@ -56,6 +60,8 @@ func _initialize() -> void:
         "candidate_count": paths.size() - 1,
         "all_checks_passed": not failed,
         "models": outputs,
+        "import_tests_passed_not_animation_functionality": true,
+        "facial_animation_restoration_completed": false,
         "limitations": [
             "Import and skeleton/clip checks only, not artistic validation",
             "Not all intermediate animation frames simulated",
@@ -82,7 +88,13 @@ func _collect(node: Node, detail: Dictionary) -> void:
     if node is AnimationPlayer:
         var player: AnimationPlayer = node as AnimationPlayer
         for clip in player.get_animation_list():
-            (detail["animation_names"] as Array).append(str(clip))
+            var clip_name: String = str(clip)
+            (detail["animation_names"] as Array).append(clip_name)
+            var clip_resource: Animation = player.get_animation(clip)
+            var tracks: int = clip_resource.get_track_count() if clip_resource else 0
+            detail["animation_track_counts"][clip_name] = tracks
+            if tracks == 0:
+                (detail["clips_without_tracks"] as Array).append(clip_name)
     if node is MeshInstance3D:
         var mesh_instance: MeshInstance3D = node as MeshInstance3D
         if mesh_instance.mesh:
