@@ -1,7 +1,9 @@
 import copy
-import unittest\nimport numpy as np
+import unittest
+import numpy as np
 from copox.geometry.eyewear_guard import (
-    find_labeled_eyewear,remove_labeled_eyewear,eyewear_gate,\n    classify_possible_embedded_eyewear
+    find_labeled_eyewear,remove_labeled_eyewear,eyewear_gate,
+    classify_possible_embedded_eyewear
 )
 
 
