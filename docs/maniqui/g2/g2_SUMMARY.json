@@ -1,0 +1,1722 @@
+{
+  "source": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "up": "Y",
+  "front": "+Z",
+  "units": "m",
+  "rig_bones": 56,
+  "clips": 29,
+  "face_triangles_original": 3894,
+  "protection_policy": "Si algun vértice de un triángulo cae dentro de una región protegida, el triángulo completo queda congelado",
+  "all_original_files_preserved": true,
+  "generated_glb": false,
+  "artistic_references_authoritative": false,
+  "note": "Sólo pruebas de máscaras. No se afirma que la banda extraída forme un contorno homólogo",
+  "recommendation": {
+    "status": "RESEARCH_REQUIRED",
+    "next_step": "Identificar el borde cuttable de la isla principal, proteger facciones en cada vista y construir una línea cerrada de corte con topología sin bifurcaciones",
+    "no_candidate_promoted": true,
+    "stitch_not_allowed": true,
+    "required_before_glb": [
+      "referencias_del_mismo_personaje",
+      "mascara_proteccion_verificada",
+      "loop_cerrado_anatomico",
+      "atributos_uv_skin_validados",
+      "reimportacion_glb_y_prueba_godot"
+    ]
+  },
+  "profiles": [
+    {
+      "profile": "conservador",
+      "faces_total": 3894,
+      "protected": 2946,
+      "review": 162,
+      "candidate": 167,
+      "unaffected": 619,
+      "candidate_rim_sectors": 33,
+      "total_rim_sectors": 128,
+      "rim_sector_coverage": 0.2578125,
+      "band_distance_m": 0.015,
+      "clearance_m": 0.008,
+      "candidate_max_distance_m": 0.014925529173708684,
+      "protected_preserved_by_construction": true,
+      "cut_allowed": false,
+      "limitations": [
+        "Angular/cKDTree selection is a corridor, not an anatomical edge loop",
+        "Semantic boxes must be artist-verified with every reference",
+        "Removing candidate faces can create new open boundaries"
+      ],
+      "protection_counts_overlapping": {
+        "cejas_ojos": 745,
+        "nariz": 747,
+        "boca": 653,
+        "oreja_izquierda": 266,
+        "oreja_derecha": 305,
+        "mandibula": 525,
+        "nuca_baja": 938
+      },
+      "boundary_before_indices": {
+        "edges": 3310,
+        "nonmanifold": 0
+      },
+      "boundary_if_candidate_faces_removed": {
+        "edges": 3165,
+        "nonmanifold": 0
+      },
+      "contour_topology_after_hypothetical_cut": {
+        "state": "INSPECTED_NOT_WELDED",
+        "quantized_positions": 3357,
+        "boundary_edges": 847,
+        "nonmanifold_edges": 1,
+        "boundary_components": 28,
+        "closed_simple_cycles": 21,
+        "potential_full_ring_cycles": 0,
+        "target_rim_vertices": 128,
+        "distance_limit_m": 0.025,
+        "highest_rim_coverage": 0.79688,
+        "components": [
+          {
+            "vertices": 292,
+            "edges": 293,
+            "closed_simple_cycle": false,
+            "branch_vertices": 1,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.79688,
+            "rim_nearby_count": 102,
+            "distance_to_rim_p95_mm": 34.243,
+            "distance_to_rim_median_mm": 11.615,
+            "bounds_min": [
+              -0.232153,
+              0.605843,
+              -0.245966
+            ],
+            "bounds_max": [
+              0.233768,
+              0.813741,
+              0.177653
+            ]
+          },
+          {
+            "vertices": 20,
+            "edges": 20,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.04688,
+            "rim_nearby_count": 6,
+            "distance_to_rim_p95_mm": 411.787,
+            "distance_to_rim_median_mm": 272.259,
+            "bounds_min": [
+              -0.225573,
+              0.691856,
+              -0.103917
+            ],
+            "bounds_max": [
+              -0.199033,
+              0.734992,
+              -0.011675
+            ]
+          },
+          {
+            "vertices": 4,
+            "edges": 4,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03906,
+            "rim_nearby_count": 5,
+            "distance_to_rim_p95_mm": 441.712,
+            "distance_to_rim_median_mm": 289.715,
+            "bounds_min": [
+              -0.108362,
+              0.72622,
+              0.165094
+            ],
+            "bounds_max": [
+              -0.0876,
+              0.736224,
+              0.176793
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03906,
+            "rim_nearby_count": 5,
+            "distance_to_rim_p95_mm": 435.243,
+            "distance_to_rim_median_mm": 292.032,
+            "bounds_min": [
+              -0.166453,
+              0.685399,
+              0.103824
+            ],
+            "bounds_max": [
+              -0.160552,
+              0.68615,
+              0.180653
+            ]
+          },
+          {
+            "vertices": 199,
+            "edges": 225,
+            "closed_simple_cycle": false,
+            "branch_vertices": 25,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03125,
+            "rim_nearby_count": 4,
+            "distance_to_rim_p95_mm": 404.126,
+            "distance_to_rim_median_mm": 192.972,
+            "bounds_min": [
+              -0.166977,
+              0.601673,
+              0.159808
+            ],
+            "bounds_max": [
+              0.122968,
+              0.741011,
+              0.208941
+            ]
+          },
+          {
+            "vertices": 16,
+            "edges": 16,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03125,
+            "rim_nearby_count": 4,
+            "distance_to_rim_p95_mm": 424.388,
+            "distance_to_rim_median_mm": 268.838,
+            "bounds_min": [
+              0.026352,
+              0.707499,
+              0.187253
+            ],
+            "bounds_max": [
+              0.127693,
+              0.731055,
+              0.206845
+            ]
+          },
+          {
+            "vertices": 7,
+            "edges": 8,
+            "closed_simple_cycle": false,
+            "branch_vertices": 1,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03125,
+            "rim_nearby_count": 4,
+            "distance_to_rim_p95_mm": 443.706,
+            "distance_to_rim_median_mm": 292.775,
+            "bounds_min": [
+              -0.115196,
+              0.709028,
+              0.167809
+            ],
+            "bounds_max": [
+              -0.098573,
+              0.717343,
+              0.17324
+            ]
+          },
+          {
+            "vertices": 38,
+            "edges": 43,
+            "closed_simple_cycle": false,
+            "branch_vertices": 5,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.02344,
+            "rim_nearby_count": 3,
+            "distance_to_rim_p95_mm": 431.512,
+            "distance_to_rim_median_mm": 264.945,
+            "bounds_min": [
+              -0.123749,
+              0.66359,
+              0.159934
+            ],
+            "bounds_max": [
+              -0.053072,
+              0.725858,
+              0.182391
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.02344,
+            "rim_nearby_count": 3,
+            "distance_to_rim_p95_mm": 432.71,
+            "distance_to_rim_median_mm": 299.436,
+            "bounds_min": [
+              0.107148,
+              0.70814,
+              0.166786
+            ],
+            "bounds_max": [
+              0.117316,
+              0.717682,
+              0.170997
+            ]
+          },
+          {
+            "vertices": 7,
+            "edges": 7,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.00781,
+            "rim_nearby_count": 1,
+            "distance_to_rim_p95_mm": 425.408,
+            "distance_to_rim_median_mm": 285.752,
+            "bounds_min": [
+              -0.035017,
+              0.715572,
+              0.180878
+            ],
+            "bounds_max": [
+              -0.026319,
+              0.741431,
+              0.188521
+            ]
+          },
+          {
+            "vertices": 91,
+            "edges": 91,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 217.351,
+            "distance_to_rim_median_mm": 144.58,
+            "bounds_min": [
+              -0.158005,
+              0.53587,
+              -0.143544
+            ],
+            "bounds_max": [
+              0.160109,
+              0.557645,
+              0.200881
+            ]
+          },
+          {
+            "vertices": 37,
+            "edges": 46,
+            "closed_simple_cycle": false,
+            "branch_vertices": 9,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 440.556,
+            "distance_to_rim_median_mm": 296.318,
+            "bounds_min": [
+              0.086433,
+              0.610806,
+              0.181391
+            ],
+            "bounds_max": [
+              0.165595,
+              0.692903,
+              0.201967
+            ]
+          },
+          {
+            "vertices": 15,
+            "edges": 15,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 449.801,
+            "distance_to_rim_median_mm": 300.056,
+            "bounds_min": [
+              -0.026864,
+              0.609493,
+              0.208711
+            ],
+            "bounds_max": [
+              0.026339,
+              0.652141,
+              0.242001
+            ]
+          },
+          {
+            "vertices": 11,
+            "edges": 13,
+            "closed_simple_cycle": false,
+            "branch_vertices": 2,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 431.225,
+            "distance_to_rim_median_mm": 295.001,
+            "bounds_min": [
+              0.021526,
+              0.641308,
+              0.198807
+            ],
+            "bounds_max": [
+              0.028041,
+              0.653188,
+              0.209391
+            ]
+          },
+          {
+            "vertices": 10,
+            "edges": 10,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 438.055,
+            "distance_to_rim_median_mm": 293.429,
+            "bounds_min": [
+              -0.033193,
+              0.63055,
+              0.195949
+            ],
+            "bounds_max": [
+              -0.026226,
+              0.649069,
+              0.20848
+            ]
+          },
+          {
+            "vertices": 8,
+            "edges": 8,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 423.483,
+            "distance_to_rim_median_mm": 310.286,
+            "bounds_min": [
+              -0.222786,
+              0.703391,
+              -0.131243
+            ],
+            "bounds_max": [
+              -0.199735,
+              0.734685,
+              -0.105095
+            ]
+          },
+          {
+            "vertices": 8,
+            "edges": 9,
+            "closed_simple_cycle": false,
+            "branch_vertices": 1,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 437.271,
+            "distance_to_rim_median_mm": 293.758,
+            "bounds_min": [
+              -0.025977,
+              0.648816,
+              0.197986
+            ],
+            "bounds_max": [
+              -0.016079,
+              0.654292,
+              0.208542
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 428.929,
+            "distance_to_rim_median_mm": 283.852,
+            "bounds_min": [
+              -0.070032,
+              0.708467,
+              0.175221
+            ],
+            "bounds_max": [
+              -0.060753,
+              0.709758,
+              0.181359
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 423.669,
+            "distance_to_rim_median_mm": 278.938,
+            "bounds_min": [
+              -0.061769,
+              0.698831,
+              0.175508
+            ],
+            "bounds_max": [
+              -0.049992,
+              0.707203,
+              0.175604
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 421.644,
+            "distance_to_rim_median_mm": 279.322,
+            "bounds_min": [
+              -0.045209,
+              0.681964,
+              0.175773
+            ],
+            "bounds_max": [
+              -0.043542,
+              0.687178,
+              0.176635
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 432.044,
+            "distance_to_rim_median_mm": 290.99,
+            "bounds_min": [
+              -0.02396,
+              0.706818,
+              0.192358
+            ],
+            "bounds_max": [
+              -0.02084,
+              0.71791,
+              0.194964
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 430.038,
+            "distance_to_rim_median_mm": 287.583,
+            "bounds_min": [
+              -0.023546,
+              0.670894,
+              0.191156
+            ],
+            "bounds_max": [
+              -0.02108,
+              0.679325,
+              0.191839
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 433.658,
+            "distance_to_rim_median_mm": 290.842,
+            "bounds_min": [
+              -0.02152,
+              0.666426,
+              0.195304
+            ],
+            "bounds_max": [
+              -0.020427,
+              0.678162,
+              0.198359
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 424.201,
+            "distance_to_rim_median_mm": 289.262,
+            "bounds_min": [
+              0.01903,
+              0.678808,
+              0.191821
+            ],
+            "bounds_max": [
+              0.020214,
+              0.679827,
+              0.193607
+            ]
+          }
+        ],
+        "stitch_ready": false,
+        "why_not_ready": "El análisis de ciclos no verifica winding, anatomía, UV/skin ni ausencia de autointersecciones; requiere segmentación/protecciones confirmadas y homologación real.",
+        "semantic_guard": "No convertir automáticamente un ciclo pequeño de ojo/oreja en contorno facial."
+      },
+      "triangles_removed_in_hypothesis": 167,
+      "protected_triangles_removed": 0,
+      "remaining_original_face_triangles": 3727,
+      "cut_gate_status": "BLOCKED_FOR_REVIEW",
+      "why_not_cut": "No hay máscara anatómica respaldada por vistas de la cabeza base ni contorno 128 a 128; la región tiene discontinuidades"
+    },
+    {
+      "profile": "intermedio",
+      "faces_total": 3894,
+      "protected": 2946,
+      "review": 252,
+      "candidate": 268,
+      "unaffected": 428,
+      "candidate_rim_sectors": 46,
+      "total_rim_sectors": 128,
+      "rim_sector_coverage": 0.359375,
+      "band_distance_m": 0.026,
+      "clearance_m": 0.016,
+      "candidate_max_distance_m": 0.025908065147704294,
+      "protected_preserved_by_construction": true,
+      "cut_allowed": false,
+      "limitations": [
+        "Angular/cKDTree selection is a corridor, not an anatomical edge loop",
+        "Semantic boxes must be artist-verified with every reference",
+        "Removing candidate faces can create new open boundaries"
+      ],
+      "protection_counts_overlapping": {
+        "cejas_ojos": 745,
+        "nariz": 747,
+        "boca": 653,
+        "oreja_izquierda": 266,
+        "oreja_derecha": 305,
+        "mandibula": 525,
+        "nuca_baja": 938
+      },
+      "boundary_before_indices": {
+        "edges": 3310,
+        "nonmanifold": 0
+      },
+      "boundary_if_candidate_faces_removed": {
+        "edges": 3116,
+        "nonmanifold": 0
+      },
+      "contour_topology_after_hypothetical_cut": {
+        "state": "INSPECTED_NOT_WELDED",
+        "quantized_positions": 3357,
+        "boundary_edges": 832,
+        "nonmanifold_edges": 1,
+        "boundary_components": 28,
+        "closed_simple_cycles": 21,
+        "potential_full_ring_cycles": 0,
+        "target_rim_vertices": 128,
+        "distance_limit_m": 0.025,
+        "highest_rim_coverage": 0.79688,
+        "components": [
+          {
+            "vertices": 277,
+            "edges": 278,
+            "closed_simple_cycle": false,
+            "branch_vertices": 1,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.79688,
+            "rim_nearby_count": 102,
+            "distance_to_rim_p95_mm": 34.243,
+            "distance_to_rim_median_mm": 12.004,
+            "bounds_min": [
+              -0.232153,
+              0.605843,
+              -0.245336
+            ],
+            "bounds_max": [
+              0.233768,
+              0.813741,
+              0.177653
+            ]
+          },
+          {
+            "vertices": 20,
+            "edges": 20,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.04688,
+            "rim_nearby_count": 6,
+            "distance_to_rim_p95_mm": 411.787,
+            "distance_to_rim_median_mm": 272.259,
+            "bounds_min": [
+              -0.225573,
+              0.691856,
+              -0.103917
+            ],
+            "bounds_max": [
+              -0.199033,
+              0.734992,
+              -0.011675
+            ]
+          },
+          {
+            "vertices": 4,
+            "edges": 4,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03906,
+            "rim_nearby_count": 5,
+            "distance_to_rim_p95_mm": 441.712,
+            "distance_to_rim_median_mm": 289.715,
+            "bounds_min": [
+              -0.108362,
+              0.72622,
+              0.165094
+            ],
+            "bounds_max": [
+              -0.0876,
+              0.736224,
+              0.176793
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03906,
+            "rim_nearby_count": 5,
+            "distance_to_rim_p95_mm": 435.243,
+            "distance_to_rim_median_mm": 292.032,
+            "bounds_min": [
+              -0.166453,
+              0.685399,
+              0.103824
+            ],
+            "bounds_max": [
+              -0.160552,
+              0.68615,
+              0.180653
+            ]
+          },
+          {
+            "vertices": 199,
+            "edges": 225,
+            "closed_simple_cycle": false,
+            "branch_vertices": 25,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03125,
+            "rim_nearby_count": 4,
+            "distance_to_rim_p95_mm": 404.126,
+            "distance_to_rim_median_mm": 192.972,
+            "bounds_min": [
+              -0.166977,
+              0.601673,
+              0.159808
+            ],
+            "bounds_max": [
+              0.122968,
+              0.741011,
+              0.208941
+            ]
+          },
+          {
+            "vertices": 16,
+            "edges": 16,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03125,
+            "rim_nearby_count": 4,
+            "distance_to_rim_p95_mm": 424.388,
+            "distance_to_rim_median_mm": 268.838,
+            "bounds_min": [
+              0.026352,
+              0.707499,
+              0.187253
+            ],
+            "bounds_max": [
+              0.127693,
+              0.731055,
+              0.206845
+            ]
+          },
+          {
+            "vertices": 7,
+            "edges": 8,
+            "closed_simple_cycle": false,
+            "branch_vertices": 1,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03125,
+            "rim_nearby_count": 4,
+            "distance_to_rim_p95_mm": 443.706,
+            "distance_to_rim_median_mm": 292.775,
+            "bounds_min": [
+              -0.115196,
+              0.709028,
+              0.167809
+            ],
+            "bounds_max": [
+              -0.098573,
+              0.717343,
+              0.17324
+            ]
+          },
+          {
+            "vertices": 38,
+            "edges": 43,
+            "closed_simple_cycle": false,
+            "branch_vertices": 5,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.02344,
+            "rim_nearby_count": 3,
+            "distance_to_rim_p95_mm": 431.512,
+            "distance_to_rim_median_mm": 264.945,
+            "bounds_min": [
+              -0.123749,
+              0.66359,
+              0.159934
+            ],
+            "bounds_max": [
+              -0.053072,
+              0.725858,
+              0.182391
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.02344,
+            "rim_nearby_count": 3,
+            "distance_to_rim_p95_mm": 432.71,
+            "distance_to_rim_median_mm": 299.436,
+            "bounds_min": [
+              0.107148,
+              0.70814,
+              0.166786
+            ],
+            "bounds_max": [
+              0.117316,
+              0.717682,
+              0.170997
+            ]
+          },
+          {
+            "vertices": 7,
+            "edges": 7,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.00781,
+            "rim_nearby_count": 1,
+            "distance_to_rim_p95_mm": 425.408,
+            "distance_to_rim_median_mm": 285.752,
+            "bounds_min": [
+              -0.035017,
+              0.715572,
+              0.180878
+            ],
+            "bounds_max": [
+              -0.026319,
+              0.741431,
+              0.188521
+            ]
+          },
+          {
+            "vertices": 91,
+            "edges": 91,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 217.351,
+            "distance_to_rim_median_mm": 144.58,
+            "bounds_min": [
+              -0.158005,
+              0.53587,
+              -0.143544
+            ],
+            "bounds_max": [
+              0.160109,
+              0.557645,
+              0.200881
+            ]
+          },
+          {
+            "vertices": 37,
+            "edges": 46,
+            "closed_simple_cycle": false,
+            "branch_vertices": 9,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 440.556,
+            "distance_to_rim_median_mm": 296.318,
+            "bounds_min": [
+              0.086433,
+              0.610806,
+              0.181391
+            ],
+            "bounds_max": [
+              0.165595,
+              0.692903,
+              0.201967
+            ]
+          },
+          {
+            "vertices": 15,
+            "edges": 15,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 449.801,
+            "distance_to_rim_median_mm": 300.056,
+            "bounds_min": [
+              -0.026864,
+              0.609493,
+              0.208711
+            ],
+            "bounds_max": [
+              0.026339,
+              0.652141,
+              0.242001
+            ]
+          },
+          {
+            "vertices": 11,
+            "edges": 13,
+            "closed_simple_cycle": false,
+            "branch_vertices": 2,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 431.225,
+            "distance_to_rim_median_mm": 295.001,
+            "bounds_min": [
+              0.021526,
+              0.641308,
+              0.198807
+            ],
+            "bounds_max": [
+              0.028041,
+              0.653188,
+              0.209391
+            ]
+          },
+          {
+            "vertices": 10,
+            "edges": 10,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 438.055,
+            "distance_to_rim_median_mm": 293.429,
+            "bounds_min": [
+              -0.033193,
+              0.63055,
+              0.195949
+            ],
+            "bounds_max": [
+              -0.026226,
+              0.649069,
+              0.20848
+            ]
+          },
+          {
+            "vertices": 8,
+            "edges": 8,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 423.483,
+            "distance_to_rim_median_mm": 310.286,
+            "bounds_min": [
+              -0.222786,
+              0.703391,
+              -0.131243
+            ],
+            "bounds_max": [
+              -0.199735,
+              0.734685,
+              -0.105095
+            ]
+          },
+          {
+            "vertices": 8,
+            "edges": 9,
+            "closed_simple_cycle": false,
+            "branch_vertices": 1,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 437.271,
+            "distance_to_rim_median_mm": 293.758,
+            "bounds_min": [
+              -0.025977,
+              0.648816,
+              0.197986
+            ],
+            "bounds_max": [
+              -0.016079,
+              0.654292,
+              0.208542
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 428.929,
+            "distance_to_rim_median_mm": 283.852,
+            "bounds_min": [
+              -0.070032,
+              0.708467,
+              0.175221
+            ],
+            "bounds_max": [
+              -0.060753,
+              0.709758,
+              0.181359
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 423.669,
+            "distance_to_rim_median_mm": 278.938,
+            "bounds_min": [
+              -0.061769,
+              0.698831,
+              0.175508
+            ],
+            "bounds_max": [
+              -0.049992,
+              0.707203,
+              0.175604
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 421.644,
+            "distance_to_rim_median_mm": 279.322,
+            "bounds_min": [
+              -0.045209,
+              0.681964,
+              0.175773
+            ],
+            "bounds_max": [
+              -0.043542,
+              0.687178,
+              0.176635
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 432.044,
+            "distance_to_rim_median_mm": 290.99,
+            "bounds_min": [
+              -0.02396,
+              0.706818,
+              0.192358
+            ],
+            "bounds_max": [
+              -0.02084,
+              0.71791,
+              0.194964
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 430.038,
+            "distance_to_rim_median_mm": 287.583,
+            "bounds_min": [
+              -0.023546,
+              0.670894,
+              0.191156
+            ],
+            "bounds_max": [
+              -0.02108,
+              0.679325,
+              0.191839
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 433.658,
+            "distance_to_rim_median_mm": 290.842,
+            "bounds_min": [
+              -0.02152,
+              0.666426,
+              0.195304
+            ],
+            "bounds_max": [
+              -0.020427,
+              0.678162,
+              0.198359
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 424.201,
+            "distance_to_rim_median_mm": 289.262,
+            "bounds_min": [
+              0.01903,
+              0.678808,
+              0.191821
+            ],
+            "bounds_max": [
+              0.020214,
+              0.679827,
+              0.193607
+            ]
+          }
+        ],
+        "stitch_ready": false,
+        "why_not_ready": "El análisis de ciclos no verifica winding, anatomía, UV/skin ni ausencia de autointersecciones; requiere segmentación/protecciones confirmadas y homologación real.",
+        "semantic_guard": "No convertir automáticamente un ciclo pequeño de ojo/oreja en contorno facial."
+      },
+      "triangles_removed_in_hypothesis": 268,
+      "protected_triangles_removed": 0,
+      "remaining_original_face_triangles": 3626,
+      "cut_gate_status": "BLOCKED_FOR_REVIEW",
+      "why_not_cut": "No hay máscara anatómica respaldada por vistas de la cabeza base ni contorno 128 a 128; la región tiene discontinuidades"
+    },
+    {
+      "profile": "amplio",
+      "faces_total": 3894,
+      "protected": 2946,
+      "review": 350,
+      "candidate": 334,
+      "unaffected": 264,
+      "candidate_rim_sectors": 50,
+      "total_rim_sectors": 128,
+      "rim_sector_coverage": 0.390625,
+      "band_distance_m": 0.042,
+      "clearance_m": 0.024,
+      "candidate_max_distance_m": 0.04176533648534291,
+      "protected_preserved_by_construction": true,
+      "cut_allowed": false,
+      "limitations": [
+        "Angular/cKDTree selection is a corridor, not an anatomical edge loop",
+        "Semantic boxes must be artist-verified with every reference",
+        "Removing candidate faces can create new open boundaries"
+      ],
+      "protection_counts_overlapping": {
+        "cejas_ojos": 745,
+        "nariz": 747,
+        "boca": 653,
+        "oreja_izquierda": 266,
+        "oreja_derecha": 305,
+        "mandibula": 525,
+        "nuca_baja": 938
+      },
+      "boundary_before_indices": {
+        "edges": 3310,
+        "nonmanifold": 0
+      },
+      "boundary_if_candidate_faces_removed": {
+        "edges": 3068,
+        "nonmanifold": 0
+      },
+      "contour_topology_after_hypothetical_cut": {
+        "state": "INSPECTED_NOT_WELDED",
+        "quantized_positions": 3357,
+        "boundary_edges": 832,
+        "nonmanifold_edges": 1,
+        "boundary_components": 27,
+        "closed_simple_cycles": 20,
+        "potential_full_ring_cycles": 0,
+        "target_rim_vertices": 128,
+        "distance_limit_m": 0.025,
+        "highest_rim_coverage": 0.79688,
+        "components": [
+          {
+            "vertices": 279,
+            "edges": 281,
+            "closed_simple_cycle": false,
+            "branch_vertices": 2,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.79688,
+            "rim_nearby_count": 102,
+            "distance_to_rim_p95_mm": 34.243,
+            "distance_to_rim_median_mm": 13.051,
+            "bounds_min": [
+              -0.232153,
+              0.605843,
+              -0.245336
+            ],
+            "bounds_max": [
+              0.233768,
+              0.813741,
+              0.177653
+            ]
+          },
+          {
+            "vertices": 20,
+            "edges": 20,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.04688,
+            "rim_nearby_count": 6,
+            "distance_to_rim_p95_mm": 411.787,
+            "distance_to_rim_median_mm": 272.259,
+            "bounds_min": [
+              -0.225573,
+              0.691856,
+              -0.103917
+            ],
+            "bounds_max": [
+              -0.199033,
+              0.734992,
+              -0.011675
+            ]
+          },
+          {
+            "vertices": 4,
+            "edges": 4,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03906,
+            "rim_nearby_count": 5,
+            "distance_to_rim_p95_mm": 441.712,
+            "distance_to_rim_median_mm": 289.715,
+            "bounds_min": [
+              -0.108362,
+              0.72622,
+              0.165094
+            ],
+            "bounds_max": [
+              -0.0876,
+              0.736224,
+              0.176793
+            ]
+          },
+          {
+            "vertices": 199,
+            "edges": 225,
+            "closed_simple_cycle": false,
+            "branch_vertices": 25,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03125,
+            "rim_nearby_count": 4,
+            "distance_to_rim_p95_mm": 404.126,
+            "distance_to_rim_median_mm": 192.972,
+            "bounds_min": [
+              -0.166977,
+              0.601673,
+              0.159808
+            ],
+            "bounds_max": [
+              0.122968,
+              0.741011,
+              0.208941
+            ]
+          },
+          {
+            "vertices": 16,
+            "edges": 16,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03125,
+            "rim_nearby_count": 4,
+            "distance_to_rim_p95_mm": 424.388,
+            "distance_to_rim_median_mm": 268.838,
+            "bounds_min": [
+              0.026352,
+              0.707499,
+              0.187253
+            ],
+            "bounds_max": [
+              0.127693,
+              0.731055,
+              0.206845
+            ]
+          },
+          {
+            "vertices": 7,
+            "edges": 8,
+            "closed_simple_cycle": false,
+            "branch_vertices": 1,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.03125,
+            "rim_nearby_count": 4,
+            "distance_to_rim_p95_mm": 443.706,
+            "distance_to_rim_median_mm": 292.775,
+            "bounds_min": [
+              -0.115196,
+              0.709028,
+              0.167809
+            ],
+            "bounds_max": [
+              -0.098573,
+              0.717343,
+              0.17324
+            ]
+          },
+          {
+            "vertices": 38,
+            "edges": 43,
+            "closed_simple_cycle": false,
+            "branch_vertices": 5,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.02344,
+            "rim_nearby_count": 3,
+            "distance_to_rim_p95_mm": 431.512,
+            "distance_to_rim_median_mm": 264.945,
+            "bounds_min": [
+              -0.123749,
+              0.66359,
+              0.159934
+            ],
+            "bounds_max": [
+              -0.053072,
+              0.725858,
+              0.182391
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.02344,
+            "rim_nearby_count": 3,
+            "distance_to_rim_p95_mm": 432.71,
+            "distance_to_rim_median_mm": 299.436,
+            "bounds_min": [
+              0.107148,
+              0.70814,
+              0.166786
+            ],
+            "bounds_max": [
+              0.117316,
+              0.717682,
+              0.170997
+            ]
+          },
+          {
+            "vertices": 7,
+            "edges": 7,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.00781,
+            "rim_nearby_count": 1,
+            "distance_to_rim_p95_mm": 425.408,
+            "distance_to_rim_median_mm": 285.752,
+            "bounds_min": [
+              -0.035017,
+              0.715572,
+              0.180878
+            ],
+            "bounds_max": [
+              -0.026319,
+              0.741431,
+              0.188521
+            ]
+          },
+          {
+            "vertices": 91,
+            "edges": 91,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 217.351,
+            "distance_to_rim_median_mm": 144.58,
+            "bounds_min": [
+              -0.158005,
+              0.53587,
+              -0.143544
+            ],
+            "bounds_max": [
+              0.160109,
+              0.557645,
+              0.200881
+            ]
+          },
+          {
+            "vertices": 37,
+            "edges": 46,
+            "closed_simple_cycle": false,
+            "branch_vertices": 9,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 440.556,
+            "distance_to_rim_median_mm": 296.318,
+            "bounds_min": [
+              0.086433,
+              0.610806,
+              0.181391
+            ],
+            "bounds_max": [
+              0.165595,
+              0.692903,
+              0.201967
+            ]
+          },
+          {
+            "vertices": 15,
+            "edges": 15,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 449.801,
+            "distance_to_rim_median_mm": 300.056,
+            "bounds_min": [
+              -0.026864,
+              0.609493,
+              0.208711
+            ],
+            "bounds_max": [
+              0.026339,
+              0.652141,
+              0.242001
+            ]
+          },
+          {
+            "vertices": 11,
+            "edges": 13,
+            "closed_simple_cycle": false,
+            "branch_vertices": 2,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 431.225,
+            "distance_to_rim_median_mm": 295.001,
+            "bounds_min": [
+              0.021526,
+              0.641308,
+              0.198807
+            ],
+            "bounds_max": [
+              0.028041,
+              0.653188,
+              0.209391
+            ]
+          },
+          {
+            "vertices": 10,
+            "edges": 10,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 438.055,
+            "distance_to_rim_median_mm": 293.429,
+            "bounds_min": [
+              -0.033193,
+              0.63055,
+              0.195949
+            ],
+            "bounds_max": [
+              -0.026226,
+              0.649069,
+              0.20848
+            ]
+          },
+          {
+            "vertices": 8,
+            "edges": 8,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 423.483,
+            "distance_to_rim_median_mm": 310.286,
+            "bounds_min": [
+              -0.222786,
+              0.703391,
+              -0.131243
+            ],
+            "bounds_max": [
+              -0.199735,
+              0.734685,
+              -0.105095
+            ]
+          },
+          {
+            "vertices": 8,
+            "edges": 9,
+            "closed_simple_cycle": false,
+            "branch_vertices": 1,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 437.271,
+            "distance_to_rim_median_mm": 293.758,
+            "bounds_min": [
+              -0.025977,
+              0.648816,
+              0.197986
+            ],
+            "bounds_max": [
+              -0.016079,
+              0.654292,
+              0.208542
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 428.929,
+            "distance_to_rim_median_mm": 283.852,
+            "bounds_min": [
+              -0.070032,
+              0.708467,
+              0.175221
+            ],
+            "bounds_max": [
+              -0.060753,
+              0.709758,
+              0.181359
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 423.669,
+            "distance_to_rim_median_mm": 278.938,
+            "bounds_min": [
+              -0.061769,
+              0.698831,
+              0.175508
+            ],
+            "bounds_max": [
+              -0.049992,
+              0.707203,
+              0.175604
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 421.644,
+            "distance_to_rim_median_mm": 279.322,
+            "bounds_min": [
+              -0.045209,
+              0.681964,
+              0.175773
+            ],
+            "bounds_max": [
+              -0.043542,
+              0.687178,
+              0.176635
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 432.044,
+            "distance_to_rim_median_mm": 290.99,
+            "bounds_min": [
+              -0.02396,
+              0.706818,
+              0.192358
+            ],
+            "bounds_max": [
+              -0.02084,
+              0.71791,
+              0.194964
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 430.038,
+            "distance_to_rim_median_mm": 287.583,
+            "bounds_min": [
+              -0.023546,
+              0.670894,
+              0.191156
+            ],
+            "bounds_max": [
+              -0.02108,
+              0.679325,
+              0.191839
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 433.658,
+            "distance_to_rim_median_mm": 290.842,
+            "bounds_min": [
+              -0.02152,
+              0.666426,
+              0.195304
+            ],
+            "bounds_max": [
+              -0.020427,
+              0.678162,
+              0.198359
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 424.201,
+            "distance_to_rim_median_mm": 289.262,
+            "bounds_min": [
+              0.01903,
+              0.678808,
+              0.191821
+            ],
+            "bounds_max": [
+              0.020214,
+              0.679827,
+              0.193607
+            ]
+          },
+          {
+            "vertices": 3,
+            "edges": 3,
+            "closed_simple_cycle": true,
+            "branch_vertices": 0,
+            "endpoint_vertices": 0,
+            "rim_nearby_fraction": 0.0,
+            "rim_nearby_count": 0,
+            "distance_to_rim_p95_mm": 424.43,
+            "distance_to_rim_median_mm": 289.403,
+            "bounds_min": [
+              0.019956,
+              0.66304,
+              0.192202
+            ],
+            "bounds_max": [
+              0.021211,
+              0.67092,
+              0.195753
+            ]
+          }
+        ],
+        "stitch_ready": false,
+        "why_not_ready": "El análisis de ciclos no verifica winding, anatomía, UV/skin ni ausencia de autointersecciones; requiere segmentación/protecciones confirmadas y homologación real.",
+        "semantic_guard": "No convertir automáticamente un ciclo pequeño de ojo/oreja en contorno facial."
+      },
+      "triangles_removed_in_hypothesis": 334,
+      "protected_triangles_removed": 0,
+      "remaining_original_face_triangles": 3560,
+      "cut_gate_status": "BLOCKED_FOR_REVIEW",
+      "why_not_cut": "No hay máscara anatómica respaldada por vistas de la cabeza base ni contorno 128 a 128; la región tiene discontinuidades"
+    }
+  ]
+}

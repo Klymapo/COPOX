@@ -1,0 +1,95 @@
+name: COPOX · G2 · Cut Probe GLB experimental
+on:
+  push:
+    branches: [experimentos/maniqui-g2-anatomic-contour]
+    paths:
+      - 'tools/maniqui/g2_cut_probe.py'
+      - '.github/workflows/maniqui-g2-cut-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: copox-g2-cut-probe
+  cancel-in-progress: true
+jobs:
+  cut-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy scipy pillow
+      - name: Generar candidato hermano de r3, sin modificar la fuente
+        run: |
+          python -m tools.maniqui.g2_cut_probe
+          python tools/maniqui/auditar_v03.py \
+             assets/maniqui/maniqui_v0_3_r3.glb \
+             docs/maniqui/g2/g2_cut_audit.json \
+             assets/maniqui/maniqui_v0_3_r3_g2_cut_probe.glb
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('docs/maniqui/g2')
+          aud=json.loads((root/'g2_cut_audit.json').read_text())['candidates'][0]
+          assert aud['preservation_pass'], 'Facciones Codex r3 dañadas'
+          assert aud['missing_feature_triangles']==0
+          assert aud['missing_ear_triangles']==0
+          assert aud['rig_animation_original_bytes_equal']
+          print('Recorte experimental: facciones originales y rig intactos')
+          PY
+      - name: Capturas reales, 87 muestras de animación y diferencias de silueta
+        run: |
+          python tools/maniqui/evaluar_v03.py \
+             assets/maniqui/maniqui_v0_3_r3.glb \
+             assets/maniqui/maniqui_v0_3_r3_g2_cut_probe.glb \
+             docs/maniqui/g2/probe_evidence
+      - name: Comparativas reales antes vs despues (no generativas)
+        run: |
+          python - <<'PY'
+          from PIL import Image,ImageDraw
+          from pathlib import Path
+          root=Path("docs/maniqui/g2/probe_evidence")
+          for label,source in [("head","detalle"),("full","4v")]:
+              base=Image.open(root/f"base_{source}.png").convert("RGB")
+              after=Image.open(root/f"candidato_{source}.png").convert("RGB")
+              if base.size!=after.size:raise RuntimeError("Diferentes cámaras para comparación")
+              w,h=base.size
+              dest=Image.new("RGB",(w,2*h+64),"white")
+              dest.paste(base,(0,32));dest.paste(after,(0,h+64))
+              d=ImageDraw.Draw(dest)
+              d.text((15,8),"R3 original (arriba) - 4 vistas reales",fill=(0,0,0))
+              d.text((15,h+42),"G2 Cut Probe (abajo) - NO SOLDADO / NO APROBADO",fill=(0,0,0))
+              dest.save(root/f"G2_comparativa_{label}.png")
+          PY
+      - name: Guardar paquete descargable, sin aprobación
+        uses: actions/upload-artifact@v4
+        with:
+          name: g2-r3-cut-probe-glb-y-cuatro-vistas
+          path: |
+            assets/maniqui/maniqui_v0_3_r3_g2_cut_probe.glb
+            docs/maniqui/g2/g2_cut_probe_report.json
+            docs/maniqui/g2/g2_cut_audit.json
+            docs/maniqui/g2/probe_evidence/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Versionar candidato SOLO en rama de experimentos
+        run: |
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/maniqui/maniqui_v0_3_r3_g2_cut_probe.glb \
+            docs/maniqui/g2/g2_cut_probe_report.json \
+            docs/maniqui/g2/g2_cut_audit.json \
+            docs/maniqui/g2/probe_evidence/base_detalle.png \
+            docs/maniqui/g2/probe_evidence/candidato_detalle.png \
+            docs/maniqui/g2/probe_evidence/base_4v.png \
+            docs/maniqui/g2/probe_evidence/candidato_4v.png \
+            docs/maniqui/g2/probe_evidence/G2_comparativa_head.png \
+            docs/maniqui/g2/probe_evidence/G2_comparativa_full.png \
+            docs/maniqui/g2/probe_evidence/evaluacion.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(g2): GLB cut-only r3 conservador, no soldado ni aprobado"
+            git pull --rebase origin experimentos/maniqui-g2-anatomic-contour
+            git push origin HEAD:experimentos/maniqui-g2-anatomic-contour
+          fi

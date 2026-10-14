@@ -1,0 +1,53 @@
+{
+  "model": "assets/maniqui/maniqui_v0_3_r3_g2_cut_probe.glb",
+  "candidate_sha256": "4ec9217c0758e473993e7665f4fbbefa83844798702f131beb3470666e081b94",
+  "status": "REJECTED_VISUAL_REGRESSION",
+  "promote": false,
+  "merge_as_model": false,
+  "reviewer": "GPT-6 visual inspection of real GLB four-view comparison",
+  "review_type": "multiview_model_render_review",
+  "reference": "docs/maniqui/g2/probe_evidence/G2_comparativa_head.png",
+  "comparisons": [
+    "front",
+    "three_quarter",
+    "side",
+    "back"
+  ],
+  "observations": [
+    {
+      "view": "front",
+      "finding": "Se ven espacios luminosos adicionales alrededor de la parte central de la cara; la transición craneofacial sigue fragmentada",
+      "severity": "moderate"
+    },
+    {
+      "view": "three_quarter",
+      "finding": "La línea cap-cara no es continua y quedan placas laterales; diferencia general pequeña",
+      "severity": "moderate"
+    },
+    {
+      "view": "side",
+      "finding": "El recorte expone huecos claros bajo el borde frontal y detrás de oreja; no hay nueva piel sustituta",
+      "severity": "high"
+    },
+    {
+      "view": "back",
+      "finding": "Se mantienen placas y huecos de nuca; no hay soldadura de cráneo y tejido posterior",
+      "severity": "high"
+    }
+  ],
+  "quantitative_silhouette_baseline_iou": [
+    0.9993095044679122,
+    0.9999781964067679,
+    0.9978492821630076,
+    0.9993095044679122
+  ],
+  "rig_bones": 56,
+  "clips": 29,
+  "animation_samples": 87,
+  "protected_codex_face_triangles_lost": 0,
+  "protected_codex_ear_triangles_lost": 0,
+  "verified": "Preservación técnica parcial sin reparación topológica ni semejanza artística aprobada",
+  "blocking_reason": "Anatomic Cut retiró triángulos sin reconstruir piel contigua. Los huecos se vuelven visibles pese al IoU alto.",
+  "next_method": "G2-B: crear banda nueva con contorno anatómico seguro y conexión indexada; no aumentar indiscriminadamente el corte ni promover este candidato",
+  "note": "Revisión del render del candidato, no comparación artística calibrada con todas las referencias originales del personaje."
+}
