@@ -4,6 +4,9 @@ on:
     branches: [experimentos/maniqui-g2c2-contorno-facial]
     paths:
       - 'copox/geometry/regional_acceptance.py'
+      - 'copox/engine.py'
+      - 'copox/contracts.py'
+      - 'tests/test_engine_regions.py'
       - 'copox/geometry/partial_loft.py'
       - 'tests/test_regional_acceptance.py'
       - 'tests/test_partial_loft.py'
@@ -30,6 +33,8 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_regional_acceptance.py' -v
           python -m unittest discover -s tests -p 'test_partial_loft.py' -v
+          python -m unittest discover -s tests -p 'test_engine_regions.py' -v
+          python -m unittest discover -s tests -p 'test_engine_preflight.py' -v
       - name: Isolated real GLB nape candidate, original r3 untouched
         run: |
           python -m tools.maniqui.region_nuca_probe
