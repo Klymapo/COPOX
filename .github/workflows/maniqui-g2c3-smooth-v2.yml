@@ -40,7 +40,7 @@ jobs:
           from pathlib import Path
           x=json.loads(Path('docs/maniqui/g2c3/visible/v2/REPORTE_G2C3.json').read_text())
           assert x['status']=='G2C3_V2_SMOOTH_VISIBILITY_MEASURED__ARTISTIC_REVIEW_REQUIRED'
-          assert not x['candidates']['completo']['model_approved']
+          assert not x['candidates']['completo_v2']['model_approved']
           assert x['original_glb_untouched']
           for c in x['candidates'].values():
               assert c['shave']['protected_triangles_removed']==0
