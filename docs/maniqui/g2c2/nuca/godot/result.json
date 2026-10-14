@@ -93,6 +93,44 @@
         56
       ],
       "surface_count": 24
+    },
+    "res://nuca_eased.glb": {
+      "animations": [
+        "Blink",
+        "GlassesPush",
+        "GlassesPushFace",
+        "HandsBehind",
+        "HandsBehindFace",
+        "HeadShake",
+        "HeadShakeFace",
+        "Idle",
+        "IdleFace",
+        "IdlePockets",
+        "IdlePocketsFace",
+        "Laugh",
+        "LaughFace",
+        "Nod",
+        "NodFace",
+        "Point",
+        "PointFace",
+        "Shrug",
+        "ShrugFace",
+        "Sit-pose",
+        "Talk",
+        "TalkGesture",
+        "TalkGestureFace",
+        "Think",
+        "ThinkFace",
+        "TieAdjust",
+        "TieAdjustFace",
+        "Wave",
+        "WaveFace"
+      ],
+      "finite_bone_positions": true,
+      "skeletons": [
+        56
+      ],
+      "surface_count": 24
     }
   },
   "scope": "nuca",
