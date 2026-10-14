@@ -1,0 +1,153 @@
+{
+  "title": "G2-C3 V2 calva-nuca 18 anillos lisos + mechón suelto + patillas",
+  "status": "G2C3_V2_SMOOTH_VISIBILITY_MEASURED__ARTISTIC_REVIEW_REQUIRED",
+  "glbs_are_unapproved": true,
+  "original_glb_untouched": true,
+  "base_source_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "candidates": {
+    "conservador_v2": {
+      "profile": "conservador_v2",
+      "glb": "assets/maniqui/maniqui_v0_3_r3_g2c3_nuca_conservador_v2_SIN_APROBAR.glb",
+      "sha256": "ae5270ff2c94d836adfd8424d90fe40e3ba800d2311dc99ee1243aa95d765a44",
+      "source_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+      "dome": {
+        "original_cranium_faces": 8064,
+        "added_faces": 1944,
+        "added_vertices": 990,
+        "anchored_original_rim_vertices": 55,
+        "lowest_new_y": 0.532,
+        "new_rear_most_z": -0.2342617963326769,
+        "original_skull_vertices_unchanged": true,
+        "original_skull_faces_unchanged": true,
+        "complete_manifold": false,
+        "outward_orientation": 0.17653268492584792,
+        "profile_rows": 18
+      },
+      "shave": {
+        "original_face_primitive_triangles": 3894,
+        "removed_rear_hair_triangles": 900,
+        "removed_sideburn_triangles": 34,
+        "removed_isolated_behind_ear_triangles": 0,
+        "remaining_face_triangles": 2960,
+        "preserved_protected_triangles": 2215,
+        "protected_triangles_removed": 0,
+        "face_vertices_untouched": true,
+        "ear_vertices_untouched": true,
+        "morph_targets_untouched": true,
+        "not_all_hair_assumed_removed": true
+      },
+      "face_eyes_mouth_nose_vertices_unchanged": true,
+      "ear_vertices_unchanged": true,
+      "all_original_face_morphs_unchanged": true,
+      "rig_bones": 56,
+      "animation_definitions": 29,
+      "godot_import_pending": true,
+      "visual_approval": false,
+      "model_approved": false,
+      "source_untouched": true,
+      "visual_difference": {
+        "FRENTE": {
+          "changed_pixels": 2047,
+          "changed_fraction": 0.01053
+        },
+        "PERFIL IZQ": {
+          "changed_pixels": 3928,
+          "changed_fraction": 0.0202
+        },
+        "NUCA": {
+          "changed_pixels": 12271,
+          "changed_fraction": 0.0631
+        },
+        "NUCA 3/4": {
+          "changed_pixels": 7047,
+          "changed_fraction": 0.03624
+        },
+        "PERFIL DER": {
+          "changed_pixels": 4442,
+          "changed_fraction": 0.02284
+        },
+        "NUCA 3/4 DER": {
+          "changed_pixels": 9408,
+          "changed_fraction": 0.04838
+        }
+      },
+      "visibility_gate_pass": true
+    },
+    "completo_v2": {
+      "profile": "completo_v2",
+      "glb": "assets/maniqui/maniqui_v0_3_r3_g2c3_nuca_completo_v2_SIN_APROBAR.glb",
+      "sha256": "b7998d382f13ef8997a2dc2f73539a61da9ec5aa27605897534b13d47f3517e6",
+      "source_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+      "dome": {
+        "original_cranium_faces": 8064,
+        "added_faces": 1944,
+        "added_vertices": 990,
+        "anchored_original_rim_vertices": 55,
+        "lowest_new_y": 0.532,
+        "new_rear_most_z": -0.2343293391881519,
+        "original_skull_vertices_unchanged": true,
+        "original_skull_faces_unchanged": true,
+        "complete_manifold": false,
+        "outward_orientation": 0.17997238867691415,
+        "profile_rows": 18
+      },
+      "shave": {
+        "original_face_primitive_triangles": 3894,
+        "removed_rear_hair_triangles": 998,
+        "removed_sideburn_triangles": 34,
+        "removed_isolated_behind_ear_triangles": 46,
+        "remaining_face_triangles": 2834,
+        "preserved_protected_triangles": 2169,
+        "protected_triangles_removed": 0,
+        "face_vertices_untouched": true,
+        "ear_vertices_untouched": true,
+        "morph_targets_untouched": true,
+        "not_all_hair_assumed_removed": true
+      },
+      "face_eyes_mouth_nose_vertices_unchanged": true,
+      "ear_vertices_unchanged": true,
+      "all_original_face_morphs_unchanged": true,
+      "rig_bones": 56,
+      "animation_definitions": 29,
+      "godot_import_pending": true,
+      "visual_approval": false,
+      "model_approved": false,
+      "source_untouched": true,
+      "visual_difference": {
+        "FRENTE": {
+          "changed_pixels": 2408,
+          "changed_fraction": 0.01238
+        },
+        "PERFIL IZQ": {
+          "changed_pixels": 5756,
+          "changed_fraction": 0.0296
+        },
+        "NUCA": {
+          "changed_pixels": 12707,
+          "changed_fraction": 0.06535
+        },
+        "NUCA 3/4": {
+          "changed_pixels": 8423,
+          "changed_fraction": 0.04331
+        },
+        "PERFIL DER": {
+          "changed_pixels": 5337,
+          "changed_fraction": 0.02745
+        },
+        "NUCA 3/4 DER": {
+          "changed_pixels": 11174,
+          "changed_fraction": 0.05746
+        }
+      },
+      "visibility_gate_pass": true
+    }
+  },
+  "comparison": "docs/maniqui/g2c3/visible/v2/G2C3_ANTES_DESPUES_6V.png",
+  "new_surface_mask": "docs/maniqui/g2c3/visible/v2/G2C3_NUEVA_SUPERFICIE_6V.png",
+  "limitations": [
+    "No se garantiza soldadura craneofacial ni manifold",
+    "Orejas protegidas; patillas solapadas con oreja pueden quedar",
+    "La fidelidad artística y animaciones deformadas requieren inspección",
+    "No sustituir modelo sin aprobación"
+  ]
+}
