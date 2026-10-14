@@ -89,3 +89,76 @@ def stitch_parts(a: MeshPart,b: MeshPart,
                   "glb_export_warning":"Un export por primitivas puede volver a partir la topología",
                   "self_intersection_checked":False})
     return StitchResult(vertices,joined,attrs,labels,stats)
+
+# G2-C is additive: the established equal-loop implementation remains stable.
+def stitch_parts_unequal(a: MeshPart, b: MeshPart,
+                         loop_a: list[int], loop_b: list[int], *,
+                         max_gap: float,
+                         max_aspect_ratio: float = 50.,
+                         bridge_material: int = 0,
+                         morph_targets_present: bool = False) -> StitchResult:
+    """Unir bucles distintos conservando atributos por vértice, materiales por cara.
+
+    Devuelve estructura indexada en RAM, SIN EXPORTAR GLB.
+    Prohíbe reconstruir morphs no respaldados o ignorar datos del skin.
+    """
+    from copox.geometry.advancing_stitch import stitch_unequal_loops
+
+    if morph_targets_present:
+        raise GeometryError("Morph targets deben preservarse; G2-C aún no los transfiere")
+    if type(bridge_material)!=int or bridge_material<0:
+        raise GeometryError("Material del puente inválido")
+    verified=[]
+    for part in (a,b):
+        p=np.asarray(part.positions,dtype=float)
+        f=np.asarray(part.faces,dtype=np.int64)
+        if (p.ndim!=2 or p.shape[1]!=3 or not len(p)
+            or not np.isfinite(p).all() or f.ndim!=2 or f.shape[1]!=3
+            or not len(f) or f.min()<0 or f.max()>=len(p)):
+            raise GeometryError("Posiciones/caras de pieza inválidas")
+        if set(part.attributes)-_ALLOWED:
+            raise GeometryError("Atributos desconocidos: no descartar automáticamente")
+        if ("WEIGHTS_0" in part.attributes)!=("JOINTS_0" in part.attributes):
+            raise GeometryError("JOINTS_0/WEIGHTS_0 deben permanecer juntos")
+        if type(part.material_id)!=int or part.material_id<0:
+            raise GeometryError("ID de material inválido")
+        for key,x in part.attributes.items():
+            val=np.asarray(x)
+            if len(val)!=len(p) or not np.isfinite(val).all():
+                raise GeometryError(f"Atributo {key} no coincide con vértices")
+            if key in {"JOINTS_0","WEIGHTS_0"} and val.shape!=(len(p),4):
+                raise GeometryError(f"Atributo {key} debe ser Nx4")
+        if "WEIGHTS_0" in part.attributes:
+            weights=np.asarray(part.attributes["WEIGHTS_0"],dtype=float)
+            joints=np.asarray(part.attributes["JOINTS_0"])
+            if (np.any(weights<0) or
+                np.any(abs(weights.sum(axis=1)-1)>1e-3) or
+                np.any(joints<0) or not np.all(joints==np.floor(joints))):
+                raise GeometryError("Pesos del rig o índices de hueso inválidos")
+        verified.append((p,f))
+    if set(a.attributes)!=set(b.attributes):
+        raise GeometryError("Diferencias de UV/skin/material por vértice entre piezas")
+    for key in a.attributes:
+        if np.asarray(a.attributes[key]).shape[1:]!=np.asarray(b.attributes[key]).shape[1:]:
+            raise GeometryError("Atributos incompatibles: "+key)
+    pa,fa=verified[0];pb,fb=verified[1]
+    merged_vertices=np.vstack((pa,pb))
+    merged_faces=np.vstack((fa,fb+len(pa)))
+    loop_b_global=np.asarray(loop_b,dtype=np.int64)+len(pa)
+    result=stitch_unequal_loops(merged_vertices,merged_faces,
+                               loop_a,loop_b_global,
+                               max_gap=max_gap,max_aspect_ratio=max_aspect_ratio)
+    attrs={k:np.concatenate((np.asarray(a.attributes[k]),
+                              np.asarray(b.attributes[k])),axis=0)
+           for k in a.attributes}
+    labels=np.concatenate((
+        np.full(len(fa),a.material_id,dtype=np.int32),
+        np.full(len(fb),b.material_id,dtype=np.int32),
+        np.full(len(result.new_faces),bridge_material,dtype=np.int32)))
+    report={**result.report,
+            "all_original_vertex_attributes_retained":True,
+            "per_face_material_ids_preserved":True,
+            "uv_and_skin_validated_in_memory":True,
+            "exported_glb_verified":False,
+            "original_meshes_may_have_nonbridged_boundaries":False}
+    return StitchResult(result.positions,result.faces,attrs,labels,report)
