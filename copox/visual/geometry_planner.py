@@ -46,12 +46,12 @@ def _geometry_ready(kind: str, data: dict) -> tuple[bool, list[str], dict]:
             else:
                 a=plane
                 vectors=("direction","region_center","region_radii")
-                if any(not isinstance(a[k], list) or len(a[k])!=3 or not all(_number(abs(t)) for t in a[k]) for k in vectors):
+                if any(not isinstance(a[k], list) or len(a[k])!=3 or not all(isinstance(t,(int,float)) and not isinstance(t,bool) and math.isfinite(t) for t in a[k]) for k in vectors):
                     blockers.append("invalid_vectors")
                 elif not all(t>0 for t in a["region_radii"]) or sum(t*t for t in a["direction"])<1e-15:
                     blockers.append("invalid_direction_or_radii")
                 if not (_number(a["max_displacement"],positive=True) and
-                        _number(abs(a["target_projection"])) and
+                        isinstance(a["target_projection"],(int,float)) and not isinstance(a["target_projection"],bool) and math.isfinite(a["target_projection"]) and
                         _number(a["strength"]) and 0<=a["strength"]<=1 and
                         _number(a["falloff"],positive=True) and 0<a["falloff"]<=1):
                     blockers.append("invalid_scully_budget")
@@ -73,9 +73,9 @@ def _geometry_ready(kind: str, data: dict) -> tuple[bool, list[str], dict]:
         if not isinstance(plane,dict) or set(("normal","offset"))-set(plane):
             blockers.append("cut_plane_not_defined")
         elif (not isinstance(plane["normal"],list) or len(plane["normal"])!=3 or
-              not all(_number(abs(v)) for v in plane["normal"]) or
+              not all(isinstance(v,(int,float)) and not isinstance(v,bool) and math.isfinite(v) for v in plane["normal"]) or
               sum(v*v for v in plane["normal"])<1e-15 or
-              not _number(abs(plane["offset"]))):
+              not isinstance(plane["offset"],(int,float)) or isinstance(plane["offset"],bool) or not math.isfinite(plane["offset"])):
             blockers.append("cut_plane_invalid")
         else:
             args={"plane":plane,"requires_protected_faces_mask":True,
@@ -163,6 +163,11 @@ def propose(visual_report: dict, geometry_diagnostics: dict) -> dict:
         ready, blockers, arguments=_geometry_ready(kind,measurements)
         if contradictory:
             blockers.append("conflicting_reference_views")
+        # Un reporte sin medición reproducible sólo debe producir hipótesis,
+        # nunca un plan listo para probar automáticamente.
+        provenance=measurements.get("measurement_provenance")
+        if not isinstance(provenance,dict) or not isinstance(provenance.get("source_sha256"),str) or len(provenance.get("source_sha256",""))!=64 or not provenance.get("measurement_method") or not provenance.get("coordinate_system"):
+            blockers.append("missing_measurement_provenance")
         # No manual review means a geometrical hypothesis, not permission to modify.
         unreviewed=[c.get("reference_id") for c in comparisons if c.get("manual_review") is None]
         status="PLAN_READY_FOR_SANDBOX" if ready and not contradictory else "RESEARCH_REQUIRED"
