@@ -71,3 +71,6 @@ Se alcanza el máximo autorizado de tres iteraciones. **PLATEAU, no continuar co
 ### Archivo físico de evidencia en Drive
 
 [Descargar paquete de tres iteraciones](https://drive.google.com/file/d/1qn3U81XXWgrbXLr21w-ic7lgRbTIaKnX/view?usp=drivesdk). Subido a COPOX/SHRINKWRAP BETA-GAMMA, 17,224,658 bytes; SHA-256 `27e14af9b2e05d14c5883574b6ffabe831d4c77dd2767c6f6fe4cf566f15b6e3`. Incluye 53 archivos: 30 hojas PNG (120 paneles), tres GLB y herramientas/auditorías/manifiesto. La copia de este reporte dentro del ZIP es el corte anterior a añadir este enlace, para evitar autorreferencia del hash. No se alteró organización ni permisos de archivos previos.
+
+### Estado de publicación
+Cambios de modelos/código/auditorías preparados en commit local `afc268b`. **Push pendiente**: la revisión automática rechazó publicar este paquete en el repositorio público sin una autorización explícita adicional de divulgación. No se intentó otra vía para publicarlo. Las tres bitácoras de Drive registran resultados, rechazos y este bloqueo; el ZIP privado está subido y verificado. PR #34 permanece sin estos commits hasta recibir autorización. Esta nota no equivale a publicación ni a aprobación artística.
