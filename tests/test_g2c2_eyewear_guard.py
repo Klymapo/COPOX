@@ -1,7 +1,7 @@
 import copy
-import unittest
+import unittest\nimport numpy as np
 from copox.geometry.eyewear_guard import (
-    find_labeled_eyewear,remove_labeled_eyewear,eyewear_gate
+    find_labeled_eyewear,remove_labeled_eyewear,eyewear_gate,\n    classify_possible_embedded_eyewear
 )
 
 
@@ -52,6 +52,26 @@ class EyewearGuardTests(unittest.TestCase):
             {"extras":{"pieza":x}} for x in
             ["Eye","Eyelashes","Eyebrows","Iris","LensFlare","Ojos","Nariz","Orejas","Glasses"]]
         self.assertEqual(len(find_labeled_eyewear(src)),1)
+
+    def test_protected_eyes_override_eyewear_proximity(self):
+        p=np.array([[0,0,0],[.001,0,0],[0,.001,0],
+                    [.020,0,0],[.021,0,0],[.020,.001,0]],float)
+        f=np.array([[0,1,2],[3,4,5]],int)
+        original=p.copy()
+        r=classify_possible_embedded_eyewear(
+            p,f,np.array([[0,.0001,0],[.020,.0001,0]]),
+            np.array([True,False]),search_radius_m=.005)
+        self.assertTrue(r["near_protected"][0])
+        self.assertFalse(r["near_unprotected_for_review"][0])
+        self.assertTrue(r["near_unprotected_for_review"][1])
+        self.assertFalse(r["remove_allowed"])
+        np.testing.assert_array_equal(original,p)
+
+    def test_residue_requires_protected_array(self):
+        p=np.array([[0,0,0],[1,0,0],[0,1,0]],float)
+        with self.assertRaises(ValueError):
+            classify_possible_embedded_eyewear(p,np.array([[0,1,2]]),p,
+                                                np.zeros(3,dtype=bool))
 
     def test_gate_requires_eyewear_free_target(self):
         base=miniature()
