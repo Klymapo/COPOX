@@ -12,6 +12,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image,ImageDraw
 from copox.geometry.anatomic_roi import RegionBox,classify_anatomic_band
+from copox.geometry.contour_graph import inspect_contour_graph
 sys.path.insert(0,str(Path("tools/maniqui").resolve()))
 import render
 
@@ -97,6 +98,7 @@ def main():
         make_sheet(tris,fc,[.57,.57,.57],name,OUT/f"g2_mascara_{name}.png")
         kept=f[~roi.candidate]
         before=boundary_edges(f);after=boundary_edges(kept)
+        contours=inspect_contour_graph(p,kept,rim,weld_decimals=6,correspondence_distance=.025)
         # Visualizar también el resultado hipotético en memoria, sin exportación;
         # NO confundir la eliminación no validada con una reparación.
         ghost=(tris[0][0][~roi.candidate],tris[0][1],None,None,None)
@@ -111,6 +113,7 @@ def main():
              "protection_counts_overlapping":roi.protection_counts,
              "boundary_before_indices":before,
              "boundary_if_candidate_faces_removed":after,
+             "contour_topology_after_hypothetical_cut":contours,
              "triangles_removed_in_hypothesis":int(roi.candidate.sum()),
              "protected_triangles_removed":int((roi.candidate & roi.protected).sum()),
              "remaining_original_face_triangles":int(len(kept)),
