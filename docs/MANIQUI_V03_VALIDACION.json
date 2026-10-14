@@ -1,0 +1,24 @@
+{
+  "base_sha256": "79799db01303a13886136afe4b98216aa20d512ee6f5d3549984bf638cac0986",
+  "candidate_sha256": "3c4374a0238537d838bfadc6819ed9f56da07f405401914c402ff1313b285dd8",
+  "base_path": "assets/maniqui/maniqui_v0_2.glb",
+  "candidate_path": "assets/maniqui/maniqui_v0_3.glb",
+  "status": "CANDIDATO - REVISION VISUAL OBLIGATORIA",
+  "bones": 56,
+  "clips": 29,
+  "old_craneo_verts": 557,
+  "new_craneo_verts": 579,
+  "old_craneo_tris": 1053,
+  "new_craneo_tris": 1091,
+  "patched_border_edges": 19,
+  "boundary_total_before": 59,
+  "anchors_to_face": 22,
+  "mean_anchor_distance_m": 0.03478199539113146,
+  "face_untouched": true,
+  "other_mesh_parts_untouched": true,
+  "caveats": [
+    "No recorta islas faciales antiguas",
+    "Conexión a cara es visual, no soldadura topológica",
+    "Importar a Godot para evaluar normales/deformaciones"
+  ]
+}

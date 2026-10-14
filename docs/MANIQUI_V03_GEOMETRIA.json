@@ -1,0 +1,624 @@
+{
+  "source": "assets/maniqui/maniqui_v0_3.glb",
+  "nodes": 59,
+  "bones": 56,
+  "animations": [
+    "Sit-pose",
+    "Idle-loop",
+    "IdleFace-loop",
+    "IdlePockets-loop",
+    "IdlePocketsFace-loop",
+    "HandsBehind-loop",
+    "HandsBehindFace-loop",
+    "TalkGesture-loop",
+    "TalkGestureFace-loop",
+    "GlassesPush",
+    "GlassesPushFace",
+    "TieAdjust",
+    "TieAdjustFace",
+    "Think",
+    "ThinkFace",
+    "Shrug",
+    "ShrugFace",
+    "Nod",
+    "NodFace",
+    "HeadShake",
+    "HeadShakeFace",
+    "Laugh",
+    "LaughFace",
+    "Point",
+    "PointFace",
+    "Wave",
+    "WaveFace",
+    "Talk-loop",
+    "Blink"
+  ],
+  "pieces": [
+    {
+      "name": "Cabeza",
+      "vertices": 5406,
+      "triangles": 5412,
+      "bounds": [
+        [
+          -0.2471,
+          0.5359,
+          -0.2494
+        ],
+        [
+          0.247,
+          0.8545,
+          0.2447
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 5,
+      "finite": true,
+      "boundary_edges": 4604,
+      "boundary_verts": 4528,
+      "boundary_bounds": [
+        [
+          -0.2468,
+          0.5359,
+          -0.2494
+        ],
+        [
+          0.2467,
+          0.8545,
+          0.2441
+        ]
+      ],
+      "boundary_y_percentiles": [
+        0.5359,
+        0.5884,
+        0.6285,
+        0.6819,
+        0.7196,
+        0.7662,
+        0.8545
+      ],
+      "boundary_z_percentiles": [
+        -0.2494,
+        -0.1927,
+        -0.0907,
+        0.0308,
+        0.1708,
+        0.1871,
+        0.2441
+      ],
+      "face_y_percentiles": [
+        0.5359,
+        0.5682,
+        0.6252,
+        0.6793,
+        0.7194,
+        0.7901,
+        0.8545
+      ]
+    },
+    {
+      "name": "Craneo",
+      "vertices": 579,
+      "triangles": 1091,
+      "bounds": [
+        [
+          -0.2362,
+          0.6957,
+          -0.2595
+        ],
+        [
+          0.2361,
+          0.9625,
+          0.2258
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 5,
+      "finite": true,
+      "boundary_edges": 65,
+      "boundary_verts": 65,
+      "boundary_bounds": [
+        [
+          -0.2362,
+          0.6957,
+          -0.2595
+        ],
+        [
+          0.2361,
+          0.7773,
+          0.2146
+        ]
+      ],
+      "boundary_y_percentiles": [
+        0.6957,
+        0.6958,
+        0.6961,
+        0.7428,
+        0.7591,
+        0.7596,
+        0.7773
+      ],
+      "boundary_z_percentiles": [
+        -0.2595,
+        -0.2327,
+        -0.1456,
+        0.0439,
+        0.1505,
+        0.2094,
+        0.2146
+      ],
+      "face_y_percentiles": [
+        0.6957,
+        0.728,
+        0.7924,
+        0.877,
+        0.9425,
+        0.962,
+        0.9625
+      ]
+    },
+    {
+      "name": "Cuello",
+      "vertices": 216,
+      "triangles": 360,
+      "bounds": [
+        [
+          -0.1797,
+          0.47,
+          -0.1309
+        ],
+        [
+          0.1618,
+          0.5901,
+          0.193
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 5,
+      "finite": true
+    },
+    {
+      "name": "Torso",
+      "vertices": 258,
+      "triangles": 512,
+      "bounds": [
+        [
+          -0.15,
+          0.295,
+          -0.056
+        ],
+        [
+          0.15,
+          0.515,
+          0.1
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0000000298023224,
+      "joints_max": 4,
+      "finite": true
+    },
+    {
+      "name": "PiernaL",
+      "vertices": 194,
+      "triangles": 384,
+      "bounds": [
+        [
+          0.0084,
+          0.0853,
+          -0.0376
+        ],
+        [
+          0.1324,
+          0.3098,
+          0.0864
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0000000298023224,
+      "joints_max": 18,
+      "finite": true
+    },
+    {
+      "name": "PiernaR",
+      "vertices": 194,
+      "triangles": 384,
+      "bounds": [
+        [
+          -0.1324,
+          0.0853,
+          -0.0376
+        ],
+        [
+          -0.0084,
+          0.3098,
+          0.0864
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0000000298023224,
+      "joints_max": 19,
+      "finite": true
+    },
+    {
+      "name": "BrazoL",
+      "vertices": 194,
+      "triangles": 384,
+      "bounds": [
+        [
+          0.0904,
+          0.4169,
+          -0.0741
+        ],
+        [
+          0.296,
+          0.4929,
+          0.0019
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 10,
+      "finite": true
+    },
+    {
+      "name": "BrazoR",
+      "vertices": 194,
+      "triangles": 384,
+      "bounds": [
+        [
+          -0.296,
+          0.4169,
+          -0.0741
+        ],
+        [
+          -0.0904,
+          0.4929,
+          0.0019
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 11,
+      "finite": true
+    },
+    {
+      "name": "AntebrazoL",
+      "vertices": 72,
+      "triangles": 96,
+      "bounds": [
+        [
+          0.296,
+          0.4249,
+          -0.0661
+        ],
+        [
+          0.3655,
+          0.4849,
+          -0.0061
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 12,
+      "finite": true
+    },
+    {
+      "name": "PalmaL",
+      "vertices": 98,
+      "triangles": 192,
+      "bounds": [
+        [
+          0.3655,
+          0.4349,
+          -0.0815
+        ],
+        [
+          0.4332,
+          0.4749,
+          0.0093
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 12,
+      "finite": true
+    },
+    {
+      "name": "DedoIndexL",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          0.4211,
+          0.4484,
+          -0.0117
+        ],
+        [
+          0.4834,
+          0.4654,
+          0.0076
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 30,
+      "finite": true
+    },
+    {
+      "name": "DedoMiddleL",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          0.4236,
+          0.4484,
+          -0.0333
+        ],
+        [
+          0.4913,
+          0.4654,
+          -0.0163
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 36,
+      "finite": true
+    },
+    {
+      "name": "DedoRingL",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          0.421,
+          0.4487,
+          -0.0575
+        ],
+        [
+          0.4843,
+          0.4651,
+          -0.0386
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 42,
+      "finite": true
+    },
+    {
+      "name": "DedoLittleL",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          0.4174,
+          0.4494,
+          -0.0812
+        ],
+        [
+          0.4699,
+          0.4644,
+          -0.061
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 48,
+      "finite": true
+    },
+    {
+      "name": "DedoThumbL",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          0.3577,
+          0.4384,
+          -0.0341
+        ],
+        [
+          0.4146,
+          0.464,
+          0.0455
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 54,
+      "finite": true
+    },
+    {
+      "name": "PieL",
+      "vertices": 170,
+      "triangles": 336,
+      "bounds": [
+        [
+          0.0124,
+          0.0,
+          -0.0306
+        ],
+        [
+          0.1284,
+          0.068,
+          0.1703
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0000000298023224,
+      "joints_max": 20,
+      "finite": true
+    },
+    {
+      "name": "AntebrazoR",
+      "vertices": 72,
+      "triangles": 96,
+      "bounds": [
+        [
+          -0.3655,
+          0.4249,
+          -0.0661
+        ],
+        [
+          -0.296,
+          0.4849,
+          -0.0061
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 13,
+      "finite": true
+    },
+    {
+      "name": "PalmaR",
+      "vertices": 98,
+      "triangles": 192,
+      "bounds": [
+        [
+          -0.4332,
+          0.4349,
+          -0.0815
+        ],
+        [
+          -0.3655,
+          0.4749,
+          0.0093
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 13,
+      "finite": true
+    },
+    {
+      "name": "DedoIndexR",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          -0.4834,
+          0.4484,
+          -0.0117
+        ],
+        [
+          -0.4211,
+          0.4654,
+          0.0076
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 31,
+      "finite": true
+    },
+    {
+      "name": "DedoMiddleR",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          -0.4913,
+          0.4484,
+          -0.0333
+        ],
+        [
+          -0.4236,
+          0.4654,
+          -0.0163
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 37,
+      "finite": true
+    },
+    {
+      "name": "DedoRingR",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          -0.4843,
+          0.4487,
+          -0.0575
+        ],
+        [
+          -0.421,
+          0.4651,
+          -0.0386
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 43,
+      "finite": true
+    },
+    {
+      "name": "DedoLittleR",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          -0.4699,
+          0.4494,
+          -0.0812
+        ],
+        [
+          -0.4174,
+          0.4644,
+          -0.061
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 49,
+      "finite": true
+    },
+    {
+      "name": "DedoThumbR",
+      "vertices": 61,
+      "triangles": 108,
+      "bounds": [
+        [
+          -0.4146,
+          0.4384,
+          -0.0341
+        ],
+        [
+          -0.3577,
+          0.464,
+          0.0455
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0,
+      "joints_max": 55,
+      "finite": true
+    },
+    {
+      "name": "PieR",
+      "vertices": 170,
+      "triangles": 336,
+      "bounds": [
+        [
+          -0.1284,
+          0.0,
+          -0.0306
+        ],
+        [
+          -0.0124,
+          0.068,
+          0.1703
+        ]
+      ],
+      "weight_min": 1.0,
+      "weight_max": 1.0000000298023224,
+      "joints_max": 21,
+      "finite": true
+    }
+  ]
+}
