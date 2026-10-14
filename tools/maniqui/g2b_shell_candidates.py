@@ -26,7 +26,11 @@ PARAMS={
  "r2_deep":{"rings":14,"front_end_y":.566,"side_end_y":.590,"rear_end_y":.564,
             "front_end_radius":.96,"side_end_radius":.89,"rear_end_radius":.93,"cut_face":False},
  "r3_deep_cut":{"rings":14,"front_end_y":.566,"side_end_y":.590,"rear_end_y":.564,
-                "front_end_radius":.96,"side_end_radius":.89,"rear_end_radius":.93,"cut_face":True}
+                "front_end_radius":.96,"side_end_radius":.89,"rear_end_radius":.93,"cut_face":True},
+ "r4_rear_focus":{"rings":12,"front_end_y":.698,"side_end_y":.612,"rear_end_y":.564,
+                  "front_end_radius":1.00,"side_end_radius":.90,"rear_end_radius":.93,"cut_face":False},
+ "r5_rear_focus_soft":{"rings":12,"front_end_y":.720,"side_end_y":.616,"rear_end_y":.565,
+                       "front_end_radius":1.00,"side_end_radius":.92,"rear_end_radius":.95,"cut_face":False}
 }
 ALLOWED={"POSITION","NORMAL","JOINTS_0","WEIGHTS_0","COLOR_0","TEXCOORD_0","TEXCOORD_1"}
 HEAD_BOUND=(np.array([-.29,.515,-.29]),np.array([.29,1.,.29]))
