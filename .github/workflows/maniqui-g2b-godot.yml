@@ -1,0 +1,97 @@
+name: COPOX · G2-B · Importación real Godot 4.7.2
+on:
+  push:
+    branches: [experimentos/maniqui-g2b-piel-craneofacial]
+    paths:
+      - 'tests/g2b_godot_validate.gd'
+      - '.github/workflows/maniqui-g2b-godot.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: copox-g2b-godot
+  cancel-in-progress: false
+jobs:
+  godot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Obtener GLBs experimentales ya generados en CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/g2b_payload"
+          gh run download 38610080882 --repo Klymapo/COPOX \
+            -n g2b-candidatos-glb-y-comparacion-original \
+            -D "$RUNNER_TEMP/g2b_payload"
+          test -s "$RUNNER_TEMP/g2b_payload/assets/maniqui/maniqui_v0_3_r3_g2b_r4_rear_focus.glb"
+      - name: Preparar proyecto Godot temporal (NO tocar AlasTheo)
+        run: |
+          mkdir -p "$RUNNER_TEMP/g2b_godot"
+          printf '[application]\nconfig/name="COPOX G2B QA"\n' > "$RUNNER_TEMP/g2b_godot/project.godot"
+          cp assets/maniqui/maniqui_v0_3_r3.glb "$RUNNER_TEMP/g2b_godot/baseline.glb"
+          cp "$RUNNER_TEMP/g2b_payload/assets/maniqui/maniqui_v0_3_r3_g2b_r4_rear_focus.glb" \
+             "$RUNNER_TEMP/g2b_godot/r4_rear_focus.glb"
+          cp "$RUNNER_TEMP/g2b_payload/assets/maniqui/maniqui_v0_3_r3_g2b_r5_rear_focus_soft.glb" \
+             "$RUNNER_TEMP/g2b_godot/r5_rear_focus_soft.glb"
+          cp tests/g2b_godot_validate.gd "$RUNNER_TEMP/g2b_godot/validate.gd"
+      - name: Instalar binario oficial gratuito Godot 4.7.2
+        run: |
+          curl --fail --location --retry 3 --silent --show-error \
+            -o "$RUNNER_TEMP/godot.zip" \
+            https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP"
+          chmod +x "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64"
+          "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" --headless --version
+      - name: Importar recursos glTF/GLB en Godot real
+        run: |
+          timeout 240s "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" \
+            --headless --path "$RUNNER_TEMP/g2b_godot" --import \
+            2>&1 | tee "$RUNNER_TEMP/g2b_godot/import_log.txt"
+      - name: Comprobar esqueletos, animaciones, superficies y poses
+        run: |
+          timeout 180s "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" \
+            --headless --path "$RUNNER_TEMP/g2b_godot" \
+            --script res://validate.gd \
+            2>&1 | tee "$RUNNER_TEMP/g2b_godot/qa_log.txt"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          path=Path(os.environ['RUNNER_TEMP'])/'g2b_godot/godot_result.json'
+          result=json.loads(path.read_text())
+          assert result['all_checks_passed']
+          assert result['candidate_count']==2
+          print('Godot 4.7.2: r4/r5 pasan importación/rig/animación')
+          PY
+      - name: Copiar informe y logs para evidencia
+        if: always()
+        run: |
+          mkdir -p docs/maniqui/g2b/godot
+          for n in godot_result.json import_log.txt qa_log.txt; do
+            test ! -f "$RUNNER_TEMP/g2b_godot/$n" || \
+              cp "$RUNNER_TEMP/g2b_godot/$n" docs/maniqui/g2b/godot/
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: g2b-godot-472-import-report
+          path: docs/maniqui/g2b/godot/
+          retention-days: 30
+      - name: Versionar informe Godot en rama experimental si pasó
+        run: |
+          test -f docs/maniqui/g2b/godot/godot_result.json
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/maniqui/g2b/godot
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(g2b): prueba real de importación Godot 4.7.2"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin experimentos/maniqui-g2b-piel-craneofacial
+              git rebase origin/experimentos/maniqui-g2b-piel-craneofacial
+              if git push origin HEAD:experimentos/maniqui-g2b-piel-craneofacial; then exit 0; fi
+              sleep 2
+            done
+            exit 1
+          fi
