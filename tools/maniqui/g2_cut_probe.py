@@ -40,6 +40,12 @@ def build():
         raise RuntimeError("Sin facciones o sin triángulos para prueba")
     if np.any(roi.protected & roi.candidate):
         raise RuntimeError("Se intentó cortar facción protegida")
+    # Auditoría heredada de Codex: protección adicional para TODAS las
+    # facciones frontales y orejas, aunque las nuevas cajas no las cubran.
+    legacy_features=np.any(((fp[:,2]>.155)&(np.abs(fp[:,0])<.185)&(fp[:,1]<.775))[ff],axis=1)
+    legacy_ears=np.any(((np.abs(fp[:,0])>.205)&(fp[:,1]<.712))[ff],axis=1)
+    if np.any(roi.candidate & (legacy_features|legacy_ears)):
+        raise RuntimeError("CANDIDATO RECHAZADO: recorte viola facciones/orejas de auditoría r3 heredada")
     kept=ff[~roi.candidate]
     kept_set={tuple(x) for x in kept}
     if any(tuple(x) not in kept_set for x in ff[roi.protected]):
