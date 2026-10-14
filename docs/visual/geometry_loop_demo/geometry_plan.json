@@ -39,11 +39,11 @@
       },
       "reference_coverage": {
         "uncertain": [],
+        "contradicts": [],
         "supports": [
           "reference_three_quarter",
           "reference_side"
         ],
-        "contradicts": [],
         "not_visible": [
           "reference_front",
           "reference_back"
