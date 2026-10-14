@@ -186,7 +186,7 @@ def propose(visual_report: dict, geometry_diagnostics: dict) -> dict:
     result["recommendations"].sort(key=lambda r: (PRIORITY.get(r.get("operator"),99),str(r.get("anomaly_id"))))
     result["status"]="PLANS_FOR_SANDBOX" if (result["recommendations"] and
                           not result["issues"] and
-                          any(r.get("state")=="PLAN_READY_FOR_SANDBOX" for r in result["recommendations"])) else "RESEARCH_REQUIRED"
+                          all(r.get("state")=="PLAN_READY_FOR_SANDBOX" for r in result["recommendations"])) else "RESEARCH_REQUIRED"
     return result
 
 
