@@ -5,6 +5,7 @@ on:
     paths:
       - 'tools/maniqui/r3_visual_critic_real.py'
       - 'tools/maniqui/r3_segment_islands.py'
+      - 'tools/maniqui/r3_seam_readiness.py'
       - '.github/workflows/maniqui-r3-critic-real.yml'
   workflow_dispatch:
 permissions:
@@ -39,6 +40,7 @@ jobs:
         run: |
           python -m tools.maniqui.r3_visual_critic_real
           python -m tools.maniqui.r3_segment_islands
+          python -m tools.maniqui.r3_seam_readiness
           python - <<'PY'
           import json
           from pathlib import Path
@@ -50,6 +52,8 @@ jobs:
           assert (root/'visual_review/report.json').exists()
           comp=json.loads((root/'face_islands.json').read_text())
           assert comp['component_count']>=2 and comp['no_glb_modified']
+          seam=json.loads((root/'stitch_readiness.json').read_text())
+          assert seam['cap_boundary_edges']==128 and not seam['readiness']['stitch_allowed']
           assert len(list((root/'visual_review').glob('comparison_*.png')))==6
           print('6 referencias cubiertas; Ninguna fusión ni edición')
           PY
@@ -71,6 +75,7 @@ jobs:
             docs/maniqui/r3_critic_real/geometry_plan.json \
             docs/maniqui/r3_critic_real/r3_fourviews.png \
             docs/maniqui/r3_critic_real/r3_head_details.png \
+            docs/maniqui/r3_critic_real/stitch_readiness.json \
             docs/maniqui/r3_critic_real/face_islands.json \
             docs/maniqui/r3_critic_real/r3_face_islands_4views.png
           if ! git diff --cached --quiet; then
