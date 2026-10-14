@@ -23,3 +23,7 @@ Este PR registra el trabajo. **Los binarios y scripts reproducibles están en el
 
 ## REGISTRO DE CAMBIOS
 2026-10-14: el usuario aprobó continuar sobre geometría nueva G2-C4. Se construyeron dos candidatos (conservador/óptico), inspeccionaron seis vistas por versión y se descartó el óptico por artefactos; se preservó el conservador como prototipo local. Bitácora y paquetes en Gaston. Pendientes: soldadura real de límites detrás de oreja, retopología de ojos, anillo anatómico mandíbula-cuello, importación Godot y revisión artística. NO MERGE.
+
+
+### Respaldo integral posterior (14 oct 2026)
+Se creó en Gaston/APPS/COPOX la carpeta dedicada [G2-C5](https://drive.google.com/drive/folders/1YTraae668CcWm2UspltPUvMRa8E4RCTB). Se subieron GLB conservador/experimental por separado y todo el ZIP de 12 archivos, más capturas y archivo de fuentes con hash. Se recuperaron scripts originales y reportes del ZIP, y se versionaron en el propio PR #48 junto a las láminas reales. Los dos binarios grandes siguen en Drive, **no en Git**; el README los enlaza con SHA256 exacto. El estado NO APROBADO, limitaciones de Godot y artefactos visuales se mantienen; no se autorizó merge ni cambio de modelo oficial.
