@@ -5,7 +5,7 @@ sys.path.insert(0, '.')
 import render
 exec(open('cuerpo.py').read().split('# ---------- TORSO')[0].replace("SRC, OUT = sys.argv[1], sys.argv[2]", "SRC, OUT = sys.argv[1], sys.argv[2]"))  # reutiliza carga, loft, wj
 
-def tube(points, radii, weights, seg=16, cap_top=True, cap_bot=False):
+def tube(points, radii, weights, seg=16, cap_top=True, cap_bot=False, p=None):
     """tubo a lo largo de una polilínea; anillos perpendiculares a la dirección local"""
     rings = []
     for k, (c, r) in enumerate(zip(points, radii)):
@@ -13,7 +13,7 @@ def tube(points, radii, weights, seg=16, cap_top=True, cap_bot=False):
         up = np.array([0, 1.0, 0]) if abs(d[1]) < 0.9 else np.array([1.0, 0, 0])
         ex = np.cross(up, d); ex /= np.linalg.norm(ex); ez = np.cross(d, ex)
         rings.append((np.array(c), r, r, ex, ez))
-    return loft(rings, weights, seg=seg, cap_top=cap_top, cap_bot=cap_bot)
+    return loft(rings, weights, seg=seg, cap_top=cap_top, cap_bot=cap_bot, p=p)
 
 pieces = []
 for side, sgn in (('Left', 1), ('Right', -1)):
@@ -28,26 +28,26 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     xs = [wrist[0], wrist[0] + sgn * 0.02, kn[:, 0].mean() - sgn * 0.012, kn[:, 0].mean() + sgn * 0.004]
     EY, EZ = np.array([0, 1.0, 0]), np.array([0, 0, 1.0])
     rings = [(np.array([x, wrist[1], zc * f + wrist[2] * (1 - f)]), ry, rz, EY, EZ) for x, ry, rz, f in
-             [(xs[0], 0.026, 0.032, 0.0), (xs[1], 0.027, 0.040, 0.5), (xs[2], 0.026, zw + 0.004, 1.0), (xs[3], 0.025, zw + 0.004, 1.0)]]
+             [(xs[0], 0.019, 0.030, 0.0), (xs[1], 0.018, 0.037, 0.5), (xs[2], 0.016, zw + 0.004, 1.0), (xs[3], 0.015, zw + 0.004, 1.0)]]
     pieces.append(('Palma' + side[0], loft(rings, [wj((side + 'Hand', 1))] * 4, seg=24)))
     # ----- dedos: tubo por las falanges, con punta extrapolada
-    for f, r in [('Index', 0.0115), ('Middle', 0.0115), ('Ring', 0.0110), ('Little', 0.0100)]:
-        p0, p1, p2 = P(f + 'Proximal'), P(f + 'Intermediate'), P(f + 'Distal'); tip = p2 + (p2 - p1) * 0.35          # dedos cortos de mitón
+    for f, r in [('Index', 0.0100), ('Middle', 0.0102), ('Ring', 0.0097), ('Little', 0.0086)]:
+        p0, p1, p2 = P(f + 'Proximal'), P(f + 'Intermediate'), P(f + 'Distal'); tip = p2 + (p2 - p1) * 0.8           # largo completo (ref: mano-con-regla-vistas.jpg)
         base = p0 - (p1 - p0) * 0.35
-        pieces.append(('Dedo' + f + side[0], tube([base, p0, p1, p2, tip], [r, r, r * 0.97, r * 0.95, r * 0.8],
-                       [wj((side + 'Hand', 1)), wj((side + f + 'Proximal', 1)), wj((side + f + 'Intermediate', 1)), wj((side + f + 'Distal', 1)), wj((side + f + 'Distal', 1))], seg=12)))
-    m, p1, p2 = P('ThumbMetacarpal'), P('ThumbProximal'), P('ThumbDistal'); tip = p2 + (p2 - p1) * 0.4
-    pieces.append(('DedoThumb' + side[0], tube([wrist + (m - wrist) * 0.3, m, p1, p2, tip], [0.011, 0.010, 0.0095, 0.009, 0.006],
-                   [wj((side + 'Hand', 1)), wj((side + 'ThumbMetacarpal', 1)), wj((side + 'ThumbProximal', 1)), wj((side + 'ThumbDistal', 1)), wj((side + 'ThumbDistal', 1))], seg=12)))
+        pieces.append(('Dedo' + f + side[0], tube([base, p0, p1, p2, tip], [r, r, r * 0.92, r * 0.82, r * 0.62],
+                       [wj((side + 'Hand', 1)), wj((side + f + 'Proximal', 1)), wj((side + f + 'Intermediate', 1)), wj((side + f + 'Distal', 1)), wj((side + f + 'Distal', 1))], seg=12, p=3.2)))
+    m, p1, p2 = P('ThumbMetacarpal'), P('ThumbProximal'), P('ThumbDistal'); tip = p2 + (p2 - p1) * 0.8
+    pieces.append(('DedoThumb' + side[0], tube([wrist + (m - wrist) * 0.3, m, p1, p2, tip], [0.0105, 0.0100, 0.0092, 0.0085, 0.0060],
+                   [wj((side + 'Hand', 1)), wj((side + 'ThumbMetacarpal', 1)), wj((side + 'ThumbProximal', 1)), wj((side + 'ThumbDistal', 1)), wj((side + 'ThumbDistal', 1))], seg=12, p=3.2)))
     # ----- pie: anillos en el plano x-y a lo largo de z (talón → punta), base plana en y=0
     ank, toe = P('Foot'), P('Toes'); EX = np.array([1.0, 0, 0])
-    prof = [(ank[2] - 0.060, 0.034, 0.042, 0.034, wj((side + 'Foot', 1))),          # botas ALTH: bloque ancho, techo plano, punta cuadrada
-            (ank[2] - 0.040, 0.044, 0.058, 0.044, wj((side + 'Foot', 1))),
-            (ank[2] + 0.010, 0.046, 0.062, 0.046, wj((side + 'Foot', 1))),
-            (ank[2] + 0.050, 0.046, 0.062, 0.046, wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))),
-            (toe[2] + 0.020, 0.044, 0.058, 0.044, wj((side + 'Toes', 1))),
-            (toe[2] + 0.055, 0.040, 0.050, 0.040, wj((side + 'Toes', 1))),
-            (toe[2] + 0.070, 0.030, 0.038, 0.030, wj((side + 'Toes', 1)))]
+    prof = [(ank[2] - 0.070, 0.060, 0.038, 0.038, wj((side + 'Foot', 1))),          # botas ALTH (Theo: 0.16 ancho × 0.10 alto × 0.22 largo de la altura)
+            (ank[2] - 0.050, 0.072, 0.050, 0.050, wj((side + 'Foot', 1))),
+            (ank[2] + 0.010, 0.075, 0.052, 0.052, wj((side + 'Foot', 1))),
+            (ank[2] + 0.060, 0.075, 0.052, 0.052, wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))),
+            (toe[2] + 0.030, 0.073, 0.050, 0.050, wj((side + 'Toes', 1))),
+            (toe[2] + 0.070, 0.066, 0.044, 0.044, wj((side + 'Toes', 1))),
+            (toe[2] + 0.088, 0.050, 0.032, 0.032, wj((side + 'Toes', 1)))]
     rings = [(np.array([ank[0], cy, z]), rx, ry, EX, EY, 3.6) for z, cy, rx, ry, _ in prof]
     pieces.append(('Pie' + side[0], loft(rings, [w for *_, w in prof], seg=24)))
 
