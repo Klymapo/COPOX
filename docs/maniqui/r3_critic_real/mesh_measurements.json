@@ -1,0 +1,18 @@
+{
+  "anomalies": {
+    "r3_cap_open_boundary": {
+      "kind": "open_seam",
+      "target_boundary_edges": 128,
+      "loop_vertex_counts": null,
+      "loop_winding_valid": false,
+      "attributes_compatible": false,
+      "morph_targets_present": null,
+      "max_gap_m": null,
+      "measurement_provenance": {
+        "source_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+        "measurement_method": "render.acc indexed GLB triangle edges; no UV weld",
+        "coordinate_system": "Y-up meters front+Z"
+      }
+    }
+  }
+}
