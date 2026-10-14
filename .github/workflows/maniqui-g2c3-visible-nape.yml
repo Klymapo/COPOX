@@ -15,7 +15,7 @@ permissions:
   contents: write
 concurrency:
   group: copox-g2c3-visible-nape
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   modelar-validar:
     runs-on: ubuntu-latest
