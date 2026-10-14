@@ -183,13 +183,43 @@ def audit(manifest: dict, *, root: Path, output: Path, make_sheets: bool=True) -
     evaluated_ids={x["reference_id"] for x in comparisons}
     if evaluated_ids!=seen_refs:
         issues.append(f"Referencias sin comparación: {sorted(seen_refs-evaluated_ids)}")
+    # Matriz multivista obligatoria para cada anomalía declarada. Incluso una
+    # vista donde el detalle no se vea debe registrarse explícitamente.
+    anomaly_records=[]
+    anomalies=manifest.get("anomalies",[])
+    if not isinstance(anomalies,list):
+        issues.append("anomalies debe ser lista")
+        anomalies=[]
+    for anomaly in anomalies:
+        if not isinstance(anomaly,dict) or not isinstance(anomaly.get("id"),str) or not anomaly.get("region") or not anomaly.get("description"):
+            issues.append("Anomalía sin id/region/description");continue
+        per=anomaly.get("per_reference")
+        if not isinstance(per,dict):
+            issues.append(f"Anomalía {anomaly['id']}: falta mapa por referencia")
+            continue
+        missing_ids=seen_refs-set(per)
+        extra_ids=set(per)-seen_refs
+        if missing_ids or extra_ids:
+            issues.append(f"Anomalía {anomaly['id']}: matriz incompleta o extra: faltan {sorted(missing_ids)}, sobran {sorted(extra_ids)}")
+        categories={"supports","contradicts","not_visible","uncertain"}
+        groups={k:[] for k in categories}
+        for rid,data in per.items():
+            if not isinstance(data,dict) or data.get("assessment") not in categories or not isinstance(data.get("note"),str) or not data["note"].strip():
+                issues.append(f"Anomalía {anomaly['id']}: anotación inválida para {rid}")
+                continue
+            groups[data["assessment"]].append(rid)
+        anomaly_records.append({"id":anomaly["id"],"region":anomaly["region"],
+           "description":anomaly["description"],"cross_reference_evidence":groups})
     unreviewed=[c["reference_id"] for c in comparisons if c["manual_review"] is None]
     conflicts=[c["reference_id"] for c in comparisons if c["manual_review"] and c["manual_review"]["verdict"]=="ISSUE"]
+    if conflicts and not anomaly_records:
+        issues.append("Hay ISSUE visuales sin anomalías documentadas contra todas las referencias")
     all_iou=[x["metrics"]["iou"] for x in comparisons if x["metrics"] is not None]
     result={"status":"INCOMPLETE" if issues else ("REVIEW_REQUIRED" if unreviewed or unreferenced_candidate_views else ("ISSUES_FOUND" if conflicts else "READY_FOR_ADMIN")),
         "automatically_approved":False, "all_references_accounted_for":not issues and evaluated_ids==seen_refs,
         "required_views":required,"references_supplied":len(inventory),"references_compared":len(comparisons),
         "unreferenced_candidate_views":unreferenced_candidate_views,
+        "anomaly_cross_view_matrix":anomaly_records,
         "issues":issues,"unreviewed_references":unreviewed,"problematic_references":conflicts,
         "worst_mask_iou":min(all_iou) if all_iou else None,
         "comparisons":comparisons,
