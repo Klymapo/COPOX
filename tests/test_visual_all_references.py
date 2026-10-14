@@ -93,9 +93,28 @@ class AllReferencesTests(unittest.TestCase):
         for r in self.references:
             r["manual_review"]={"verdict":"PASS","observations":["Sin anomalías"],"reviewer":"test-suite"}
         self.references[3]["manual_review"]={"verdict":"ISSUE","observations":["Bulto en perfil"],"reviewer":"test-suite"}
+        self.manifest["anomalies"]=[{"id":"bulge-1","region":"forehead",
+            "description":"Bulto observado en el perfil","per_reference":{
+                r["id"]:{"assessment":"supports" if r["id"]=="side" else "not_visible",
+                          "note":"Se observa en perfil" if r["id"]=="side" else "No concluyente en esta vista"}
+                for r in self.references}}]
         report=self.run_audit()
         self.assertEqual(report["status"],"ISSUES_FOUND")
         self.assertEqual(report["problematic_references"],["side"])
+        self.assertEqual(len(report["anomaly_cross_view_matrix"]),1)
+        self.assertEqual(report["anomaly_cross_view_matrix"][0]["cross_reference_evidence"]["supports"],["side"])
+
+    def test_defect_rejected_when_other_reference_is_not_considered(self):
+        for r in self.references:
+            r["manual_review"]={"verdict":"PASS","observations":["Evaluada"],"reviewer":"test-suite"}
+        self.references[3]["manual_review"]["verdict"]="ISSUE"
+        self.manifest["anomalies"]=[{"id":"bulge-1","region":"forehead",
+            "description":"Bulto en perfil","per_reference":{
+                "side":{"assessment":"supports","note":"Saliente"}
+            }}]
+        report=self.run_audit()
+        self.assertEqual(report["status"],"INCOMPLETE")
+        self.assertTrue(any("matriz incompleta" in x for x in report["issues"]))
 
     def test_camera_approximate_never_used_for_mask_iou(self):
         self.references[1]["mask"]="mask_0.png"
