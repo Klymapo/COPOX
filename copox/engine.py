@@ -121,7 +121,7 @@ def run_campaign(cassette_path: str, output_root: str = ".copox/evidence") -> in
     maturity = cassette.maturity
     manifest: dict[str, Any] = {
         "engine": "copox-loop-engine",
-        "version": "0.3.0",
+        "version": "0.3.1",
         "run_id": run_id,
         "cassette": cassette.id,
         "kind": cassette.kind,
@@ -164,21 +164,39 @@ def run_campaign(cassette_path: str, output_root: str = ".copox/evidence") -> in
             candidate_dir = Path(ctx["candidate_dir"])
             record: dict[str, Any] = {"id": candidate_id, "tournament": tournament, "status": "RUNNING"}
             try:
-                for phase in ("mutate", "execute", "capture"):
-                    command = cassette.data.get("commands", {}).get(phase, [])
+                # Fase barata opcional: se evalúa ANTES de cualquier captura profunda.
+                commands = cassette.data.get("commands", {})
+                for phase in ("mutate", "execute"):
+                    command = commands.get(phase, [])
                     if command:
                         _run_command(list(command), ctx, Path.cwd(), env)
-                evidence_pass, missing = _evidence_ok(cassette, candidate_dir)
-                if not evidence_pass:
-                    record.update({"status": "REJECTED", "reason": "missing_evidence", "missing_evidence": missing})
-                else:
-                    unanimous, score, audit_results = _audit_candidate(cassette, ctx, env)
-                    record.update({"audit": audit_results, "score": score})
-                    if unanimous:
-                        record["status"] = "ELIGIBLE"
-                        passing.append(record)
+                preflight = commands.get("preflight", [])
+                if preflight:
+                    _run_command(list(preflight), ctx, Path.cwd(), env)
+                    gate_path = candidate_dir / "preflight.json"
+                    if not gate_path.is_file():
+                        raise RuntimeError("Preflight sin reporte: se bloquea captura profunda")
+                    gate = _read_json(gate_path)
+                    if not isinstance(gate, dict) or "status" not in gate:
+                        raise RuntimeError("Preflight inválido: se bloquea captura profunda")
+                    record["preflight"] = gate
+                    if gate["status"] != "DEEP_ELIGIBLE":
+                        record.update({"status": "REJECTED", "reason": "preflight_gate"})
+                if record["status"] == "RUNNING":
+                    capture = commands.get("capture", [])
+                    if capture:
+                        _run_command(list(capture), ctx, Path.cwd(), env)
+                    evidence_pass, missing = _evidence_ok(cassette, candidate_dir)
+                    if not evidence_pass:
+                        record.update({"status": "REJECTED", "reason": "missing_evidence", "missing_evidence": missing})
                     else:
-                        record.update({"status": "REJECTED", "reason": "auditor_veto"})
+                        unanimous, score, audit_results = _audit_candidate(cassette, ctx, env)
+                        record.update({"audit": audit_results, "score": score})
+                        if unanimous:
+                            record["status"] = "ELIGIBLE"
+                            passing.append(record)
+                        else:
+                            record.update({"status": "REJECTED", "reason": "auditor_veto"})
             except Exception as exc:
                 record.update({"status": "ERROR", "reason": str(exc)})
             manifest["candidates"].append(record)
