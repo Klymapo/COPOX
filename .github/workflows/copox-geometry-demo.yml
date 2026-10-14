@@ -20,11 +20,22 @@ jobs:
         with:
           python-version: '3.11'
       - name: Free dependencies
-        run: python -m pip install numpy scipy pillow
+        run: python -m pip install numpy scipy pillow trimesh
       - name: Run mathematical operations on original synthetic geometry
         run: |
           python -m tools.geometry.demo_operations
           python -m unittest discover -s tests -p 'test_geometry_operations.py' -v
+      - name: Reimportar GLB sintético y verificar topología real
+        run: |
+          python - <<'PY'
+          import trimesh
+          path='docs/geometry/demo/surface_stitch_sintetico.glb'
+          model=trimesh.load(path,force='mesh')
+          assert len(model.vertices)==34, len(model.vertices)
+          assert len(model.faces)==64, len(model.faces)
+          assert model.is_watertight, 'No se conserva la estanqueidad al reimportar GLB'
+          print('GLB válido reimportado: 34 vértices, 64 triángulos, watertight=True')
+          PY
       - name: Upload real rendered evidence
         uses: actions/upload-artifact@v4
         with:
