@@ -82,3 +82,41 @@ def eyewear_gate(face_gltf,wardrobe_gltf):
             "face_geometry_must_not_be_deleted_for_eyewear":True,
             "all_source_models_preserved":True,
             "production_visual_approval":False}
+
+
+def classify_possible_embedded_eyewear(face_vertices, face_triangles,
+                                      accessory_vertices, protected_faces,
+                                      *, search_radius_m=0.006):
+    """Only TRIAGE remnants near removed frames; returns no deletion mask.
+
+    Eye contours frequently lie near eyeglass frames. A proximity search
+    cannot distinguish eyelids from unlabeled frame polygons. Protection wins.
+    """
+    import numpy as np
+    from scipy.spatial import cKDTree
+    p=np.asarray(face_vertices,dtype=float)
+    f=np.asarray(face_triangles,dtype=np.int64)
+    accessory=np.asarray(accessory_vertices,dtype=float)
+    protected=np.asarray(protected_faces)
+    if (p.ndim!=2 or p.shape[1]!=3 or not np.isfinite(p).all()
+        or f.ndim!=2 or f.shape[1]!=3 or len(f)==0
+        or f.min()<0 or f.max()>=len(p)):
+        raise ValueError("Geometría facial inválida")
+    if (accessory.ndim!=2 or accessory.shape[1]!=3 or len(accessory)==0
+        or not np.isfinite(accessory).all()):
+        raise ValueError("Puntos de lentes originales inválidos")
+    if protected.dtype!=bool or protected.shape!=(len(f),):
+        raise ValueError("Protección de triángulos obligatoria")
+    if not np.isfinite(search_radius_m) or search_radius_m<=0:
+        raise ValueError("Radio inválido")
+    distances,_=cKDTree(accessory).query(p[f].mean(axis=1),k=1,workers=1)
+    near=distances<=search_radius_m
+    return {
+        "distances_m":distances,
+        "near_protected":near&protected,
+        "near_unprotected_for_review":near&~protected,
+        "far":~near,
+        "remove_allowed":False,
+        "method":"KDTree distance to separately extracted eyewear vertex points; TRIAGE ONLY",
+        "warning":"Proximity is not eyewear identity; no facial triangles may be removed without multi-view proof",
+    }
