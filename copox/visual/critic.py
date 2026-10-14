@@ -243,7 +243,7 @@ def main():
         measurement=json.loads(Path(args.geometry_diagnostics).read_text(encoding="utf-8"))
         plan=propose(result,measurement)
         dest=Path(args.output)/"geometry_plan.json"
-        dest.write_text(json.dumps(plan,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+        dest.write_text(json.dumps(plan,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
         print(f"[COPOX] {len(plan['recommendations'])} operaciones propuestas; estado={plan['status']}; sin autoejecución")
     print(json.dumps({k:v for k,v in result.items() if k!="comparisons"},indent=2,ensure_ascii=False))
     return 2 if result["status"]=="INCOMPLETE" else 0
