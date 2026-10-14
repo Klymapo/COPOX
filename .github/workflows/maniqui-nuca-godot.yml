@@ -85,19 +85,24 @@ jobs:
           path: docs/maniqui/g2c2/nuca/godot/
           if-no-files-found: warn
           retention-days: 30
-      - name: Versionar informe sin fusionar candidato
+      - name: Versionar informe en worktree limpio; sin tocar modelos ni fusionar
         if: success()
         run: |
           test -s docs/maniqui/g2c2/nuca/godot/result.json
-          git config user.name "COPOX CI"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/maniqui/g2c2/nuca/godot
-          if ! git diff --cached --quiet; then
-            git commit -m "evidence(nuca): Godot 4.7.2 comparacion importacion por region"
+          git fetch origin experimentos/g2c2-nuca-evaluacion-regional
+          publish="$RUNNER_TEMP/nuca_publish"
+          git worktree add --detach "$publish" origin/experimentos/g2c2-nuca-evaluacion-regional
+          mkdir -p "$publish/docs/maniqui/g2c2/nuca/godot"
+          cp -a docs/maniqui/g2c2/nuca/godot/. "$publish/docs/maniqui/g2c2/nuca/godot/"
+          git -C "$publish" config user.name "COPOX CI"
+          git -C "$publish" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$publish" add docs/maniqui/g2c2/nuca/godot
+          if ! git -C "$publish" diff --cached --quiet; then
+            git -C "$publish" commit -m "evidence(nuca): Godot comparativo r3 flat eased"
             for attempt in 1 2 3 4 5; do
-              git fetch origin experimentos/g2c2-nuca-evaluacion-regional
-              git rebase origin/experimentos/g2c2-nuca-evaluacion-regional
-              if git push origin HEAD:experimentos/g2c2-nuca-evaluacion-regional; then exit 0; fi
+              git -C "$publish" fetch origin experimentos/g2c2-nuca-evaluacion-regional
+              git -C "$publish" rebase origin/experimentos/g2c2-nuca-evaluacion-regional
+              if git -C "$publish" push origin HEAD:experimentos/g2c2-nuca-evaluacion-regional; then exit 0; fi
               sleep 2
             done
             exit 1
