@@ -59,6 +59,35 @@ def safe_prepare(source: str, target: str, report_path: str) -> dict:
             else:
                 node.pop("mesh")
                 node.pop("skin",None)
+    # The old GLB also has morph-weight channels pointing to mesh nodes that
+    # contain ZERO vertices. Godot rejects node.mesh=-1 for these.
+    # These channels never had a drawable/morphable target. Archive their
+    # metadata in asset extras, then drop ONLY these invalid references
+    # from the derived compatibility copy. Bone animation channels stay intact.
+    orphan_weight_channels=[]
+    for ai,anim in enumerate(j.get("animations",[])):
+        kept=[]
+        for ci,channel in enumerate(anim.get("channels",[])):
+            target=channel.get("target",{})
+            node_idx=target.get("node")
+            if (target.get("path")=="weights" and isinstance(node_idx,int)
+                and 0<=node_idx<len(j["nodes"])
+                and "mesh" not in j["nodes"][node_idx]):
+                orphan_weight_channels.append({
+                    "animation":anim.get("name"),"animation_index":ai,
+                    "channel_index":ci,"node_index":node_idx,
+                    "sampler":channel.get("sampler"),
+                    "reason":"weights target points to a zero-geometry mesh node"})
+                continue
+            kept.append(channel)
+        anim["channels"]=kept
+    empty_animation_names=[a.get("name") for a in j.get("animations",[]) if not a.get("channels")]
+    if orphan_weight_channels:
+        j.setdefault("asset",{}).setdefault("extras",{})["copox_compatibility"]={
+            "legacy_source_sha256":hashlib.sha256(src.read_bytes()).hexdigest(),
+            "orphan_weights_channels":orphan_weight_channels,
+            "note":"Original animation arrays and source GLB retained; channels without drawable target excluded only from derived Godot copy"
+        }
     # Collect only glTF core accessor references after pruning EMPTY primitives.
     uses=[]
     for mesh in j.get("meshes",[]):
@@ -118,10 +147,14 @@ def safe_prepare(source: str, target: str, report_path: str) -> dict:
         "empty_primitives_removed":len(dropped_primitive),
         "empty_primitive_details":dropped_primitive,
         "empty_meshes_removed":removed_meshes,
+        "orphan_morph_channels_removed":len(orphan_weight_channels),
+        "orphan_morph_channels":orphan_weight_channels,
+        "animations_left_without_channels":empty_animation_names,
         "original_accessor_count":len(accessors),"new_accessor_count":len(dj["accessors"]),
         "original_mesh_count":len(m),"new_mesh_count":len(dj["meshes"]),
         "all_nonempty_primitives_preserved":True,
-        "bytes_of_original_geometry_and_animations_unmodified":True,
+        "binary_buffer_unchanged":True,
+        "all_valid_joint_animation_channels_preserved":True,
         "material_definitions_untouched":dj.get("materials")==original.get("materials"),
         "glb_zero_count_accessors_remaining":sum(x.get("count",0)==0 for x in dj["accessors"]),
         "compatibility_not_yet_proven_in_Godot":True,
