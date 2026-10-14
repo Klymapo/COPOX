@@ -29,6 +29,22 @@ jobs:
         run: |
           python -m tools.geometry.demo_visual_loop
           python -m unittest discover -s tests -p 'test_visual_geometry_planner.py' -v
+      - name: Probar comando integrado de una sola línea
+        run: |
+          python -m copox.visual.critic docs/visual/geometry_loop_demo/manifest.json \
+            --root docs/visual/geometry_loop_demo \
+            --output "$RUNNER_TEMP/critic_cli" \
+            --geometry-diagnostics docs/visual/geometry_loop_demo/measured_geometry.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"critic_cli"/"geometry_plan.json"
+          assert p.exists(), "Visual Critic no emitió plan geométrico"
+          j=json.loads(p.read_text())
+          assert j["status"]=="PLANS_FOR_SANDBOX" and not j["execute_automatically"]
+          assert [x["operator"] for x in j["recommendations"]]==["Scully"]
+          print("CLI integrada: plan Scully y cero ediciones automáticas")
+          PY
       - name: Entregar evidencia (sin sobrescribir activos)
         uses: actions/upload-artifact@v4
         with:
