@@ -1,0 +1,98 @@
+{
+  "checks_passed": true,
+  "engine": {
+    "build": "official",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (official)",
+    "timestamp": 0
+  },
+  "limitations": [
+    "No confirma deformacion facial funcional",
+    "No confirma watertight ni aprobacion artistica",
+    "No autoriza fusion, sustituir ni borrar originales"
+  ],
+  "models": {
+    "res://baseline_v2.glb": {
+      "animations": [
+        "Blink",
+        "GlassesPush",
+        "GlassesPushFace",
+        "HandsBehind",
+        "HandsBehindFace",
+        "HeadShake",
+        "HeadShakeFace",
+        "Idle",
+        "IdleFace",
+        "IdlePockets",
+        "IdlePocketsFace",
+        "Laugh",
+        "LaughFace",
+        "Nod",
+        "NodFace",
+        "Point",
+        "PointFace",
+        "Shrug",
+        "ShrugFace",
+        "Sit-pose",
+        "Talk",
+        "TalkGesture",
+        "TalkGestureFace",
+        "Think",
+        "ThinkFace",
+        "TieAdjust",
+        "TieAdjustFace",
+        "Wave",
+        "WaveFace"
+      ],
+      "finite_bone_positions": true,
+      "skeletons": [
+        56
+      ],
+      "surface_count": 24
+    },
+    "res://left_tuft_removed_v3.glb": {
+      "animations": [
+        "Blink",
+        "GlassesPush",
+        "GlassesPushFace",
+        "HandsBehind",
+        "HandsBehindFace",
+        "HeadShake",
+        "HeadShakeFace",
+        "Idle",
+        "IdleFace",
+        "IdlePockets",
+        "IdlePocketsFace",
+        "Laugh",
+        "LaughFace",
+        "Nod",
+        "NodFace",
+        "Point",
+        "PointFace",
+        "Shrug",
+        "ShrugFace",
+        "Sit-pose",
+        "Talk",
+        "TalkGesture",
+        "TalkGestureFace",
+        "Think",
+        "ThinkFace",
+        "TieAdjust",
+        "TieAdjustFace",
+        "Wave",
+        "WaveFace"
+      ],
+      "finite_bone_positions": true,
+      "skeletons": [
+        56
+      ],
+      "surface_count": 24
+    }
+  },
+  "status": "PASS_IMPORT_STRUCTURAL"
+}

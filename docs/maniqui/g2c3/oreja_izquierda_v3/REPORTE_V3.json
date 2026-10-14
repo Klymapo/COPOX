@@ -1,0 +1,69 @@
+{
+  "status": "LEFT_EAR_ISOLATED_TUFT_REMOVED__TECHNICAL_PASS_VISUAL_REVIEW_REQUIRED",
+  "baseline": "G2-C3 V2 completo (no re-esculpir casco)",
+  "source_glb": "assets/maniqui/maniqui_v0_3_r3_g2c3_nuca_completo_v2_SIN_APROBAR.glb",
+  "derived_glb": "assets/maniqui/maniqui_v0_3_r3_g2c3_v3_rapado_oreja_izquierda_SIN_APROBAR.glb",
+  "technical": {
+    "component_count": 17,
+    "removed_faces": 8,
+    "removed_face_ids": [
+      1857,
+      1858,
+      1859,
+      1860,
+      1880,
+      1881,
+      1882,
+      1883
+    ],
+    "bounds_min": [
+      -0.222786,
+      0.703391,
+      -0.131243
+    ],
+    "bounds_max": [
+      -0.199735,
+      0.734685,
+      -0.105095
+    ],
+    "all_adjacent_ear_faces_preserved": true,
+    "source_sha256": "b7998d382f13ef8997a2dc2f73539a61da9ec5aa27605897534b13d47f3517e6",
+    "candidate_sha256": "0a100a9400e87251cbdd64328c0c13ffc4bbf829ae4c85d5b54aee2c1e67565b",
+    "old_face_count": 2834,
+    "new_face_count": 2826,
+    "unchanged_original_buffer_prefix": true,
+    "skull_cap_unchanged": true,
+    "face_ear_vertices_unchanged": true,
+    "facial_morph_targets_unchanged": true,
+    "ear_nearby_triangles_unchanged": true,
+    "bone_count": 56,
+    "animation_definitions": 29,
+    "model_glb": "assets/maniqui/maniqui_v0_3_r3_g2c3_v3_rapado_oreja_izquierda_SIN_APROBAR.glb",
+    "artistic_approval": false,
+    "pixels_changed_by_view": {
+      "FRENTE": 17,
+      "3/4 FRONTAL IZQ": 92,
+      "PERFIL IZQ": 48,
+      "3/4 POSTERIOR IZQ": 39,
+      "NUCA": 40,
+      "PERFIL DERECHO": 0
+    },
+    "zoom_pixels_changed_by_view": {
+      "PERFIL IZQ": 1352,
+      "PERFIL EXACTO": 568,
+      "3/4 POSTERIOR IZQ": 648,
+      "NUCA IZQ": 236
+    },
+    "visual_change_detected": true,
+    "evidence_six_views": "docs/maniqui/g2c3/oreja_izquierda_v3/V2_V3_ANTES_DESPUES_6V.png",
+    "evidence_ear_zoom": "docs/maniqui/g2c3/oreja_izquierda_v3/OREJA_IZQUIERDA_CLOSEUP_ANTES_DESPUES.png"
+  },
+  "limitations": [
+    "La seguridad protege oreja/cara por conectividad REAL de 8 triángulos",
+    "No prueba animaciones faciales en movimiento ni cierra cabeza/cara",
+    "La aprobación artística requiere revisar dos zooms reales",
+    "GLB V2 r3 original y fuentes no se sustituyen ni se fusionan"
+  ],
+  "no_merge": true,
+  "no_original_replacement": true
+}
