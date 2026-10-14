@@ -10,6 +10,7 @@ from copox import engine
 class FakeCassette:
     id = "synthetic-preflight"
     kind = "framework_test"
+    path = Path("synthetic.json")
     max_candidates = 1
     tournament_size = 1
     maturity = None
