@@ -21,7 +21,14 @@ DEST=Path("assets/maniqui/maniqui_v0_3_r3_g2_cut_probe.glb")
 
 def build():
     if DEST.exists():
-        raise FileExistsError("No sobrescribir: "+str(DEST))
+        report_path=OUT/"g2_cut_probe_report.json"
+        if not report_path.is_file():
+            raise FileExistsError("GLB existente sin reporte de verificación")
+        existing=json.loads(report_path.read_text())
+        if existing.get("candidate_sha256")!=hashlib.sha256(DEST.read_bytes()).hexdigest() or existing.get("baseline_sha256")!=SHA:
+            raise RuntimeError("GLB existente no coincide con el reporte: rechazo")
+        print("El mismo candidato verificado ya existe; no se sobrescribe")
+        return existing
     if hashlib.sha256(SRC.read_bytes()).hexdigest()!=SHA:
         raise RuntimeError("Baseline no validada")
     j,b=render.load(SRC)
