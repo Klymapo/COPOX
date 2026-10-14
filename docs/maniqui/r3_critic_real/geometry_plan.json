@@ -19,9 +19,9 @@
           "turnaround_sheet",
           "character_comparison"
         ],
-        "contradicts": [],
+        "not_visible": [],
         "supports": [],
-        "not_visible": []
+        "contradicts": []
       }
     }
   ],

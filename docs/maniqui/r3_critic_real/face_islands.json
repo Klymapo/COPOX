@@ -1,0 +1,557 @@
+{
+  "source": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "source_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "weld_tolerance_only_for_diagnosis_m": 1e-06,
+  "component_count": 18,
+  "components": [
+    {
+      "island_id": 0,
+      "triangles": 3718,
+      "vertices_raw": 3635,
+      "area_m2": 0.26104891,
+      "bounds_min": [
+        -0.24706,
+        0.53587,
+        -0.246279
+      ],
+      "bounds_max": [
+        0.246983,
+        0.813741,
+        0.208941
+      ],
+      "centroid": [
+        0.00687,
+        0.646309,
+        0.032711
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 1237,
+      "triangles_touching_protected_ear_mask": 427,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": true,
+        "rear": true,
+        "low_neck": true
+      }
+    },
+    {
+      "island_id": 1,
+      "triangles": 46,
+      "vertices_raw": 34,
+      "area_m2": 0.00321691,
+      "bounds_min": [
+        -0.225573,
+        0.691856,
+        -0.103917
+      ],
+      "bounds_max": [
+        -0.199033,
+        0.734992,
+        -0.011675
+      ],
+      "centroid": [
+        -0.209195,
+        0.70522,
+        -0.066492
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 0,
+      "triangles_touching_protected_ear_mask": 46,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": false,
+        "lateral": true,
+        "rear": true,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 2,
+      "triangles": 35,
+      "vertices_raw": 46,
+      "area_m2": 0.00303641,
+      "bounds_min": [
+        -0.026864,
+        0.609493,
+        0.208711
+      ],
+      "bounds_max": [
+        0.026339,
+        0.652141,
+        0.244683
+      ],
+      "centroid": [
+        0.000792,
+        0.631232,
+        0.238632
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 35,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": true
+      }
+    },
+    {
+      "island_id": 3,
+      "triangles": 32,
+      "vertices_raw": 52,
+      "area_m2": 0.00270537,
+      "bounds_min": [
+        0.086433,
+        0.610806,
+        0.181391
+      ],
+      "bounds_max": [
+        0.165595,
+        0.692903,
+        0.201967
+      ],
+      "centroid": [
+        0.144927,
+        0.64382,
+        0.190447
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 32,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": true,
+        "rear": false,
+        "low_neck": true
+      }
+    },
+    {
+      "island_id": 4,
+      "triangles": 20,
+      "vertices_raw": 25,
+      "area_m2": 0.00262525,
+      "bounds_min": [
+        0.026352,
+        0.707499,
+        0.187253
+      ],
+      "bounds_max": [
+        0.127693,
+        0.731055,
+        0.206845
+      ],
+      "centroid": [
+        0.073754,
+        0.718934,
+        0.192238
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 20,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 5,
+      "triangles": 14,
+      "vertices_raw": 19,
+      "area_m2": 8.813e-05,
+      "bounds_min": [
+        -0.033193,
+        0.63055,
+        0.195773
+      ],
+      "bounds_max": [
+        -0.026226,
+        0.649069,
+        0.20848
+      ],
+      "centroid": [
+        -0.028658,
+        0.640285,
+        0.201629
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 14,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 6,
+      "triangles": 8,
+      "vertices_raw": 14,
+      "area_m2": 0.00038464,
+      "bounds_min": [
+        -0.222786,
+        0.703391,
+        -0.131243
+      ],
+      "bounds_max": [
+        -0.199735,
+        0.734685,
+        -0.105095
+      ],
+      "centroid": [
+        -0.208102,
+        0.708814,
+        -0.116433
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 0,
+      "triangles_touching_protected_ear_mask": 8,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": false,
+        "lateral": true,
+        "rear": true,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 7,
+      "triangles": 7,
+      "vertices_raw": 16,
+      "area_m2": 3.358e-05,
+      "bounds_min": [
+        0.021526,
+        0.641308,
+        0.198807
+      ],
+      "bounds_max": [
+        0.028041,
+        0.653188,
+        0.209391
+      ],
+      "centroid": [
+        0.024471,
+        0.649488,
+        0.205728
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 7,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 8,
+      "triangles": 5,
+      "vertices_raw": 9,
+      "area_m2": 3.52e-05,
+      "bounds_min": [
+        -0.025977,
+        0.648816,
+        0.197986
+      ],
+      "bounds_max": [
+        -0.016079,
+        0.654292,
+        0.208542
+      ],
+      "centroid": [
+        -0.023554,
+        0.651305,
+        0.203888
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 5,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 9,
+      "triangles": 1,
+      "vertices_raw": 3,
+      "area_m2": 1.11e-06,
+      "bounds_min": [
+        0.01903,
+        0.678808,
+        0.191821
+      ],
+      "bounds_max": [
+        0.020214,
+        0.679827,
+        0.193607
+      ],
+      "centroid": [
+        0.019652,
+        0.67936,
+        0.192445
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 1,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 10,
+      "triangles": 1,
+      "vertices_raw": 3,
+      "area_m2": 3.3e-07,
+      "bounds_min": [
+        0.0216,
+        0.659648,
+        0.195894
+      ],
+      "bounds_max": [
+        0.021637,
+        0.662043,
+        0.196585
+      ],
+      "centroid": [
+        0.02162,
+        0.660866,
+        0.196142
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 1,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 11,
+      "triangles": 1,
+      "vertices_raw": 3,
+      "area_m2": 9.16e-06,
+      "bounds_min": [
+        -0.02396,
+        0.706818,
+        0.192358
+      ],
+      "bounds_max": [
+        -0.02084,
+        0.71791,
+        0.194964
+      ],
+      "centroid": [
+        -0.021978,
+        0.711344,
+        0.193926
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 1,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 12,
+      "triangles": 1,
+      "vertices_raw": 3,
+      "area_m2": 1.094e-05,
+      "bounds_min": [
+        0.162746,
+        0.68849,
+        0.106465
+      ],
+      "bounds_max": [
+        0.162999,
+        0.698433,
+        0.109061
+      ],
+      "centroid": [
+        0.162844,
+        0.694819,
+        0.108047
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 0,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": false,
+        "lateral": true,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 13,
+      "triangles": 1,
+      "vertices_raw": 3,
+      "area_m2": 1.79e-05,
+      "bounds_min": [
+        0.158717,
+        0.685756,
+        0.180029
+      ],
+      "bounds_max": [
+        0.159058,
+        0.71904,
+        0.181159
+      ],
+      "centroid": [
+        0.158892,
+        0.707153,
+        0.180756
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 1,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 14,
+      "triangles": 1,
+      "vertices_raw": 3,
+      "area_m2": 4.22e-06,
+      "bounds_min": [
+        -0.175466,
+        0.685702,
+        0.082262
+      ],
+      "bounds_max": [
+        -0.173241,
+        0.68602,
+        0.098223
+      ],
+      "centroid": [
+        -0.174621,
+        0.685865,
+        0.087908
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 0,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": false,
+        "lateral": true,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 15,
+      "triangles": 1,
+      "vertices_raw": 3,
+      "area_m2": 2.84e-06,
+      "bounds_min": [
+        0.019956,
+        0.66304,
+        0.192202
+      ],
+      "bounds_max": [
+        0.021211,
+        0.67092,
+        0.195753
+      ],
+      "centroid": [
+        0.020592,
+        0.668269,
+        0.193419
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 1,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 16,
+      "triangles": 1,
+      "vertices_raw": 3,
+      "area_m2": 1.017e-05,
+      "bounds_min": [
+        -0.023546,
+        0.670894,
+        0.191156
+      ],
+      "bounds_max": [
+        -0.02108,
+        0.679325,
+        0.191839
+      ],
+      "centroid": [
+        -0.022053,
+        0.676314,
+        0.191533
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 1,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    },
+    {
+      "island_id": 17,
+      "triangles": 1,
+      "vertices_raw": 3,
+      "area_m2": 1.671e-05,
+      "bounds_min": [
+        -0.02152,
+        0.666426,
+        0.195304
+      ],
+      "bounds_max": [
+        -0.020427,
+        0.678162,
+        0.198359
+      ],
+      "centroid": [
+        -0.021133,
+        0.670678,
+        0.196492
+      ],
+      "triangles_touching_protected_eye_nose_mouth_mask": 1,
+      "triangles_touching_protected_ear_mask": 0,
+      "unsafe_to_delete_automatically": true,
+      "region_hints_not_anatomical_proof": {
+        "front": true,
+        "lateral": false,
+        "rear": false,
+        "low_neck": false
+      }
+    }
+  ],
+  "method": "numpy.unique rounded positions + union-find by index",
+  "colors": "categorical by sorted component triangle count",
+  "limitations": [
+    "Component != defect: eyes, nose and lips may be separate legitimate islands",
+    "Skin/material/UV not modified",
+    "Categorical colors are structural, not aesthetic evidence",
+    "Segmentation may connect coincident surfaces and miss tiny gaps <1e-6 m"
+  ],
+  "no_glb_modified": true
+}
