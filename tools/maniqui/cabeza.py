@@ -58,7 +58,7 @@ _, CP, CI = prim('Craneo'); _, FP, FI = prim('Cabeza')
 Htot = max(render.acc(j, binc, p['attributes']['POSITION'])[:, 1].max() for p in mesh['primitives'] if p.get('extras', {}).get('pieza') in ('Craneo', 'Cabeza'))
 Htot = float(np.array([1, Htot]).max())      # altura del maniquí con la cabeza vieja (≈1.03 m); la cabeza nueva se escala a esta altura
 W = R['ancho_cara_m'] if 'ancho_cara_m' in R else R.get('ancho_cara_sobre_altura', 0.316) * Htot   # ancho_cara_m manda si está
-y_chin = FP[:, 1].min() + 0.012
+y_chin = R.get('barbilla_y', world[joints[HEAD]][1, 3] - 0.006)      # la barbilla queda justo arriba del hueso Head (en el estilo no se ve cuello)
 Hc = R['alto_cara_sobre_ancho'] * W                   # barbilla → línea del pelo
 Ht = R['craneo_sobre_cara'] * Hc                       # barbilla → coronilla (calvo)
 D = R['fondo_sobre_alto'] * Hc                         # fondo de la cabeza

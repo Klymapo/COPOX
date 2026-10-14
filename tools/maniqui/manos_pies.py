@@ -20,7 +20,7 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     P = lambda n: jp[side + n]
     # ----- antebrazo: del puño de la manga (donde termina BrazoX) a la muñeca
     wrist = P('Hand'); cuff = np.array([sgn * (cuff_x + 0.012), wrist[1], wrist[2]])
-    pieces.append(('Antebrazo' + side[0], tube([cuff, cuff + (wrist - cuff) * 0.5, wrist], [0.030, 0.028, 0.026],
+    pieces.append(('Antebrazo' + side[0], tube([cuff, cuff + (wrist - cuff) * 0.5, wrist], [0.036, 0.034, 0.030],
                    [wj((side + 'LowerArm', 1)), wj((side + 'LowerArm', 0.7), (side + 'Hand', 0.3)), wj((side + 'Hand', 1))], seg=24, cap_top=False, cap_bot=False)))
     # ----- palma: de la muñeca a los nudillos, aplanada (grosor en y, ancho en z)
     fingers = ['Index', 'Middle', 'Ring', 'Little']
@@ -28,27 +28,27 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     xs = [wrist[0], wrist[0] + sgn * 0.02, kn[:, 0].mean() - sgn * 0.012, kn[:, 0].mean() + sgn * 0.004]
     EY, EZ = np.array([0, 1.0, 0]), np.array([0, 0, 1.0])
     rings = [(np.array([x, wrist[1], zc * f + wrist[2] * (1 - f)]), ry, rz, EY, EZ) for x, ry, rz, f in
-             [(xs[0], 0.020, 0.030, 0.0), (xs[1], 0.019, 0.036, 0.5), (xs[2], 0.017, zw, 1.0), (xs[3], 0.016, zw, 1.0)]]
+             [(xs[0], 0.024, 0.030, 0.0), (xs[1], 0.023, 0.036, 0.5), (xs[2], 0.021, zw, 1.0), (xs[3], 0.020, zw, 1.0)]]
     pieces.append(('Palma' + side[0], loft(rings, [wj((side + 'Hand', 1))] * 4, seg=24)))
     # ----- dedos: tubo por las falanges, con punta extrapolada
-    for f, r in [('Index', 0.0085), ('Middle', 0.0085), ('Ring', 0.0082), ('Little', 0.0075)]:
+    for f, r in [('Index', 0.0100), ('Middle', 0.0100), ('Ring', 0.0095), ('Little', 0.0088)]:
         p0, p1, p2 = P(f + 'Proximal'), P(f + 'Intermediate'), P(f + 'Distal'); tip = p2 + (p2 - p1) * 0.9
         base = p0 - (p1 - p0) * 0.35
-        pieces.append(('Dedo' + f + side[0], tube([base, p0, p1, p2, tip], [r, r, r * 0.95, r * 0.9, r * 0.6],
+        pieces.append(('Dedo' + f + side[0], tube([base, p0, p1, p2, tip], [r, r, r * 0.97, r * 0.95, r * 0.8],
                        [wj((side + 'Hand', 1)), wj((side + f + 'Proximal', 1)), wj((side + f + 'Intermediate', 1)), wj((side + f + 'Distal', 1)), wj((side + f + 'Distal', 1))], seg=12)))
     m, p1, p2 = P('ThumbMetacarpal'), P('ThumbProximal'), P('ThumbDistal'); tip = p2 + (p2 - p1) * 0.8
     pieces.append(('DedoThumb' + side[0], tube([wrist + (m - wrist) * 0.3, m, p1, p2, tip], [0.011, 0.010, 0.0095, 0.009, 0.006],
                    [wj((side + 'Hand', 1)), wj((side + 'ThumbMetacarpal', 1)), wj((side + 'ThumbProximal', 1)), wj((side + 'ThumbDistal', 1)), wj((side + 'ThumbDistal', 1))], seg=12)))
     # ----- pie: anillos en el plano x-y a lo largo de z (talón → punta), base plana en y=0
     ank, toe = P('Foot'), P('Toes'); EX = np.array([1.0, 0, 0])
-    prof = [(ank[2] - 0.055, 0.030, 0.040, 0.030, wj((side + 'Foot', 1))),
-            (ank[2] - 0.030, 0.034, 0.052, 0.034, wj((side + 'Foot', 1))),
-            (ank[2] + 0.010, 0.034, 0.056, 0.034, wj((side + 'Foot', 1))),
-            (ank[2] + 0.050, 0.031, 0.058, 0.031, wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))),
-            (toe[2] + 0.010, 0.027, 0.056, 0.027, wj((side + 'Toes', 1))),
-            (toe[2] + 0.045, 0.020, 0.046, 0.020, wj((side + 'Toes', 1))),
-            (toe[2] + 0.062, 0.010, 0.030, 0.010, wj((side + 'Toes', 1)))]
-    rings = [(np.array([ank[0], cy, z]), rx, ry, EX, EY) for z, cy, rx, ry, _ in prof]
+    prof = [(ank[2] - 0.060, 0.034, 0.042, 0.034, wj((side + 'Foot', 1))),          # botas ALTH: bloque ancho, techo plano, punta cuadrada
+            (ank[2] - 0.040, 0.044, 0.058, 0.044, wj((side + 'Foot', 1))),
+            (ank[2] + 0.010, 0.046, 0.062, 0.046, wj((side + 'Foot', 1))),
+            (ank[2] + 0.050, 0.046, 0.062, 0.046, wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))),
+            (toe[2] + 0.020, 0.044, 0.058, 0.044, wj((side + 'Toes', 1))),
+            (toe[2] + 0.055, 0.040, 0.050, 0.040, wj((side + 'Toes', 1))),
+            (toe[2] + 0.070, 0.030, 0.038, 0.030, wj((side + 'Toes', 1)))]
+    rings = [(np.array([ank[0], cy, z]), rx, ry, EX, EY, 3.6) for z, cy, rx, ry, _ in prof]
     pieces.append(('Pie' + side[0], loft(rings, [w for *_, w in prof], seg=24)))
 
 keep = [p for p, n in zip(mesh['primitives'], names) if n not in ('Brazos', 'Pies')]

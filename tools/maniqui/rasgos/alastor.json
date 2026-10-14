@@ -30,6 +30,5 @@
   "_nota": "tomado de Theo: en detective.jpg los lentes tapan el rasgo"
  },
  "_fuente": "refs/personajes/detective.jpg (3/4) + rasgos de Theo",
- "ancho_cara_m": 0.456,
- "_nota_ancho": "ancho_cara_sobre_altura (0.316) es lo medido; ancho_cara_m=0.456 se impone porque el cuerpo Beta/Gamma es más ancho que el del estilo: con 0.316 la cabeza queda chica respecto al cuerpo (comparativa v0.8, 14 oct)"
+ "_nota_ancho": "ancho_cara_sobre_altura 0.316 medido en detective.jpg (3/4, corregido −5 %). Se ve \"chica\" calva porque el pelo del estilo añade ~80 % de ancho; cara/torso da 1.09 igual que en la referencia (14 oct)."
 }

@@ -39,12 +39,16 @@ def add_acc(bvi, ct, n, at, arr=None):
     j['accessors'].append(a); return len(j['accessors']) - 1
 gris = next(i for i, m in enumerate(j['materials']) if m['name'] == 'Maniqui')
 
-def loft(rings, weights, seg=32, cap_top=True, cap_bot=True):
-    """rings: lista de (centro(3), rx, rz, eje_x(3), eje_z(3)); weights: lista de (joints4, w4) por anillo."""
+P_BOX = 2.8   # exponente de la sección (2 = elipse, 3-4 = cajón redondeado). Estilo ALTH: cuerpos de bloques redondeados.
+def loft(rings, weights, seg=32, cap_top=True, cap_bot=True, p=None):
+    """rings: lista de (centro(3), rx, rz, eje_x(3), eje_z(3)[, p]); weights: lista de (joints4, w4) por anillo.
+    La sección es una superelipse de exponente p (por anillo, o el global P_BOX): |x/rx|^p + |z/rz|^p = 1."""
     th = np.linspace(0, 2 * np.pi, seg, endpoint=False); V, N, J, W = [], [], [], []
-    for (c, rx, rz, ex, ez), (jj, ww) in zip(rings, weights):
+    for ring, (jj, ww) in zip(rings, weights):
+        c, rx, rz, ex, ez = ring[:5]; pe = ring[5] if len(ring) > 5 else (p if p is not None else P_BOX)
         for t in th:
-            V.append(c + rx * np.cos(t) * ex + rz * np.sin(t) * ez); N.append(np.cos(t) * ex / rx + np.sin(t) * ez / rz)
+            cx = np.sign(np.cos(t)) * abs(np.cos(t)) ** (2 / pe); cz = np.sign(np.sin(t)) * abs(np.sin(t)) ** (2 / pe)
+            V.append(c + rx * cx * ex + rz * cz * ez); N.append(np.cos(t) * ex / rx + np.sin(t) * ez / rz)
             J.append(jj); W.append(ww)
     V = np.array(V); N = np.array(N); N /= np.linalg.norm(N, axis=1, keepdims=True)
     I = []
@@ -58,7 +62,10 @@ def loft(rings, weights, seg=32, cap_top=True, cap_bot=True):
         for s in range(seg):
             a_, b_ = k * seg + s, k * seg + (s + 1) % seg
             I.append([ci, a_, b_] if flip else [ci, b_, a_])
-    return V, N, np.array(J, np.uint16), np.array(W, np.float32), np.array(I)
+    I = np.array(I); fn = np.cross(V[I[:, 1]] - V[I[:, 0]], V[I[:, 2]] - V[I[:, 0]]); N = np.zeros_like(V)
+    for k in range(3): np.add.at(N, I[:, k], fn)
+    N /= np.linalg.norm(N, axis=1, keepdims=True) + 1e-12
+    return V, N, np.array(J, np.uint16), np.array(W, np.float32), I
 
 def wj(*pairs):
     jj = [0, 0, 0, 0]; ww = [0, 0, 0, 0]
@@ -75,8 +82,8 @@ torso_prof = [  # (y, rx, rz, pesos)
     (0.330, 0.128, 0.074, wj(('Hips', 0.5), ('Spine', 0.5))),
     (0.370, 0.130, 0.076, wj(('Spine', 0.6), ('Chest', 0.4))),
     (0.410, 0.136, 0.078, wj(('Chest', 1))),
-    (0.445, 0.150, 0.076, wj(('Chest', 1))),
-    (0.475, 0.140, 0.070, wj(('Chest', 0.7), ('Neck', 0.3))),
+    (0.445, 0.140, 0.076, wj(('Chest', 1))),
+    (0.475, 0.132, 0.070, wj(('Chest', 0.7), ('Neck', 0.3))),
     (0.500, 0.100, 0.060, wj(('Chest', 0.3), ('Neck', 0.7))),
     (0.515, 0.062, 0.050, wj(('Neck', 1))),
 ]
@@ -102,12 +109,12 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     axis = np.array([sgn, 0, 0.0]); ey = EY; ez = np.array([0, 0, 1.0])
     def at(x): return np.array([x, ua[1] + (x - ua[0]) * (la[1] - ua[1]) / max(abs(la[0] - ua[0]), 1e-6) * 0, ua[2]])
     xs = [ua[0] - sgn * 0.045, ua[0], ua[0] + sgn * 0.05, la[0], la[0] + sgn * 0.02, sgn * (cuff_x + 0.012)]
-    prof = [(at(xs[0]), 0.036, 0.036, wj((side + 'Shoulder', 0.5), (side + 'UpperArm', 0.5))),
-            (at(xs[1]), 0.038, 0.038, wj((side + 'UpperArm', 1))),
-            (at(xs[2]), 0.036, 0.036, wj((side + 'UpperArm', 1))),
-            (at(xs[3]), 0.033, 0.033, wj((side + 'UpperArm', 0.5), (side + 'LowerArm', 0.5))),
-            (at(xs[4]), 0.032, 0.032, wj((side + 'LowerArm', 1))),
-            (at(xs[5]), 0.030, 0.030, wj((side + 'LowerArm', 1)))]
+    prof = [(at(xs[0]), 0.042, 0.042, wj((side + 'Shoulder', 0.5), (side + 'UpperArm', 0.5))),   # brazos de bloque (Theo: ~0.08 de la altura de grueso)
+            (at(xs[1]), 0.044, 0.044, wj((side + 'UpperArm', 1))),
+            (at(xs[2]), 0.043, 0.043, wj((side + 'UpperArm', 1))),
+            (at(xs[3]), 0.041, 0.041, wj((side + 'UpperArm', 0.5), (side + 'LowerArm', 0.5))),
+            (at(xs[4]), 0.040, 0.040, wj((side + 'LowerArm', 1))),
+            (at(xs[5]), 0.038, 0.038, wj((side + 'LowerArm', 1)))]
     rings = [(np.array(c), rx, rz, ey, ez) for c, rx, rz, _ in prof]
     pieces.append(('Brazo' + side[0], loft(rings, [w for *_, w in prof])))
 
