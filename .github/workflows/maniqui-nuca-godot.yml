@@ -1,0 +1,109 @@
+name: COPOX · NUCA · Importacion Godot real
+on:
+  push:
+    branches: [experimentos/g2c2-nuca-evaluacion-regional]
+    paths:
+      - 'tests/regional_nape_godot.gd'
+      - '.github/workflows/maniqui-nuca-godot.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: copox-nuca-godot
+  cancel-in-progress: false
+jobs:
+  godot-nuca:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencias libres del saneador
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 Pillow==10.4.0
+      - name: Construir candidatos hermanos sin alterar r3
+        run: |
+          python -m tools.maniqui.g2c2_nuca_cassette
+          python -c "from tools.maniqui.g2c2_nuca_cassette import make; make(profile='eased')"
+      - name: Preparar tres copias temporales para Godot
+        run: |
+          mkdir -p "$RUNNER_TEMP/nuca_godot"
+          printf '[application]\nconfig/name="COPOX Nuca QA"\n' > "$RUNNER_TEMP/nuca_godot/project.godot"
+          cp tests/regional_nape_godot.gd "$RUNNER_TEMP/nuca_godot/validate.gd"
+          python tools/maniqui/gltf_sanitize.py \
+            assets/maniqui/maniqui_v0_3_r3.glb \
+            "$RUNNER_TEMP/nuca_godot/baseline.glb" \
+            "$RUNNER_TEMP/nuca_godot/baseline_sanitizer.json"
+          python tools/maniqui/gltf_sanitize.py \
+            assets/maniqui/maniqui_v0_3_r3_nuca_local_prototipo.glb \
+            "$RUNNER_TEMP/nuca_godot/nuca.glb" \
+            "$RUNNER_TEMP/nuca_godot/nuca_sanitizer.json"
+          python tools/maniqui/gltf_sanitize.py \
+            assets/maniqui/maniqui_v0_3_r3_nuca_local_suavizada.glb \
+            "$RUNNER_TEMP/nuca_godot/nuca_eased.glb" \
+            "$RUNNER_TEMP/nuca_godot/nuca_eased_sanitizer.json"
+      - name: Godot oficial 4.7.2 headless
+        run: |
+          curl --fail --location --retry 3 --silent --show-error \
+             -o "$RUNNER_TEMP/godot.zip" \
+             https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP"
+          chmod +x "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64"
+          "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" --headless --version
+      - name: Importar candidatos regionales sin ejecutar el juego
+        run: |
+          timeout 240s "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" \
+            --headless --path "$RUNNER_TEMP/nuca_godot" --import \
+            2>&1 | tee "$RUNNER_TEMP/nuca_godot/import.log"
+      - name: Validar que rig y animaciones coinciden con r3
+        run: |
+          timeout 180s "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" \
+            --headless --path "$RUNNER_TEMP/nuca_godot" --script res://validate.gd \
+            2>&1 | tee "$RUNNER_TEMP/nuca_godot/qa.log"
+          python - <<'PY'
+          import os,json
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'nuca_godot/result.json'
+          x=json.loads(p.read_text())
+          assert x['checks_passed'] and x['status']=='PASS_IMPORT_STRUCTURAL'
+          assert len(x['models'])==3
+          print('REGION NUCA: GLB importado en Godot, rostro no juzgado')
+          PY
+      - name: Conservar pruebas reales
+        if: always()
+        run: |
+          mkdir -p docs/maniqui/g2c2/nuca/godot
+          for n in baseline_sanitizer.json nuca_sanitizer.json nuca_eased_sanitizer.json import.log qa.log result.json; do
+            test ! -f "$RUNNER_TEMP/nuca_godot/$n" || \
+              cp "$RUNNER_TEMP/nuca_godot/$n" docs/maniqui/g2c2/nuca/godot/
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maniqui-nuca-godot-472-regional
+          path: docs/maniqui/g2c2/nuca/godot/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Versionar informe en worktree limpio; sin tocar modelos ni fusionar
+        if: success()
+        run: |
+          test -s docs/maniqui/g2c2/nuca/godot/result.json
+          git fetch origin experimentos/g2c2-nuca-evaluacion-regional
+          publish="$RUNNER_TEMP/nuca_publish"
+          git worktree add --detach "$publish" origin/experimentos/g2c2-nuca-evaluacion-regional
+          mkdir -p "$publish/docs/maniqui/g2c2/nuca/godot"
+          cp -a docs/maniqui/g2c2/nuca/godot/. "$publish/docs/maniqui/g2c2/nuca/godot/"
+          git -C "$publish" config user.name "COPOX CI"
+          git -C "$publish" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$publish" add docs/maniqui/g2c2/nuca/godot
+          if ! git -C "$publish" diff --cached --quiet; then
+            git -C "$publish" commit -m "evidence(nuca): Godot comparativo r3 flat eased"
+            for attempt in 1 2 3 4 5; do
+              git -C "$publish" fetch origin experimentos/g2c2-nuca-evaluacion-regional
+              git -C "$publish" rebase origin/experimentos/g2c2-nuca-evaluacion-regional
+              if git -C "$publish" push origin HEAD:experimentos/g2c2-nuca-evaluacion-regional; then exit 0; fi
+              sleep 2
+            done
+            exit 1
+          fi

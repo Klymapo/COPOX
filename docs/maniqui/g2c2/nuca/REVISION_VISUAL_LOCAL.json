@@ -1,0 +1,25 @@
+{
+  "target_region": "nuca",
+  "candidate": "assets/maniqui/maniqui_v0_3_r3_nuca_local_prototipo.glb",
+  "evidence": [
+    "docs/maniqui/g2c2/nuca/NUCA_LOCAL_ANTES_DESPUES_4V.png",
+    "docs/maniqui/g2c2/nuca/NUCA_SOLO_TRIANGULOS_NUEVOS_4V.png"
+  ],
+  "auditor": "GPT-6 visual review, four views of actual reimported candidate glb",
+  "technical_status": "PASS_SCOPE_PRESERVATION",
+  "visual_status": "REVIEW_REQUIRED_NOT_APPROVED",
+  "nape_finding": "Nape gains a continuous partial strip under the skull cap, covering some previously jagged upper posterior boundary. Lower facial/neck geometry remains fragmented; strip ends and neck interface remain open.",
+  "rear_3quarter_finding": "Patch is visible at the back and nape 3/4, but is a band rather than an anatomical full transition; no final neck integration.",
+  "face_finding": "Although original face mesh is byte-identical, part of the rear patch is visible through pre-existing facial holes in frontal view, near eye/nose. This is a cross-view visibility dependency to address when face geometry is cleaned, not evidence that original facial vertices were moved.",
+  "scope_policy": "Do not reject all nape progress due to unrelated pre-existing face defects. However, later composition must remove any unintended see-through or interpenetration.",
+  "approval": "NO_GLOBAL_APPROVAL",
+  "nape_piece_promotable_without_human_review": false,
+  "candidate_retained_in_actions_artifact": true,
+  "closing_face_and_neck_remaining": true,
+  "next_steps": [
+    "local nape curvature and neck transition",
+    "avoid leaks through existing face holes during final assembly",
+    "inspect source correct references for nape",
+    "test deformation and materials in gameplay context"
+  ]
+}
