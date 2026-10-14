@@ -1,0 +1,68 @@
+name: COPOX · G2 · Protección facial y contorno r3
+on:
+  push:
+    branches: [experimentos/maniqui-g2-anatomic-contour]
+    paths:
+      - 'copox/geometry/anatomic_roi.py'
+      - 'tests/test_g2_anatomic_roi.py'
+      - 'tools/maniqui/g2_anatomic_dryrun.py'
+      - '.github/workflows/maniqui-g2.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: copox-maniqui-g2
+  cancel-in-progress: true
+jobs:
+  g2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencias gratuitas
+        run: python -m pip install numpy scipy pillow
+      - name: Gates previos y pruebas de regiones protegidas
+        run: |
+          python -m unittest discover -s tests -p 'test_g2_anatomic_roi.py' -v
+          python -m unittest discover -s tests -p 'test_visual_geometry_planner.py' -v
+      - name: Modelo real: tres hipótesis sin editar GLB
+        run: |
+          python -m tools.maniqui.g2_anatomic_dryrun
+          python - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+          base=Path("assets/maniqui/maniqui_v0_3_r3.glb")
+          expect="3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b"
+          assert hashlib.sha256(base.read_bytes()).hexdigest()==expect, "Fuente modificada"
+          path=Path("docs/maniqui/g2")
+          result=json.loads((path/"g2_SUMMARY.json").read_text())
+          assert not result["generated_glb"]
+          assert result["recommendation"]["stitch_not_allowed"]
+          assert len(result["profiles"])==3
+          assert all(r["protected_triangles_removed"]==0 for r in result["profiles"])
+          assert len(list(path.glob("*.png")))==6
+          print("G2: las tres máscaras conservan todas las facciones congeladas")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: maniqui-r3-g2-proteccion-y-cortes-no-destructivos
+          path: docs/maniqui/g2/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Guardar evidencias resumidas sólo en rama experimental
+        run: |
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/maniqui/g2/g2_SUMMARY.json \
+            docs/maniqui/g2/g2_mascara_conservador.png \
+            docs/maniqui/g2/g2_mascara_intermedio.png \
+            docs/maniqui/g2/g2_mascara_amplio.png \
+            docs/maniqui/g2/g2_hipotesis_corte_conservador.png
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(g2): proteccion r3 y tres contornos reales sin alterar GLB"
+            git pull --rebase origin experimentos/maniqui-g2-anatomic-contour
+            git push origin HEAD:experimentos/maniqui-g2-anatomic-contour
+          fi
