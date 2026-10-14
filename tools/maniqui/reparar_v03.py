@@ -32,7 +32,7 @@ def write_glb(path,j,b):
     txt+=b' '*((-len(txt))%4)
     out=(struct.pack('<4sII',b'glTF',2,28+len(txt)+len(b))
         +struct.pack('<I4s',len(txt),b'JSON')+txt
-        +struct.pack('<I4s',len(b),b'BIN\\x00')+bytes(b))
+        +struct.pack('<I4s',len(b),b'BIN\x00')+bytes(b))
     Path(path).parent.mkdir(parents=True,exist_ok=True)
     Path(path).write_bytes(out)
 
