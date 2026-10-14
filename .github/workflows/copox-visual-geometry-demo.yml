@@ -1,0 +1,63 @@
+name: COPOX · Visual Critic + Motor Geométrico · Demo
+on:
+  push:
+    branches: [propuesta/skills-3d-critica-completa]
+    paths:
+      - 'tools/geometry/demo_visual_loop.py'
+      - 'copox/visual/geometry_planner.py'
+      - 'copox/visual/mesh_diagnostics.py'
+      - 'copox/visual/critic.py'
+      - 'tests/test_visual_geometry_planner.py'
+      - '.github/workflows/copox-visual-geometry-demo.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: copox-visual-geometry-demo
+  cancel-in-progress: true
+jobs:
+  demonstracion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy scipy pillow
+      - name: 4 referencias, análisis real y Scully bajo control
+        run: |
+          python -m tools.geometry.demo_visual_loop
+          python -m unittest discover -s tests -p 'test_visual_geometry_planner.py' -v
+      - name: Probar comando integrado de una sola línea
+        run: |
+          python -m copox.visual.critic docs/visual/geometry_loop_demo/manifest.json \
+            --root docs/visual/geometry_loop_demo \
+            --output "$RUNNER_TEMP/critic_cli" \
+            --geometry-diagnostics docs/visual/geometry_loop_demo/measured_geometry.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"critic_cli"/"geometry_plan.json"
+          assert p.exists(), "Visual Critic no emitió plan geométrico"
+          j=json.loads(p.read_text())
+          assert j["status"]=="PLANS_FOR_SANDBOX" and not j["execute_automatically"]
+          assert [x["operator"] for x in j["recommendations"]]==["Scully"]
+          print("CLI integrada: plan Scully y cero ediciones automáticas")
+          PY
+      - name: Entregar evidencia (sin sobrescribir activos)
+        uses: actions/upload-artifact@v4
+        with:
+          name: critic-geometry-loop-synthetic
+          path: docs/visual/geometry_loop_demo
+          retention-days: 30
+      - name: Registrar PNG y reportes en rama de investigación
+        run: |
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/visual/geometry_loop_demo
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(visual): 4 referencias, plan matematico y Scully sintetico"
+            git pull --rebase origin propuesta/skills-3d-critica-completa
+            git push origin HEAD:propuesta/skills-3d-critica-completa
+          fi

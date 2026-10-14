@@ -1,0 +1,70 @@
+{
+  "status": "PLANS_FOR_SANDBOX",
+  "approved": false,
+  "execute_automatically": false,
+  "source": "Visual Critic × COPOX Geometry Kernel",
+  "recommendations": [
+    {
+      "anomaly_id": "synthetic_bulge",
+      "region": "front_head",
+      "kind": "surface_bulge",
+      "operator": "Scully",
+      "callable": "copox.geometry.surface_sculpt.flatten_surface",
+      "state": "PLAN_READY_FOR_SANDBOX",
+      "blockers": [],
+      "arguments": {
+        "parameters": {
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "target_projection": 0.245,
+          "region_center": [
+            0,
+            0.09,
+            0.225
+          ],
+          "region_radii": [
+            0.185,
+            0.18,
+            0.19
+          ],
+          "strength": 1.0,
+          "falloff": 0.42,
+          "max_displacement": 0.055
+        },
+        "requires_vertex_protection_mask": true,
+        "recalculate_normals": true
+      },
+      "reference_coverage": {
+        "uncertain": [],
+        "contradicts": [],
+        "supports": [
+          "reference_three_quarter",
+          "reference_side"
+        ],
+        "not_visible": [
+          "reference_front",
+          "reference_back"
+        ]
+      },
+      "independent_visual_review_pending": true,
+      "verification": [
+        "render_all_references",
+        "per_view_difference_map",
+        "protect_all_features",
+        "cheap_geometry_preflight",
+        "rig_and_animation_tests",
+        "Godot_and_Admin_review"
+      ],
+      "auto_apply": false
+    }
+  ],
+  "issues": [],
+  "priority_order": [
+    "Anatomic Cut",
+    "Surface Stitch",
+    "Scully"
+  ]
+}

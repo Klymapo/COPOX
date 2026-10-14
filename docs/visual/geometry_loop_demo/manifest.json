@@ -1,0 +1,95 @@
+{
+  "asset_id": "synthetic-bulged-head-v1",
+  "provided_reference_files": [
+    "ref_front.png",
+    "ref_three_quarter.png",
+    "ref_side.png",
+    "ref_back.png"
+  ],
+  "required_views": [
+    "front",
+    "three_quarter",
+    "side",
+    "back"
+  ],
+  "references": [
+    {
+      "id": "reference_front",
+      "view": "front",
+      "image": "ref_front.png",
+      "mask": "ref_mask_front.png",
+      "camera_alignment": "exact"
+    },
+    {
+      "id": "reference_three_quarter",
+      "view": "three_quarter",
+      "image": "ref_three_quarter.png",
+      "mask": "ref_mask_three_quarter.png",
+      "camera_alignment": "exact"
+    },
+    {
+      "id": "reference_side",
+      "view": "side",
+      "image": "ref_side.png",
+      "mask": "ref_mask_side.png",
+      "camera_alignment": "exact"
+    },
+    {
+      "id": "reference_back",
+      "view": "back",
+      "image": "ref_back.png",
+      "mask": "ref_mask_back.png",
+      "camera_alignment": "exact"
+    }
+  ],
+  "candidate": {
+    "id": "known-bulge",
+    "views": [
+      {
+        "view": "front",
+        "image": "candidate_front.png",
+        "mask": "candidate_mask_front.png"
+      },
+      {
+        "view": "three_quarter",
+        "image": "candidate_three_quarter.png",
+        "mask": "candidate_mask_three_quarter.png"
+      },
+      {
+        "view": "side",
+        "image": "candidate_side.png",
+        "mask": "candidate_mask_side.png"
+      },
+      {
+        "view": "back",
+        "image": "candidate_back.png",
+        "mask": "candidate_mask_back.png"
+      }
+    ]
+  },
+  "anomalies": [
+    {
+      "id": "synthetic_bulge",
+      "region": "front_head",
+      "description": "Protuberancia frontal añadida intencionalmente en código",
+      "per_reference": {
+        "reference_front": {
+          "assessment": "not_visible",
+          "note": "Sin cambio perceptible en máscara, IoU=1.000000"
+        },
+        "reference_three_quarter": {
+          "assessment": "supports",
+          "note": "Diferencia de silueta medible: IoU=0.992570; no prueba causa semántica"
+        },
+        "reference_side": {
+          "assessment": "supports",
+          "note": "Diferencia de silueta medible: IoU=0.961821; no prueba causa semántica"
+        },
+        "reference_back": {
+          "assessment": "not_visible",
+          "note": "Sin cambio perceptible en máscara, IoU=1.000000"
+        }
+      }
+    }
+  ]
+}

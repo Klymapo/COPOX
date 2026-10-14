@@ -1,0 +1,40 @@
+{
+  "anomalies": {
+    "synthetic_bulge": {
+      "signed_excess_mm": 35.52592174880176,
+      "region_topology_continuous": true,
+      "region_components": 1,
+      "target_boundary_edges": 53,
+      "selected_vertices": 204,
+      "region_triangles": 353,
+      "measurement_provenance": {
+        "source_sha256": "8d0c1af9bfba758154601bb8a2c0ba7c1e32bfaf35d124b35c38688cb5c4502b",
+        "measurement_method": "COPOX indexed mesh ROI plane-excess v1",
+        "coordinate_system": "user-declared; coordinates remain unchanged",
+        "note": "plane_offset represents a user/artist-supplied target, not an inferred artistic preference"
+      },
+      "kind": "surface_bulge",
+      "flatten": {
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "target_projection": 0.245,
+        "region_center": [
+          0,
+          0.09,
+          0.225
+        ],
+        "region_radii": [
+          0.185,
+          0.18,
+          0.19
+        ],
+        "strength": 1.0,
+        "falloff": 0.42,
+        "max_displacement": 0.055
+      }
+    }
+  }
+}

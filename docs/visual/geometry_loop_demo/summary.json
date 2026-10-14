@@ -1,0 +1,29 @@
+{
+  "description": "Fixture programada: protuberancia frontal + planes cuantitativos, sin IA de visión",
+  "reference_count": 4,
+  "reference_coverage": true,
+  "critic_status": "REVIEW_REQUIRED",
+  "plan_status": "PLANS_FOR_SANDBOX",
+  "operator_proposed": "Scully",
+  "automatic_approval": false,
+  "manual_review_pending": true,
+  "scully_changed_vertices": 45,
+  "scully_max_displacement_mm": 35.5259,
+  "before_mask_iou": {
+    "front": 1.0,
+    "three_quarter": 0.9925703403696055,
+    "side": 0.9618212954568349,
+    "back": 1.0
+  },
+  "after_mask_iou": {
+    "front": 1.0,
+    "three_quarter": 0.9925703403696055,
+    "side": 0.9813706092453169,
+    "back": 1.0
+  },
+  "limitations": [
+    "No detección semántica autónoma: bulto inyectado deliberadamente",
+    "No GLB de personaje ni Godot; demostración de la selección y operador",
+    "No promoción automática"
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "status": "REVIEW_REQUIRED",
+  "automatically_approved": false,
+  "all_references_accounted_for": true,
+  "required_views": [
+    "front",
+    "three_quarter",
+    "side",
+    "back"
+  ],
+  "references_supplied": 4,
+  "references_compared": 4,
+  "unreferenced_candidate_views": [],
+  "anomaly_cross_view_matrix": [
+    {
+      "id": "synthetic_bulge",
+      "region": "front_head",
+      "description": "Protuberancia frontal añadida intencionalmente en código",
+      "cross_reference_evidence": {
+        "uncertain": [],
+        "contradicts": [],
+        "supports": [
+          "reference_three_quarter",
+          "reference_side"
+        ],
+        "not_visible": [
+          "reference_front",
+          "reference_back"
+        ]
+      }
+    }
+  ],
+  "issues": [],
+  "unreviewed_references": [
+    "reference_front",
+    "reference_three_quarter",
+    "reference_side",
+    "reference_back"
+  ],
+  "problematic_references": [],
+  "worst_mask_iou": 0.9618212954568349,
+  "comparisons": [
+    {
+      "reference_id": "reference_front",
+      "view": "front",
+      "pose": "rest",
+      "camera_alignment": "exact",
+      "reference_image": "/home/runner/work/COPOX/COPOX/docs/visual/geometry_loop_demo/ref_front.png",
+      "candidate_image": "/home/runner/work/COPOX/COPOX/docs/visual/geometry_loop_demo/candidate_front.png",
+      "metrics": {
+        "iou": 1.0,
+        "symmetric_chamfer_px": 0.0
+      },
+      "manual_review": null,
+      "sheet": "docs/visual/geometry_loop_demo/compare/comparison_b724b01cbc21.png"
+    },
+    {
+      "reference_id": "reference_three_quarter",
+      "view": "three_quarter",
+      "pose": "rest",
+      "camera_alignment": "exact",
+      "reference_image": "/home/runner/work/COPOX/COPOX/docs/visual/geometry_loop_demo/ref_three_quarter.png",
+      "candidate_image": "/home/runner/work/COPOX/COPOX/docs/visual/geometry_loop_demo/candidate_three_quarter.png",
+      "metrics": {
+        "iou": 0.9925703403696055,
+        "symmetric_chamfer_px": 0.3942949721690737
+      },
+      "manual_review": null,
+      "sheet": "docs/visual/geometry_loop_demo/compare/comparison_94d5fc95ce0b.png"
+    },
+    {
+      "reference_id": "reference_side",
+      "view": "side",
+      "pose": "rest",
+      "camera_alignment": "exact",
+      "reference_image": "/home/runner/work/COPOX/COPOX/docs/visual/geometry_loop_demo/ref_side.png",
+      "candidate_image": "/home/runner/work/COPOX/COPOX/docs/visual/geometry_loop_demo/candidate_side.png",
+      "metrics": {
+        "iou": 0.9618212954568349,
+        "symmetric_chamfer_px": 2.140148900511101
+      },
+      "manual_review": null,
+      "sheet": "docs/visual/geometry_loop_demo/compare/comparison_e2002f91f0ab.png"
+    },
+    {
+      "reference_id": "reference_back",
+      "view": "back",
+      "pose": "rest",
+      "camera_alignment": "exact",
+      "reference_image": "/home/runner/work/COPOX/COPOX/docs/visual/geometry_loop_demo/ref_back.png",
+      "candidate_image": "/home/runner/work/COPOX/COPOX/docs/visual/geometry_loop_demo/candidate_back.png",
+      "metrics": {
+        "iou": 1.0,
+        "symmetric_chamfer_px": 0.0
+      },
+      "manual_review": null,
+      "sheet": "docs/visual/geometry_loop_demo/compare/comparison_3e5d1e86e644.png"
+    }
+  ],
+  "warning": "Todas las referencias deben revisarse visualmente; IoU de máscaras NO demuestra semejanza ni estética."
+}
