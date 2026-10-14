@@ -1,0 +1,120 @@
+name: COPOX · G2C3 V3 · Mechon oreja izquierda
+on:
+  push:
+    branches: [experimentos/g2c3-v3-rapado-detras-oreja-izquierda]
+    paths:
+      - 'tools/maniqui/g2c3_v3_rapar_mechon_izquierdo.py'
+      - 'tests/regional_left_ear_godot.gd'
+      - '.github/workflows/maniqui-g2c3-v3-oreja-izquierda.yml'
+  pull_request:
+    branches: [experimentos/g2c3-nuca-superficie-visible]
+    paths:
+      - 'tools/maniqui/g2c3_v3_rapar_mechon_izquierdo.py'
+      - 'tests/regional_left_ear_godot.gd'
+      - '.github/workflows/maniqui-g2c3-v3-oreja-izquierda.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: copox-g2c3-v3-oreja-izq
+  cancel-in-progress: true
+jobs:
+  operar-y-verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencias libres
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 Pillow==10.4.0
+      - name: Gates antiguos / sintaxis del nuevo rapado
+        run: |
+          python -m py_compile tools/maniqui/g2c3_v3_rapar_mechon_izquierdo.py
+          python -m unittest discover -s tests -p 'test_regional_nape.py' -v
+      - name: Editar GLB V2 por hash y rapar isla exacta tras oreja
+        run: python -m tools.maniqui.g2c3_v3_rapar_mechon_izquierdo
+      - name: Verificar veto a oreja, SHA y cuatro primeros planos reales
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          r=json.loads(Path('docs/maniqui/g2c3/oreja_izquierda_v3/REPORTE_V3.json').read_text())
+          t=r["technical"]
+          if not (t["removed_faces"]==8 and t["ear_nearby_triangles_unchanged"]
+                and t["face_ear_vertices_unchanged"] and t["skull_cap_unchanged"]
+                and t["facial_morph_targets_unchanged"]
+                and t["unchanged_original_buffer_prefix"]
+                and t["source_sha256"]=='b7998d382f13ef8997a2dc2f73539a61da9ec5aa27605897534b13d47f3517e6'):
+              raise SystemExit("Regresión en superficie protegida: NO APROBAR")
+          if not (t["visual_change_detected"] and max(t["zoom_pixels_changed_by_view"].values())>4):
+              raise SystemExit("La zona visible no cambió")
+          f=Path(r["derived_glb"])
+          if hashlib.sha256(f.read_bytes()).hexdigest()!=t["candidate_sha256"]:
+              raise SystemExit("SHA candidato no coincide")
+          if not all(Path(t[k]).stat().st_size>7000 for k in ("evidence_six_views","evidence_ear_zoom")):
+              raise SystemExit("Falta evidencia real")
+          print("Recorte local exacto: ocho caras; V2 intacta; cambio visual comprobado")
+          PY
+      - name: Saneamiento y dos GLB reales para Godot 4.7.2
+        run: |
+          mkdir -p "$RUNNER_TEMP/v3_godot"
+          printf '[application]\nconfig/name="COPOX V3 oreja izq"\n' > "$RUNNER_TEMP/v3_godot/project.godot"
+          cp tests/regional_left_ear_godot.gd "$RUNNER_TEMP/v3_godot/validate.gd"
+          python tools/maniqui/gltf_sanitize.py assets/maniqui/maniqui_v0_3_r3_g2c3_nuca_completo_v2_SIN_APROBAR.glb "$RUNNER_TEMP/v3_godot/baseline_v2.glb" "$RUNNER_TEMP/v3_godot/baseline_sanitizer.json"
+          python tools/maniqui/gltf_sanitize.py assets/maniqui/maniqui_v0_3_r3_g2c3_v3_rapado_oreja_izquierda_SIN_APROBAR.glb "$RUNNER_TEMP/v3_godot/left_tuft_removed_v3.glb" "$RUNNER_TEMP/v3_godot/updated_sanitizer.json"
+      - name: Importación oficial Godot 4.7.2 y comprobación de rig
+        run: |
+          curl --fail --location --retry 3 --silent --show-error -o "$RUNNER_TEMP/godot.zip" https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP"
+          chmod +x "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64"
+          timeout 240s "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" --headless --path "$RUNNER_TEMP/v3_godot" --import 2>&1 | tee "$RUNNER_TEMP/v3_godot/import.log"
+          timeout 180s "$RUNNER_TEMP/Godot_v4.7.2-stable_linux.x86_64" --headless --path "$RUNNER_TEMP/v3_godot" --script res://validate.gd 2>&1 | tee "$RUNNER_TEMP/v3_godot/qa.log"
+          python - <<'PY'
+          from pathlib import Path
+          import os,json
+          p=Path(os.environ['RUNNER_TEMP'])/'v3_godot/result.json'
+          d=json.loads(p.read_text())
+          if not d['checks_passed'] or len(d['models'])!=2:
+              raise SystemExit('No pasó importación Godot V2 versus V3')
+          print("Godot: 56 huesos, 29 clips nominales, 24 superficies")
+          PY
+      - name: Conservar reportes reales
+        if: always()
+        run: |
+          mkdir -p docs/maniqui/g2c3/oreja_izquierda_v3/godot
+          for f in baseline_sanitizer.json updated_sanitizer.json import.log qa.log result.json; do
+            test ! -f "$RUNNER_TEMP/v3_godot/$f" || cp "$RUNNER_TEMP/v3_godot/$f" docs/maniqui/g2c3/oreja_izquierda_v3/godot/
+          done
+      - name: Entregar GLB V3 y renders en artifact SIN APROBAR
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g2c3-v3-oreja-izquierda-rapada-sin-aprobar
+          path: |
+            assets/maniqui/maniqui_v0_3_r3_g2c3_v3_rapado_oreja_izquierda_SIN_APROBAR.glb
+            docs/maniqui/g2c3/oreja_izquierda_v3/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Versionar SOLO capturas y reporte en rama experimental
+        if: success()
+        run: |
+          git fetch origin experimentos/g2c3-v3-rapado-detras-oreja-izquierda
+          publish="$RUNNER_TEMP/v3_publish"
+          git worktree add --detach "$publish" origin/experimentos/g2c3-v3-rapado-detras-oreja-izquierda
+          mkdir -p "$publish/docs/maniqui/g2c3/oreja_izquierda_v3"
+          cp -a docs/maniqui/g2c3/oreja_izquierda_v3/. "$publish/docs/maniqui/g2c3/oreja_izquierda_v3/"
+          git -C "$publish" config user.name "COPOX CI"
+          git -C "$publish" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$publish" add docs/maniqui/g2c3/oreja_izquierda_v3/
+          if ! git -C "$publish" diff --cached --quiet; then
+            git -C "$publish" commit -m "evidence(g2c3 v3): ocho caras tras oreja izquierda; vistas y Godot"
+            for i in 1 2 3 4 5; do
+              git -C "$publish" fetch origin experimentos/g2c3-v3-rapado-detras-oreja-izquierda
+              git -C "$publish" rebase origin/experimentos/g2c3-v3-rapado-detras-oreja-izquierda
+              if git -C "$publish" push origin HEAD:experimentos/g2c3-v3-rapado-detras-oreja-izquierda; then exit 0; fi
+              sleep 2
+            done
+            exit 1
+          fi
