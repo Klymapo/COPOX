@@ -100,7 +100,7 @@ def save_simple_glb(path,vertices,faces):
       "buffers":[{"byteLength":len(binary)}]}
     jb=json.dumps(document,separators=(',',':')).encode("utf-8")
     jb+=b" "*(-len(jb)%4)
-    binary.extend(b"\\x00"*(-len(binary)%4))
+    binary.extend(bytes([0])*(-len(binary)%4))
     payload=struct.pack("<4sII",b"glTF",2,28+len(jb)+len(binary))
     payload+=struct.pack("<I4s",len(jb),b"JSON")+jb
     payload+=struct.pack("<I4s",len(binary),bytes([66,73,78,0]))+binary
