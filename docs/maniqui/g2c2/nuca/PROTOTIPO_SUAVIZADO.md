@@ -14,3 +14,5 @@ No hay soldadura con Cara ni cuello, no cierre watertight, no corrección de mor
 - 2026-10-14 · Argos: perfil alternativo `eased`, cobertura curvada de nuca en dos anillos, unit tests y CI de generación/comparación. Todas las fuentes y modelos aprobados siguen intactos. Estado inicial: experimental, sujeto a CI y revisión artística.
 
 - 2026-10-14 · QA preliminar: CI #38623498481 detectó expectativa de prueba incorrecta: dos anillos crean 132 bordes abiertos frente a 130 del control (dos laterales adicionales). No se marcó watertight. Se corrigió el test y se mantuvieron idénticas las leyendas de capturas del control flat para no reescribir visualmente el experimento histórico.
+
+- 2026-10-14 · Argos: añadido test de importación Godot 4.7.2 en tres vías: baseline, parche plano y parche curvado, todos como copias saneadas. Esto sólo mide compatibilidad e inventario de rig/clips, no movimiento facial. Ejecución Actions en curso al registrar.

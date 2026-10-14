@@ -1,7 +1,7 @@
 extends SceneTree
 ## COPOX · validar un cassette regional, sin abrir ni modificar AlasTheo.
 func _initialize() -> void:
-    var paths: Array[String] = ["res://baseline.glb", "res://nuca.glb"]
+    var paths: Array[String] = ["res://baseline.glb", "res://nuca.glb", "res://nuca_eased.glb"]
     var models: Dictionary = {}
     var reference_clips: Array = []
     var reference_surfaces: int = -1
@@ -26,7 +26,7 @@ func _initialize() -> void:
             reference_clips = clip_names.duplicate()
             reference_surfaces = d["surface_count"]
         elif clip_names != reference_clips or d["surface_count"] != reference_surfaces:
-            push_error("Diferencias de clips o superficies entre baseline y nuca")
+            push_error("Diferencias de clips o superficies entre baseline y candidato de nuca")
             failed = true
         if not d["finite_bone_positions"]:
             failed = true

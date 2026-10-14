@@ -22,9 +22,11 @@ jobs:
           python-version: '3.11'
       - name: Dependencias libres del saneador
         run: python -m pip install numpy==1.26.4 scipy==1.13.1 Pillow==10.4.0
-      - name: Construir candidato hermano, no modificar r3
-        run: python -m tools.maniqui.g2c2_nuca_cassette
-      - name: Preparar dos copias temporales para Godot
+      - name: Construir candidatos hermanos sin alterar r3
+        run: |
+          python -m tools.maniqui.g2c2_nuca_cassette
+          python -c "from tools.maniqui.g2c2_nuca_cassette import make; make(profile='eased')"
+      - name: Preparar tres copias temporales para Godot
         run: |
           mkdir -p "$RUNNER_TEMP/nuca_godot"
           printf '[application]\nconfig/name="COPOX Nuca QA"\n' > "$RUNNER_TEMP/nuca_godot/project.godot"
@@ -37,6 +39,10 @@ jobs:
             assets/maniqui/maniqui_v0_3_r3_nuca_local_prototipo.glb \
             "$RUNNER_TEMP/nuca_godot/nuca.glb" \
             "$RUNNER_TEMP/nuca_godot/nuca_sanitizer.json"
+          python tools/maniqui/gltf_sanitize.py \
+            assets/maniqui/maniqui_v0_3_r3_nuca_local_suavizada.glb \
+            "$RUNNER_TEMP/nuca_godot/nuca_eased.glb" \
+            "$RUNNER_TEMP/nuca_godot/nuca_eased_sanitizer.json"
       - name: Godot oficial 4.7.2 headless
         run: |
           curl --fail --location --retry 3 --silent --show-error \
@@ -61,14 +67,14 @@ jobs:
           p=Path(os.environ['RUNNER_TEMP'])/'nuca_godot/result.json'
           x=json.loads(p.read_text())
           assert x['checks_passed'] and x['status']=='PASS_IMPORT_STRUCTURAL'
-          assert len(x['models'])==2
+          assert len(x['models'])==3
           print('REGION NUCA: GLB importado en Godot, rostro no juzgado')
           PY
       - name: Conservar pruebas reales
         if: always()
         run: |
           mkdir -p docs/maniqui/g2c2/nuca/godot
-          for n in baseline_sanitizer.json nuca_sanitizer.json import.log qa.log result.json; do
+          for n in baseline_sanitizer.json nuca_sanitizer.json nuca_eased_sanitizer.json import.log qa.log result.json; do
             test ! -f "$RUNNER_TEMP/nuca_godot/$n" || \
               cp "$RUNNER_TEMP/nuca_godot/$n" docs/maniqui/g2c2/nuca/godot/
           done
