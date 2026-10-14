@@ -1,0 +1,85 @@
+name: COPOX · Maniquí r3 · Visual Critic real
+on:
+  push:
+    branches: [experimentos/maniqui-r3-visual-critico]
+    paths:
+      - 'tools/maniqui/r3_visual_critic_real.py'
+      - 'tools/maniqui/r3_segment_islands.py'
+      - 'tools/maniqui/r3_seam_readiness.py'
+      - '.github/workflows/maniqui-r3-critic-real.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: r3-critic-real
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Librerías gratuitas, CPU
+        run: python -m pip install numpy scipy pillow
+      - name: Primer filtro rig y fuente autentica
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          f=Path('assets/maniqui/maniqui_v0_3_r3.glb')
+          expected='3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b'
+          assert hashlib.sha256(f.read_bytes()).hexdigest()==expected
+          print('r3 fuente verificada, no modificada')
+          PY
+      - name: Análisis real de topología y referencias multivista
+        run: |
+          python -m tools.maniqui.r3_visual_critic_real
+          python -m tools.maniqui.r3_segment_islands
+          python -m tools.maniqui.r3_seam_readiness
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('docs/maniqui/r3_critic_real')
+          t=json.loads((root/'SUMMARY.json').read_text())
+          assert t['refs_compared']==6
+          assert t['no_mutated_model'] and t['no_artistic_approval']
+          assert t['open_cap_edges_by_index']>0
+          assert (root/'visual_review/report.json').exists()
+          comp=json.loads((root/'face_islands.json').read_text())
+          assert comp['component_count']>=2 and comp['no_glb_modified']
+          seam=json.loads((root/'stitch_readiness.json').read_text())
+          assert seam['cap_boundary_edges']==128 and not seam['readiness']['stitch_allowed']
+          assert len(list((root/'visual_review').glob('comparison_*.png')))==6
+          print('6 referencias cubiertas; Ninguna fusión ni edición')
+          PY
+      - name: Conservar evidencia completa temporalmente como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: r3-real-critic-all-references
+          path: docs/maniqui/r3_critic_real/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publicar sólo muestras clave y auditorías en rama experimental
+        run: |
+          git config user.name "COPOX CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/maniqui/r3_critic_real/SUMMARY.json \
+            docs/maniqui/r3_critic_real/topologia_r3.json \
+            docs/maniqui/r3_critic_real/references_manifest.json \
+            docs/maniqui/r3_critic_real/mesh_measurements.json \
+            docs/maniqui/r3_critic_real/geometry_plan.json \
+            docs/maniqui/r3_critic_real/r3_fourviews.png \
+            docs/maniqui/r3_critic_real/r3_head_details.png \
+            docs/maniqui/r3_critic_real/stitch_readiness.json \
+            docs/maniqui/r3_critic_real/face_islands.json \
+            docs/maniqui/r3_critic_real/r3_face_islands_4views.png
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence(maniqui): auditoria real r3, geometria, seis referencias y cuatro vistas"
+            git pull --rebase origin experimentos/maniqui-r3-visual-critico
+            git push origin HEAD:experimentos/maniqui-r3-visual-critico
+          fi

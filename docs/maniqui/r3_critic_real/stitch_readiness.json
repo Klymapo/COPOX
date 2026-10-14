@@ -1,0 +1,66 @@
+{
+  "source": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "cap_boundary_edges": 128,
+  "cap_boundary_vertex_indices": 128,
+  "face_welded_boundary_edges_1e-6m": 898,
+  "face_welded_boundary_vertices_1e-6m": 851,
+  "face_welded_nonmanifold_edges": 1,
+  "nearest_neighbor_face_vertices_unique": 90,
+  "nearest_neighbor_collisions": 38,
+  "distance_all_mm": {
+    "median": 10.719,
+    "p95": 28.685,
+    "maximum": 34.599
+  },
+  "regional": {
+    "front": {
+      "sampled_cap_vertices": 43,
+      "distance_nearest_face_boundary_mm": {
+        "min": 2.362,
+        "median": 16.438,
+        "p95": 30.358,
+        "max": 34.599
+      },
+      "within_5mm": 9,
+      "within_15mm": 21,
+      "within_30mm": 40
+    },
+    "temples": {
+      "sampled_cap_vertices": 42,
+      "distance_nearest_face_boundary_mm": {
+        "min": 2.844,
+        "median": 10.463,
+        "p95": 21.391,
+        "max": 25.619
+      },
+      "within_5mm": 7,
+      "within_15mm": 29,
+      "within_30mm": 42
+    },
+    "rear": {
+      "sampled_cap_vertices": 43,
+      "distance_nearest_face_boundary_mm": {
+        "min": 3.791,
+        "median": 10.722,
+        "p95": 24.96,
+        "max": 26.812
+      },
+      "within_5mm": 6,
+      "within_15mm": 27,
+      "within_30mm": 43
+    }
+  },
+  "readiness": {
+    "loop_pair_valid": false,
+    "winding_validated": false,
+    "protected_feature_bridge_safe": false,
+    "stitch_allowed": false,
+    "reason": "La Cara no tiene un loop anatómico equivalente identificado: nearest-neighbor es diagnóstico, no soldadura"
+  },
+  "limits": [
+    "No transformar materiales UV skin morph ni geometría",
+    "El punto más próximo puede ser ceja, oreja, pestaña o isla extra",
+    "Antes de Stitch hay que clasificar y aislar un contorno facial, limpiar nonmanifold con máscara anatómica y homologar 128 vértices respetando facciones"
+  ]
+}

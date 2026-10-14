@@ -1,0 +1,117 @@
+{
+  "source": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "bones": 56,
+  "clips": 29,
+  "coordinate_contract": {
+    "up": "Y",
+    "front": "+Z",
+    "unit": "meters"
+  },
+  "primitives": [
+    {
+      "part": "Cabeza",
+      "vertices": 5647,
+      "triangles": 3894,
+      "raw_by_index": {
+        "positions": 5647,
+        "components": 297,
+        "largest_component_vertices": [
+          127,
+          123,
+          113,
+          104,
+          82,
+          74,
+          72,
+          70,
+          69,
+          69
+        ],
+        "open_boundary_edges": 3310,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0
+      },
+      "position_weld_for_diagnosis_only_1e-6": {
+        "positions": 3357,
+        "components": 18,
+        "largest_component_vertices": [
+          2199,
+          37,
+          34,
+          26,
+          19,
+          13,
+          11,
+          9,
+          8,
+          3
+        ],
+        "open_boundary_edges": 898,
+        "nonmanifold_edges": 1,
+        "degenerate_triangles": 0
+      },
+      "bounds_min": [
+        -0.2470597,
+        0.5358705,
+        -0.2494152
+      ],
+      "bounds_max": [
+        0.2469833,
+        0.8544835,
+        0.2446828
+      ],
+      "warnings": [
+        "Algunos cortes por UV producen bordes por índice, no agujeros",
+        "Agrupar por posición es SÓLO diagnóstico; no exportar soldadura así"
+      ]
+    },
+    {
+      "part": "Craneo",
+      "vertices": 4097,
+      "triangles": 8064,
+      "raw_by_index": {
+        "positions": 4097,
+        "components": 1,
+        "largest_component_vertices": [
+          4097
+        ],
+        "open_boundary_edges": 128,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0
+      },
+      "position_weld_for_diagnosis_only_1e-6": {
+        "positions": 4097,
+        "components": 1,
+        "largest_component_vertices": [
+          4097
+        ],
+        "open_boundary_edges": 128,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0
+      },
+      "bounds_min": [
+        -0.2143845,
+        0.672,
+        -0.2391348
+      ],
+      "bounds_max": [
+        0.218066,
+        0.9625644,
+        0.1832331
+      ],
+      "warnings": [
+        "Algunos cortes por UV producen bordes por índice, no agujeros",
+        "Agrupar por posición es SÓLO diagnóstico; no exportar soldadura así"
+      ]
+    }
+  ],
+  "conclusions": [
+    "El borde de cúpula abierto por índice no significa que estén soldadas sus piezas con la Cara",
+    "R3 conserva 56 bones y 29 clips; inspección de malla NO certifica comportamiento de animación",
+    "Las referencias originales tienen identidad/ropa/focal distintas y no son métricas calibradas de la esfera calva",
+    "No medir semejanza artística por IoU con referencias de cámara desconocida",
+    "No cortar patillas ni nuca sin máscaras de protección validadas contra todas las referencias"
+  ],
+  "cap_boundary_edges_indexed": 128
+}

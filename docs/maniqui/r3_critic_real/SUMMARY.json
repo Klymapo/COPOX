@@ -1,0 +1,36 @@
+{
+  "state": "AUDITED_NOT_MODIFIED",
+  "model_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "references_found": 6,
+  "refs_compared": 6,
+  "all_references_accounted_for_in_this_repo_selection": true,
+  "visual_status": "REVIEW_REQUIRED",
+  "operator_plan_status": "RESEARCH_REQUIRED",
+  "plan_recommendations": [
+    {
+      "anomaly_id": "r3_cap_open_boundary",
+      "state": "INSUFFICIENT_EVIDENCE",
+      "blockers": [
+        "no_reference_support"
+      ],
+      "reference_coverage": {
+        "supports": [],
+        "contradicts": [],
+        "not_visible": [],
+        "uncertain": [
+          "detective_portrait",
+          "alastor_pending",
+          "older_male",
+          "pair_older_male",
+          "turnaround_sheet",
+          "character_comparison"
+        ]
+      }
+    }
+  ],
+  "open_cap_edges_by_index": 128,
+  "no_mutated_model": true,
+  "no_artistic_approval": true,
+  "not_proven_complete_user_reference_history": true,
+  "warning": "No hay cámara exacta ni referencias 3D de la cabeza calva; se requiere segmentar la hoja multivista, confirmar identidad y máscaras anatómicas antes de cortar o soldar."
+}

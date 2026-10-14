@@ -1,0 +1,34 @@
+{
+  "status": "RESEARCH_REQUIRED",
+  "approved": false,
+  "execute_automatically": false,
+  "source": "Visual Critic × COPOX Geometry Kernel",
+  "recommendations": [
+    {
+      "anomaly_id": "r3_cap_open_boundary",
+      "state": "INSUFFICIENT_EVIDENCE",
+      "blockers": [
+        "no_reference_support"
+      ],
+      "reference_coverage": {
+        "supports": [],
+        "contradicts": [],
+        "not_visible": [],
+        "uncertain": [
+          "detective_portrait",
+          "alastor_pending",
+          "older_male",
+          "pair_older_male",
+          "turnaround_sheet",
+          "character_comparison"
+        ]
+      }
+    }
+  ],
+  "issues": [],
+  "priority_order": [
+    "Anatomic Cut",
+    "Surface Stitch",
+    "Scully"
+  ]
+}

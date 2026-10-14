@@ -1,0 +1,136 @@
+{
+  "asset_id": "maniqui_v0_3_r3",
+  "required_views": [
+    "front",
+    "three_quarter",
+    "side",
+    "back"
+  ],
+  "provided_reference_files": [
+    "refs/personajes/detective.jpg",
+    "refs/pendientes/alastor-1790548802009.jpg",
+    "refs/personajes/hombre-mayor.png",
+    "refs/personajes/joven-rubio-y-hombre-mayor.png",
+    "refs/infografias/hoja-de-vistas-personaje.png",
+    "refs/infografias/comparativa-visual-de-personajes.png"
+  ],
+  "references": [
+    {
+      "id": "detective_portrait",
+      "image": "refs/personajes/detective.jpg",
+      "view": "three_quarter",
+      "pose": "rest",
+      "camera_alignment": "unknown",
+      "reference_role": "contextual_uncalibrated",
+      "notes": "Detective de pelo castaño/gafas: identidad respecto a r3 requiere confirmación"
+    },
+    {
+      "id": "alastor_pending",
+      "image": "refs/pendientes/alastor-1790548802009.jpg",
+      "view": "three_quarter",
+      "pose": "rest",
+      "camera_alignment": "unknown",
+      "reference_role": "contextual_uncalibrated",
+      "notes": "Referencia etiquetada Alastor; duplicado visual probable de detective.jpg"
+    },
+    {
+      "id": "older_male",
+      "image": "refs/personajes/hombre-mayor.png",
+      "view": "three_quarter",
+      "pose": "rest",
+      "camera_alignment": "unknown",
+      "reference_role": "contextual_uncalibrated",
+      "notes": "Hombre mayor canoso y barba: alternativa o personaje distinto sin confirmación"
+    },
+    {
+      "id": "pair_older_male",
+      "image": "refs/personajes/joven-rubio-y-hombre-mayor.png",
+      "view": "three_quarter",
+      "pose": "rest",
+      "camera_alignment": "unknown",
+      "reference_role": "contextual_uncalibrated",
+      "notes": "Contexto de hombre mayor con Theo: NO referencia frontal/ortográfica"
+    },
+    {
+      "id": "turnaround_sheet",
+      "image": "refs/infografias/hoja-de-vistas-personaje.png",
+      "view": "reference_sheet",
+      "pose": "rest",
+      "camera_alignment": "unknown",
+      "reference_role": "contextual_uncalibrated",
+      "notes": "Lámina multivista de personaje: sus vistas internas deben segmentarse e identificarse"
+    },
+    {
+      "id": "character_comparison",
+      "image": "refs/infografias/comparativa-visual-de-personajes.png",
+      "view": "reference_sheet",
+      "pose": "rest",
+      "camera_alignment": "unknown",
+      "reference_role": "contextual_uncalibrated",
+      "notes": "Comparativa gráfica multicaracter; no mezclar sujetos y escalas"
+    }
+  ],
+  "candidate": {
+    "id": "r3_original_unmodified",
+    "views": [
+      {
+        "view": "front",
+        "pose": "rest",
+        "image": "docs/maniqui/r3_critic_real/r3_front.png"
+      },
+      {
+        "view": "three_quarter",
+        "pose": "rest",
+        "image": "docs/maniqui/r3_critic_real/r3_three_quarter.png"
+      },
+      {
+        "view": "side",
+        "pose": "rest",
+        "image": "docs/maniqui/r3_critic_real/r3_side.png"
+      },
+      {
+        "view": "back",
+        "pose": "rest",
+        "image": "docs/maniqui/r3_critic_real/r3_back.png"
+      },
+      {
+        "view": "reference_sheet",
+        "pose": "rest",
+        "image": "docs/maniqui/r3_critic_real/r3_fourviews.png"
+      }
+    ]
+  },
+  "anomalies": [
+    {
+      "id": "r3_cap_open_boundary",
+      "region": "skull_face_transition",
+      "description": "Cúpula y Cara son primitivas diferentes; cúpula con bordes abiertos por índice",
+      "per_reference": {
+        "detective_portrait": {
+          "assessment": "uncertain",
+          "note": "Referencia sin cámara calibrada y sin render anatómico equivalente; no concluir error artístico de esta imagen"
+        },
+        "alastor_pending": {
+          "assessment": "uncertain",
+          "note": "Referencia sin cámara calibrada y sin render anatómico equivalente; no concluir error artístico de esta imagen"
+        },
+        "older_male": {
+          "assessment": "uncertain",
+          "note": "Referencia sin cámara calibrada y sin render anatómico equivalente; no concluir error artístico de esta imagen"
+        },
+        "pair_older_male": {
+          "assessment": "uncertain",
+          "note": "Referencia sin cámara calibrada y sin render anatómico equivalente; no concluir error artístico de esta imagen"
+        },
+        "turnaround_sheet": {
+          "assessment": "uncertain",
+          "note": "Referencia sin cámara calibrada y sin render anatómico equivalente; no concluir error artístico de esta imagen"
+        },
+        "character_comparison": {
+          "assessment": "uncertain",
+          "note": "Referencia sin cámara calibrada y sin render anatómico equivalente; no concluir error artístico de esta imagen"
+        }
+      }
+    }
+  ]
+}
