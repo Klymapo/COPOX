@@ -4,6 +4,8 @@ on:
     branches: [experimentos/maniqui-g2-anatomic-contour]
     paths:
       - 'copox/geometry/anatomic_roi.py'
+      - 'copox/geometry/contour_graph.py'
+      - 'tests/test_g2_contour_graph.py'
       - 'tests/test_g2_anatomic_roi.py'
       - 'tools/maniqui/g2_anatomic_dryrun.py'
       - '.github/workflows/maniqui-g2.yml'
@@ -27,6 +29,7 @@ jobs:
       - name: Gates previos y pruebas de regiones protegidas
         run: |
           python -m unittest discover -s tests -p 'test_g2_anatomic_roi.py' -v
+          python -m unittest discover -s tests -p 'test_g2_contour_graph.py' -v
           python -m unittest discover -s tests -p 'test_visual_geometry_planner.py' -v
       - name: 'Modelo real: tres hipótesis sin editar GLB'
         run: |
@@ -43,6 +46,7 @@ jobs:
           assert result["recommendation"]["stitch_not_allowed"]
           assert len(result["profiles"])==3
           assert all(r["protected_triangles_removed"]==0 for r in result["profiles"])
+          assert all(r["contour_topology_after_hypothetical_cut"]["stitch_ready"] is False for r in result["profiles"])
           assert len(list(path.glob("*.png")))==6
           print("G2: las tres máscaras conservan todas las facciones congeladas")
           PY
