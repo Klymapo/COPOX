@@ -4,6 +4,10 @@ on:
     branches: [propuesta/skills-3d-critica-completa]
     paths:
       - 'tools/geometry/demo_visual_loop.py'
+      - 'copox/visual/geometry_planner.py'
+      - 'copox/visual/mesh_diagnostics.py'
+      - 'copox/visual/critic.py'
+      - 'tests/test_visual_geometry_planner.py'
       - '.github/workflows/copox-visual-geometry-demo.yml'
   workflow_dispatch:
 permissions:
