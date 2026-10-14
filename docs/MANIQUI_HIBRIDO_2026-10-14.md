@@ -13,6 +13,7 @@ Autor: Elio (Claude), sesión de Claude Code. Rama `propuesta-maniqui-hibrido` (
 | `assets/alastor_delta/alastor_delta_v1_1_cuello.glb` | Delta con el cuello remodelado (pieza nueva bajo la mandíbula). IoU 97.2 %. |
 | `assets/maniqui/maniqui_v0_2.glb` | **Primer avatar de la biblioteca**: gris, sin ropa, pelo ni lentes. Cabeza redonda, torso, brazos, piernas, manos con 5 dedos y pies generados sobre el esqueleto. 56 huesos, 29 clips, pesos válidos. |
 | `assets/maniqui/maniqui_v0_7.glb` | **Maniquí v0.7**: v0.2 con cabeza canónica paramétrica (una sola pieza cerrada: bola medida de Gamma, cara aplanada, cuencas, nariz, boca, orejas) y cuello recto nuevo. Sin restos de Gamma en la cabeza. Rama `propuesta-cabeza-canonica`. |
+| `assets/maniqui/maniqui_v0_8.glb` | **Maniquí v0.8**: cabeza ALTH medida de las referencias con `medir_cara.py` + `cabeza.py rasgos/alastor.json`: cajón redondeado (superelipsoide), mandíbula plana, nariz y orejas de bloque. Ver hallazgo de proporciones abajo. |
 | `assets/maniqui/ropa_alastor_v0.glb` | Ropa de Alastor en 10 piezas con el mismo esqueleto: pelo, lentes, gabardina (2), camisa, corbata, cinturón, hebilla, faldones+pantalón y zapatos. |
 | `assets/*/previews/` | Vistas finales (no renders de iteración). |
 | `tools/maniqui/` | Scripts y `run_pipeline.sh`. |
@@ -42,6 +43,14 @@ Herramientas de control: `render.py` (4 vistas), `measure.py` (IoU de silueta co
 - **Gamma no tiene nada debajo de la ropa ni del pelo.** Beta tampoco tenía torso, brazos superiores ni piernas bajo la gabardina. El cuerpo del maniquí se **genera**, no se recorta.
 - Los colores de la textura de Gamma no distinguen bien pelo en sombra de piel en sombra. Hay que combinar color, posición y geometría.
 - Mis renders usan sombreado plano y exageran las facetas. **Validar en Godot** antes de juzgar.
+
+## Hallazgo del 14 oct (tarde): la cabeza ALTH no es una bola, y el cuerpo Beta no está en proporción ALTH
+
+`medir_cara.py` sobre `refs/personajes/joven-rubio-4-vistas.jpg` (frente) y `detective.jpg` (3/4) da: llenado de la caja de la cara 0.90-0.92 (una elipse daría 0.785), mandíbula 0.96-1.0 del ancho, radio de esquina 0.04-0.08 → **cajón redondeado**, no esfera. Ojos a 0.50 W sobre la barbilla, separados 0.58 W, de 0.32×0.30 W; nariz 0.23 W bajo el ojo, 0.21 W de ancho. Ancho de cara / altura total: 0.26 (Theo) y 0.32 (detective); barbilla al 49-55 % de la altura.
+
+Con ese 0.32 la cabeza del maniquí mide 32 cm y queda chica para el cuerpo Beta/Gamma (hombros y cuello más anchos que en el estilo). Por eso `rasgos/alastor.json` impone `ancho_cara_m = 0.456` (el ancho de Gamma) y conserva lo medido como dato. **Lo que sigue en serio**: re-proporcionar el cuerpo del maniquí a las referencias (medir torso, hombros, brazos y piernas con la misma herramienta) y no solo la cabeza.
+
+La auditoría automática de la cabeza contra la referencia queda pendiente: no hay referencia frontal sin pelo; haría falta una máscara de pelo en `medir_cara.py` o una referencia calva.
 
 ## Pendientes (prioridad)
 

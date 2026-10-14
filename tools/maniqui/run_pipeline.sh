@@ -26,9 +26,11 @@ $PY cuerpo.py "$OUT/maniqui_v0.glb" "$OUT/maniqui_v0_1.glb"
 echo "6/6 manos con dedos y pies (v0.2)"
 $PY manos_pies.py "$OUT/maniqui_v0_1.glb" "$OUT/maniqui_v0_2.glb"
 
-echo "7/7 cabeza canónica paramétrica + cuello nuevo (v0.7)"
-$PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_7.glb"
-$PY facezoom.py "$OUT/maniqui_v0_7.glb" "$OUT/maniqui_v0_7_cara.png"
+echo "7/7 cabeza canónica ALTH medida de las referencias (v0.8)"
+$PY medir_cara.py "$ROOT/refs/personajes/joven-rubio-4-vistas.jpg" "$OUT/theo_frente.json" --recorte 0,0,768,768
+$PY medir_cara.py "$ROOT/refs/personajes/detective.jpg" "$OUT/alastor_34.json"
+$PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_8.glb" rasgos/alastor.json
+$PY facezoom.py "$OUT/maniqui_v0_8.glb" "$OUT/maniqui_v0_8_cara.png"
 
 echo "Previews:"
 $PY render.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_2_4vistas.png" >/dev/null

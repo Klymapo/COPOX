@@ -16,7 +16,8 @@ Los scripts se importan entre sí por ruta relativa (`render.py`, `cuerpo.py`), 
 | `maniqui.py delta_v1_1 it4c maniqui_out ropa_out beta` | quita pelo y lentes, cráneo de bola, archivo de ropa | ver comentarios |
 | `cuerpo.py in out` | torso, brazos superiores y piernas sobre el esqueleto | perfiles en el código |
 | `manos_pies.py in out` | antebrazo, palma, dedos y pies | radios en el código |
-| `cabeza.py in out` | cabeza canónica paramétrica (bola medida de Gamma, cara aplanada, cuencas, nariz, boca, orejas) + cuello recto; reemplaza Cabeza/Craneo/Cuello | medidas en el código |
+| `medir_cara.py ref.jpg out.json [--recorte x0,y0,x1,y1] [--vista lado] [--debug png]` | mide la referencia (numpy/scipy/Pillow): caja de la cara, llenado, mandíbula, ojos, cejas, nariz, boca, orejas, proporción con la altura | ver `rasgos/*.json` |
+| `cabeza.py in out [rasgos.json]` | cabeza canónica ALTH: superelipsoide (cajón redondeado) con las proporciones del JSON, cuencas, nariz de bloque, boca, orejas de bloque + cuello recto; reemplaza Cabeza/Craneo/Cuello | `rasgos/alastor.json`, `rasgos/theo.json` |
 | `headzoom.py in out [y_min]` / `facezoom.py in out` | acercamientos de cabeza (4 vistas) y cara (0/25/60°) | — |
 | `render.py in.glb out.png [zup]` | 4 vistas, sombreado plano | — |
 | `measure.py cand gamma beta prefijo` | IoU de silueta en 4 vistas + mapa de diferencias | — |
