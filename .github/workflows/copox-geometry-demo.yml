@@ -39,5 +39,6 @@ jobs:
           git add docs/geometry/demo/
           if ! git diff --cached --quiet; then
             git commit -m "evidence(geometry): three synthetic operators PNG GLB JSON"
+            git pull --rebase origin propuesta/cassette-geometria-guiada
             git push origin HEAD:propuesta/cassette-geometria-guiada
           fi
