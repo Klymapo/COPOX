@@ -90,6 +90,21 @@ torso_prof = [  # (y, rx, rz, pesos)
 rings = [(np.array([0, y, cz]), rx, rz, EX, EZ) for y, rx, rz, _ in torso_prof]
 pieces.append(('Torso', loft(rings, [w for *_, w in torso_prof])))
 
+# ---------- PELVIS: bloque de cadera bajo el torso, del que salen las piernas (estilo: pantalón de bloque, sin entrepierna alta)
+hipL, hipR = jp['LeftUpperLeg'], jp['RightUpperLeg']
+pelv_prof = [(0.305, 0.126, 0.074, wj(('Hips', 1))),
+             (0.280, 0.130, 0.080, wj(('Hips', 1))),
+             (0.255, 0.130, 0.082, wj(('Hips', 1))),
+             (0.238, 0.124, 0.078, wj(('Hips', 1)))]
+rings = [(np.array([0, y, cz]), rx, rz, EX, EZ, 3.2) for y, rx, rz, _ in pelv_prof]
+Vp, Np, Jp, Wp, Ip = loft(rings, [w for *_, w in pelv_prof], cap_top=False)
+# abajo, cada mitad sigue un poco a su pierna para que no se rasgue al sentarse
+for v in range(len(Vp)):
+    if Vp[v][1] < 0.262:
+        side = 'Left' if Vp[v][0] > 0 else 'Right'; f = np.clip((0.262 - Vp[v][1]) / 0.03, 0, 1) * 0.45
+        jj, ww = wj(('Hips', 1 - f), (side + 'UpperLeg', f)); Jp[v] = jj; Wp[v] = ww
+pieces.append(('Pelvis', (Vp, Np, Jp, Wp, Ip)))
+
 # ---------- PIERNAS (cadera → tobillo), una por lado
 for side in ('Left', 'Right'):
     hip, knee, ankle = jp[side + 'UpperLeg'], jp[side + 'LowerLeg'], jp[side + 'Foot']

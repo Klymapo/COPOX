@@ -28,15 +28,15 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     xs = [wrist[0], wrist[0] + sgn * 0.02, kn[:, 0].mean() - sgn * 0.012, kn[:, 0].mean() + sgn * 0.004]
     EY, EZ = np.array([0, 1.0, 0]), np.array([0, 0, 1.0])
     rings = [(np.array([x, wrist[1], zc * f + wrist[2] * (1 - f)]), ry, rz, EY, EZ) for x, ry, rz, f in
-             [(xs[0], 0.024, 0.030, 0.0), (xs[1], 0.023, 0.036, 0.5), (xs[2], 0.021, zw, 1.0), (xs[3], 0.020, zw, 1.0)]]
+             [(xs[0], 0.026, 0.032, 0.0), (xs[1], 0.027, 0.040, 0.5), (xs[2], 0.026, zw + 0.004, 1.0), (xs[3], 0.025, zw + 0.004, 1.0)]]
     pieces.append(('Palma' + side[0], loft(rings, [wj((side + 'Hand', 1))] * 4, seg=24)))
     # ----- dedos: tubo por las falanges, con punta extrapolada
-    for f, r in [('Index', 0.0100), ('Middle', 0.0100), ('Ring', 0.0095), ('Little', 0.0088)]:
-        p0, p1, p2 = P(f + 'Proximal'), P(f + 'Intermediate'), P(f + 'Distal'); tip = p2 + (p2 - p1) * 0.9
+    for f, r in [('Index', 0.0115), ('Middle', 0.0115), ('Ring', 0.0110), ('Little', 0.0100)]:
+        p0, p1, p2 = P(f + 'Proximal'), P(f + 'Intermediate'), P(f + 'Distal'); tip = p2 + (p2 - p1) * 0.35          # dedos cortos de mitón
         base = p0 - (p1 - p0) * 0.35
         pieces.append(('Dedo' + f + side[0], tube([base, p0, p1, p2, tip], [r, r, r * 0.97, r * 0.95, r * 0.8],
                        [wj((side + 'Hand', 1)), wj((side + f + 'Proximal', 1)), wj((side + f + 'Intermediate', 1)), wj((side + f + 'Distal', 1)), wj((side + f + 'Distal', 1))], seg=12)))
-    m, p1, p2 = P('ThumbMetacarpal'), P('ThumbProximal'), P('ThumbDistal'); tip = p2 + (p2 - p1) * 0.8
+    m, p1, p2 = P('ThumbMetacarpal'), P('ThumbProximal'), P('ThumbDistal'); tip = p2 + (p2 - p1) * 0.4
     pieces.append(('DedoThumb' + side[0], tube([wrist + (m - wrist) * 0.3, m, p1, p2, tip], [0.011, 0.010, 0.0095, 0.009, 0.006],
                    [wj((side + 'Hand', 1)), wj((side + 'ThumbMetacarpal', 1)), wj((side + 'ThumbProximal', 1)), wj((side + 'ThumbDistal', 1)), wj((side + 'ThumbDistal', 1))], seg=12)))
     # ----- pie: anillos en el plano x-y a lo largo de z (talón → punta), base plana en y=0
