@@ -1,5 +1,7 @@
 name: COPOX · R3 · Capturas reales
 on:
+  pull_request:
+    branches: [main]
   push:
     branches:
       - evidencia/maniqui-v03-r3-png
