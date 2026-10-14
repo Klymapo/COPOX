@@ -37,7 +37,7 @@ def flatten_surface(
     Este es un paso de modelado, no de retopología o auto-collision.
     """
     p = np.asarray(positions, dtype=np.float64)
-    d = np.asarray(direction, dtype=np.float64)
+    d = np.array(direction, dtype=np.float64, copy=True)
     center = np.asarray(region_center, dtype=np.float64)
     radii = np.asarray(region_radii, dtype=np.float64)
     if p.ndim != 2 or p.shape[1] != 3 or len(p) == 0 or not np.isfinite(p).all():
