@@ -73,6 +73,11 @@ def extend_visible_dome(p,f,params):
     taper=.09+.91*(np.sin(np.pi*u)**.58)
     center=np.array([-.000038,-.010537])
     radial=base[:,[0,2]]-center
+    # Set a neck floor based on the real r3 geometry. The previous absolute
+    # drop could cross y=.50; gradually reach at most y=.532 without clamping
+    # late rings against one another (which would produce degenerate faces).
+    available=np.maximum(base[:,1]-.532,0.)
+    actual_drop=np.minimum(params["drop"]*taper,available)
     rows=[]
     steps=(.20,.40,.60,.80,1.0)
     for t in steps:
@@ -82,7 +87,7 @@ def extend_visible_dome(p,f,params):
         neck=.78 if t==1 else 1-.22*t*t
         radial_scale=bulge*neck
         xyz=base.copy()
-        xyz[:,1]=base[:,1]-params["drop"]*t*taper
+        xyz[:,1]=base[:,1]-actual_drop*t
         xyz[:,0]=center[0]+radial[:,0]*radial_scale
         xyz[:,2]=center[1]+radial[:,1]*radial_scale
         rows.append(xyz)
@@ -100,8 +105,8 @@ def extend_visible_dome(p,f,params):
     tri=new_p[new_faces]
     area=np.linalg.norm(np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]),axis=1)*.5
     if np.any(area<1e-11): raise GeometryError("Relleno produjo triangulos degenerados")
-    if np.min(tri[:,:,1])<.50 or np.max(tri[:,:,2])> .09:
-        raise GeometryError("El relleno invade limites de seguridad de la cabeza")
+    if np.min(tri[:,:,1])<.531 or np.max(tri[:,:,2])> .09:
+        raise GeometryError(f"Relleno excede limite: min_y={float(np.min(tri[:,:,1])):.5f}; max_z={float(np.max(tri[:,:,2])):.5f}")
     # Lower ring is part of a remaining open partial boundary: do not claim manifold.
     stats={"original_cranium_faces":len(f),"added_faces":len(new_faces),
        "added_vertices":len(rows)*n,"anchored_original_rim_vertices":n,
