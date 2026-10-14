@@ -1,0 +1,149 @@
+{
+  "status": "NAPE_CANDIDATES_LOCAL_TECHNICAL_PASS__ARTISTIC_REVIEW_PENDING",
+  "baseline": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "baseline_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "variants": [
+    {
+      "name": "nuca_local_suave",
+      "glb": "assets/maniqui/maniqui_r3_nuca_local_suave_NO_APROBADO.glb",
+      "sha256": "5f83e67245bb5fe8abfa9ba5dbe998a35ca464e0b81471c4721259fab1db5307",
+      "size": 11155480,
+      "baseline_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+      "changed_region": "nuca",
+      "selected_boundary_edges": 56,
+      "added_vertices": 171,
+      "added_triangles": 336,
+      "maximum_new_vertex_displacement_mm": 22.204,
+      "original_vertices_unchanged": true,
+      "original_faces_unchanged": true,
+      "original_face_primitive_untouched": true,
+      "original_other_body_parts_untouched": true,
+      "original_attributes_retained": true,
+      "skin_56_bones_retained": true,
+      "animation_definitions_29_retained": true,
+      "cranium_to_face_welded": false,
+      "entire_head_watertight": false,
+      "godot_import_pending": true,
+      "artistic_review_pending": true,
+      "full_model_approved": false,
+      "source_model_untouched": true,
+      "parameters": {
+        "rear_z_max": -0.048,
+        "drop_m": 0.022,
+        "depth_m": 0.003,
+        "rings": 3
+      }
+    },
+    {
+      "name": "nuca_local_profunda",
+      "glb": "assets/maniqui/maniqui_r3_nuca_local_profunda_NO_APROBADO.glb",
+      "sha256": "8bca246a61fcccd0d8f6f8271c39c90daa96105795c81b92de52f88d07840ed0",
+      "size": 11159560,
+      "baseline_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+      "changed_region": "nuca",
+      "selected_boundary_edges": 56,
+      "added_vertices": 228,
+      "added_triangles": 448,
+      "maximum_new_vertex_displacement_mm": 37.656,
+      "original_vertices_unchanged": true,
+      "original_faces_unchanged": true,
+      "original_face_primitive_untouched": true,
+      "original_other_body_parts_untouched": true,
+      "original_attributes_retained": true,
+      "skin_56_bones_retained": true,
+      "animation_definitions_29_retained": true,
+      "cranium_to_face_welded": false,
+      "entire_head_watertight": false,
+      "godot_import_pending": true,
+      "artistic_review_pending": true,
+      "full_model_approved": false,
+      "source_model_untouched": true,
+      "parameters": {
+        "rear_z_max": -0.048,
+        "drop_m": 0.037,
+        "depth_m": 0.007,
+        "rings": 4
+      }
+    }
+  ],
+  "regions": {
+    "regions": {
+      "nuca": {
+        "status": "PASS_LOCAL_TECHNICAL",
+        "local_tests_pass": true,
+        "protected_neighbors_unchanged": true,
+        "rig_attributes_preserved": true,
+        "evidence_complete": true,
+        "artistic_review_completed": false,
+        "artistic_review_approved": false,
+        "integration_tests_pass": false,
+        "eligible_for_integration_review": false,
+        "notes": "QA local y cuatro vistas generadas; revisión artística humana pendiente"
+      },
+      "rostro": {
+        "status": "REJECTED_LOCAL",
+        "local_tests_pass": false,
+        "protected_neighbors_unchanged": true,
+        "rig_attributes_preserved": true,
+        "evidence_complete": true,
+        "artistic_review_completed": false,
+        "artistic_review_approved": false,
+        "integration_tests_pass": false,
+        "eligible_for_integration_review": false,
+        "notes": "Fragmentación previa conocida: NO invalida el parche de nuca"
+      },
+      "ojos": {
+        "status": "NEEDS_EVIDENCE",
+        "local_tests_pass": true,
+        "protected_neighbors_unchanged": true,
+        "rig_attributes_preserved": true,
+        "evidence_complete": false,
+        "artistic_review_completed": false,
+        "artistic_review_approved": false,
+        "integration_tests_pass": false,
+        "eligible_for_integration_review": false,
+        "notes": "Intactos; inspección de facciones y lentes aún pendiente"
+      },
+      "orejas": {
+        "status": "NEEDS_EVIDENCE",
+        "local_tests_pass": true,
+        "protected_neighbors_unchanged": true,
+        "rig_attributes_preserved": true,
+        "evidence_complete": false,
+        "artistic_review_completed": false,
+        "artistic_review_approved": false,
+        "integration_tests_pass": false,
+        "eligible_for_integration_review": false,
+        "notes": "Sin modificación; comprobar las patillas en close-up"
+      }
+    },
+    "accepted_local": [],
+    "locally_accepted": [],
+    "technical_pass": [
+      "nuca"
+    ],
+    "integration_review_ready": [],
+    "pending": [
+      "accesorios",
+      "brazo_derecho",
+      "brazo_izquierdo",
+      "cabello",
+      "craneo",
+      "cuello",
+      "mano_derecha",
+      "mano_izquierda",
+      "pie_derecho",
+      "pie_izquierdo",
+      "pierna_derecha",
+      "pierna_izquierda",
+      "ropa",
+      "torso"
+    ],
+    "global_approval": false,
+    "promotion_allowed": false,
+    "rule": "A locally successful part remains viable regardless of failures elsewhere. Local technical QA, artistic approval, cross-region integration, and authorization to replace the baseline are four distinct gates."
+  },
+  "comparison_png": "docs/maniqui/regional/G2C2_NUCA_LOCAL_4V.png",
+  "warning": "Parche de nuca = continuidad local parcial; NO soldadura a toda la cara. Sin aprobar hasta revisar las vistas y las zonas colindantes.",
+  "no_merge_or_original_replacement": true
+}
