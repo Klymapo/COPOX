@@ -51,6 +51,7 @@ jobs:
           assert b['local_patch_metrics']['added_triangles']==2*a['local_patch_metrics']['added_triangles']
           assert b['local_patch_metrics']['remaining_open_edges']>0
           assert not b['regional_review']['global_model_approved']
+          assert '/suavizada/' in b['comparison'] and '/suavizada/' in b['patch_highlight']
           assert Path(b['comparison']).is_file() and Path(b['patch_highlight']).is_file()
           assert hashlib.sha256(Path(b['derived_glb']).read_bytes()).hexdigest()==b['derived_sha256']
           print('NUCA aislada: candidato verificable, cero cambios faciales, no aprobado')
