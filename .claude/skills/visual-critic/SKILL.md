@@ -33,3 +33,8 @@ El JSON declara `required_views`, `references` y `candidate.views` (vista + pose
 ## Regla de procedencia
 No mezclar fotografías del usuario con PNG generados y afirmar que son el mismo ángulo. Registrar cámara/calibración; material sin permiso permanece privado. Renders reales, no imágenes inventadas para evaluar un GLB.
 
+## Enlace ejecutable al motor geométrico (propuesta)
+Para cada anomalía, **primero** obtener `report.json` con `anomaly_cross_view_matrix` (todos los IDs cubiertos). Medir geometría real de esa región; usar `copox.visual.mesh_diagnostics.analyze_plane_region` sólo cuando exista un **plano objetivo declarado a partir de referencia/brief**, no inventarlo. Para fragmentos/costuras usar análisis topológico del GLB y registrar `measurement_provenance` con SHA-256, método, ejes y unidades.
+Ejecutar: `python -m copox.visual.critic MANIFEST --root . --output EVIDENCE --geometry-diagnostics GEOMETRY.json`. Se crean `report.json` y `geometry_plan.json`. También se puede ejecutar `python -m copox.visual.geometry_planner --visual-report EVIDENCE/report.json --geometry-diagnostics GEOMETRY.json --output EVIDENCE/geometry_plan.json`.
+El plan propone **Scully** si hay protuberancia medida en superficie continua, **Anatomic Cut** si hay fragmentos y máscara de facciones segura, o **Surface Stitch** si existen dos contornos con conectividad y atributos compatibles.
+No ejecutar planes cuando hay referencias faltantes, contradicciones, mediciones sin trazabilidad o morph/UV/skin no soportados. El plan **nunca** promociona ni edita GLB por sí solo: pasa a prueba sintética/experimental y reauditoría visual exhaustiva.
