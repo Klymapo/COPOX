@@ -99,7 +99,6 @@ def patch_nape_arc(
         raise GeometryError("Triángulos degenerados; no exportar")
     # The patch is intentionally OPEN at its lower and side edges.
     # Never assert the whole head is watertight.
-    boundary_loops(out) if False else None  # the open arc is not a single loop
     return NapePatch(
         positions=pos,faces=out,parents=np.asarray(parent_ids,dtype=int),
         selected_boundary_edges=k,added_triangles=2*k*rings,
