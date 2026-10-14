@@ -1,0 +1,50 @@
+name: COPOX · G2-C Advancing Front + Skills
+on:
+  push:
+    branches: [propuesta/g2c-advancing-front-skills]
+    paths:
+      - 'copox/geometry/advancing_stitch.py'
+      - 'copox/geometry/surface_stitch.py'
+      - 'tests/test_g2c_advancing_stitch.py'
+      - 'tests/test_g2c_surface_parts.py'
+      - 'tools/maniqui/g2c_r3_preflight.py'
+      - '.github/workflows/maniqui-g2c.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fast-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free pinned Python dependencies
+        run: python -m pip install numpy==1.26.4 scipy==1.13.1 pillow==10.4.0
+      - name: Cerrar loops sintéticos y rechazar geometrías inseguras
+        run: |
+          python -m unittest discover -s tests -p 'test_g2c_advancing_stitch.py' -v
+          python -m unittest discover -s tests -p 'test_g2c_surface_parts.py' -v
+          python -m unittest discover -s tests -p 'test_geometry_kernel.py' -v
+      - name: El r3 real NUNCA debe pasar sin su contorno homologado
+        run: python -m tools.maniqui.g2c_r3_preflight
+      - name: Guardar evidencia de bloqueo seguro
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g2c-preflight-real-no-unsafe-stitch
+          path: docs/maniqui/g2c/
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Verificar skills de Codex y Claude
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for n in ('contour-extractor','stitch-advancing-front','gltf-rig-guardian'):
+              paths=[Path(f'.codex/skills/{n}/SKILL.md'),Path(f'.claude/skills/{n}/SKILL.md')]
+              assert all(x.exists() for x in paths),n
+              assert paths[0].read_text()==paths[1].read_text(),n
+          print('3 skills espejadas y reproducibles')
+          PY
