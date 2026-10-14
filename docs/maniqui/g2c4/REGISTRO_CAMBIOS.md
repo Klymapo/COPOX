@@ -105,3 +105,14 @@ El eje anatómico Neck→Head y los puntos de borde medidos se registran en
 `CUELLO_ANATOMIA.json`. No se inventó un anillo: no hay unión de cuello
 validada. El objetivo completo G2-C4 sigue pendiente; B2 es el avance
 regional recuperable y no está promovido a producción.
+
+## Publicación y bitácoras
+
+Publicado como [PR #47 en borrador](https://github.com/Klymapo/COPOX/pull/47),
+con base en la rama V3 del PR46. Los tres ZIP figuran en la carpeta
+SHRINKWRAP de Drive de Gaston; se verificaron IDs y tamaños por lectura
+de la carpeta. Enlaces y SHA256 en `ENTREGABLES.md`.
+
+Actualizadas la memoria maestra integral, la bitácora técnica de Alastor
+y maniquí y la bitácora shrinkwrap Beta→Gamma con resultados, rechazos,
+limitaciones Godot/Khronos, PR y paquetes. No se fusionó ninguna rama.
