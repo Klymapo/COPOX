@@ -44,8 +44,8 @@ for side, sgn in (('Left', 1), ('Right', -1)):
                    [wj((side + 'Hand', 1)), wj((side + 'ThumbMetacarpal', 1)), wj((side + 'ThumbProximal', 1)), wj((side + 'ThumbDistal', 1)), wj((side + 'ThumbDistal', 1))], seg=12, p=3.2)))
     # ----- pie: anillos en el plano x-y a lo largo de z (talón → punta), base plana en y=0
     ank, toe = P('Foot'), P('Toes'); EX = np.array([1.0, 0, 0])
-    prof = [(ank[2] - 0.062, 0.046, 0.058, 0.046, wj((side + 'Foot', 1))),          # talón: trasera vertical y cuadrada (tapa plana del loft)
-            (ank[2] - 0.050, 0.051, 0.063, 0.051, wj((side + 'Foot', 1))),
+    prof = [(ank[2] - 0.060, 0.038, 0.054, 0.038, wj((side + 'Foot', 1))),          # talón: trasera casi vertical, esquina redondeada
+            (ank[2] - 0.050, 0.047, 0.061, 0.047, wj((side + 'Foot', 1))),
             (ank[2] + 0.005, 0.053, 0.065, 0.053, wj((side + 'Foot', 1))),          # caña: abraza el tobillo
             (ank[2] + 0.040, 0.047, 0.065, 0.047, wj((side + 'Foot', 0.7), (side + 'Toes', 0.3))),   # empeine: baja hacia la punta
             (toe[2] + 0.015, 0.039, 0.063, 0.039, wj((side + 'Toes', 1))),

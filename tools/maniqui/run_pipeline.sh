@@ -28,14 +28,14 @@ $PY cuerpo.py "$OUT/maniqui_v0_h.glb" "$OUT/maniqui_v0_1.glb"
 echo "6/7 manos (ref mano-con-regla) y botas (ref Theo) (v0.2)"
 $PY manos_pies.py "$OUT/maniqui_v0_1.glb" "$OUT/maniqui_v0_2.glb"
 
-echo "7/7 cabeza canónica ALTH medida de las referencias + cuerpo de bloques (v0.14)"
+echo "7/7 cabeza canónica ALTH medida de las referencias + cuerpo de bloques (v0.15)"
 $PY medir_cara.py "$ROOT/refs/personajes/joven-rubio-4-vistas.jpg" "$OUT/theo_frente.json" --recorte 0,0,768,768
 $PY medir_cara.py "$ROOT/refs/personajes/detective.jpg" "$OUT/alastor_34.json"
-$PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_14.glb" rasgos/alastor.json      # cuerpo.py y manos_pies.py ya generan bloques redondeados (P_BOX)
-$PY facezoom.py "$OUT/maniqui_v0_14.glb" "$OUT/maniqui_v0_14_cara.png"
+$PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_15.glb" rasgos/alastor.json      # cuerpo.py y manos_pies.py ya generan bloques redondeados (P_BOX)
+$PY facezoom.py "$OUT/maniqui_v0_15.glb" "$OUT/maniqui_v0_15_cara.png"
 
 echo "Previews:"
-$PY render.py "$OUT/maniqui_v0_14.glb" "$OUT/maniqui_v0_14_4vistas.png" >/dev/null
-$PY pose.py "$OUT/maniqui_v0_14.glb" Wave 0.6 "$OUT/maniqui_v0_14_wave.png" >/dev/null
+$PY render.py "$OUT/maniqui_v0_15.glb" "$OUT/maniqui_v0_15_4vistas.png" >/dev/null
+$PY pose.py "$OUT/maniqui_v0_15.glb" Wave 0.6 "$OUT/maniqui_v0_15_wave.png" >/dev/null
 $PY measure.py "$OUT/alastor_delta.glb" "$GAMMA" "$BETA" "$OUT/delta"
 echo "Listo en $OUT"

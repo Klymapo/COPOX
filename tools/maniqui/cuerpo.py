@@ -86,9 +86,10 @@ torso_prof = [  # (y, rx, rz, pesos)   · los 3 primeros anillos son la pelvis (
     (0.370, 0.130, 0.076, wj(('Spine', 0.6), ('Chest', 0.4))),
     (0.410, 0.136, 0.078, wj(('Chest', 1))),
     (0.445, 0.140, 0.076, wj(('Chest', 1))),
-    (0.475, 0.138, 0.074, wj(('Chest', 0.7), ('Neck', 0.3))),
-    (0.500, 0.134, 0.072, wj(('Chest', 0.3), ('Neck', 0.7))),
-    (0.518, 0.110, 0.064, wj(('Neck', 1))),
+    (0.470, 0.140, 0.075, wj(('Chest', 0.8), ('Neck', 0.2))),
+    (0.492, 0.132, 0.073, wj(('Chest', 0.4), ('Neck', 0.6))),     # hombros: caen redondeados hacia el cuello
+    (0.508, 0.114, 0.068, wj(('Neck', 1))),
+    (0.520, 0.088, 0.060, wj(('Neck', 1))),
 ]
 rings = [(np.array([0, y, cz]), rx, rz, EX, EZ) for y, rx, rz, _ in torso_prof]
 Vt, Nt, Jt, Wt, It = loft(rings, [w for *_, w in torso_prof])
@@ -118,9 +119,9 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     axis = np.array([sgn, 0, 0.0]); ey = EY; ez = np.array([0, 0, 1.0])
     def at(x): return np.array([x, ua[1] + (x - ua[0]) * (la[1] - ua[1]) / max(abs(la[0] - ua[0]), 1e-6) * 0, ua[2]])
     xs = [ua[0] - sgn * 0.050, ua[0] - sgn * 0.022, ua[0] + sgn * 0.01, ua[0] + sgn * 0.05, la[0], la[0] + sgn * 0.02, sgn * (cuff_x + 0.012)]
-    prof = [(at(xs[0]), 0.026, 0.026, wj((side + 'Shoulder', 0.5), (side + 'UpperArm', 0.5))),   # hombro: nace dentro del torso, redondeado
-            (at(xs[1]), 0.040, 0.040, wj((side + 'Shoulder', 0.3), (side + 'UpperArm', 0.7))),
-            (at(xs[2]), 0.044, 0.044, wj((side + 'UpperArm', 1))),                                 # brazos de bloque (Theo: ~0.08 de la altura de grueso)
+    prof = [(at(xs[0]), 0.030, 0.030, wj((side + 'Shoulder', 0.5), (side + 'UpperArm', 0.5))),   # hombro: nace dentro del torso, redondeado
+            (at(xs[1]), 0.042, 0.042, wj((side + 'Shoulder', 0.3), (side + 'UpperArm', 0.7))),
+            (at(xs[2]), 0.047, 0.047, wj((side + 'UpperArm', 1))),                                 # deltoides: un poco más grueso que el brazo                                 # brazos de bloque (Theo: ~0.08 de la altura de grueso)
             (at(xs[3]), 0.043, 0.043, wj((side + 'UpperArm', 1))),
             (at(xs[4]), 0.040, 0.040, wj((side + 'UpperArm', 0.5), (side + 'LowerArm', 0.5))),
             (at(xs[5]), 0.038, 0.038, wj((side + 'LowerArm', 1))),

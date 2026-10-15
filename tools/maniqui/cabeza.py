@@ -149,7 +149,7 @@ def ear(side):
 _, TP, TI = prim('Torso'); top_t = TP[:, 1].max()
 sel = TP[np.abs(TP[:, 1] - top_t) < 2e-3]                              # anillo superior del torso
 qc = np.array([(sel[:, 0].min() + sel[:, 0].max()) / 2, 0, (sel[:, 2].min() + sel[:, 2].max()) / 2])
-qrx, qrz = (sel[:, 0].max() - sel[:, 0].min()) / 2, (sel[:, 2].max() - sel[:, 2].min()) / 2
+qrx, qrz = R.get('cuello_rx', 0.085), R.get('cuello_rz', 0.058)                       # cuello: 17×11.6 cm, más angosto que la repisa de hombros
 y0, y1, NR, NS = top_t - 0.03, y_chin + 0.03, 6, 48
 NP, NJ, NW = [], [], []
 for k in range(NR):
