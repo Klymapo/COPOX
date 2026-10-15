@@ -1,0 +1,34 @@
+name: COPOX Transferencia Rig - recuperar Elio v026
+on:
+  push:
+    branches:
+      - experimentos/transferencia-rig-g2c22-elio-v026
+    paths:
+      - .github/workflows/copox-elio-v026-export.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export-elio-v026:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact source branch
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Verify original Elio GLB
+        run: |
+          test -s assets/maniqui/maniqui_v0_26.glb
+          file assets/maniqui/maniqui_v0_26.glb
+          sha256sum assets/maniqui/maniqui_v0_26.glb | tee elio_v026.sha256
+          mkdir -p export
+          cp assets/maniqui/maniqui_v0_26.glb export/
+          cp elio_v026.sha256 export/
+      - name: Upload Elio source as temporary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: COPOX_ELIO_V026_ORIGINAL
+          path: export/
+          if-no-files-found: error
+          retention-days: 1
