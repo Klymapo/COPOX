@@ -168,15 +168,58 @@ print(f'cuello: sección {qrx*100:.1f}×{qrz*100:.1f} cm, y {y0:.3f}..{y1:.3f}, 
 
 # ================= 5. escribir
 keep_prims = [p for p, n in zip(mesh['primitives'], names) if n not in ('Cabeza', 'Craneo', 'Cuello')]
-def add_piece(name, P, N_, I_, mat, J=None, W=None):
+def add_piece(name, P, N_, I_, mat, J=None, W=None, UV=None, targets=None):
     Pl = (np.c_[P, np.ones(len(P))] @ Minv.T)[:, :3].astype(np.float32); Nl = (N_ @ np.linalg.inv(M0[:3, :3]).T).astype(np.float32)
     J = (np.tile([HEAD, 0, 0, 0], (len(P), 1)) if J is None else np.array(J)).astype(np.uint16); W = (np.tile([1, 0, 0, 0], (len(P), 1)) if W is None else np.array(W)).astype(np.float32)
     attrs = {}
     for key, arr, ct, at in [('POSITION', Pl, 5126, 'VEC3'), ('NORMAL', Nl, 5126, 'VEC3'), ('JOINTS_0', J, 5123, 'VEC4'), ('WEIGHTS_0', W, 5126, 'VEC4')]:
         attrs[key] = add_acc(append_bv(arr.tobytes(), 34962), ct, len(arr), at, arr if at == 'VEC3' else None)
+    if UV is not None: attrs['TEXCOORD_0'] = add_acc(append_bv(np.asarray(UV, np.float32).tobytes(), 34962), 5126, len(UV), 'VEC2')
     ii = I_.astype(np.uint32).ravel()
-    keep_prims.append({'attributes': attrs, 'indices': add_acc(append_bv(ii.tobytes(), 34963), 5125, len(ii), 'SCALAR'), 'material': mat, 'extras': {'pieza': name}})
-add_piece('Cabeza', V, N, I, gris)
+    prim_ = {'attributes': attrs, 'indices': add_acc(append_bv(ii.tobytes(), 34963), 5125, len(ii), 'SCALAR'), 'material': mat, 'extras': {'pieza': name}}
+    if targets:      # morph targets (shape keys): deltas de posición en espacio local de la malla
+        prim_['targets'] = [{'POSITION': add_acc(append_bv((d @ Minv[:3, :3].T).astype(np.float32).tobytes(), 34962), 5126, len(d), 'VEC3', (d @ Minv[:3, :3].T).astype(np.float32))} for d in targets]
+    keep_prims.append(prim_)
+
+# ================= 4c. boca: shape keys sobre la cabeza ("soplar" para Alastor y "abrir" para hablar)
+y_mouth = y_eye - bo['y_bajo_ojo'] * W; mc = np.array([ctr[0], y_mouth])
+d2 = np.sqrt(((V[:, 0] - mc[0]) / (0.16 * W)) ** 2 + ((V[:, 1] - mc[1]) / (0.11 * W)) ** 2); k_sop = ss(1 - d2) * front
+soplar = np.zeros_like(V); soplar[:, 2] += 0.06 * W * k_sop; soplar[:, 0] -= 0.35 * (V[:, 0] - mc[0]) * k_sop          # labios hacia adelante y al centro
+d3 = np.sqrt(((V[:, 0] - mc[0]) / (0.14 * W)) ** 2 + (np.clip(mc[1] - V[:, 1], 0, None) / (0.22 * W)) ** 2); k_ab = ss(1 - d3) * front * (V[:, 1] < mc[1] + 0.01 * W)
+abrir = np.zeros_like(V); abrir[:, 1] -= 0.05 * W * k_ab; abrir[:, 2] -= 0.015 * W * k_ab                                  # mandíbula baja
+mesh['extras'] = dict(mesh.get('extras', {}), targetNames=['boca_soplar', 'boca_abrir'])
+add_piece('Cabeza', V, N, I, gris, targets=[soplar, abrir])
+
+# ================= 4d. ojos: placas con textura deslizante (iris centrado; mover uv offset en Y = mirar arriba / "ojos en blanco")
+from PIL import Image, ImageDraw
+import io
+TW, TH = 256, 512
+im = Image.new('RGB', (TW, TH), (245, 243, 240)); dr = ImageDraw.Draw(im)
+r_i = int(0.33 * TW); cx_, cy_ = TW // 2, TH // 2
+dr.ellipse([cx_ - r_i, cy_ - r_i, cx_ + r_i, cy_ + r_i], fill=(92, 58, 30))                       # iris café (Alastor)
+dr.ellipse([cx_ - int(r_i * 0.78), cy_ - int(r_i * 0.78), cx_ + int(r_i * 0.78), cy_ + int(r_i * 0.78)], fill=(120, 76, 38))
+dr.ellipse([cx_ - int(r_i * 0.45), cy_ - int(r_i * 0.45), cx_ + int(r_i * 0.45), cy_ + int(r_i * 0.45)], fill=(25, 15, 8))     # pupila
+dr.ellipse([cx_ - int(r_i * 0.55), cy_ - int(r_i * 0.75), cx_ - int(r_i * 0.15), cy_ - int(r_i * 0.35)], fill=(255, 255, 255))  # brillo
+buf = io.BytesIO(); im.save(buf, 'PNG'); png = buf.getvalue()
+j.setdefault('images', []).append({'bufferView': append_bv(png), 'mimeType': 'image/png', 'name': 'ojo_alastor'})
+j.setdefault('samplers', []).append({'magFilter': 9729, 'minFilter': 9987, 'wrapS': 33071, 'wrapT': 33071})
+j.setdefault('textures', []).append({'source': len(j['images']) - 1, 'sampler': len(j['samplers']) - 1})
+j['materials'].append({'name': 'Ojo', 'pbrMetallicRoughness': {'baseColorTexture': {'index': len(j['textures']) - 1}, 'metallicFactor': 0, 'roughnessFactor': 0.4}})
+mat_ojo = len(j['materials']) - 1
+def ojo(side):
+    ew, eh = o['ancho'] * W, o['alto'] * W; ex = ctr[0] + side * o['separacion'] * W / 2
+    # z de la superficie de la cabeza en el centro del ojo (vértice más cercano en x,y) + 2 mm
+    k = np.argmin((V[:, 0] - ex) ** 2 + (V[:, 1] - y_eye) ** 2 + (V[:, 2] < ctr[2]) * 10); ez = V[k, 2] + 0.002
+    SEG2 = 40; EP = [[ex, y_eye, ez]]; UV = [[0.5, 0.5]]; EI = []
+    for s_ in range(SEG2):
+        t = 2 * np.pi * s_ / SEG2; cx = np.sign(np.cos(t)) * abs(np.cos(t)) ** (2 / 2.4); cy = np.sign(np.sin(t)) * abs(np.sin(t)) ** (2 / 2.4)
+        EP.append([ex + ew / 2 * cx, y_eye + eh / 2 * cy, ez - 0.004 * (cx * cx + cy * cy)])          # ligera curvatura hacia atrás en el borde
+        UV.append([0.5 + 0.5 * cx, 0.5 - 0.25 * cy])                                                  # la placa usa la mitad central de la textura: hay 25 % de recorrido arriba y abajo
+        EI.append([0, 1 + s_, 1 + (s_ + 1) % SEG2])
+    EP = np.array(EP); EI = np.array(EI); EN = np.tile([0, 0, 1.0], (len(EP), 1))
+    return EP, EN, EI, np.array(UV)
+for side, nm in ((1, 'OjoL'), (-1, 'OjoR')):
+    EP, EN, EI, UV = ojo(side); add_piece(nm, EP, EN, EI, mat_ojo, UV=UV)
 add_piece('Cuello', NP, NNm, NI, gris, NJ, NW)
 for side, nm in ((1, 'OrejaL'), (-1, 'OrejaR')):
     EP, EN, EI = ear(side); add_piece(nm, EP, EN, EI, gris)
