@@ -27,3 +27,22 @@ SHA256 `daf3737d0cb5b6469fa407ffab5dc761b2fc0e0acd9c69652cb283d41b4b05ec`.
 Retira 71 triángulos identificados de montura; cero vértices movidos.
 No sustituye V3. Los huecos faciales y las expresiones no funcionales
 siguen siendo limitaciones heredadas.
+
+## Continuación · 15 de octubre de 2026
+
+Paquetes nuevos, sin sustituir los anteriores. A3/C2/C3 rechazados; V3 y
+B2 conservados. 141 capturas reales nuevas, 16 láminas y 725 muestras.
+
+- [Maestros V3, B2, A3, C2 y C3](https://drive.google.com/file/d/14s0T97Asid9DkEORL1Ie4v7fWSHPnVO9/view).
+  23.214.530 bytes; SHA256 `d1f0e744cf66e2b64963dc4287615bd05974b668880306875ef40027891850a6`.
+- [Copias Godot 4.7.2 con limitaciones heredadas](https://drive.google.com/file/d/1KPaVAs2nZ3Bq2El43au_jeo5Vsoy9tfZ/view).
+  23.273.193 bytes; SHA256 `28fe0fdeaa9cfe5490acc972f4ad791505cb2640a19d66f9ea231ac8f6371ddd`.
+- [Capturas, láminas, código e informes](https://drive.google.com/file/d/1kx2bq4KfVLW9o-lwW73uoRGct8dpltYj/view).
+  15.579.063 bytes; SHA256 `736fa09d3cd4893053359d825ff442f7fc6bdb4c8e36c3c6db3c99fe672c660f`.
+  Extraer y abrir `index.html`; las imágenes reales están en
+  `godot/captures_v3` y las composiciones en `laminas`.
+
+[Resultados y límites](continuacion_2026-10-15/RESULTADO.md),
+[reproducción](continuacion_2026-10-15/REPRODUCIR.md),
+[hashes de capturas](continuacion_2026-10-15/CAPTURAS_SHA256.json).
+No hay ABC ni unión de cuello aprobada. A y C alcanzaron tres ensayos.

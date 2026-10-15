@@ -116,3 +116,19 @@ de la carpeta. Enlaces y SHA256 en `ENTREGABLES.md`.
 Actualizadas la memoria maestra integral, la bitácora técnica de Alastor
 y maniquí y la bitácora shrinkwrap Beta→Gamma con resultados, rechazos,
 limitaciones Godot/Khronos, PR y paquetes. No se fusionó ninguna rama.
+
+## Continuación · 2026-10-15
+
+Por petición «Continua», se generaron A3, C2 y C3, siempre hermanos de V3.
+A3: parche lateral nuevo sin mover la calva; rechazado por 31 cruces.
+C2: mandíbula y anillo inferior; rechazado por 78 cruces. C3: anclajes
+más bajos y anillo elevado; un cruce restante y banda angular/discontinua,
+también rechazado. Se alcanzaron tres ensayos A y tres C; B2 sigue intacto.
+No hay ABC. 141 capturas adicionales, 16 láminas y 725 muestras de clips
+reales en Godot 4.7.2. Las limitaciones faciales y del GLB original persisten.
+
+El apartado anterior registra exclusivamente la campaña del 14 de octubre.
+Para las modificaciones permitidas a Craneo (sólo adición A3) y Cuello
+(sustitución localizada C2/C3), los resultados y límites actuales, ver
+[continuación completa](continuacion_2026-10-15/RESULTADO.md). Evidencias
+anteriores inmutables; bitácoras de Drive actualizadas por adición.
