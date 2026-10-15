@@ -35,6 +35,9 @@ $PY medir_gamma.py "$GAMMA" "$OUT/gamma_rasgos.json"
 $PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_23.glb" rasgos/gamma.json      # cuerpo.py y manos_pies.py ya generan bloques redondeados (P_BOX)
 $PY facezoom.py "$OUT/maniqui_v0_23.glb" "$OUT/maniqui_v0_23_cara.png"
 
+echo "8/8 posturas y gestos de las láminas 15-20 como clips (v0.24)"
+$PY posturas.py "$OUT/maniqui_v0_23.glb" "$OUT/maniqui_v0_24.glb"
+
 echo "Previews:"
 $PY render.py "$OUT/maniqui_v0_23.glb" "$OUT/maniqui_v0_23_4vistas.png" >/dev/null
 $PY pose.py "$OUT/maniqui_v0_23.glb" Wave 0.6 "$OUT/maniqui_v0_23_wave.png" >/dev/null
