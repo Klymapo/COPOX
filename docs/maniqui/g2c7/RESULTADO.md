@@ -22,6 +22,23 @@ particionado en una superficie extra preserva exactamente las esquinas,
 normales, pesos y huesos originales. Su aspecto frontal mejora; el criterio
 de reconocer inmediatamente la identidad global **no se cumple**.
 
+## Valoración visual separada
+
+| Criterio | V2 frente a L1 | Límite práctico |
+|---|---|---|
+| Likeness facial | Mejora **local** de color y lectura de iris/cejas; **FAIL global**. | Faltan superficies continuas de puente, ojera y mejilla; pelo/gafas están excluidos por el encargo anterior. |
+| Likeness corporal | **Sin cambio**. | La masa y el vestuario característicos de la foto no están modelados en el maniquí. |
+| Silueta | **Sin cambio geométrico; FAIL lateral**. | Calva esférica separada del perfil mandibular. |
+| Anatomía y continuidad | **FAIL**. | Huecos de cara y transición mandíbula-cuello visibles en las capturas. |
+| Topología regional | **PASS sin regresión** de V2 respecto a L1. | Se preservan también los defectos históricos; no se declara manifold global. |
+| Integridad del rig | **PASS estructural**: 56 huesos, pesos por esquina y 145 matrices iguales. | Deformación continua de skin y morphs faciales no demostrada. |
+| Compatibilidad Godot | **PASS sólo en copia compatible**, 25 superficies. | El bruto conserva error 43 y el validador Khronos conserva errores heredados. |
+
+No se asignan porcentajes de parecido: la foto maestra y Gamma tienen
+pelo/gafas/ropa y distinta cámara, mientras este ensayo sólo cambia el
+material de rasgos y piel. Una coincidencia de contorno o color no mediría
+fidelidad anatómica de la cara.
+
 ## Comprobaciones
 
 - Todas las 24 primitivas de L1 preservan exactamente sus triángulos
