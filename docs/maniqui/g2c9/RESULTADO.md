@@ -22,6 +22,8 @@ Todos conservan 56 huesos, 29 definiciones de clip, pesos, materiales y estructu
 
 `build/g2c9/COMPARATIVA_T_POSE_REAL.png`: columnas G2-C8 base / H invisible / F rechazado; filas frontal completo, perfil derecho completo y acercamiento frontal. H muestra por qué un resultado técnicamente correcto puede carecer de valor visual; F muestra por qué no se acepta el suavizado sólo por sus métricas. Las capturas finales originales sin montaje están en `build/g2c9/captures_tpose/`; las anteriores en `captures_huecos/` y `captures_glabella/` corresponden al clip `Sit-pose` autoseleccionado por Blender y no deben etiquetarse como T pose.
 
+La comparación de píxeles con cámara idéntica confirmó H: 0 píxeles distintos en frontal, perfil y acercamiento. F cambia 436, 34 y 2910 píxeles respectivamente (umbral de diferencia por canal >4), pero el cambio local acentúa el defecto. Estas cifras miden diferencia, no calidad ni porcentaje de parecido.
+
 ## Próximo método necesario
 
 La cara requiere reconstrucción anatómica de una superficie frontal coherente, con retopología guiada por la referencia, conservación explícita de ojos/nariz/boca, transferencia de pesos y evaluación de expresiones y poses. Las restauraciones de triángulos fuente R1–R3 y estos cierres pequeños han alcanzado un límite visual. No se debe continuar rellenando ciclos por inercia ni usar F como padre de otra versión. El GLB experimental más reciente que sigue como base de trabajo es G2-C8, sin aprobación final.
