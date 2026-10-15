@@ -1,0 +1,42 @@
+name: COPOX - Comparativa visual Elio v0.26 vs G2-C5
+on:
+  push:
+    branches:
+      - experimentos/comparativa-elio-v026-g2c5
+    paths:
+      - .github/workflows/comparativa-elio-v026-g2c5.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  respaldar-fuente-elio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - name: Identificar GLB v0.26 sin editar
+        shell: bash
+        run: |
+          test -s assets/maniqui/maniqui_v0_26.glb
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path("assets/maniqui/maniqui_v0_26.glb")
+          h=p.read_bytes()[:12]
+          assert h[:4]==b"glTF", "no es un GLB real"
+          print("ELIO_V026_SIZE",p.stat().st_size)
+          print("ELIO_V026_SHA256",hashlib.sha256(p.read_bytes()).hexdigest())
+          PY
+      - name: Exportar sólo copia y capturas originales, sin alterar modelo
+        uses: actions/upload-artifact@v4
+        with:
+          name: elio-v026-glb-original-para-comparativa
+          path: |
+            assets/maniqui/maniqui_v0_26.glb
+            assets/maniqui/previews/maniqui_v0_16_cara.png
+            assets/maniqui/previews/maniqui_v0_19_cara.png
+            assets/maniqui/previews/gestos/lamina_26.png
+          if-no-files-found: error
+          retention-days: 30
