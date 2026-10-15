@@ -1,0 +1,79 @@
+{
+  "campaign": "COPOX G2-C5 · recuperación localizada de piel facial y nariz",
+  "base": "assets/maniqui/maniqui_v0_3_r3_g2c3_v3_rapado_oreja_izquierda_SIN_APROBAR.glb",
+  "base_sha256": "0a100a9400e87251cbdd64328c0c13ffc4bbf829ae4c85d5b54aee2c1e67565b",
+  "candidate": "R3",
+  "glb": "build/g2c5/maniqui_G2C5_R3_HUECOS_NARIZ_SIN_APROBAR.glb",
+  "sha256": "05774f8177155dc3a742a77776649357b15f58ce29b2e4d7e3689c872dfd7b95",
+  "geometry": {
+    "restored_source_triangles": 267,
+    "interpolated_fill_triangles": 81,
+    "added_vertices": 136,
+    "modified_original_vertices": 0,
+    "proper_crossings": 0,
+    "welded_nonmanifold_edges_before": 1,
+    "welded_nonmanifold_edges_after": 1,
+    "unresolved_boundary_fans": 0,
+    "protected_eye_boundary_cycles": 16,
+    "boundary_not_on_retained_surface": 16,
+    "rejected_crossing_patches": 1
+  },
+  "structure": {
+    "original_glb_binary_prefix_exact": true,
+    "original_vertex_attributes_exact": true,
+    "morph_rig_material_node_arrays_exact": true,
+    "56_joint_order_and_inverse_bind_matrices_identical_to_baseline": true,
+    "29_animation_definitions_preserved": true,
+    "Godot_4_7_2_compat_append_error": 0,
+    "Godot_4_7_2_raw_append_error": 43,
+    "Godot_bones": 56,
+    "Godot_surfaces": 24,
+    "Godot_clip_definitions": 29,
+    "Godot_pose_samples": 145,
+    "bone_pose_samples_match_V3": true,
+    "clips_with_observed_bone_motion": 14,
+    "clips_without_observed_bone_motion": 15,
+    "functional_animation_validation": "PARTIAL: clip pose matrices match V3; mesh skin baking failed to register a valid skeleton, resulting in 0 baked vertices",
+    "Godot_runtime_import_of_correct_R3_scene": "COMPATIBILITY COPY IMPORTED"
+  },
+  "khronos_validator": {
+    "R3_master": {
+      "errors": 53,
+      "warnings": 182
+    },
+    "V3_master": {
+      "errors": 53,
+      "warnings": 182
+    },
+    "R3_compat": {
+      "errors": 31,
+      "warnings": 181
+    },
+    "V3_compat": {
+      "errors": 31,
+      "warnings": 181
+    },
+    "new_issue_count_vs_V3": 0
+  },
+  "visual_validation": {
+    "status": "FAIL_ARTISTIC_GAPS_REMAIN",
+    "renderer": "Blender 4.3.2 EEVEE, 640x640, 8 TAA samples; actual V3/B2/R2/R3 compatibility GLBs imported from file, same cameras, lighting, and materials",
+    "capture_count": 36,
+    "views": [
+      "front",
+      "left profile",
+      "right profile",
+      "back",
+      "left three-quarter",
+      "right three-quarter",
+      "face detail",
+      "nose detail",
+      "eyes detail"
+    ],
+    "review": "R2 introduces visible streaks around the inner brow/eye and leaves the cheek/eye gaps open. R3 adds a narrow central fill but large dark gaps remain beside and below the eyes; the nose remains block-shaped with no continuous bridge. Both rejected visually.",
+    "godot_capture_count": 0,
+    "godot_capture_blocker": "Xvfb cannot bind because /tmp/.X11-unix is agent-owned rather than root-owned; changing ownership returned EPERM. Godot compatibility import and clip metadata run headless, but real Godot capture is unavailable."
+  },
+  "production_approved": false,
+  "next_required_step": "Regenerate real Godot 4.7.2 views and pose captures on a working display server; inspect the nose/cheek fills and reject or retain R3 before any integration."
+}

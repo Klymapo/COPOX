@@ -1,0 +1,905 @@
+{
+  "candidate": "R3",
+  "source": "assets/maniqui/maniqui_v0_3_r3_g2c3_v3_rapado_oreja_izquierda_SIN_APROBAR.glb",
+  "source_sha256": "0a100a9400e87251cbdd64328c0c13ffc4bbf829ae4c85d5b54aee2c1e67565b",
+  "cleanup_B2_reapplied": [
+    325,
+    326,
+    484,
+    485,
+    486,
+    567,
+    762,
+    763,
+    764,
+    765,
+    768,
+    769,
+    770,
+    771,
+    772,
+    773,
+    774,
+    775,
+    776,
+    777,
+    778,
+    779,
+    780,
+    781,
+    782,
+    783,
+    784,
+    785,
+    786,
+    787,
+    788,
+    804,
+    805,
+    842,
+    843,
+    844,
+    845,
+    846,
+    847,
+    963,
+    964,
+    966,
+    967,
+    968,
+    1876,
+    1877,
+    1878,
+    1879,
+    1880,
+    1881,
+    1882,
+    1890,
+    1891,
+    1892,
+    1893,
+    1894,
+    1897,
+    2316,
+    2317,
+    2318,
+    2319,
+    2320,
+    2321,
+    2322,
+    2323,
+    2430,
+    2431,
+    2432,
+    2433,
+    2434,
+    2435
+  ],
+  "reference": "assets/alastor_delta/alastor_delta_v1_1_cuello.glb",
+  "reference_sha256": "7f168516586d00f5c90f9d3d896676e26f2b758e57c287d5dfb1950710cb7ca6",
+  "glb": "build/g2c5/maniqui_G2C5_R3_HUECOS_NARIZ_SIN_APROBAR.glb",
+  "sha256": "05774f8177155dc3a742a77776649357b15f58ce29b2e4d7e3689c872dfd7b95",
+  "restored_source_triangles": [
+    813,
+    814,
+    816,
+    826,
+    827,
+    2790,
+    2791,
+    2792,
+    2793,
+    2796,
+    2797,
+    2800,
+    2802,
+    2827,
+    2828,
+    2829,
+    2830,
+    2835,
+    2836,
+    2848,
+    2849,
+    2850,
+    2872,
+    2873,
+    2874,
+    2875,
+    2876,
+    2877,
+    2878,
+    2879,
+    2886,
+    2887,
+    2888,
+    2893,
+    2894,
+    2897,
+    2898,
+    2899,
+    2900,
+    2919,
+    2920,
+    2921,
+    3098,
+    3099,
+    3100,
+    3192,
+    3194,
+    3251,
+    3312,
+    3314,
+    3326,
+    3327,
+    3329,
+    3339,
+    3340,
+    3387,
+    3391,
+    3392,
+    3393,
+    3395,
+    3398,
+    3399,
+    3400,
+    3401,
+    3402,
+    3406,
+    3407,
+    3408,
+    3409,
+    3419,
+    3422,
+    3423,
+    3425,
+    3432,
+    3437,
+    3439,
+    3440,
+    3441,
+    3442,
+    3447,
+    3448,
+    3450,
+    3451,
+    3452,
+    3453,
+    3454,
+    3455,
+    3456,
+    3457,
+    3459,
+    3460,
+    3461,
+    3462,
+    3463,
+    3468,
+    3489,
+    3490,
+    3491,
+    3492,
+    3493,
+    3494,
+    3507,
+    3508,
+    3645,
+    3646,
+    3656,
+    3657,
+    3659,
+    3716,
+    3720,
+    3721,
+    3722,
+    3723,
+    3724,
+    3727,
+    3741,
+    3762,
+    3763,
+    3765,
+    3766,
+    3767,
+    3768,
+    3770,
+    3771,
+    3783,
+    3785,
+    3862,
+    3864,
+    3865,
+    3868,
+    3944,
+    3945,
+    3946,
+    3947,
+    3995,
+    3996,
+    3997,
+    3998,
+    3999,
+    4000,
+    4001,
+    4002,
+    4003,
+    4018,
+    4024,
+    4025,
+    4029,
+    4030,
+    4034,
+    4039,
+    4045,
+    4046,
+    4047,
+    4048,
+    4049,
+    4050,
+    4051,
+    4052,
+    4054,
+    4090,
+    4091,
+    4092,
+    4093,
+    4228,
+    4229,
+    4230,
+    4231,
+    4232,
+    4233,
+    4234,
+    4235,
+    4236,
+    4237,
+    4282,
+    4283,
+    4284,
+    4310,
+    4311,
+    4315,
+    4364,
+    4368,
+    4370,
+    4373,
+    4374,
+    4375,
+    4376,
+    4378,
+    4450,
+    4451,
+    4452,
+    4453,
+    4454,
+    4455,
+    4456,
+    4457,
+    4458,
+    4460,
+    4462,
+    4466,
+    4467,
+    4468,
+    4470,
+    4471,
+    4477,
+    4478,
+    4480,
+    4482,
+    4484,
+    4486,
+    4487,
+    4670,
+    4674,
+    4678,
+    7542,
+    11227,
+    11228,
+    11232,
+    11233,
+    11234,
+    11235,
+    11237,
+    11238,
+    11239,
+    11240,
+    11241,
+    11455,
+    11472,
+    11473,
+    11474,
+    11475,
+    11476,
+    11477,
+    11478,
+    11479,
+    11480,
+    11481,
+    11482,
+    11483,
+    11484,
+    11485,
+    11486,
+    11487,
+    11488,
+    11489,
+    11490,
+    11491,
+    11492,
+    11493,
+    11494,
+    11495,
+    11496,
+    11497,
+    11498,
+    11499,
+    11504,
+    11505,
+    11506,
+    11507,
+    11563,
+    12222,
+    12264,
+    12265,
+    12266,
+    12267,
+    12269,
+    12270,
+    12542
+  ],
+  "excluded_source_faces_due_R1_crossings": [
+    2826,
+    3781,
+    3782,
+    3784
+  ],
+  "restored_triangle_count": 267,
+  "interpolated_fill_triangles": 81,
+  "added_vertices": 136,
+  "modified_original_vertices": 0,
+  "patches": [
+    {
+      "loop": 2,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        1296,
+        1297,
+        1298,
+        1294,
+        1295
+      ]
+    },
+    {
+      "loop": 3,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        141,
+        1365,
+        1341,
+        157,
+        1336,
+        190
+      ]
+    },
+    {
+      "loop": 4,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        114,
+        104,
+        1128,
+        1124,
+        1131,
+        1121,
+        1119,
+        1141,
+        1296,
+        1249,
+        1250,
+        1253,
+        148,
+        144,
+        143,
+        145,
+        107,
+        140,
+        142,
+        141,
+        99,
+        97,
+        183,
+        1429,
+        1412,
+        182,
+        196
+      ]
+    },
+    {
+      "loop": 5,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        120,
+        113,
+        114,
+        194
+      ]
+    },
+    {
+      "loop": 6,
+      "sub": 0,
+      "status": "ADDED",
+      "faces": 1,
+      "vertices": 1,
+      "area_m2": 7.448423178607775e-08,
+      "bounds": [
+        0.02448378942342293,
+        0.6504034277592665,
+        0.02500886842608452,
+        0.6513096690177917
+      ],
+      "face_range": [
+        3022,
+        3023
+      ]
+    },
+    {
+      "loop": 7,
+      "sub": 0,
+      "status": "ADDED",
+      "faces": 1,
+      "vertices": 0,
+      "area_m2": 2.898367293391324e-07,
+      "bounds": [
+        0.021622996777296066,
+        0.6593062877655029,
+        0.021881012246012688,
+        0.6620429754257202
+      ],
+      "face_range": [
+        3023,
+        3024
+      ]
+    },
+    {
+      "loop": 8,
+      "sub": 0,
+      "status": "ADDED",
+      "faces": 27,
+      "vertices": 13,
+      "area_m2": 0.00014298574561348587,
+      "bounds": [
+        -0.012521686963737011,
+        0.6860076785087585,
+        0.014992834068834782,
+        0.6969542503356934
+      ],
+      "face_range": [
+        3024,
+        3051
+      ]
+    },
+    {
+      "loop": 9,
+      "sub": 0,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 9,
+      "sub": 1,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 10,
+      "sub": 0,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 11,
+      "sub": 0,
+      "status": "ADDED",
+      "faces": 37,
+      "vertices": 14,
+      "area_m2": 0.00017213413073316057,
+      "bounds": [
+        0.027319503568000808,
+        0.7022375464439392,
+        0.054015595465898514,
+        0.7309942891240697
+      ],
+      "face_range": [
+        3051,
+        3088
+      ]
+    },
+    {
+      "loop": 13,
+      "sub": 0,
+      "status": "ADDED",
+      "faces": 9,
+      "vertices": 4,
+      "area_m2": 6.128687756823403e-05,
+      "bounds": [
+        -0.09950274974107742,
+        0.6092261075973511,
+        -0.08458348363637924,
+        0.6219415664672852
+      ],
+      "face_range": [
+        3088,
+        3097
+      ]
+    },
+    {
+      "loop": 14,
+      "sub": 0,
+      "status": "ADDED",
+      "faces": 1,
+      "vertices": 0,
+      "area_m2": 1.0294032037894141e-07,
+      "bounds": [
+        -0.024307504296302795,
+        0.6518303751945496,
+        -0.022466929629445076,
+        0.6580730080604553
+      ],
+      "face_range": [
+        3097,
+        3098
+      ]
+    },
+    {
+      "loop": 16,
+      "sub": 0,
+      "status": "ADDED",
+      "faces": 1,
+      "vertices": 2,
+      "area_m2": 9.23680520340395e-08,
+      "bounds": [
+        -0.08804108202457428,
+        0.6115897360400295,
+        -0.08755127740765468,
+        0.6124545931816101
+      ],
+      "face_range": [
+        3098,
+        3099
+      ]
+    },
+    {
+      "loop": 16,
+      "sub": 1,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 16,
+      "sub": 2,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 16,
+      "sub": 3,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 16,
+      "sub": 4,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 16,
+      "sub": 5,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 16,
+      "sub": 6,
+      "status": "ADDED",
+      "faces": 1,
+      "vertices": 0,
+      "area_m2": 1.778277523012406e-07,
+      "bounds": [
+        -0.02456272579729557,
+        0.6508122682571411,
+        -0.023886483162641525,
+        0.6521163582801819
+      ],
+      "face_range": [
+        3099,
+        3100
+      ]
+    },
+    {
+      "loop": 16,
+      "sub": 7,
+      "status": "ADDED",
+      "faces": 1,
+      "vertices": 0,
+      "area_m2": 4.817508349908017e-06,
+      "bounds": [
+        -0.04245056211948395,
+        0.6199631094932556,
+        -0.028299760073423386,
+        0.6417108774185181
+      ],
+      "face_range": [
+        3100,
+        3101
+      ]
+    },
+    {
+      "loop": 18,
+      "sub": 0,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 19,
+      "sub": 0,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 19,
+      "sub": 1,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 19,
+      "sub": 2,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 19,
+      "sub": 3,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 19,
+      "sub": 4,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 19,
+      "sub": 5,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 19,
+      "sub": 6,
+      "status": "BOUNDARY_NOT_ON_RETAINED_SURFACE"
+    },
+    {
+      "loop": 20,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        5144,
+        5362,
+        5137
+      ]
+    },
+    {
+      "loop": 21,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        5147,
+        5144,
+        5299,
+        5302,
+        5369
+      ]
+    },
+    {
+      "loop": 22,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        641,
+        643,
+        639,
+        3117,
+        3119,
+        3118,
+        3115,
+        3114,
+        3112,
+        3113,
+        3711,
+        3709,
+        3710,
+        3705,
+        3707,
+        3702,
+        5364,
+        5147,
+        5373,
+        685,
+        686,
+        3708,
+        683,
+        679,
+        680,
+        663,
+        650
+      ]
+    },
+    {
+      "loop": 23,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        644,
+        636,
+        641
+      ]
+    },
+    {
+      "loop": 24,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        727,
+        732,
+        728
+      ]
+    },
+    {
+      "loop": 25,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        745,
+        725,
+        726
+      ]
+    },
+    {
+      "loop": 26,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        744,
+        5070,
+        5071
+      ]
+    },
+    {
+      "loop": 28,
+      "sub": 0,
+      "status": "ADDED",
+      "faces": 1,
+      "vertices": 0,
+      "area_m2": 4.4386622199965586e-07,
+      "bounds": [
+        0.019029801711440086,
+        0.6788083910942078,
+        0.020213691517710686,
+        0.6798273921012878
+      ],
+      "face_range": [
+        3101,
+        3102
+      ]
+    },
+    {
+      "loop": 33,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        1113,
+        1109,
+        1107
+      ]
+    },
+    {
+      "loop": 34,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        1362,
+        1323,
+        1360
+      ]
+    },
+    {
+      "loop": 41,
+      "sub": 0,
+      "status": "REJECTED_CROSSINGS",
+      "count": 1
+    },
+    {
+      "loop": 42,
+      "status": "NO_MISSING_VISIBLE_AREA",
+      "boundary": [
+        3102,
+        3101,
+        3100
+      ]
+    },
+    {
+      "loop": 44,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        5129,
+        5123,
+        5127
+      ]
+    },
+    {
+      "loop": 45,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        5129,
+        5142,
+        3694,
+        3698,
+        3693
+      ]
+    },
+    {
+      "loop": 47,
+      "status": "PROTECTED_OCULAR_CAVITY",
+      "boundary": [
+        5291,
+        5354,
+        5298,
+        5296
+      ]
+    },
+    {
+      "loop": 48,
+      "sub": 0,
+      "status": "ADDED",
+      "faces": 1,
+      "vertices": 0,
+      "area_m2": 5.561233476392147e-06,
+      "bounds": [
+        -0.03033500723540783,
+        0.7293422222137451,
+        -0.028625773265957832,
+        0.7405095100402832
+      ],
+      "face_range": [
+        3102,
+        3103
+      ]
+    },
+    {
+      "loop": 49,
+      "status": "NO_MISSING_VISIBLE_AREA",
+      "boundary": [
+        5665,
+        592,
+        5664,
+        5672,
+        5673,
+        5666,
+        5671,
+        5670,
+        5667
+      ]
+    }
+  ],
+  "unresolved_boundary_fans": [],
+  "before_B2": {
+    "faces": 2755,
+    "used_vertices": 2836,
+    "welded_boundary_edges": 703,
+    "welded_nonmanifold_edges": 1,
+    "degenerate_faces": [],
+    "min_area": 3.1601320913363306e-08,
+    "components": 14
+  },
+  "after": {
+    "faces": 3103,
+    "used_vertices": 2987,
+    "welded_boundary_edges": 669,
+    "welded_nonmanifold_edges": 1,
+    "degenerate_faces": [],
+    "min_area": 3.1601320913363306e-08,
+    "components": 6
+  },
+  "proper_crossings": [],
+  "coplanar_aabb_candidates": 0,
+  "maximum_original_edge_overfill_change": 0,
+  "original_binary_prefix_exact": true,
+  "all_original_vertex_attributes_exact": true,
+  "protected_morph_rig_material_nodes_exact": true,
+  "GLTF_error43_compat_limitation_inherited": true,
+  "production_approved": false,
+  "geometry_status": "PASS_REGIONAL_INITIAL",
+  "artistic_status": "FAIL_ARTISTIC_BLENDER_4_3_2",
+  "artistic_review": "La captura real del GLB importado mejora levemente la banda central, pero aún deja huecos grandes y polígonos oscuros alrededor de ambos ojos y la nariz. La nariz sigue como un bloque sin puente continuo. Rechazado artísticamente.",
+  "artistic_captures": "build/g2c5/blender_captures_final/R3"
+}

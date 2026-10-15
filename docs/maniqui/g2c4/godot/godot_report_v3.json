@@ -1,0 +1,5511 @@
+{
+  "engine": {
+    "build": "official",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (official)",
+    "timestamp": 0
+  },
+  "limitations": [
+    "compat copies remove invalid empty primitives and 15 orphan facial channels; originals preserved",
+    "finite sampled animation vertices do not certify continuous collision-free motion",
+    "no artistic approval implied"
+  ],
+  "models": {
+    "A": {
+      "all_baked_body_normals_match_V3": true,
+      "all_baked_body_samples_match_V3": true,
+      "all_baked_vertices_finite": true,
+      "all_bone_samples_match_V3": true,
+      "baked_vertex_samples": 1513365,
+      "blend_shape_count": 0,
+      "bones": 56,
+      "clips": [
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Blink",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "GlassesPush",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "GlassesPushFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "HandsBehind-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HandsBehindFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.39999997615814,
+          "name": "HeadShake",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HeadShakeFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "Idle-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdleFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "IdlePockets-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdlePocketsFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.60000002384186,
+          "name": "Laugh",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "LaughFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.10000002384186,
+          "name": "Nod",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "NodFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "Point",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "PointFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.70000004768372,
+          "name": "Shrug",
+          "tracks": 51
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ShrugFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 0.0333333350718021,
+          "name": "Sit-pose",
+          "tracks": 38
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Talk-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 6.0,
+          "name": "TalkGesture-loop",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TalkGestureFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.79999995231628,
+          "name": "Think",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ThinkFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.20000004768372,
+          "name": "TieAdjust",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TieAdjustFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.0,
+          "name": "Wave",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "WaveFace",
+          "tracks": 0
+        }
+      ],
+      "compat_append_error": 0,
+      "raw_append_error": 43,
+      "samples": [
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.349999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.04999998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.400000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.800000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.20000001788139
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.60000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.275000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.825000017881393
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.425000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.850000023841858
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.27500003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.70000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.00833333376795053
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0166666675359011
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0250000013038516
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0333333350718021
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 3.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 4.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.09999996423721
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.79999995231628
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.65000003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 2.20000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.001
+        }
+      ],
+      "surfaces": 24
+    },
+    "A2": {
+      "all_baked_body_normals_match_V3": true,
+      "all_baked_body_samples_match_V3": true,
+      "all_baked_vertices_finite": true,
+      "all_bone_samples_match_V3": true,
+      "baked_vertex_samples": 1526850,
+      "blend_shape_count": 0,
+      "bones": 56,
+      "clips": [
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Blink",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "GlassesPush",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "GlassesPushFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "HandsBehind-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HandsBehindFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.39999997615814,
+          "name": "HeadShake",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HeadShakeFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "Idle-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdleFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "IdlePockets-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdlePocketsFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.60000002384186,
+          "name": "Laugh",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "LaughFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.10000002384186,
+          "name": "Nod",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "NodFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "Point",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "PointFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.70000004768372,
+          "name": "Shrug",
+          "tracks": 51
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ShrugFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 0.0333333350718021,
+          "name": "Sit-pose",
+          "tracks": 38
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Talk-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 6.0,
+          "name": "TalkGesture-loop",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TalkGestureFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.79999995231628,
+          "name": "Think",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ThinkFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.20000004768372,
+          "name": "TieAdjust",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TieAdjustFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.0,
+          "name": "Wave",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "WaveFace",
+          "tracks": 0
+        }
+      ],
+      "compat_append_error": 0,
+      "raw_append_error": 43,
+      "samples": [
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.349999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.04999998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.400000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.800000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.20000001788139
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.60000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.275000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.825000017881393
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.425000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.850000023841858
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.27500003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.70000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.00833333376795053
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0166666675359011
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0250000013038516
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0333333350718021
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 3.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 4.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.09999996423721
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.79999995231628
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.65000003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 2.20000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.001
+        }
+      ],
+      "surfaces": 24
+    },
+    "B": {
+      "all_baked_body_normals_match_V3": true,
+      "all_baked_body_samples_match_V3": true,
+      "all_baked_vertices_finite": true,
+      "all_bone_samples_match_V3": true,
+      "baked_vertex_samples": 1520905,
+      "blend_shape_count": 0,
+      "bones": 56,
+      "clips": [
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Blink",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "GlassesPush",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "GlassesPushFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "HandsBehind-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HandsBehindFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.39999997615814,
+          "name": "HeadShake",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HeadShakeFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "Idle-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdleFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "IdlePockets-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdlePocketsFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.60000002384186,
+          "name": "Laugh",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "LaughFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.10000002384186,
+          "name": "Nod",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "NodFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "Point",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "PointFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.70000004768372,
+          "name": "Shrug",
+          "tracks": 51
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ShrugFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 0.0333333350718021,
+          "name": "Sit-pose",
+          "tracks": 38
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Talk-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 6.0,
+          "name": "TalkGesture-loop",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TalkGestureFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.79999995231628,
+          "name": "Think",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ThinkFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.20000004768372,
+          "name": "TieAdjust",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TieAdjustFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.0,
+          "name": "Wave",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "WaveFace",
+          "tracks": 0
+        }
+      ],
+      "compat_append_error": 0,
+      "raw_append_error": 43,
+      "samples": [
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.349999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.04999998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.400000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.800000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.20000001788139
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.60000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.275000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.825000017881393
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.425000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.850000023841858
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.27500003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.70000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.00833333376795053
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0166666675359011
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0250000013038516
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0333333350718021
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 3.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 4.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.09999996423721
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.79999995231628
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.65000003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 2.20000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.001
+        }
+      ],
+      "surfaces": 24
+    },
+    "B2": {
+      "all_baked_body_normals_match_V3": true,
+      "all_baked_body_samples_match_V3": true,
+      "all_baked_vertices_finite": true,
+      "all_bone_samples_match_V3": true,
+      "baked_vertex_samples": 1517135,
+      "blend_shape_count": 0,
+      "bones": 56,
+      "clips": [
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Blink",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "GlassesPush",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "GlassesPushFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "HandsBehind-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HandsBehindFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.39999997615814,
+          "name": "HeadShake",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HeadShakeFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "Idle-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdleFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "IdlePockets-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdlePocketsFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.60000002384186,
+          "name": "Laugh",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "LaughFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.10000002384186,
+          "name": "Nod",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "NodFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "Point",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "PointFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.70000004768372,
+          "name": "Shrug",
+          "tracks": 51
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ShrugFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 0.0333333350718021,
+          "name": "Sit-pose",
+          "tracks": 38
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Talk-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 6.0,
+          "name": "TalkGesture-loop",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TalkGestureFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.79999995231628,
+          "name": "Think",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ThinkFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.20000004768372,
+          "name": "TieAdjust",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TieAdjustFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.0,
+          "name": "Wave",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "WaveFace",
+          "tracks": 0
+        }
+      ],
+      "compat_append_error": 0,
+      "raw_append_error": 43,
+      "samples": [
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.349999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.04999998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.400000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.800000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.20000001788139
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.60000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.275000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.825000017881393
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.425000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.850000023841858
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.27500003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.70000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.00833333376795053
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0166666675359011
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0250000013038516
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0333333350718021
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 3.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 4.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.09999996423721
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.79999995231628
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.65000003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 2.20000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.001
+        }
+      ],
+      "surfaces": 24
+    },
+    "C": {
+      "all_baked_body_normals_match_V3": true,
+      "all_baked_body_samples_match_V3": true,
+      "all_baked_vertices_finite": true,
+      "all_bone_samples_match_V3": true,
+      "baked_vertex_samples": 1533230,
+      "blend_shape_count": 0,
+      "bones": 56,
+      "clips": [
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Blink",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "GlassesPush",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "GlassesPushFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "HandsBehind-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HandsBehindFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.39999997615814,
+          "name": "HeadShake",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HeadShakeFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "Idle-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdleFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "IdlePockets-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdlePocketsFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.60000002384186,
+          "name": "Laugh",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "LaughFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.10000002384186,
+          "name": "Nod",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "NodFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "Point",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "PointFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.70000004768372,
+          "name": "Shrug",
+          "tracks": 51
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ShrugFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 0.0333333350718021,
+          "name": "Sit-pose",
+          "tracks": 38
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Talk-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 6.0,
+          "name": "TalkGesture-loop",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TalkGestureFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.79999995231628,
+          "name": "Think",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ThinkFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.20000004768372,
+          "name": "TieAdjust",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TieAdjustFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.0,
+          "name": "Wave",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "WaveFace",
+          "tracks": 0
+        }
+      ],
+      "compat_append_error": 0,
+      "raw_append_error": 43,
+      "samples": [
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.349999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.04999998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.400000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.800000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.20000001788139
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.60000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.275000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.825000017881393
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.425000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.850000023841858
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.27500003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.70000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.00833333376795053
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0166666675359011
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0250000013038516
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0333333350718021
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 3.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 4.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.09999996423721
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.79999995231628
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.65000003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 2.20000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.001
+        }
+      ],
+      "surfaces": 24
+    },
+    "V3": {
+      "all_baked_body_normals_match_V3": true,
+      "all_baked_body_samples_match_V3": true,
+      "all_baked_vertices_finite": true,
+      "all_bone_samples_match_V3": true,
+      "baked_vertex_samples": 1533230,
+      "blend_shape_count": 0,
+      "bones": 56,
+      "clips": [
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Blink",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "GlassesPush",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "GlassesPushFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "HandsBehind-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HandsBehindFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.39999997615814,
+          "name": "HeadShake",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "HeadShakeFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "Idle-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdleFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 8.0,
+          "name": "IdlePockets-loop",
+          "tracks": 54
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "IdlePocketsFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.60000002384186,
+          "name": "Laugh",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "LaughFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.10000002384186,
+          "name": "Nod",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "NodFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.89999997615814,
+          "name": "Point",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "PointFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 1.70000004768372,
+          "name": "Shrug",
+          "tracks": 51
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ShrugFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 0.0333333350718021,
+          "name": "Sit-pose",
+          "tracks": 38
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "Talk-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 6.0,
+          "name": "TalkGesture-loop",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TalkGestureFace-loop",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.79999995231628,
+          "name": "Think",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "ThinkFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.20000004768372,
+          "name": "TieAdjust",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "TieAdjustFace",
+          "tracks": 0
+        },
+        {
+          "bone_motion_observed": true,
+          "length": 2.0,
+          "name": "Wave",
+          "tracks": 49
+        },
+        {
+          "bone_motion_observed": false,
+          "length": 0.001,
+          "name": "WaveFace",
+          "tracks": 0
+        }
+      ],
+      "compat_append_error": 0,
+      "raw_append_error": 43,
+      "samples": [
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Blink",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPush",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "GlassesPushFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehind-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HandsBehindFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.349999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.04999998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShake",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "HeadShakeFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Idle-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdleFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 4.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePockets-loop",
+          "time": 8.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "IdlePocketsFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.400000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 0.800000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.20000001788139
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Laugh",
+          "time": 1.60000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "LaughFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.275000005960464
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 0.825000017881393
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Nod",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "NodFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.474999994039536
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 0.949999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.42499998211861
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Point",
+          "time": 1.89999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "PointFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.425000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 0.850000023841858
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.27500003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Shrug",
+          "time": 1.70000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ShrugFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.00833333376795053
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0166666675359011
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0250000013038516
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Sit-pose",
+          "time": 0.0333333350718021
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Talk-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 3.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 4.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGesture-loop",
+          "time": 6.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TalkGestureFace-loop",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 0.699999988079071
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 1.39999997615814
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.09999996423721
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Think",
+          "time": 2.79999995231628
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "ThinkFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 0.550000011920929
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.10000002384186
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 1.65000003576279
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjust",
+          "time": 2.20000004768372
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "TieAdjustFace",
+          "time": 0.001
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 0.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 1.5
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "Wave",
+          "time": 2.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00025
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.0005
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.00075
+        },
+        {
+          "bone_sample_matches_baseline": true,
+          "clip": "WaveFace",
+          "time": 0.001
+        }
+      ],
+      "surfaces": 24
+    }
+  },
+  "renderer": "OpenGL compatibility / Mesa llvmpipe / Xvfb; real GLB geometry"
+}

@@ -1,0 +1,170 @@
+{
+  "V3": {
+    "master": {
+      "errors": 53,
+      "warnings": 182,
+      "truncated": false,
+      "codes": {
+        "VALUE_NOT_IN_RANGE": 32,
+        "BUFFER_VIEW_TARGET_MISSING": 160,
+        "NODE_SKINNED_MESH_NON_ROOT": 2,
+        "UNUSED_OBJECT": 176,
+        "ACCESSOR_VECTOR3_NON_UNIT": 21,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    },
+    "compat": {
+      "errors": 31,
+      "warnings": 181,
+      "truncated": false,
+      "codes": {
+        "EMPTY_ENTITY": 15,
+        "VALUE_NOT_IN_RANGE": 16,
+        "NODE_SKINNED_MESH_NON_ROOT": 1,
+        "NODE_EMPTY": 1,
+        "UNUSED_OBJECT": 420,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    }
+  },
+  "A": {
+    "master": {
+      "errors": 53,
+      "warnings": 182,
+      "truncated": false,
+      "codes": {
+        "VALUE_NOT_IN_RANGE": 32,
+        "BUFFER_VIEW_TARGET_MISSING": 160,
+        "NODE_SKINNED_MESH_NON_ROOT": 2,
+        "UNUSED_OBJECT": 177,
+        "ACCESSOR_VECTOR3_NON_UNIT": 21,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    },
+    "compat": {
+      "errors": 31,
+      "warnings": 181,
+      "truncated": false,
+      "codes": {
+        "EMPTY_ENTITY": 15,
+        "VALUE_NOT_IN_RANGE": 16,
+        "NODE_SKINNED_MESH_NON_ROOT": 1,
+        "NODE_EMPTY": 1,
+        "UNUSED_OBJECT": 421,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    }
+  },
+  "A2": {
+    "master": {
+      "errors": 53,
+      "warnings": 182,
+      "truncated": false,
+      "codes": {
+        "VALUE_NOT_IN_RANGE": 32,
+        "BUFFER_VIEW_TARGET_MISSING": 160,
+        "NODE_SKINNED_MESH_NON_ROOT": 2,
+        "UNUSED_OBJECT": 177,
+        "ACCESSOR_VECTOR3_NON_UNIT": 21,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    },
+    "compat": {
+      "errors": 31,
+      "warnings": 181,
+      "truncated": false,
+      "codes": {
+        "EMPTY_ENTITY": 15,
+        "VALUE_NOT_IN_RANGE": 16,
+        "NODE_SKINNED_MESH_NON_ROOT": 1,
+        "NODE_EMPTY": 1,
+        "UNUSED_OBJECT": 421,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    }
+  },
+  "B": {
+    "master": {
+      "errors": 53,
+      "warnings": 182,
+      "truncated": false,
+      "codes": {
+        "VALUE_NOT_IN_RANGE": 32,
+        "BUFFER_VIEW_TARGET_MISSING": 160,
+        "NODE_SKINNED_MESH_NON_ROOT": 2,
+        "UNUSED_OBJECT": 177,
+        "ACCESSOR_VECTOR3_NON_UNIT": 21,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    },
+    "compat": {
+      "errors": 31,
+      "warnings": 181,
+      "truncated": false,
+      "codes": {
+        "EMPTY_ENTITY": 15,
+        "VALUE_NOT_IN_RANGE": 16,
+        "NODE_SKINNED_MESH_NON_ROOT": 1,
+        "NODE_EMPTY": 1,
+        "UNUSED_OBJECT": 421,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    }
+  },
+  "B2": {
+    "master": {
+      "errors": 53,
+      "warnings": 182,
+      "truncated": false,
+      "codes": {
+        "VALUE_NOT_IN_RANGE": 32,
+        "BUFFER_VIEW_TARGET_MISSING": 160,
+        "NODE_SKINNED_MESH_NON_ROOT": 2,
+        "UNUSED_OBJECT": 177,
+        "ACCESSOR_VECTOR3_NON_UNIT": 21,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    },
+    "compat": {
+      "errors": 31,
+      "warnings": 181,
+      "truncated": false,
+      "codes": {
+        "EMPTY_ENTITY": 15,
+        "VALUE_NOT_IN_RANGE": 16,
+        "NODE_SKINNED_MESH_NON_ROOT": 1,
+        "NODE_EMPTY": 1,
+        "UNUSED_OBJECT": 421,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    }
+  },
+  "C": {
+    "master": {
+      "errors": 53,
+      "warnings": 182,
+      "truncated": false,
+      "codes": {
+        "VALUE_NOT_IN_RANGE": 32,
+        "BUFFER_VIEW_TARGET_MISSING": 160,
+        "NODE_SKINNED_MESH_NON_ROOT": 2,
+        "UNUSED_OBJECT": 178,
+        "ACCESSOR_VECTOR3_NON_UNIT": 21,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    },
+    "compat": {
+      "errors": 31,
+      "warnings": 181,
+      "truncated": false,
+      "codes": {
+        "EMPTY_ENTITY": 15,
+        "VALUE_NOT_IN_RANGE": 16,
+        "NODE_SKINNED_MESH_NON_ROOT": 1,
+        "NODE_EMPTY": 1,
+        "UNUSED_OBJECT": 422,
+        "ACCESSOR_JOINTS_USED_ZERO_WEIGHT": 180
+      }
+    }
+  }
+}

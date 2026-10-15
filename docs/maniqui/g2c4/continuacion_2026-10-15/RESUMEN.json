@@ -1,0 +1,17 @@
+{
+  "base_sha256": "0a100a9400e87251cbdd64328c0c13ffc4bbf829ae4c85d5b54aee2c1e67565b",
+  "B2_sha256": "daf3737d0cb5b6469fa407ffab5dc761b2fc0e0acd9c69652cb283d41b4b05ec",
+  "candidate_decisions": {
+    "A3": "RECHAZADO: 31 cruces, pliegues y unión lateral incompleta; no oreja corregida aprobable.",
+    "C2": "RECHAZADO: 78 cruces, incluidos 71 con torso; transición anular facetada.",
+    "C3": "RECHAZADO: un cruce entre Cabeza 1637 y transición 60; contorno anterior mejora pero la unión sigue facetada/incompleta."
+  },
+  "A_iterations_total": 3,
+  "B_iterations_total": 2,
+  "C_iterations_total": 3,
+  "ABC_generated": false,
+  "new_real_Godot_captures": 141,
+  "new_sheets": 16,
+  "pose_samples": 725,
+  "production_approved": false
+}

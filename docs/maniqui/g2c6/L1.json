@@ -1,0 +1,164 @@
+{
+  "candidate": "L1",
+  "source_v3_sha256": "0a100a9400e87251cbdd64328c0c13ffc4bbf829ae4c85d5b54aee2c1e67565b",
+  "source_B2_sha256": "daf3737d0cb5b6469fa407ffab5dc761b2fc0e0acd9c69652cb283d41b4b05ec",
+  "glb": "build/g2c6/maniqui_G2C6_L1_UNIONES_TOBILLOS_SIN_APROBAR.glb",
+  "sha256": "cf759292adace095b0a0c41516e0ecebead3cb48efb44210afcbbef8cc8d71e0",
+  "operation": "Measured lower shin ring extension into each existing shoe",
+  "changes": [
+    {
+      "shin_primitive": 4,
+      "shoe_primitive": 15,
+      "vertex_indices": [
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        191,
+        193
+      ],
+      "vertices_moved": 33,
+      "old_lower_y": 0.08525270968675613,
+      "new_lower_y": 0.05500000369548798,
+      "shoe_crown_y": 0.06800000369548798,
+      "old_gap_y": 0.017252705991268158,
+      "buried_depth_y": 0.013,
+      "next_shin_ring_y": 0.12025270611047745,
+      "xz_bounds": [
+        [
+          0.026397112756967545,
+          -0.019631769508123398
+        ],
+        [
+          0.11439710855484009,
+          0.06836823374032974
+        ]
+      ]
+    },
+    {
+      "shin_primitive": 5,
+      "shoe_primitive": 23,
+      "vertex_indices": [
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        191,
+        193
+      ],
+      "vertices_moved": 33,
+      "old_lower_y": 0.08525270968675613,
+      "new_lower_y": 0.05500000369548798,
+      "shoe_crown_y": 0.06800000369548798,
+      "old_gap_y": 0.017252705991268158,
+      "buried_depth_y": 0.013,
+      "next_shin_ring_y": 0.12025270611047745,
+      "xz_bounds": [
+        [
+          -0.11439710855484009,
+          -0.019631769508123398
+        ],
+        [
+          -0.026397112756967545,
+          0.06836823374032974
+        ]
+      ]
+    }
+  ],
+  "triangles_added_or_deleted": 0,
+  "vertices_moved": 66,
+  "face_scalp_eyes_brows_nose_lips_ears_arms_torso_unchanged": true,
+  "rig_skin_weights_nodes_materials_animation_definitions_exact": true,
+  "original_binary_prefix_exact": true,
+  "status": "PASS_LOCAL_REST_VISUAL__GLOBAL_INCOMPLETE",
+  "production_approved": false,
+  "limitations": [
+    "Shoe termination intentionally overlaps the shin shell; this is not a welded anatomical ankle.",
+    "Facial holes, scalp-to-face seam, folds, and other limb joints are outside this local operation.",
+    "Animation deformation requires separate pose inspection.",
+    "Only one Wave frame was visually inspected; complete deformation, especially ankle bending, remains unproven."
+  ],
+  "visual_evidence": "build/g2c6/COMPARATIVA_REAL_B2_L1_BLENDER.png",
+  "pose_evidence": "build/g2c6/captures_pose_wave",
+  "godot_report": "build/g2c6/godot_report.json",
+  "godot_compat_error": 0,
+  "godot_raw_error_inherited": 43,
+  "godot_bones": 56,
+  "godot_surfaces": 24,
+  "godot_clip_definitions": 29,
+  "godot_bone_matrix_samples_equal_B2": 145,
+  "khronos_raw_errors_B2_L1": [
+    53,
+    53
+  ],
+  "khronos_raw_warnings_B2_L1": [
+    182,
+    182
+  ],
+  "degenerate_shin_triangles_B2_L1": [
+    0,
+    0
+  ],
+  "artistic_scope": "Ankle gap improved at rest; face, folds, scalp seam, other extremity joints unresolved",
+  "pose_clip": "Wave",
+  "pose_frame_blender": 24,
+  "pose_pixel_difference_from_rest_B2_L1": [
+    107315,
+    107809
+  ],
+  "invalid_pose_evidence_retained": "build/g2c6/captures_pose_mid; Sit-pose frames identical to rest, not validation"
+}

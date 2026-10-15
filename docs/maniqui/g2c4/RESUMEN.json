@@ -1,0 +1,57 @@
+{
+  "baseline_sha256": "0a100a9400e87251cbdd64328c0c13ffc4bbf829ae4c85d5b54aee2c1e67565b",
+  "baseline_pr": 46,
+  "baseline_immutable": true,
+  "models": {
+    "A": {
+      "sha256": "e5660a56d9d611dec63209a22d0857947ea44cadb871fee9026d67d24438e308",
+      "deleted": 156,
+      "moved": 0,
+      "status": "REJECTED_ARTISTIC",
+      "reason": "El recorte de 156 caras de pelo deja un hueco visible detrás de la oreja.",
+      "regression_checks_pass": true,
+      "global_pass": false
+    },
+    "A2": {
+      "sha256": "24d54d73d87077b808cb8ae2ba27a01dbe1b8ffb1d7e45a7e1abad314b6268b2",
+      "deleted": 63,
+      "moved": 0,
+      "status": "REJECTED_ARTISTIC",
+      "reason": "El recorte limitado de 63 caras conserva saliente y deja hueco; no repetir por inercia.",
+      "regression_checks_pass": true,
+      "global_pass": false
+    },
+    "B": {
+      "sha256": "edc645a2814255e0b6364823b1f60cecb0b871d7855945d16fdd91189b070e1a",
+      "deleted": 61,
+      "moved": 0,
+      "status": "PARTIAL_SUPERSEDED",
+      "reason": "61 caras de montura retiradas; sobreviven diez residuos confirmados.",
+      "regression_checks_pass": true,
+      "global_pass": false
+    },
+    "B2": {
+      "sha256": "daf3737d0cb5b6469fa407ffab5dc761b2fc0e0acd9c69652cb283d41b4b05ec",
+      "deleted": 71,
+      "moved": 0,
+      "status": "REGIONAL_CLEANUP_REVIEWABLE_GLOBAL_BLOCKED",
+      "reason": "71 caras confirmadas de montura retiradas. Ojos y facciones retenidos; huecos faciales históricos no reparados. No certificación de expresiones funcionales.",
+      "regression_checks_pass": true,
+      "global_pass": false
+    },
+    "C": {
+      "sha256": "3a045efdbef61dfe3f0f4c458ab1037ec2e815c7c6f46a3d1e74919bfc125bd9",
+      "deleted": 0,
+      "moved": 40,
+      "status": "REJECTED_ANATOMICAL",
+      "reason": "Contorno menos dentado, pero aplanado y sin transición ni anillo de cuello reutilizable. La mejora numérica no satisface anatomía/topología.",
+      "regression_checks_pass": true,
+      "global_pass": false
+    }
+  },
+  "ABC_generated": false,
+  "reason_no_ABC": "A/A2 y C no pasan sus criterios; todos los maestros mantienen bloqueo glTF heredado. B2 se conserva independientemente.",
+  "approval": false,
+  "merge": false,
+  "paid_tools": false
+}
