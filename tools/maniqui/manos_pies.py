@@ -35,8 +35,8 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     perfil = []
     for k_ in range(7):
         u = k_ / 6; x = x0p + (x1p - x0p) * u
-        rz = 0.030 + (zf - 0.030) * np.sin(min(u * 1.15, 1) * np.pi / 2) - 0.010 * max(u - 0.85, 0) / 0.15   # ancho: curva suave, redondeo al final
-        ry = 0.019 - 0.004 * u - 0.004 * max(u - 0.85, 0) / 0.15                                             # grosor: baja hacia los nudillos
+        rz = 0.027 + (zf - 0.002 - 0.027) * np.sin(min(u * 1.15, 1) * np.pi / 2) - 0.008 * max(u - 0.85, 0) / 0.15   # ancho: curva suave, redondeo al final
+        ry = 0.0155 - 0.0035 * u - 0.003 * max(u - 0.85, 0) / 0.15                                           # grosor: más delgada (no inflada)
         perfil.append((x, ry, rz, min(u * 2, 1.0)))
     rings = [(np.array([x, wrist[1], zc * f + wrist[2] * (1 - f)]), ry, rz, EY, EZ, 2.3) for x, ry, rz, f in perfil]
     pieces.append(('Palma' + side[0], loft(rings, [wj((side + 'Hand', 1))] * len(rings), seg=24)))
@@ -51,8 +51,8 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     # relleno entre el pulgar y el borde de la palma: tubo que corre a medio camino entre el eje del pulgar y el interior de la palma
     pts_p = [wrist + (m - wrist) * 0.25, m, m + (p1 - m) * 0.5, p1]
     def hacia_palma(q, f): return q + (np.array([q[0], wrist[1], zc]) - q) * f
-    ruta = [hacia_palma(q, f) for q, f in zip(pts_p, (0.55, 0.5, 0.4, 0.15))]
-    pieces.append(('BasePulgar' + side[0], tube(ruta, [0.021, 0.021, 0.017, 0.0125],
+    ruta = [hacia_palma(q, f) for q, f in zip(pts_p, (0.6, 0.55, 0.45, 0.15))]
+    pieces.append(('BasePulgar' + side[0], tube(ruta, [0.016, 0.016, 0.0135, 0.0115],
                    [wj((side + 'Hand', 1)), wj((side + 'Hand', 0.5), (side + 'ThumbMetacarpal', 0.5)), wj((side + 'ThumbMetacarpal', 0.6), (side + 'ThumbProximal', 0.4)),
                     wj((side + 'ThumbProximal', 1))], seg=16, cap_top=True, cap_bot=True, p=2.4)))
     pieces.append(('DedoThumb' + side[0], tube([wrist + (m - wrist) * 0.3, m, p1, p2, tip], [0.0125, 0.0120, 0.0115, 0.0110, 0.0098],
