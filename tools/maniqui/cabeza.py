@@ -65,8 +65,9 @@ D = R['fondo_sobre_alto'] * Hc                         # fondo de la cabeza
 a, b, c = W / 2, Ht / 2, D / 2
 a_back = R.get('craneo_ancho', 1.0) * W / 2
 # el frente de la cara se queda donde estaba el plano de la cara de Gamma (a la altura del ojo); la nuca donde alcance
-z_front = np.percentile(FP[(FP[:, 1] > y_chin) & (FP[:, 1] < y_chin + 0.7 * W) & (np.abs(FP[:, 0]) < 0.3 * W)][:, 2], 95)   # plano de la cara vieja (robusto a huecos)
-ctr = np.array([(CP[:, 0].min() + CP[:, 0].max()) / 2, y_chin + b, z_front - c])
+_, TPz, _ = prim('Torso'); z_torso = (TPz[:, 2].min() + TPz[:, 2].max()) / 2
+ctr = np.array([(CP[:, 0].min() + CP[:, 0].max()) / 2, y_chin + b, z_torso + R.get('cabeza_adelante', 0.01)])   # cabeza centrada sobre el torso (de perfil)
+z_front = ctr[2] + c
 y_eye = y_chin + R['ojos']['y_sobre_barbilla'] * W
 # exponente del superelipsoide a partir del llenado de la caja (n=2 → 0.785, n=3 → 0.88, n=4 → 0.93)
 p_h = float(np.interp(R['llenado_caja'], [0.785, 0.88, 0.93, 0.97], [2.0, 3.0, 4.0, 6.0]))
@@ -115,6 +116,17 @@ y_n_top = y_ojo - o['alto'] * W * 0.35; y_n_bot = y_n_top - n_alto
 y_mouth = y_n_bot - 0.55 * (y_n_bot - y_chin)                                 # boca un poco abajo de la mitad entre nariz y barbilla
 disp = np.zeros(len(V))
 for sx in (-1, 1): disp -= R.get('ojos_hundidos', 0.0) * W * caja_suave(ctr[0] + sx * o['separacion'] * W / 2, y_eye, o['ancho'] * W * 1.1, o['alto'] * W * 1.1, 2.5)   # cuencas
+def bulto(cx, cyy, rx_, ry_, p=2.0):
+    d = (np.abs((V[:, 0] - cx) / rx_) ** p + np.abs((V[:, 1] - cyy) / ry_) ** p) ** (1 / p); return ss(1 - d) * front
+ys_ = o['separacion'] * W / 2
+y_ojo_ = y_eye + R.get('ojo_sube', 0.03) * W
+disp += 0.012 * W * bulto(ctr[0], y_ojo_ + 0.19 * W, 0.42 * W, 0.07 * W, 3.0)                  # arco superciliar: repisa sobre los ojos
+disp -= 0.010 * W * bulto(ctr[0], y_ojo_ + 0.12 * W, 0.08 * W, 0.05 * W)                         # entrecejo
+for sx in (-1, 1):
+    disp -= 0.012 * W * bulto(ctr[0] + sx * ys_, y_ojo_, 0.17 * W, 0.15 * W, 2.4)                # cuenca suave alrededor del ojo
+    disp += 0.022 * W * bulto(ctr[0] + sx * (ys_ + 0.05 * W), y_ojo_ - 0.20 * W, 0.15 * W, 0.10 * W)   # pómulos
+    disp -= 0.010 * W * bulto(ctr[0] + sx * 0.40 * W, y_chin + 0.18 * W, 0.08 * W, 0.16 * W)     # plano de la mandíbula (se marca el ángulo)
+disp += 0.020 * W * bulto(ctr[0], y_chin + 0.06 * W, 0.17 * W, 0.07 * W, 2.5)                    # barbilla
 t_n = np.clip((y_n_top - V[:, 1]) / n_alto, 0, 1)                            # 0 arriba (puente) → 1 punta
 hw = n_ancho / 2 * (0.55 + 0.45 * t_n)                                       # más angosta arriba
 lat = ss((1 - np.abs(V[:, 0] - ctr[0]) / hw) / 0.5)
@@ -258,24 +270,32 @@ for side, nm in ((1, 'OjoL'), (-1, 'OjoR')):
 j['materials'].append({'name': 'Ceja', 'pbrMetallicRoughness': {'baseColorFactor': [0.16, 0.09, 0.04, 1.0], 'metallicFactor': 0, 'roughnessFactor': 0.9}})
 mat_ceja = len(j['materials']) - 1
 def ceja(side):
-    cj = R['cejas']; bw, bh = cj['ancho'] * W, max(cj['alto'], 0.075) * W; bx = ctr[0] + side * o['separacion'] * W / 2; by = y_ojo + cj['y_sobre_ojo'] * W * 0.85
-    k = np.argmin((V[:, 0] - bx) ** 2 + (V[:, 1] - by) ** 2 + (V[:, 2] < ctr[2]) * 10); bz = V[k, 2] + 0.004
-    # bloque inclinado: más alto hacia el centro de la cara (ceño del estilo)
-    pts = []
-    for sx_, sy_ in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
-        ceno = cj.get('ceno', -0.3 * cj['alto']) * W
-        x = bx + sx_ * bw / 2; y = by + sy_ * bh / 2 + (ceno / 2 if (sx_ * side) < 0 else -ceno / 2)       # ceño medido: el extremo interior baja
-        pts.append([x, y, bz])
-    P2 = np.array(pts + [[p[0], p[1], p[2] - 0.012] for p in pts])                                       # grosor hacia atrás (entra en la cabeza)
-    F = np.array([[0, 1, 2], [0, 2, 3], [4, 6, 5], [4, 7, 6], [0, 4, 5], [0, 5, 1], [1, 5, 6], [1, 6, 2], [2, 6, 7], [2, 7, 3], [3, 7, 4], [3, 4, 0]])
+    """ceja: tira gruesa de 10 segmentos que sigue la superficie; el extremo interior más bajo (ceño) y un poco más grueso"""
+    cj = R['cejas']; bw, bh = cj['ancho'] * W * 1.05, 0.085 * W
+    bx = ctr[0] + side * o['separacion'] * W / 2; by = y_ojo + cj['y_sobre_ojo'] * W * 0.85; ceno = -0.06 * W
+    NSG = 10; top, bot = [], []
+    for i_ in range(NSG + 1):
+        u = i_ / NSG; x = bx - side * bw / 2 + side * bw * u                           # u=0 interior → u=1 exterior
+        yc = by + ceno * (0.5 - u); h = bh * (1.1 - 0.35 * u)                           # interior más bajo y grueso, punta afilada
+        for y_, lst in ((yc + h / 2, top), (yc - h / 2, bot)):
+            q = np.argmin((V[:, 0] - x) ** 2 + (V[:, 1] - y_) ** 2 + (V[:, 2] < ctr[2]) * 10); lst.append([x, y_, V[q, 2] + 0.006])
+    F_ = np.array(top + bot); B_ = F_ - np.array([0, 0, 0.02])
+    P2 = np.vstack([F_, B_]); n1 = NSG + 1; F = []
+    for i_ in range(NSG):
+        t0, t1, b0, b1 = i_, i_ + 1, n1 + i_, n1 + i_ + 1
+        F += [[t0, b0, t1], [t1, b0, b1]]                                                 # cara frontal
+        F += [[t0 + 2 * n1, t1 + 2 * n1, b0 + 2 * n1], [t1 + 2 * n1, b1 + 2 * n1, b0 + 2 * n1]]   # trasera
+        F += [[t0, t1, t0 + 2 * n1], [t1, t1 + 2 * n1, t0 + 2 * n1], [b0, b0 + 2 * n1, b1], [b1, b0 + 2 * n1, b1 + 2 * n1]]   # bordes
+    F = np.array(F)
+    if side < 0: F = F[:, [0, 2, 1]]
     return P2, vnormals(P2, F), F
 for side, nm in ((1, 'CejaL'), (-1, 'CejaR')):
     EP, EN, EI = ceja(side); add_piece(nm, EP, EN, EI, mat_ceja)
 # boca: placa delgada oscura con leve sonrisa de lado (estilo Theo); sigue a la cabeza y a los shape keys no (es rígida)
-mw, mh = bo['ancho'] * W, 0.018 * W; MP, MI = [], []
+mw, mh = bo['ancho'] * W * 1.1, 0.026 * W; MP, MI = [], []
 for i_ in range(9):
     u = i_ / 8; x = mc[0] - mw / 2 + mw * u; yb = y_mouth + 0.006 * W * (1 - (2 * u - 1) ** 2)                 # centrada, horizontal, comisuras apenas abajo (como Gamma)
-    k = np.argmin((V[:, 0] - x) ** 2 + (V[:, 1] - yb) ** 2 + (V[:, 2] < ctr[2]) * 10); zb = V[k, 2] + 0.003
+    k = np.argmin((V[:, 0] - x) ** 2 + (V[:, 1] - yb) ** 2 + (V[:, 2] < ctr[2]) * 10); zb = V[k, 2] + 0.004 - 0.004 * (2 * u - 1) ** 2
     MP += [[x, yb + mh / 2, zb], [x, yb - mh / 2, zb]]
     if i_: MI += [[2 * i_ - 2, 2 * i_ - 1, 2 * i_], [2 * i_ - 1, 2 * i_ + 1, 2 * i_]]
 MP = np.array(MP); MI = np.array(MI)

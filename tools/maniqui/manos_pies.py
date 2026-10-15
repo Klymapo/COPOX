@@ -34,13 +34,13 @@ for side, sgn in (('Left', 1), ('Right', -1)):
              [(xs[0], 0.019, 0.030, 0.0), (xs[1], 0.018, 0.037, 0.5), (xs[2], 0.016, zw + 0.004, 1.0), (xs[3], 0.015, zw + 0.004, 1.0)]]
     pieces.append(('Palma' + side[0], loft(rings, [wj((side + 'Hand', 1))] * 4, seg=24)))
     # ----- dedos: tubo por las falanges, con punta extrapolada
-    for f, r in [('Index', 0.0100), ('Middle', 0.0102), ('Ring', 0.0097), ('Little', 0.0086)]:
+    for f, r in [('Index', 0.0110), ('Middle', 0.0112), ('Ring', 0.0107), ('Little', 0.0095)]:
         p0, p1, p2 = P(f + 'Proximal'), P(f + 'Intermediate'), P(f + 'Distal'); tip = p2 + (p2 - p1) * 0.8           # largo completo (ref: mano-con-regla-vistas.jpg)
         base = p0 - (p1 - p0) * 0.35
-        pieces.append(('Dedo' + f + side[0], tube([base, p0, p1, p2, tip], [r, r, r * 0.92, r * 0.82, r * 0.62],
-                       [wj((side + 'Hand', 1)), wj((side + f + 'Proximal', 1)), wj((side + f + 'Intermediate', 1)), wj((side + f + 'Distal', 1)), wj((side + f + 'Distal', 1))], seg=12, p=3.2)))
+        pieces.append(('Dedo' + f + side[0], tube([base, p0, p1, p2, tip], [r, r, r * 0.97, r * 0.94, r * 0.88],
+                       [wj((side + 'Hand', 1)), wj((side + f + 'Proximal', 1)), wj((side + f + 'Intermediate', 1)), wj((side + f + 'Distal', 1)), wj((side + f + 'Distal', 1))], seg=12, p=3.2, cap_top=True)))
     m, p1, p2 = P('ThumbMetacarpal'), P('ThumbProximal'), P('ThumbDistal'); tip = p2 + (p2 - p1) * 0.8
-    pieces.append(('DedoThumb' + side[0], tube([wrist + (m - wrist) * 0.3, m, p1, p2, tip], [0.0105, 0.0100, 0.0092, 0.0085, 0.0060],
+    pieces.append(('DedoThumb' + side[0], tube([wrist + (m - wrist) * 0.3, m, p1, p2, tip], [0.0125, 0.0120, 0.0115, 0.0110, 0.0098],
                    [wj((side + 'Hand', 1)), wj((side + 'ThumbMetacarpal', 1)), wj((side + 'ThumbProximal', 1)), wj((side + 'ThumbDistal', 1)), wj((side + 'ThumbDistal', 1))], seg=12, p=3.2)))
     # ----- pie: anillos en el plano x-y a lo largo de z (talón → punta), base plana en y=0
     ank, toe = P('Foot'), P('Toes'); EX = np.array([1.0, 0, 0])
@@ -50,9 +50,13 @@ for side, sgn in (('Left', 1), ('Right', -1)):
             (ank[2] + 0.040, 0.047, 0.065, 0.047, wj((side + 'Foot', 0.7), (side + 'Toes', 0.3))),   # empeine: baja hacia la punta
             (toe[2] + 0.015, 0.039, 0.063, 0.039, wj((side + 'Toes', 1))),
             (toe[2] + 0.050, 0.031, 0.057, 0.031, wj((side + 'Toes', 1))),
-            (toe[2] + 0.068, 0.022, 0.044, 0.022, wj((side + 'Toes', 1)))]
+            (toe[2] + 0.068, 0.026, 0.044, 0.020, wj((side + 'Toes', 1)))]
     rings = [(np.array([ank[0], cy, z]), rx, ry, EX, EY, 3.6) for z, cy, rx, ry, _ in prof]
     pieces.append(('Pie' + side[0], loft(rings, [w for *_, w in prof], seg=24)))
+    # suela: losa un poco más ancha que la bota, 1.2 cm, punta y talón redondeados (define el pie al verlo de lado)
+    sol = [(ank[2] - 0.062, 0.050), (ank[2] - 0.045, 0.066), (ank[2] + 0.050, 0.069), (toe[2] + 0.050, 0.061), (toe[2] + 0.074, 0.040)]
+    rs = [(np.array([ank[0], 0.007, z]), rx, 0.007, EX, EY, 5.0) for z, rx in sol]
+    pieces.append(('Suela' + side[0], loft(rs, [wj((side + 'Foot', 1))] * 2 + [wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))] + [wj((side + 'Toes', 1))] * 2, seg=24)))
 
 keep = [p for p, n in zip(mesh['primitives'], names) if n not in ('Brazos', 'Pies')]
 for name, (V, N, J, W, I) in pieces:

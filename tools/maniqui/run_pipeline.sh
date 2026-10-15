@@ -22,21 +22,21 @@ $PY neck.py "$OUT/alastor_delta.glb" "$OUT/alastor_delta_v1_1.glb" 0.47
 echo "4/6 maniquí v0 (sin pelo/lentes/ropa) + archivo de ropa"
 $PY maniqui.py "$OUT/alastor_delta_v1_1.glb" "$OUT/it4c.glb" "$OUT/maniqui_v0.glb" "$OUT/ropa_alastor_v0.glb" "$BETA"
 echo "4b/7 huesos: brazos 15 % más cortos y piernas 25 % más separadas (medido en Theo)"
-$PY huesos.py "$OUT/maniqui_v0.glb" "$OUT/maniqui_v0_h.glb" UpperArm=0.85 LowerArm=0.85 UpperLeg.x=1.25 Shoulder.z+=0.050
+$PY huesos.py "$OUT/maniqui_v0.glb" "$OUT/maniqui_v0_h.glb" UpperArm=0.85 LowerArm=0.85 UpperLeg.x=1.25 Shoulder.z+=0.050 '#MiddleIntermediate=1.15' '#MiddleDistal=1.15' '#RingIntermediate=1.05' '#RingDistal=1.05' '#LittleIntermediate=0.85' '#LittleDistal=0.85'
 echo "5/7 torso, pelvis, brazos y piernas de bloque (v0.1)"
 $PY cuerpo.py "$OUT/maniqui_v0_h.glb" "$OUT/maniqui_v0_1.glb"
 echo "6/7 manos (ref mano-con-regla) y botas (ref Theo) (v0.2)"
 $PY manos_pies.py "$OUT/maniqui_v0_1.glb" "$OUT/maniqui_v0_2.glb"
 
-echo "7/7 cabeza canónica ALTH medida de las referencias + cuerpo de bloques (v0.18)"
+echo "7/7 cabeza canónica ALTH medida de las referencias + cuerpo de bloques (v0.19)"
 $PY medir_cara.py "$ROOT/refs/personajes/joven-rubio-4-vistas.jpg" "$OUT/theo_frente.json" --recorte 0,0,768,768
 $PY medir_cara.py "$ROOT/refs/personajes/detective.jpg" "$OUT/alastor_34.json"
 $PY medir_gamma.py "$GAMMA" "$OUT/gamma_rasgos.json"
-$PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_18.glb" rasgos/gamma.json      # cuerpo.py y manos_pies.py ya generan bloques redondeados (P_BOX)
-$PY facezoom.py "$OUT/maniqui_v0_18.glb" "$OUT/maniqui_v0_18_cara.png"
+$PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_19.glb" rasgos/gamma.json      # cuerpo.py y manos_pies.py ya generan bloques redondeados (P_BOX)
+$PY facezoom.py "$OUT/maniqui_v0_19.glb" "$OUT/maniqui_v0_19_cara.png"
 
 echo "Previews:"
-$PY render.py "$OUT/maniqui_v0_18.glb" "$OUT/maniqui_v0_18_4vistas.png" >/dev/null
-$PY pose.py "$OUT/maniqui_v0_18.glb" Wave 0.6 "$OUT/maniqui_v0_18_wave.png" >/dev/null
+$PY render.py "$OUT/maniqui_v0_19.glb" "$OUT/maniqui_v0_19_4vistas.png" >/dev/null
+$PY pose.py "$OUT/maniqui_v0_19.glb" Wave 0.6 "$OUT/maniqui_v0_19_wave.png" >/dev/null
 $PY measure.py "$OUT/alastor_delta.glb" "$GAMMA" "$BETA" "$OUT/delta"
 echo "Listo en $OUT"

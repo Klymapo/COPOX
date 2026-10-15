@@ -16,6 +16,8 @@ nodes = j['nodes']; idx = {n['name']: i for i, n in enumerate(nodes)}
 hijo = {'UpperArm': 'LowerArm', 'LowerArm': 'Hand', 'UpperLeg': 'LowerLeg', 'LowerLeg': 'Foot'}   # el hueso cuyo largo se escala mueve a este hijo
 for k, f in fac.items():
     for side in ('Left', 'Right'):
+        if k.startswith('#'):                            # '#MiddleDistal=1.1': escala la traslación propia de ese hueso (largo del segmento padre)
+            n = nodes[idx[side + k[1:]]]; t = np.array(n['translation']); n['translation'] = (t * f).tolist(); print(f'{side}{k[1:]} ×{f}'); continue
         if '.' in k:                                     # 'UpperLeg.x=1.2' escala UNA componente de la traslación propia; 'Shoulder.z+=0.04' la desplaza
             nm, comp = k.split('.'); suma = comp.endswith('+'); comp = comp.rstrip('+')
             n = nodes[idx[side + nm]]; t = np.array(n['translation'])
