@@ -1,0 +1,30 @@
+{
+ "orejas_sobresalen": 0.2972972972972973,
+ "llenado_caja": 0.9041184041184042,
+ "ancho_arriba": 0.372972972972973,
+ "ancho_medio": 1.0513513513513513,
+ "ancho_abajo": 0.9621621621621622,
+ "radio_esquina_abajo": 0.08108108108108109,
+ "ojos": {
+  "separacion": 0.5784,
+  "ancho": 0.3189,
+  "alto": 0.2973,
+  "y_desde_arriba": 0.627,
+  "y_sobre_barbilla": 0.5027,
+  "y_rel_alto": 0.5524
+ },
+ "cejas": {
+  "y_sobre_ojo": 0.2135,
+  "ancho": 0.3405,
+  "alto": 0.1297
+ },
+ "nariz": {
+  "y_bajo_ojo": 0.2297,
+  "ancho": 0.2054,
+  "alto": 0.1838
+ },
+ "alto_sobre_ancho_cara": 1.135135135135135,
+ "ancho_cara_sobre_altura": 0.2595,
+ "barbilla_sobre_altura": 0.554,
+ "_fuente": "refs/personajes/joven-rubio-4-vistas.jpg (frente, recorte 0,0,768,768)"
+}
