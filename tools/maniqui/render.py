@@ -16,7 +16,9 @@ def load(path):
     return j, binc
 
 def acc(j, binc, i):
-    a = j['accessors'][i]; bv = j['bufferViews'][a['bufferView']]
+    a = j['accessors'][i]
+    if 'bufferView' not in a: return np.zeros((a['count'], NC[a['type']]))     # glTF: accessor sin bufferView = ceros
+    bv = j['bufferViews'][a['bufferView']]
     dt = np.dtype(CT[a['componentType']]); n = NC[a['type']]
     start = bv.get('byteOffset', 0) + a.get('byteOffset', 0)
     stride = bv.get('byteStride', 0) or dt.itemsize * n

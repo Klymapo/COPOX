@@ -32,11 +32,11 @@ echo "7/7 cabeza canónica ALTH medida de las referencias + cuerpo de bloques (v
 $PY medir_cara.py "$ROOT/refs/personajes/joven-rubio-4-vistas.jpg" "$OUT/theo_frente.json" --recorte 0,0,768,768
 $PY medir_cara.py "$ROOT/refs/personajes/detective.jpg" "$OUT/alastor_34.json"
 $PY medir_gamma.py "$GAMMA" "$OUT/gamma_rasgos.json"
-$PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_v0_23.glb" rasgos/gamma.json      # cuerpo.py y manos_pies.py ya generan bloques redondeados (P_BOX)
-$PY facezoom.py "$OUT/maniqui_v0_23.glb" "$OUT/maniqui_v0_23_cara.png"
+$PY cabeza.py "$OUT/maniqui_v0_2.glb" "$OUT/maniqui_cabeza.glb" rasgos/gamma.json      # cuerpo.py y manos_pies.py ya generan bloques redondeados (P_BOX)
+$PY facezoom.py "$OUT/maniqui_cabeza.glb" "$OUT/maniqui_v0_23_cara.png"
 
-echo "8/8 posturas (láminas 15-20) y manos (31-36) como clips (v0.25)"
-$PY posturas.py "$OUT/maniqui_v0_23.glb" "$OUT/maniqui_v0_25.glb"
+echo "8/8 posturas (15-20), manos (31-36) y gestos de cara (23-26) como clips (v0.26)"
+$PY posturas.py "$OUT/maniqui_cabeza.glb" "$OUT/maniqui_v0_26.glb"
 
 echo "Previews:"
 $PY render.py "$OUT/maniqui_v0_23.glb" "$OUT/maniqui_v0_23_4vistas.png" >/dev/null

@@ -208,8 +208,8 @@ def add_piece(name, P, N_, I_, mat, J=None, W=None, UV=None, targets=None):
     if UV is not None: attrs['TEXCOORD_0'] = add_acc(append_bv(np.asarray(UV, np.float32).tobytes(), 34962), 5126, len(UV), 'VEC2')
     ii = I_.astype(np.uint32).ravel()
     prim_ = {'attributes': attrs, 'indices': add_acc(append_bv(ii.tobytes(), 34963), 5125, len(ii), 'SCALAR'), 'material': mat, 'extras': {'pieza': name}}
-    if targets:      # morph targets (shape keys): deltas de posición en espacio local de la malla
-        prim_['targets'] = [{'POSITION': add_acc(append_bv((d @ Minv[:3, :3].T).astype(np.float32).tobytes(), 34962), 5126, len(d), 'VEC3', (d @ Minv[:3, :3].T).astype(np.float32))} for d in targets]
+    if targets:      # morph targets (shape keys): {nombre: delta de posición en mundo}; se completan para todas las primitivas al final
+        prim_['_t'] = {k: add_acc(append_bv((d @ Minv[:3, :3].T).astype(np.float32).tobytes(), 34962), 5126, len(d), 'VEC3', (d @ Minv[:3, :3].T).astype(np.float32)) for k, d in targets.items()}
     keep_prims.append(prim_)
 
 # ================= 4c. boca: shape keys sobre la cabeza ("soplar" para Alastor y "abrir" para hablar)
@@ -218,8 +218,20 @@ d2 = np.sqrt(((V[:, 0] - mc[0]) / (0.16 * W)) ** 2 + ((V[:, 1] - mc[1]) / (0.11 
 soplar = np.zeros_like(V); soplar[:, 2] += 0.06 * W * k_sop; soplar[:, 0] -= 0.35 * (V[:, 0] - mc[0]) * k_sop          # labios hacia adelante y al centro
 d3 = np.sqrt(((V[:, 0] - mc[0]) / (0.14 * W)) ** 2 + (np.clip(mc[1] - V[:, 1], 0, None) / (0.22 * W)) ** 2); k_ab = ss(1 - d3) * front * (V[:, 1] < mc[1] + 0.01 * W)
 abrir = np.zeros_like(V); abrir[:, 1] -= 0.05 * W * k_ab; abrir[:, 2] -= 0.015 * W * k_ab                                  # mandíbula baja
-mesh['extras'] = dict(mesh.get('extras', {}), targetNames=['boca_soplar', 'boca_abrir'])
-add_piece('Cabeza', V, N, I, gris, targets=[soplar, abrir])
+uB = (V[:, 0] - mc[0]) / (0.11 * W)                                          # -1..1 a lo ancho de la boca
+banda = np.exp(-((V[:, 1] - mc[1]) / (0.045 * W)) ** 2) * ss((1.6 - np.abs(uB)) / 0.6) * front
+ranura = np.exp(-((V[:, 1] - mc[1]) / (0.014 * W)) ** 2) * ss((1.1 - np.abs(uB)) / 0.3) * front
+def dV(dx=0, dy=0, dz=0):
+    d = np.zeros_like(V); d[:, 0] = dx; d[:, 1] = dy; d[:, 2] = dz; return d
+abrir = abrir + dV(dz=-0.045 * W * ranura) + dV(dy=-0.02 * W * ranura)      # además se ahonda la boca (se lee abierta en gris)
+TG = {'boca_soplar': soplar, 'boca_abrir': abrir,
+      'boca_sonrisa': dV(dy=0.055 * W * np.clip(uB, -1.3, 1.3) ** 2 * banda, dx=0.02 * W * uB * banda, dz=-0.012 * W * ranura),
+      'boca_triste':  dV(dy=-0.05 * W * np.clip(uB, -1.3, 1.3) ** 2 * banda),
+      'boca_o':       dV(dx=-0.55 * (V[:, 0] - mc[0]) * banda, dz=-0.04 * W * ranura, dy=-0.015 * W * ranura),
+      'boca_tensa':   dV(dx=-0.18 * (V[:, 0] - mc[0]) * banda, dz=0.004 * W * banda),
+      'boca_lado_L':  dV(dy=0.055 * W * np.clip(uB, 0, 1.3) ** 2 * banda),
+      'boca_lado_R':  dV(dy=0.055 * W * np.clip(-uB, 0, 1.3) ** 2 * banda)}
+add_piece('Cabeza', V, N, I, gris, targets=TG)
 
 # ================= 4d. ojos: placas con textura deslizante (iris centrado; mover uv offset en Y = mirar arriba / "ojos en blanco")
 from PIL import Image, ImageDraw
@@ -268,9 +280,36 @@ def ojo(side):
             p0, p1 = b0 + s_, b0 + (s_ + 1) % SEG2; p2, p3 = b1 + s_, b1 + (s_ + 1) % SEG2
             EI += [[p0, p2, p1], [p1, p2, p3]]
     EP = np.array(EP); EI = np.array(EI)
-    return EP, vnormals(EP, EI), EI, np.array(UV)
-for side, nm in ((1, 'OjoL'), (-1, 'OjoR')):
-    EP, EN, EI, UV = ojo(side); add_piece(nm, EP, EN, EI, gris, UV=UV)        # gris como el cuerpo; el material 'Ojo' (textura) queda en el archivo para asignarlo después
+    def domo(cx, cy):                                                           # punto sobre el ojo en coordenadas normalizadas (-1..1)
+        rho = min((abs(cx) ** pe + abs(cy) ** pe) ** (1 / pe), 1.0); x, y = ex + ew / 2 * cx, y_ojo + eh / 2 * cy
+        return np.array([x, y, sup(x, y) + 0.0015 + 0.018 * W * np.sqrt(max(1 - rho ** 2, 0))])
+    return EP, vnormals(EP, EI), EI, np.array(UV), domo, pe
+def parpado(domo, pe, arriba=True):
+    """párpado: superficie 3 mm sobre el ojo. En reposo se junta en una franja junto al borde (se lee como línea);
+    el shape key la extiende hasta cerrar (arriba) o hasta media altura con arco (abajo = 'ojo alegre')"""
+    NU, NV = 18, 7; base, cerr = [], []
+    for iv in range(NV):
+        tv = iv / (NV - 1)
+        for iu in range(NU):
+            u = -1.06 + 2.12 * iu / (NU - 1); borde = (max(1 - min(abs(u), 1) ** pe, 0)) ** (1 / pe)
+            if arriba:
+                y_c = borde - 2 * borde * tv * 1.02; y_o = borde - 2 * borde * tv * 0.07
+            else:
+                alto = 0.95 * (1 - 0.35 * u * u); y_c = -borde + borde * alto * tv; y_o = -borde + 2 * borde * tv * 0.05
+            def P_(yy):
+                p = domo(u, np.clip(yy, -1, 1)); p[2] += 0.003 + 0.002 * (1 - tv); return p
+            base.append(P_(y_o)); cerr.append(P_(y_c))
+    PI = []
+    for iv in range(NV - 1):
+        for iu in range(NU - 1):
+            a_, b_ = iv * NU + iu, iv * NU + iu + 1; c_, d_ = a_ + NU, b_ + NU
+            PI += [[a_, c_, b_], [b_, c_, d_]] if arriba else [[a_, b_, c_], [b_, d_, c_]]
+    base = np.array(base); cerr = np.array(cerr); PI = np.array(PI)
+    return base, vnormals(base, PI), PI, cerr - base
+for side, nm, s in ((1, 'OjoL', 'L'), (-1, 'OjoR', 'R')):
+    EP, EN, EI, UV, domo, pe = ojo(side); add_piece(nm, EP, EN, EI, gris, UV=UV)   # gris como el cuerpo; el material 'Ojo' (textura) queda en el archivo para asignarlo después
+    PB, PN, PI, dC = parpado(domo, pe, True); add_piece('ParpadoSup' + s, PB, PN, PI, gris, targets={'parpado_' + s: dC})
+    PB, PN, PI, dC = parpado(domo, pe, False); add_piece('ParpadoInf' + s, PB, PN, PI, gris, targets={'alegre_' + s: dC})
 j['materials'].append({'name': 'Ceja', 'pbrMetallicRoughness': {'baseColorFactor': [0.16, 0.09, 0.04, 1.0], 'metallicFactor': 0, 'roughnessFactor': 0.9}})
 mat_ceja = len(j['materials']) - 1
 def ceja(side):
@@ -292,12 +331,26 @@ def ceja(side):
         F += [[t0, t1, t0 + 2 * n1], [t1, t1 + 2 * n1, t0 + 2 * n1], [b0, b0 + 2 * n1, b1], [b1, b0 + 2 * n1, b1 + 2 * n1]]   # bordes
     F = np.array(F)
     if side < 0: F = F[:, [0, 2, 1]]
-    return P2, vnormals(P2, F), F
-for side, nm in ((1, 'CejaL'), (-1, 'CejaR')):
-    EP, EN, EI = ceja(side); add_piece(nm, EP, EN, EI, gris)                 # grises como el cuerpo, relieve de 3.5 mm
+    u_ = np.clip(side * (P2[:, 0] - (bx - side * bw / 2)) / bw, 0, 1)          # 0 interior → 1 exterior
+    def dy(v): d = np.zeros_like(P2); d[:, 1] = v; return d
+    tg = {'ceja_arriba': dy(0.09 * W * np.ones(len(P2))), 'ceja_ceno': dy(-0.085 * W * (1 - u_) + 0.02 * W * u_), 'ceja_triste': dy(0.085 * W * (1 - u_) - 0.025 * W * u_)}
+    return P2, vnormals(P2, F), F, tg
+for side, nm, s in ((1, 'CejaL', 'L'), (-1, 'CejaR', 'R')):
+    EP, EN, EI, tg = ceja(side); add_piece(nm, EP, EN, EI, gris, targets={k + '_' + s: v for k, v in tg.items()})   # grises como el cuerpo, relieve de 3.5 mm
 add_piece('Cuello', NP, NNm, NI, gris, NJ, NW)
 for side, nm in ((1, 'OrejaL'), (-1, 'OrejaR')):
     EP, EN, EI = ear(side); add_piece(nm, EP, EN, EI, gris)
+TARGETS = ['boca_soplar', 'boca_abrir', 'boca_sonrisa', 'boca_triste', 'boca_o', 'boca_tensa', 'boca_lado_L', 'boca_lado_R',
+           'ceja_arriba_L', 'ceja_arriba_R', 'ceja_ceno_L', 'ceja_ceno_R', 'ceja_triste_L', 'ceja_triste_R', 'parpado_L', 'parpado_R', 'alegre_L', 'alegre_R']
+for p_ in keep_prims:
+    t_ = p_.pop('_t', {}); n_ = j['accessors'][p_['attributes']['POSITION']]['count']; tl = []
+    for k in TARGETS:
+        if k in t_: tl.append({'POSITION': t_[k]})
+        else:
+            j['accessors'].append({'componentType': 5126, 'count': n_, 'type': 'VEC3', 'min': [0, 0, 0], 'max': [0, 0, 0]}); tl.append({'POSITION': len(j['accessors']) - 1})   # sin bufferView = ceros (glTF 2.0 §3.6.2)
+    p_['targets'] = tl
+mesh['weights'] = [0.0] * len(TARGETS)
+mesh['extras'] = dict(mesh.get('extras', {}), targetNames=TARGETS)
 mesh['primitives'] = keep_prims
 j['buffers'] = [{'byteLength': len(binc)}]
 while len(binc) % 4: binc.append(0)

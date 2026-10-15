@@ -123,6 +123,41 @@ MANOS = {   # lámina 31 (base), 32 (agarres), 33 (gestos)
 }
 for nombre, forma in MANOS.items(): POSES[nombre] = dict(L=forma, R=forma)
 
+# ---------------- gestos de cara: mezclas de blend shapes (pesos 0..1; '_LR' aplica a ambos lados) + giro de cabeza
+def G(head=(0, 0, 0), neck=(0, 0, 0), **w):
+    pesos = {}
+    for k, v in w.items():
+        if k.endswith('_LR'): pesos[k[:-3] + '_L'] = v; pesos[k[:-3] + '_R'] = v
+        else: pesos[k] = v
+    return dict(C=dict(Head=head, Neck=neck), W=pesos)
+GESTOS = {
+    # 23 · conversación
+    'G23_1_Saludo':          G((-3, 0, 8), boca_sonrisa=0.8, boca_abrir=0.3, ceja_arriba_LR=0.4),
+    'G23_2_EscuchaActiva':   G((3, 0, 10), boca_sonrisa=0.3, ceja_arriba_L=0.3),
+    'G23_3_RespuestaAmable': G((0, 0, 6), boca_sonrisa=0.8, boca_abrir=0.25, parpado_R=0.95, alegre_R=0.8, ceja_arriba_L=0.3),
+    'G23_4_SorpresaLeve':    G((-5, 0, 0), ceja_arriba_LR=0.85, boca_o=0.7),
+    'G23_5_RisaContenida':   G((0, 0, -6), parpado_R=0.85, alegre_R=0.7, boca_sonrisa=0.5, boca_lado_L=0.4, ceja_triste_R=0.2),
+    # 24 · observación y duda
+    'G24_1_Observador':      G((4, 0, 8), ceja_ceno_R=0.5, ceja_arriba_L=0.5, parpado_LR=0.3, boca_tensa=0.3),
+    'G24_2_Curioso':         G((5, 0, 12), ceja_arriba_LR=0.6, boca_o=0.4),
+    'G24_3_Duda':            G((2, 0, 10), ceja_triste_R=0.6, ceja_ceno_L=0.3, boca_lado_R=0.4, boca_triste=0.25),
+    'G24_4_Confundido':      G((0, 0, -8), ceja_triste_LR=0.8, boca_o=0.45),
+    'G24_5_Sospecha':        G((3, 12, 0), parpado_LR=0.55, ceja_ceno_LR=0.6, boca_lado_L=0.3),
+    # 25 · intimidación
+    'G25_1_Frio':            G((2, 0, 0), ceja_ceno_LR=0.5, parpado_LR=0.35, boca_tensa=0.5),
+    'G25_2_Desafiante':      G((10, 0, 0), ceja_ceno_LR=0.9, parpado_LR=0.3, boca_triste=0.3),
+    'G25_3_Amenazante':      G((12, 0, 0), ceja_ceno_LR=1.0, parpado_LR=0.2, boca_triste=0.5, boca_tensa=0.3),
+    'G25_4_Desprecio':       G((-8, 10, 0), ceja_arriba_R=0.6, ceja_ceno_L=0.5, parpado_LR=0.5, boca_lado_R=0.5),
+    'G25_5_Dominante':       G((-6, 0, 0), ceja_ceno_LR=0.7, parpado_LR=0.4, boca_lado_L=0.3, boca_sonrisa=0.15),
+    # 26 · expresiones dinámicas
+    'G26_1_Concentrado':     G((5, 0, 0), ceja_ceno_LR=0.7, parpado_LR=0.3, boca_tensa=0.4),
+    'G26_2_Realizacion':     G((-6, 0, 0), ceja_arriba_LR=1.0, boca_o=0.8, boca_abrir=0.3),
+    'G26_3_Incomodidad':     G((0, 0, -6), ceja_triste_LR=0.7, boca_triste=0.4, boca_tensa=0.3),
+    'G26_4_Fastidio':        G((0, -12, 0), ceja_ceno_LR=0.6, parpado_LR=0.6, boca_triste=0.5),
+    'G26_5_Determinacion':   G((6, 0, 0), ceja_ceno_LR=0.8, boca_tensa=0.5),
+}
+for nombre, g in GESTOS.items(): POSES[nombre] = g
+
 def quat(rx, ry, rz):
     """rotación R = Rz·Ry·Rx (grados) → cuaternión glTF [x, y, z, w]"""
     def q_ax(ax, a):
@@ -187,7 +222,8 @@ def resolver(j, pose):
         rot[side + 'LowerArm'] = _q_from(np.array(j['nodes'][ha]['translation']), par2.T @ (T - E))
     return rot
 
-def posar(j, b, rot):
+COLOR_EVAL = False; _TEX_OJO = None
+def posar(j, b, rot, pesos=None):
     """posiciones deformadas de todas las primitivas para un dict {nodo: cuaternión}"""
     idx = {n['name']: i for i, n in enumerate(j['nodes'])}
     local = {i: dict(t=n.get('translation', [0, 0, 0]), r=n.get('rotation', [0, 0, 0, 1]), s=n.get('scale', [1, 1, 1])) for i, n in enumerate(j['nodes'])}
@@ -202,11 +238,22 @@ def posar(j, b, rot):
     tris = []
     for p in j['meshes'][0]['primitives']:
         A = p['attributes']; P = render.acc(j, b, A['POSITION']); Jt = render.acc(j, b, A['JOINTS_0']).astype(int); W = render.acc(j, b, A['WEIGHTS_0'])
+        nombre_p = p.get('extras', {}).get('pieza', '')
+        if pesos and 'targets' in p:
+            nombres_t = j['meshes'][0].get('extras', {}).get('targetNames', [])
+            for k, tgt in enumerate(p['targets']):
+                if k < len(nombres_t) and pesos.get(nombres_t[k], 0): P = P + pesos[nombres_t[k]] * render.acc(j, b, tgt['POSITION'])
         P4 = np.c_[P, np.ones(len(P))]; o = np.zeros((len(P), 3))
         for k in range(4): o += W[:, k:k + 1] * np.einsum('nij,nj->ni', JM[Jt[:, k]], P4)[:, :3]
         I = render.acc(j, b, p['indices']).astype(int).reshape(-1, 3)
         pbr = j['materials'][p['material']].get('pbrMetallicRoughness', {})
-        tris.append((o[I], render.srgb(np.array(pbr.get('baseColorFactor', [0.8, 0.8, 0.8, 1])[:3])), None, None, None))
+        col = render.srgb(np.array(pbr.get('baseColorFactor', [0.8, 0.8, 0.8, 1])[:3])); uv = tex = None
+        if COLOR_EVAL:
+            if nombre_p.startswith('Ceja'): col = np.array([0.25, 0.16, 0.10])
+            elif nombre_p.startswith('Parpado'): col = np.array([0.62, 0.60, 0.58])
+            elif nombre_p.startswith('Ojo') and 'TEXCOORD_0' in A and _TEX_OJO is not None:
+                uv = render.acc(j, b, A['TEXCOORD_0'])[I]; tex = _TEX_OJO
+        tris.append((o[I], col, uv, tex, None))
     return tris
 
 def escribir_clips(j, binc, poses, dur=0.3):
@@ -224,6 +271,13 @@ def escribir_clips(j, binc, poses, dur=0.3):
     for nombre, pose in poses.items():
         if nombre in nombres: j['animations'] = [a for a in j['animations'] if a['name'] != nombre]
         rot = resolver(j, pose); ch, sm = [], []
+        if 'W' in pose:                                                         # blend shapes: canal 'weights' del nodo de la malla
+            tn = j['meshes'][0].get('extras', {}).get('targetNames', [])
+            if tn:
+                mesh_node = [i for i, n in enumerate(j['nodes']) if 'mesh' in n][0]
+                w1 = np.array([pose['W'].get(k, 0.0) for k in tn], np.float32)
+                sm.append({'input': t_acc, 'output': acc(np.concatenate([np.zeros_like(w1), w1]), 'SCALAR'), 'interpolation': 'LINEAR'})
+                ch.append({'sampler': len(sm) - 1, 'target': {'node': mesh_node, 'path': 'weights'}})
         for nm, q in rot.items():
             rest = np.array(j['nodes'][idx[nm]].get('rotation', [0, 0, 0, 1]), np.float32)
             sm.append({'input': t_acc, 'output': acc(np.stack([rest, q.astype(np.float32)]), 'VEC4'), 'interpolation': 'LINEAR'})
@@ -279,6 +333,32 @@ if __name__ == '__main__':
                 hoja.paste(render.render(sel, -20, W=W_, H=W_, bounds=bx), (W_ * k, W_ + 30))
                 top = [(np.stack([t[0][..., 0], t[0][..., 2], -t[0][..., 1]], -1),) + t[1:] for t in sel]
                 hoja.paste(render.render(top, 0, W=W_, H=W_, bounds=(np.array([0.32, -0.08, -0.53]), np.array([0.47, 0.07, -0.39]))), (W_ * k, 2 * W_ + 30))
+                ImageDraw.Draw(hoja).text((W_ * k + 6, W_ + 8), nombre, fill=(30, 30, 30))
+            hoja.save(os.path.join(outd, f'{g}.png')); print('hoja', g)
+    if '--gestos-render' in sys.argv:
+        from PIL import Image, ImageDraw
+        outd = sys.argv[sys.argv.index('--gestos-render') + 1]; os.makedirs(outd, exist_ok=True)
+        refs = sys.argv[sys.argv.index('--refs') + 1] if '--refs' in sys.argv else None
+        grupos = {}
+        for nombre in GESTOS: grupos.setdefault(nombre.split('_')[0], []).append(nombre)
+        for g, nombres in grupos.items():
+            W_ = 260; hoja = Image.new('RGB', (W_ * len(nombres), W_ * 3 + 30), 'white')
+            if refs:
+                fs = [f for f in os.listdir(refs) if f.startswith(g[1:] + ' -')]
+                ref = Image.open(os.path.join(refs, fs[0])).convert('RGB'); rw, rh = ref.size
+                x0, x1, y0, y1 = 0.02 * rw, 0.98 * rw, 0.27 * rh, 0.62 * rh; cw = (x1 - x0) / len(nombres)
+                for k in range(len(nombres)): hoja.paste(ref.crop((int(x0 + k * cw), int(y0), int(x0 + (k + 1) * cw), int(y1))).resize((W_, W_)), (W_ * k, 0))
+            import io as _io
+            mo = [m for m in j['materials'] if m['name'] == 'Ojo']
+            if mo:
+                ti = mo[0]['pbrMetallicRoughness']['baseColorTexture']['index']; bvi = j['images'][j['textures'][ti]['source']]['bufferView']; bv_ = j['bufferViews'][bvi]
+                o_ = bv_.get('byteOffset', 0); _TEX_OJO = np.asarray(Image.open(_io.BytesIO(raw[28 + Lj:][o_:o_ + bv_['byteLength']])).convert('RGB'), dtype=np.float64) / 255
+            for k, nombre in enumerate(nombres):
+                bx = (np.array([-0.20, 0.52, -0.20]), np.array([0.20, 0.92, 0.20]))
+                COLOR_EVAL = False; tris = posar(j, raw[28 + Lj:], resolver(j, POSES[nombre]), POSES[nombre]['W'])
+                hoja.paste(render.render(tris, 0, W=W_, H=W_, bounds=bx), (W_ * k, W_ + 30))
+                COLOR_EVAL = True; tris = posar(j, raw[28 + Lj:], resolver(j, POSES[nombre]), POSES[nombre]['W'])
+                hoja.paste(render.render(tris, 0, W=W_, H=W_, bounds=bx), (W_ * k, 2 * W_ + 30)); COLOR_EVAL = False
                 ImageDraw.Draw(hoja).text((W_ * k + 6, W_ + 8), nombre, fill=(30, 30, 30))
             hoja.save(os.path.join(outd, f'{g}.png')); print('hoja', g)
     binc = escribir_clips(j, binc, POSES)
