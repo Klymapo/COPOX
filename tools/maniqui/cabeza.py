@@ -85,7 +85,7 @@ def radius(n):
     return r
 
 # ================= 2. malla base (SEG x RING) sobre el superelipsoide; mandíbula un poco más angosta que la cara
-SEG, RING = 128, 72
+SEG, RING = 128, 110          # más anillos: la hendidura de la boca necesita resolución vertical
 def vnormals(P, T):
     fn = np.cross(P[T[:, 1]] - P[T[:, 0]], P[T[:, 2]] - P[T[:, 0]]); N = np.zeros_like(P)
     for k in range(3): np.add.at(N, T[:, k], fn)
@@ -124,9 +124,13 @@ disp += 0.012 * W * bulto(ctr[0], y_ojo_ + 0.19 * W, 0.42 * W, 0.07 * W, 3.0)   
 disp -= 0.010 * W * bulto(ctr[0], y_ojo_ + 0.12 * W, 0.08 * W, 0.05 * W)                         # entrecejo
 for sx in (-1, 1):
     disp -= 0.012 * W * bulto(ctr[0] + sx * ys_, y_ojo_, 0.17 * W, 0.15 * W, 2.4)                # cuenca suave alrededor del ojo
-    disp += 0.022 * W * bulto(ctr[0] + sx * (ys_ + 0.05 * W), y_ojo_ - 0.20 * W, 0.15 * W, 0.10 * W)   # pómulos
     disp -= 0.010 * W * bulto(ctr[0] + sx * 0.40 * W, y_chin + 0.18 * W, 0.08 * W, 0.16 * W)     # plano de la mandíbula (se marca el ángulo)
 disp += 0.020 * W * bulto(ctr[0], y_chin + 0.06 * W, 0.17 * W, 0.07 * W, 2.5)                    # barbilla
+# boca: hendidura en la cabeza (curva suave, comisuras apenas abajo); la posición sale de la nariz y la barbilla
+_y_n_top = y_ojo_ - o['alto'] * W * 0.35; _y_n_bot = _y_n_top - 0.12 * W; _y_m = _y_n_bot - 0.55 * (_y_n_bot - y_chin)
+_u = (V[:, 0] - ctr[0]) / (0.11 * W)
+_yc = _y_m + 0.006 * W * (1 - np.clip(_u, -1, 1) ** 2)
+disp -= 0.014 * W * np.exp(-((V[:, 1] - _yc) / (0.011 * W)) ** 2) * ss((1 - np.abs(_u)) / 0.35) * front
 t_n = np.clip((y_n_top - V[:, 1]) / n_alto, 0, 1)                            # 0 arriba (puente) → 1 punta
 hw = n_ancho / 2 * (0.55 + 0.45 * t_n)                                       # más angosta arriba
 lat = ss((1 - np.abs(V[:, 0] - ctr[0]) / hw) / 0.5)
@@ -278,8 +282,8 @@ def ceja(side):
         u = i_ / NSG; x = bx - side * bw / 2 + side * bw * u                           # u=0 interior → u=1 exterior
         yc = by + ceno * (0.5 - u); h = bh * (1.1 - 0.35 * u)                           # interior más bajo y grueso, punta afilada
         for y_, lst in ((yc + h / 2, top), (yc - h / 2, bot)):
-            q = np.argmin((V[:, 0] - x) ** 2 + (V[:, 1] - y_) ** 2 + (V[:, 2] < ctr[2]) * 10); lst.append([x, y_, V[q, 2] + 0.006])
-    F_ = np.array(top + bot); B_ = F_ - np.array([0, 0, 0.02])
+            q = np.argmin((V[:, 0] - x) ** 2 + (V[:, 1] - y_) ** 2 + (V[:, 2] < ctr[2]) * 10); lst.append([x, y_, V[q, 2] + 0.0035])
+    F_ = np.array(top + bot); B_ = F_ - np.array([0, 0, 0.012])
     P2 = np.vstack([F_, B_]); n1 = NSG + 1; F = []
     for i_ in range(NSG):
         t0, t1, b0, b1 = i_, i_ + 1, n1 + i_, n1 + i_ + 1
@@ -290,16 +294,7 @@ def ceja(side):
     if side < 0: F = F[:, [0, 2, 1]]
     return P2, vnormals(P2, F), F
 for side, nm in ((1, 'CejaL'), (-1, 'CejaR')):
-    EP, EN, EI = ceja(side); add_piece(nm, EP, EN, EI, mat_ceja)
-# boca: placa delgada oscura con leve sonrisa de lado (estilo Theo); sigue a la cabeza y a los shape keys no (es rígida)
-mw, mh = bo['ancho'] * W * 1.1, 0.026 * W; MP, MI = [], []
-for i_ in range(9):
-    u = i_ / 8; x = mc[0] - mw / 2 + mw * u; yb = y_mouth + 0.006 * W * (1 - (2 * u - 1) ** 2)                 # centrada, horizontal, comisuras apenas abajo (como Gamma)
-    k = np.argmin((V[:, 0] - x) ** 2 + (V[:, 1] - yb) ** 2 + (V[:, 2] < ctr[2]) * 10); zb = V[k, 2] + 0.004 - 0.004 * (2 * u - 1) ** 2
-    MP += [[x, yb + mh / 2, zb], [x, yb - mh / 2, zb]]
-    if i_: MI += [[2 * i_ - 2, 2 * i_ - 1, 2 * i_], [2 * i_ - 1, 2 * i_ + 1, 2 * i_]]
-MP = np.array(MP); MI = np.array(MI)
-add_piece('Boca', MP, np.tile([0, 0, 1.0], (len(MP), 1)), MI, mat_ceja)
+    EP, EN, EI = ceja(side); add_piece(nm, EP, EN, EI, gris)                 # grises como el cuerpo, relieve de 3.5 mm
 add_piece('Cuello', NP, NNm, NI, gris, NJ, NW)
 for side, nm in ((1, 'OrejaL'), (-1, 'OrejaR')):
     EP, EN, EI = ear(side); add_piece(nm, EP, EN, EI, gris)

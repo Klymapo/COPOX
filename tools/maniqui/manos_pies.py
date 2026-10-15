@@ -40,23 +40,44 @@ for side, sgn in (('Left', 1), ('Right', -1)):
         pieces.append(('Dedo' + f + side[0], tube([base, p0, p1, p2, tip], [r, r, r * 0.97, r * 0.94, r * 0.88],
                        [wj((side + 'Hand', 1)), wj((side + f + 'Proximal', 1)), wj((side + f + 'Intermediate', 1)), wj((side + f + 'Distal', 1)), wj((side + f + 'Distal', 1))], seg=12, p=3.2, cap_top=True)))
     m, p1, p2 = P('ThumbMetacarpal'), P('ThumbProximal'), P('ThumbDistal'); tip = p2 + (p2 - p1) * 0.8
+    # membrana índice-pulgar: placa que une el borde de la palma (del lado del pulgar) con la base del índice y el nudillo del pulgar
+    idx0 = P('IndexProximal'); zmax = zc + zw + 0.004
+    A = np.array([wrist[0] + sgn * 0.012, wrist[1], zmax - 0.004]); B = np.array([idx0[0] - sgn * 0.004, idx0[1], idx0[2] + 0.008])
+    Cp = p1 + (m - p1) * 0.15; D = (B + Cp) / 2 + np.array([-sgn * 0.010, 0, -0.004])          # borde cóncavo entre índice y pulgar
+    poly = [A, B, D, Cp]; th = [0.016, 0.013, 0.009, 0.010]
+    WP = []
+    for q, t_ in zip(poly, th): WP += [q + [0, t_, 0], q - [0, t_, 0]]
+    WP = np.array(WP); WI = []
+    n4 = len(poly)
+    for i_ in range(n4):                                                                 # bordes
+        a_, b_ = 2 * i_, 2 * ((i_ + 1) % n4); WI += [[a_, b_, a_ + 1], [b_, b_ + 1, a_ + 1]]
+    WI += [[0, 2, 4], [0, 4, 6], [1, 5, 3], [1, 7, 5]]                                   # tapas arriba / abajo
+    WI = np.array(WI)
+    if sgn < 0: WI = WI[:, [0, 2, 1]]
+    fnw = np.cross(WP[WI[:, 1]] - WP[WI[:, 0]], WP[WI[:, 2]] - WP[WI[:, 0]]); WN = np.zeros_like(WP)
+    for k_ in range(3): np.add.at(WN, WI[:, k_], fnw)
+    WN /= np.linalg.norm(WN, axis=1, keepdims=True) + 1e-12
+    wts = [wj((side + 'Hand', 1)), wj((side + 'Hand', 1)), wj((side + 'Hand', 0.5), (side + 'ThumbMetacarpal', 0.5)), wj((side + 'ThumbMetacarpal', 0.6), (side + 'ThumbProximal', 0.4))]
+    WJ = np.array([w_[0] for w_ in wts for _ in (0, 1)], np.uint16); WW = np.array([w_[1] for w_ in wts for _ in (0, 1)], np.float32)
+    pieces.append(('Membrana' + side[0], (WP, WN, WJ, WW, WI)))
     pieces.append(('DedoThumb' + side[0], tube([wrist + (m - wrist) * 0.3, m, p1, p2, tip], [0.0125, 0.0120, 0.0115, 0.0110, 0.0098],
                    [wj((side + 'Hand', 1)), wj((side + 'ThumbMetacarpal', 1)), wj((side + 'ThumbProximal', 1)), wj((side + 'ThumbDistal', 1)), wj((side + 'ThumbDistal', 1))], seg=12, p=3.2)))
     # ----- pie: anillos en el plano x-y a lo largo de z (talón → punta), base plana en y=0
     ank, toe = P('Foot'), P('Toes'); EX = np.array([1.0, 0, 0])
-    prof = [(ank[2] - 0.060, 0.038, 0.054, 0.038, wj((side + 'Foot', 1))),          # talón: trasera casi vertical, esquina redondeada
-            (ank[2] - 0.050, 0.047, 0.061, 0.047, wj((side + 'Foot', 1))),
-            (ank[2] + 0.005, 0.053, 0.065, 0.053, wj((side + 'Foot', 1))),          # caña: abraza el tobillo
-            (ank[2] + 0.040, 0.047, 0.065, 0.047, wj((side + 'Foot', 0.7), (side + 'Toes', 0.3))),   # empeine: baja hacia la punta
-            (toe[2] + 0.015, 0.039, 0.063, 0.039, wj((side + 'Toes', 1))),
-            (toe[2] + 0.050, 0.031, 0.057, 0.031, wj((side + 'Toes', 1))),
-            (toe[2] + 0.068, 0.026, 0.044, 0.020, wj((side + 'Toes', 1)))]
-    rings = [(np.array([ank[0], cy, z]), rx, ry, EX, EY, 3.6) for z, cy, rx, ry, _ in prof]
-    pieces.append(('Pie' + side[0], loft(rings, [w for *_, w in prof], seg=24)))
+    prof = [(ank[2] - 0.068, 0.030, 0.040, 0.026, wj((side + 'Foot', 1)), 2.2),          # talón redondeado (exponente bajo atrás)
+            (ank[2] - 0.060, 0.040, 0.054, 0.038, wj((side + 'Foot', 1)), 2.6),
+            (ank[2] - 0.046, 0.047, 0.061, 0.047, wj((side + 'Foot', 1)), 3.2),
+            (ank[2] + 0.005, 0.053, 0.065, 0.053, wj((side + 'Foot', 1)), 3.6),          # caña: abraza el tobillo
+            (ank[2] + 0.040, 0.047, 0.065, 0.047, wj((side + 'Foot', 0.7), (side + 'Toes', 0.3)), 3.6),   # empeine: baja hacia la punta
+            (toe[2] + 0.015, 0.039, 0.063, 0.039, wj((side + 'Toes', 1)), 3.6),
+            (toe[2] + 0.050, 0.031, 0.057, 0.031, wj((side + 'Toes', 1)), 3.6),
+            (toe[2] + 0.068, 0.026, 0.044, 0.020, wj((side + 'Toes', 1)), 3.2)]
+    rings = [(np.array([ank[0], cy, z]), rx, ry, EX, EY, pe) for z, cy, rx, ry, _, pe in prof]
+    pieces.append(('Pie' + side[0], loft(rings, [w for _, _, _, _, w, _ in prof], seg=24)))
     # suela: losa un poco más ancha que la bota, 1.2 cm, punta y talón redondeados (define el pie al verlo de lado)
-    sol = [(ank[2] - 0.062, 0.050), (ank[2] - 0.045, 0.066), (ank[2] + 0.050, 0.069), (toe[2] + 0.050, 0.061), (toe[2] + 0.074, 0.040)]
+    sol = [(ank[2] - 0.068, 0.036), (ank[2] - 0.058, 0.056), (ank[2] - 0.045, 0.066), (ank[2] + 0.050, 0.069), (toe[2] + 0.050, 0.061), (toe[2] + 0.074, 0.040)]
     rs = [(np.array([ank[0], 0.007, z]), rx, 0.007, EX, EY, 5.0) for z, rx in sol]
-    pieces.append(('Suela' + side[0], loft(rs, [wj((side + 'Foot', 1))] * 2 + [wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))] + [wj((side + 'Toes', 1))] * 2, seg=24)))
+    pieces.append(('Suela' + side[0], loft(rs, [wj((side + 'Foot', 1))] * 3 + [wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))] + [wj((side + 'Toes', 1))] * 2, seg=24)))
 
 keep = [p for p, n in zip(mesh['primitives'], names) if n not in ('Brazos', 'Pies')]
 for name, (V, N, J, W, I) in pieces:
