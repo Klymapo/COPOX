@@ -6,7 +6,7 @@
 
 El rostro de la base presenta 44 ciclos de borde en la superficie de piel, incluido uno de 413 vértices que mezcla cara y mandíbula; al reunir la superficie de ojos/cejas por posición, aparecen 57 ciclos por la fragmentación y costuras del atlas. La zona glabelar entre cejas y nariz es una isla separada de 110 triángulos con un borde exterior de 32 vértices y tres aberturas interiores de 3, 3 y 4. La captura diagnóstica de iluminación emisiva `build/g2c9/emission/COLOR/detalle_rostro.png` demuestra que la franja oscura bajo los ojos es en buena parte sombreado/oclusión de superficies fragmentadas: no corresponde a un único contorno plano que pueda taparse sin invadir los ojos. La calva lisa no es el origen del pliegue central.
 
-El esqueleto importado por Blender mantiene la T pose de reposo: cabezas de LeftUpperArm, LeftLowerArm y LeftHand en altura Blender Z=0.455, respectivamente X=0.135, 0.221, 0.366; el lado derecho es simétrico. No se activó ningún clip en las capturas. Todas las imágenes comparadas proceden de los GLB exportados, importados por Blender 4.3.2, con cámara e iluminación iguales.
+Blender seleccionaba automáticamente `Sit-pose` al importar el GLB. Las capturas iniciales comparaban ese clip, pero **no** eran T pose. Para la comparativa final se desactivaron la acción y todas las pistas NLA, se restauró `matrix_basis` de cada hueso y se renderizó la pose de reposo real. Las cabezas de LeftUpperArm, LeftLowerArm y LeftHand están en altura Blender Z=0.455, respectivamente X=0.135, 0.221, 0.366; el lado derecho es simétrico. Los brazos de la malla quedan extendidos horizontalmente. Todas las imágenes comparadas proceden de los GLB exportados, importados por Blender 4.3.2, con cámara e iluminación iguales.
 
 ## Tres ensayos independientes
 
@@ -20,7 +20,7 @@ Todos conservan 56 huesos, 29 definiciones de clip, pesos, materiales y estructu
 
 ## Comparativa T pose
 
-`build/g2c9/COMPARATIVA_T_POSE_REAL.png`: columnas G2-C8 base / H invisible / F rechazado; filas frontal completo, perfil derecho completo y acercamiento frontal. H muestra por qué un resultado técnicamente correcto puede carecer de valor visual; F muestra por qué no se acepta el suavizado sólo por sus métricas. Las capturas originales sin montaje están en `build/g2c9/captures_huecos/` y `captures_glabella/`.
+`build/g2c9/COMPARATIVA_T_POSE_REAL.png`: columnas G2-C8 base / H invisible / F rechazado; filas frontal completo, perfil derecho completo y acercamiento frontal. H muestra por qué un resultado técnicamente correcto puede carecer de valor visual; F muestra por qué no se acepta el suavizado sólo por sus métricas. Las capturas finales originales sin montaje están en `build/g2c9/captures_tpose/`; las anteriores en `captures_huecos/` y `captures_glabella/` corresponden al clip `Sit-pose` autoseleccionado por Blender y no deben etiquetarse como T pose.
 
 ## Próximo método necesario
 
