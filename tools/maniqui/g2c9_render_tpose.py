@@ -35,6 +35,13 @@ for label,path in models.items():
  for ob in list(scene.objects):
   if ob.type in {'MESH','ARMATURE','EMPTY','CURVE','SURFACE','FONT'}:bpy.data.objects.remove(ob,do_unlink=True)
  bpy.ops.import_scene.gltf(filepath=os.path.abspath(path))
+ # Blender auto-selects Sit-pose on import. Clear all imported actions/NLA,
+ # then restore the skeleton's bind/T pose before rendering.
+ for arm in [o for o in scene.objects if o.type=='ARMATURE']:
+  arm.animation_data_clear()
+  for pb in arm.pose.bones: pb.matrix_basis.identity()
+ scene.frame_set(0)
+ bpy.context.view_layer.update()
  # Capture the imported GLB at rest pose and identical camera/lighting settings.
  dest=out/label;dest.mkdir(exist_ok=True)
  for name,direction,target,scale in views:
