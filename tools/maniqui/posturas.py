@@ -74,6 +74,55 @@ POSES = {
     'P20_5_Satisfecho': dict(C=dict(Hips=(0, 0, 4), Spine=(0, 0, -3), Head=(-6, 0, -8)), L=BASE, IK=dict(mano_R=(0.15, 0.30, 0.0), codo_R=(1, 0, -0.4))),
 }
 
+# ---------------- manos: formas por dedo (dedos a lo largo de +X, palma hacia -Y, pulgar al frente +Z, lado izquierdo)
+DEDOS = ('Index', 'Middle', 'Ring', 'Little')
+def mano(cierre=0.0, dedos=None, abre=0.0, pulgar=(0, 0, 0), muneca=(0, 0, 0)):
+    """cierre: 0 extendido → 1 puño (por dedo con 'dedos'); abre: grados de separación en abanico;
+    pulgar: (hacia la palma, hacia los dedos, flexión de las falanges) en grados; muneca: (rx, ry, rz) del hueso Hand"""
+    out = {'Hand': muneca}
+    for k, f in enumerate(DEDOS):
+        c = (dedos or {}).get(f, cierre); sp = abre * (1.5 - k)                              # índice se abre hacia +Z, meñique hacia -Z
+        out[f + 'Proximal'] = (0, -sp, -70 * c); out[f + 'Intermediate'] = (0, 0, -95 * c); out[f + 'Distal'] = (0, 0, -60 * c)
+    px, py, pf = pulgar
+    out['ThumbMetacarpal'] = (px, py, 0); out['ThumbProximal'] = (pf * 0.3, pf * 0.6, 0); out['ThumbDistal'] = (pf * 0.3, pf, 0)   # la flexión dobla hacia los dedos
+    return out
+MANOS = {   # lámina 31 (base), 32 (agarres), 33 (gestos)
+    'M31_1_Relajada': mano(0.28, pulgar=(10, 10, 10)),
+    'M31_2_Abierta':  mano(0.0, abre=9, pulgar=(-10, -15, 0)),
+    'M31_3_Puno':     mano(1.0, pulgar=(18, 55, 35)),
+    'M31_4_Senalar':  mano(1.0, dedos={'Index': 0.0}, pulgar=(18, 55, 35)),
+    'M31_5_Pinza':    mano(0.3, dedos={'Index': 0.6}, pulgar=(14, 50, 25)),
+    'M32_1_Esfera':   mano(0.45, abre=6, pulgar=(20, 25, 15)),
+    'M32_2_Cubo':     {**mano(0.5, pulgar=(20, 30, 5)), **{f + 'Proximal': (0, 0, -60) for f in DEDOS}, **{f + 'Intermediate': (0, 0, -35) for f in DEDOS}, **{f + 'Distal': (0, 0, -10) for f in DEDOS}},
+    'M32_3_Cilindro': mano(0.78, pulgar=(15, 50, 30)),
+    'M32_4_Disco':    mano(0.85, dedos={'Index': 0.45}, pulgar=(14, 45, 15)),
+    'M32_5_Prisma':   mano(0.4, abre=3, pulgar=(20, 25, 5)),
+    'M33_1_Saludo':   mano(0.0, abre=12, pulgar=(-15, -20, 0), muneca=(0, 0, 10)),
+    'M33_2_Ofrecer':  mano(0.15, abre=6, pulgar=(-10, -10, 0), muneca=(-150, 0, 0)),     # palma hacia arriba
+    'M33_3_Contar':   mano(0.0, dedos={'Little': 1.0}, abre=6, pulgar=(18, 55, 35)),
+    'M33_4_VenAqui':  mano(1.0, dedos={'Index': 0.6}, pulgar=(18, 50, 30), muneca=(-90, 0, 0)),
+    'M33_5_Afirmar':  mano(1.0, pulgar=(-20, -35, -10), muneca=(-90, 0, 0)),             # pulgar arriba
+    # lámina 34 · objetos (sólo la mano; el objeto es otro asset)
+    'M34_1_Taza':     mano(0.7, dedos={'Ring': 0.9, 'Little': 0.95}, pulgar=(-5, 30, 10)),          # índice y medio por el asa, pulgar arriba
+    'M34_2_Libro':    mano(0.15, abre=3, pulgar=(-20, -25, 0), muneca=(-80, 0, 0)),                  # mano plana que sostiene desde abajo
+    'M34_3_Linterna': mano(0.82, pulgar=(15, 50, 30)),
+    'M34_4_Llave':    mano(0.5, dedos={'Index': 0.6, 'Middle': 0.7}, pulgar=(14, 50, 25)),
+    'M34_5_Tableta':  mano(1.0, dedos={'Index': 0.0}, pulgar=(18, 55, 35)),                         # la otra mano sostiene: usa M34_2
+    # lámina 35 · espada de madera (agarre de cilindro apretado; cambia la muñeca)
+    'M35_1_Empunadura': mano(0.9, pulgar=(15, 55, 35), muneca=(-90, 0, 0)),
+    'M35_2_GuardiaBaja': mano(0.9, pulgar=(15, 55, 35), muneca=(-90, 0, -35)),
+    'M35_3_GuardiaAlta': mano(0.9, pulgar=(15, 55, 35), muneca=(-90, 0, 30)),
+    'M35_4_DosManos':  mano(0.9, pulgar=(15, 55, 35), muneca=(-90, 0, 0)),
+    'M35_5_Presentacion': mano(0.9, pulgar=(15, 55, 35), muneca=(0, 0, 0)),
+    # lámina 36 · pistola de agua (índice en el gatillo)
+    'M36_1_AgarreBase': mano(0.85, dedos={'Index': 0.3}, pulgar=(15, 45, 25), muneca=(-90, 0, 0)),
+    'M36_2_ListaParaUsar': mano(0.85, dedos={'Index': 0.5}, pulgar=(15, 45, 25), muneca=(-90, 0, 0)),
+    'M36_3_Apuntar':  mano(0.85, dedos={'Index': 0.5}, pulgar=(15, 45, 25), muneca=(-90, 0, 10)),
+    'M36_4_ConApoyo': mano(0.85, dedos={'Index': 0.5}, pulgar=(15, 45, 25), muneca=(-90, 0, 0)),
+    'M36_5_Descanso': mano(0.85, dedos={'Index': 0.0}, pulgar=(15, 45, 25), muneca=(-90, 0, -40)),
+}
+for nombre, forma in MANOS.items(): POSES[nombre] = dict(L=forma, R=forma)
+
 def quat(rx, ry, rz):
     """rotación R = Rz·Ry·Rx (grados) → cuaternión glTF [x, y, z, w]"""
     def q_ax(ax, a):
@@ -209,6 +258,29 @@ if __name__ == '__main__':
                 hoja.paste(im, (W_ * k, H_ + 40 if refs else 0))
                 ImageDraw.Draw(hoja).text((W_ * k + 8, (H_ + 12) if refs else 8), nombre, fill=(30, 30, 30))
             hoja.save(os.path.join(outd, f'{lam}.png')); print('hoja', lam)
+    if '--manos-render' in sys.argv:
+        from PIL import Image, ImageDraw
+        outd = sys.argv[sys.argv.index('--manos-render') + 1]; os.makedirs(outd, exist_ok=True)
+        grupos = {}
+        for nombre in MANOS: grupos.setdefault(nombre.split('_')[0], []).append(nombre)
+        refs = sys.argv[sys.argv.index('--refs') + 1] if '--refs' in sys.argv else None
+        for g, nombres in grupos.items():
+            W_ = 260; hoja = Image.new('RGB', (W_ * len(nombres), W_ * 3 + 30), 'white')
+            if refs:
+                fs = [f for f in os.listdir(refs) if f.startswith(g[1:] + ' -')]
+                ref = Image.open(os.path.join(refs, fs[0])).convert('RGB'); rw, rh = ref.size
+                x0, x1, y0, y1 = 0.02 * rw, 0.98 * rw, 0.27 * rh, 0.62 * rh; cw = (x1 - x0) / len(nombres)
+                for k in range(len(nombres)): hoja.paste(ref.crop((int(x0 + k * cw), int(y0), int(x0 + (k + 1) * cw), int(y1))).resize((W_, W_)), (W_ * k, 0))
+            for k, nombre in enumerate(nombres):
+                tris = posar(j, raw[28 + Lj:], resolver(j, POSES[nombre]))
+                sel = [(t[0][(t[0][:, :, 0].min(1) > 0.30) & (t[0][:, :, 1].min(1) > 0.38) & (t[0][:, :, 1].max(1) < 0.54)],) + t[1:] for t in tris]
+                sel = [t for t in sel if len(t[0])]
+                bx = (np.array([0.32, 0.39, -0.08]), np.array([0.47, 0.53, 0.07]))
+                hoja.paste(render.render(sel, -20, W=W_, H=W_, bounds=bx), (W_ * k, W_ + 30))
+                top = [(np.stack([t[0][..., 0], t[0][..., 2], -t[0][..., 1]], -1),) + t[1:] for t in sel]
+                hoja.paste(render.render(top, 0, W=W_, H=W_, bounds=(np.array([0.32, -0.08, -0.53]), np.array([0.47, 0.07, -0.39]))), (W_ * k, 2 * W_ + 30))
+                ImageDraw.Draw(hoja).text((W_ * k + 6, W_ + 8), nombre, fill=(30, 30, 30))
+            hoja.save(os.path.join(outd, f'{g}.png')); print('hoja', g)
     binc = escribir_clips(j, binc, POSES)
     j['buffers'] = [{'byteLength': len(binc)}]
     while len(binc) % 4: binc.append(0)
