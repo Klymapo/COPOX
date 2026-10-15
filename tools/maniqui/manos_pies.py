@@ -30,9 +30,16 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     kn = np.array([P(f + 'Proximal') for f in fingers]); zc = kn[:, 2].mean(); zw = (kn[:, 2].max() - kn[:, 2].min()) / 2 + 0.012
     xs = [wrist[0], wrist[0] + sgn * 0.02, kn[:, 0].mean() - sgn * 0.012, kn[:, 0].mean() + sgn * 0.004]
     EY, EZ = np.array([0, 1.0, 0]), np.array([0, 0, 1.0])
-    rings = [(np.array([x, wrist[1], zc * f + wrist[2] * (1 - f)]), ry, rz, EY, EZ) for x, ry, rz, f in
-             [(xs[0], 0.019, 0.030, 0.0), (xs[1], 0.018, 0.037, 0.5), (xs[2], 0.016, zw + 0.004, 1.0), (xs[3], 0.015, zw + 0.004, 1.0)]]
-    pieces.append(('Palma' + side[0], loft(rings, [wj((side + 'Hand', 1))] * 4, seg=24)))
+    # palma redondeada: 7 anillos, contorno que se abre y se cierra en curva (no trapecio), sección más ovalada (exponente 2.3)
+    x0p, x1p = xs[0], kn[:, 0].mean() + sgn * 0.006; zf = zw + 0.004
+    perfil = []
+    for k_ in range(7):
+        u = k_ / 6; x = x0p + (x1p - x0p) * u
+        rz = 0.030 + (zf - 0.030) * np.sin(min(u * 1.15, 1) * np.pi / 2) - 0.010 * max(u - 0.85, 0) / 0.15   # ancho: curva suave, redondeo al final
+        ry = 0.019 - 0.004 * u - 0.004 * max(u - 0.85, 0) / 0.15                                             # grosor: baja hacia los nudillos
+        perfil.append((x, ry, rz, min(u * 2, 1.0)))
+    rings = [(np.array([x, wrist[1], zc * f + wrist[2] * (1 - f)]), ry, rz, EY, EZ, 2.3) for x, ry, rz, f in perfil]
+    pieces.append(('Palma' + side[0], loft(rings, [wj((side + 'Hand', 1))] * len(rings), seg=24)))
     # ----- dedos: tubo por las falanges, con punta extrapolada
     for f, r in [('Index', 0.0110), ('Middle', 0.0112), ('Ring', 0.0107), ('Little', 0.0095)]:
         p0, p1, p2 = P(f + 'Proximal'), P(f + 'Intermediate'), P(f + 'Distal'); tip = p2 + (p2 - p1) * 0.8           # largo completo (ref: mano-con-regla-vistas.jpg)
@@ -64,6 +71,12 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     prof = [(ank[2] + (z - ank[2]) * PIE, cy * PIE, max(rx * PIE, 0.047 if abs(z - ank[2]) < 0.02 else 0), ry * PIE, w, pe) for z, cy, rx, ry, w, pe in prof]
     rings = [(np.array([ank[0], cy, z]), rx, ry, EX, EY, pe) for z, cy, rx, ry, _, pe in prof]
     pieces.append(('Pie' + side[0], loft(rings, [w for _, _, _, _, w, _ in prof], seg=24)))
+    # caña: collar vertical que une pierna y bota (la pierna entra en él; él entra en la bota)
+    EZc = np.array([0, 0, 1.0]); cz_c = ank[2] - 0.002
+    ca = [(0.030, 0.047, 0.048, wj((side + 'Foot', 1))), (0.060, 0.0455, 0.0465, wj((side + 'Foot', 0.7), (side + 'LowerLeg', 0.3))),
+          (0.082, 0.0450, 0.0460, wj((side + 'LowerLeg', 0.6), (side + 'Foot', 0.4))), (0.090, 0.0445, 0.0450, wj((side + 'LowerLeg', 1)))]   # apenas más gruesa que la pierna
+    rc = [(np.array([ank[0], y, cz_c]), rx, rz, EX, EZc, 2.8) for y, rx, rz, _ in ca]
+    pieces.append(('Cana' + side[0], loft(rc, [w for *_, w in ca], seg=24, cap_bot=False)))
     # suela: losa un poco más ancha que la bota, 1.2 cm, punta y talón redondeados (define el pie al verlo de lado)
     sol = [(ank[2] - 0.068, 0.036), (ank[2] - 0.058, 0.056), (ank[2] - 0.045, 0.066), (ank[2] + 0.050, 0.069), (toe[2] + 0.050, 0.061), (toe[2] + 0.074, 0.040)]
     rs = [(np.array([ank[0], 0.006, ank[2] + (z - ank[2]) * PIE]), rx * PIE, 0.006, EX, EY, 5.0) for z, rx in sol]

@@ -108,7 +108,8 @@ for side in ('Left', 'Right'):
             (knee + [0, 0.02, 0], 0.052, 0.052, wj((side + 'UpperLeg', 0.6), (side + 'LowerLeg', 0.4))),
             (knee - [0, 0.02, 0], 0.050, 0.050, wj((side + 'UpperLeg', 0.3), (side + 'LowerLeg', 0.7))),
             (ankle + [0, 0.03, 0], 0.046, 0.046, wj((side + 'LowerLeg', 1))),
-            (ankle - [0, 0.005, 0], 0.044, 0.044, wj((side + 'LowerLeg', 0.5), (side + 'Foot', 0.5)))]
+            (ankle - [0, 0.005, 0], 0.044, 0.044, wj((side + 'LowerLeg', 0.5), (side + 'Foot', 0.5))),
+            (ankle - [0, 0.030, 0], 0.043, 0.043, wj((side + 'Foot', 1)))]          # la pierna baja dentro de la caña
     rings = [(np.array(c), rx, rz, EX, EZ) for c, rx, rz, _ in prof]
     pieces.append(('Pierna' + side[0], loft(rings, [w for *_, w in prof])))
 
