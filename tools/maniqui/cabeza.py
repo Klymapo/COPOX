@@ -145,26 +145,26 @@ def ear(side):
     EI = np.array(EI)
     return EP, vnormals(EP, EI), EI
 
-# ================= 4b. cuello nuevo: tubo recto que entra en la cabeza (la cabeza nueva es más angosta abajo que la mandíbula de Gamma)
-_, QP, QI = prim('Cuello')
-base = QP[np.abs(QP[:, 1] - QP[:, 1].min()) < 1e-3]            # anillo inferior actual (empata con el torso)
-qc = np.array([(base[:, 0].min() + base[:, 0].max()) / 2, 0, (base[:, 2].min() + base[:, 2].max()) / 2])
-qrx, qrz = (base[:, 0].max() - base[:, 0].min()) / 2, (base[:, 2].max() - base[:, 2].min()) / 2
-y0, y1, NR, NS = QP[:, 1].min(), y_chin + 0.12 * W, 8, 36
+# ================= 4b. cuello: bloque corto con la sección de la repisa de hombros del torso, que entra en la cabeza (estilo: casi sin cuello)
+_, TP, TI = prim('Torso'); top_t = TP[:, 1].max()
+sel = TP[np.abs(TP[:, 1] - top_t) < 2e-3]                              # anillo superior del torso
+qc = np.array([(sel[:, 0].min() + sel[:, 0].max()) / 2, 0, (sel[:, 2].min() + sel[:, 2].max()) / 2])
+qrx, qrz = (sel[:, 0].max() - sel[:, 0].min()) / 2, (sel[:, 2].max() - sel[:, 2].min()) / 2
+y0, y1, NR, NS = top_t - 0.03, y_chin + 0.03, 6, 48
 NP, NJ, NW = [], [], []
 for k in range(NR):
-    yy = y0 + (y1 - y0) * k / (NR - 1); g = 1 + 0.06 * (k / (NR - 1))   # se ensancha 6 % al entrar en la cabeza
-    wh = np.clip((yy - y0) / 0.04, 0, 1)
+    yy = y0 + (y1 - y0) * k / (NR - 1); g = 1 - 0.08 * (k / (NR - 1))      # afina 8 % hacia la cabeza
+    wh = np.clip((yy - top_t) / (y_chin - top_t), 0, 1)
     for s_ in range(NS):
-        ang = 2 * np.pi * s_ / NS
-        NP.append([qc[0] + qrx * g * np.cos(ang), yy, qc[2] + qrz * g * np.sin(ang)]); NJ.append([HEAD, jn['Neck'], 0, 0]); NW.append([wh, 1 - wh, 0, 0])
+        ang = 2 * np.pi * s_ / NS; cx_ = np.sign(np.cos(ang)) * abs(np.cos(ang)) ** (2 / 2.8); cz_ = np.sign(np.sin(ang)) * abs(np.sin(ang)) ** (2 / 2.8)
+        NP.append([qc[0] + qrx * g * cx_, yy, qc[2] + qrz * g * cz_]); NJ.append([HEAD, jn['Neck'], 0, 0]); NW.append([wh, 1 - wh, 0, 0])
 NP = np.array(NP); NI = []
 for k in range(NR - 1):
     for s_ in range(NS):
         p0, p1 = k * NS + s_, k * NS + (s_ + 1) % NS; p2, p3 = p0 + NS, p1 + NS
         NI += [[p0, p1, p2], [p1, p3, p2]]
 NI = np.array(NI); NNm = vnormals(NP, NI)
-print(f'cuello nuevo: y {y0:.3f}..{y1:.3f}, {len(NI)} tris')
+print(f'cuello: sección {qrx*100:.1f}×{qrz*100:.1f} cm, y {y0:.3f}..{y1:.3f}, {len(NI)} tris')
 
 # ================= 5. escribir
 keep_prims = [p for p, n in zip(mesh['primitives'], names) if n not in ('Cabeza', 'Craneo', 'Cuello')]
