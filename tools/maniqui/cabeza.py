@@ -43,7 +43,7 @@ R = {  # Theo de frente, joven-rubio-4-vistas.jpg (14 oct 2026)
     'ojos': {'separacion': 0.578, 'ancho': 0.319, 'alto': 0.297, 'y_sobre_barbilla': 0.503},
     'cejas': {'y_sobre_ojo': 0.214, 'ancho': 0.341, 'alto': 0.130},
     'nariz': {'y_bajo_ojo': 0.230, 'ancho': 0.205, 'alto': 0.184},
-    'boca': {'y_bajo_ojo': 0.45, 'ancho': 0.15, 'alto': 0.03},          # no medible en Theo (línea muy delgada): valor del estilo
+    'boca': {'y_bajo_ojo': 0.36, 'ancho': 0.15, 'alto': 0.03},          # no medible en Theo (línea muy delgada): valor del estilo
     'orejas': {'sale': 0.10, 'alto': 0.26, 'fondo': 0.16, 'y_sobre_barbilla': 0.48},
     'fondo_sobre_alto': 0.92, 'craneo_sobre_cara': 1.12, 'ancho_cara_sobre_altura': 0.259,                 # lado: fondo/alto de la cara; cuánto sube el cráneo calvo sobre la línea del pelo
 }
@@ -194,12 +194,19 @@ add_piece('Cabeza', V, N, I, gris, targets=[soplar, abrir])
 from PIL import Image, ImageDraw
 import io
 TW, TH = 256, 512
-im = Image.new('RGB', (TW, TH), (245, 243, 240)); dr = ImageDraw.Draw(im)
-r_i = int(0.33 * TW); cx_, cy_ = TW // 2, TH // 2
-dr.ellipse([cx_ - r_i, cy_ - r_i, cx_ + r_i, cy_ + r_i], fill=(92, 58, 30))                       # iris café (Alastor)
-dr.ellipse([cx_ - int(r_i * 0.78), cy_ - int(r_i * 0.78), cx_ + int(r_i * 0.78), cy_ + int(r_i * 0.78)], fill=(120, 76, 38))
-dr.ellipse([cx_ - int(r_i * 0.45), cy_ - int(r_i * 0.45), cx_ + int(r_i * 0.45), cy_ + int(r_i * 0.45)], fill=(25, 15, 8))     # pupila
-dr.ellipse([cx_ - int(r_i * 0.55), cy_ - int(r_i * 0.75), cx_ - int(r_i * 0.15), cy_ - int(r_i * 0.35)], fill=(255, 255, 255))  # brillo
+im = Image.new('RGB', (TW, TH), (248, 246, 242)); dr = ImageDraw.Draw(im)
+cx_, cy_ = TW // 2, TH // 2
+# estilo ALTH (Theo/Alastor): el iris ocupa casi todo el ojo, la esclerótica apenas asoma en las esquinas
+r_i = int(0.47 * TW)
+dr.ellipse([cx_ - r_i, cy_ - int(r_i * 1.12), cx_ + r_i, cy_ + int(r_i * 1.12)], fill=(62, 36, 18))            # iris café oscuro (ovalado, más alto que ancho)
+dr.ellipse([cx_ - int(r_i * 0.86), cy_ - int(r_i * 0.84), cx_ + int(r_i * 0.86), cy_ + int(r_i * 1.00)], fill=(112, 66, 30))   # iris claro, abajo
+dr.ellipse([cx_ - int(r_i * 0.50), cy_ - int(r_i * 0.55), cx_ + int(r_i * 0.50), cy_ + int(r_i * 0.55)], fill=(22, 12, 6))     # pupila
+dr.ellipse([cx_ - int(r_i * 0.62), cy_ - int(r_i * 0.85), cx_ - int(r_i * 0.18), cy_ - int(r_i * 0.42)], fill=(255, 255, 255)) # brillo grande
+dr.ellipse([cx_ + int(r_i * 0.25), cy_ + int(r_i * 0.25), cx_ + int(r_i * 0.45), cy_ + int(r_i * 0.45)], fill=(255, 255, 255)) # brillo chico
+# párpado superior: banda oscura que sombrea el tercio de arriba (se desliza con el iris, que es lo que queremos)
+for k in range(int(0.16 * TH)):
+    y = cy_ - int(0.27 * TH) + k; f = 1 - k / (0.16 * TH)
+    dr.line([(0, y), (TW, y)], fill=(int(40 + 60 * (1 - f)), int(24 + 40 * (1 - f)), int(12 + 20 * (1 - f))))
 buf = io.BytesIO(); im.save(buf, 'PNG'); png = buf.getvalue()
 j.setdefault('images', []).append({'bufferView': append_bv(png), 'mimeType': 'image/png', 'name': 'ojo_alastor'})
 j.setdefault('samplers', []).append({'magFilter': 9729, 'minFilter': 9987, 'wrapS': 33071, 'wrapT': 33071})
@@ -213,6 +220,7 @@ def ojo(side):
     SEG2 = 40; EP = [[ex, y_eye, ez]]; UV = [[0.5, 0.5]]; EI = []
     for s_ in range(SEG2):
         t = 2 * np.pi * s_ / SEG2; cx = np.sign(np.cos(t)) * abs(np.cos(t)) ** (2 / 2.4); cy = np.sign(np.sin(t)) * abs(np.sin(t)) ** (2 / 2.4)
+        cy = min(cy, 0.62)                                                                             # párpado superior recto: ojo en D
         EP.append([ex + ew / 2 * cx, y_eye + eh / 2 * cy, ez - 0.004 * (cx * cx + cy * cy)])          # ligera curvatura hacia atrás en el borde
         UV.append([0.5 + 0.5 * cx, 0.5 - 0.25 * cy])                                                  # la placa usa la mitad central de la textura: hay 25 % de recorrido arriba y abajo
         EI.append([0, 1 + s_, 1 + (s_ + 1) % SEG2])
@@ -220,6 +228,30 @@ def ojo(side):
     return EP, EN, EI, np.array(UV)
 for side, nm in ((1, 'OjoL'), (-1, 'OjoR')):
     EP, EN, EI, UV = ojo(side); add_piece(nm, EP, EN, EI, mat_ojo, UV=UV)
+j['materials'].append({'name': 'Ceja', 'pbrMetallicRoughness': {'baseColorFactor': [0.16, 0.09, 0.04, 1.0], 'metallicFactor': 0, 'roughnessFactor': 0.9}})
+mat_ceja = len(j['materials']) - 1
+def ceja(side):
+    cj = R['cejas']; bw, bh = cj['ancho'] * W, cj['alto'] * W; bx = ctr[0] + side * o['separacion'] * W / 2; by = y_eye + cj['y_sobre_ojo'] * W
+    k = np.argmin((V[:, 0] - bx) ** 2 + (V[:, 1] - by) ** 2 + (V[:, 2] < ctr[2]) * 10); bz = V[k, 2] + 0.004
+    # bloque inclinado: más alto hacia el centro de la cara (ceño del estilo)
+    pts = []
+    for sx_, sy_ in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
+        x = bx + sx_ * bw / 2; y = by + sy_ * bh * 0.6 + (-0.45 * bh if (sx_ * side) < 0 else 0.15 * bh)   # el extremo interior baja (ceño)
+        pts.append([x, y, bz])
+    P2 = np.array(pts + [[p[0], p[1], p[2] - 0.012] for p in pts])                                       # grosor hacia atrás (entra en la cabeza)
+    F = np.array([[0, 1, 2], [0, 2, 3], [4, 6, 5], [4, 7, 6], [0, 4, 5], [0, 5, 1], [1, 5, 6], [1, 6, 2], [2, 6, 7], [2, 7, 3], [3, 7, 4], [3, 4, 0]])
+    return P2, vnormals(P2, F), F
+for side, nm in ((1, 'CejaL'), (-1, 'CejaR')):
+    EP, EN, EI = ceja(side); add_piece(nm, EP, EN, EI, mat_ceja)
+# boca: placa delgada oscura con leve sonrisa de lado (estilo Theo); sigue a la cabeza y a los shape keys no (es rígida)
+mw, mh = bo['ancho'] * W * 1.3, 0.022 * W; MP, MI = [], []
+for i_ in range(9):
+    u = i_ / 8; x = mc[0] - mw / 2 + mw * u; yb = y_mouth + 0.02 * W * (u - 0.5) + 0.03 * W * (u - 0.5) ** 2 * 0   # ligera asimetría
+    k = np.argmin((V[:, 0] - x) ** 2 + (V[:, 1] - yb) ** 2 + (V[:, 2] < ctr[2]) * 10); zb = V[k, 2] + 0.003
+    MP += [[x, yb + mh / 2, zb], [x, yb - mh / 2, zb]]
+    if i_: MI += [[2 * i_ - 2, 2 * i_ - 1, 2 * i_], [2 * i_ - 1, 2 * i_ + 1, 2 * i_]]
+MP = np.array(MP); MI = np.array(MI)
+add_piece('Boca', MP, np.tile([0, 0, 1.0], (len(MP), 1)), MI, mat_ceja)
 add_piece('Cuello', NP, NNm, NI, gris, NJ, NW)
 for side, nm in ((1, 'OrejaL'), (-1, 'OrejaR')):
     EP, EN, EI = ear(side); add_piece(nm, EP, EN, EI, gris)
