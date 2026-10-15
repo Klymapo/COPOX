@@ -3,7 +3,7 @@
 deslizante de ojos), nariz de bloque, ranura de boca, orejas de bloque y cuello recto nuevo.
 Reemplaza las piezas Cabeza, Craneo y Cuello. Una sola cabeza cerrada, sin huecos; todo pesado a Head/Neck.
 Historial: v2 horneado por raycast y v3 parche de Gamma fundido se descartaron (ruido de los lentes fundidos y escalones).
-Uso: cabeza.py maniqui_in.glb out.glb [rasgos.json]   (sin JSON usa las proporciones de Theo, refs/personajes/joven-rubio-4-vistas.jpg)"""
+Uso: cabeza.py maniqui_in.glb out.glb [rasgos.json]   (rasgos/gamma.json = medidas de la cara de Gamma con medir_gamma.py; sin JSON usa las de Theo)"""
 import json, struct, sys
 import numpy as np
 sys.path.insert(0, '.')
@@ -63,8 +63,9 @@ Hc = R['alto_cara_sobre_ancho'] * W                   # barbilla → línea del 
 Ht = R['craneo_sobre_cara'] * Hc                       # barbilla → coronilla (calvo)
 D = R['fondo_sobre_alto'] * Hc                         # fondo de la cabeza
 a, b, c = W / 2, Ht / 2, D / 2
+a_back = R.get('craneo_ancho', 1.0) * W / 2
 # el frente de la cara se queda donde estaba el plano de la cara de Gamma (a la altura del ojo); la nuca donde alcance
-z_front = np.percentile(FP[(np.abs(FP[:, 1] - (y_chin + R['ojos']['y_sobre_barbilla'] * W)) < 0.02) & (np.abs(FP[:, 0]) < 0.06 * W)][:, 2], 92)
+z_front = np.percentile(FP[(FP[:, 1] > y_chin) & (FP[:, 1] < y_chin + 0.7 * W) & (np.abs(FP[:, 0]) < 0.3 * W)][:, 2], 95)   # plano de la cara vieja (robusto a huecos)
 ctr = np.array([(CP[:, 0].min() + CP[:, 0].max()) / 2, y_chin + b, z_front - c])
 y_eye = y_chin + R['ojos']['y_sobre_barbilla'] * W
 # exponente del superelipsoide a partir del llenado de la caja (n=2 → 0.785, n=3 → 0.88, n=4 → 0.93)
@@ -77,7 +78,8 @@ def radius(n):
     """radio del superelipsoide en la dirección n (semiejes a,b,c; exponente horizontal p_h, vertical según hemisferio)"""
     pv = p_v_bajo if n[1] < 0 else p_v_alto
     # mezcla: la sección horizontal usa p_h, la vertical pv
-    horiz = (abs(n[0] / a) ** p_h + abs(n[2] / c) ** p_h) ** (1 / p_h)
+    aa = a + (a_back - a) * ss((0.55 - n[2]) / 0.9)          # el cráneo es más ancho detrás de la cara (Gamma: ~1.24 W a la altura de las orejas)
+    horiz = (abs(n[0] / aa) ** p_h + abs(n[2] / c) ** p_h) ** (1 / p_h)
     r = (horiz ** pv + abs(n[1] / b) ** pv) ** (-1 / pv)
     return r
 
@@ -105,11 +107,11 @@ front = ss((Dh[:, 2] - 0.25) / 0.3)
 def caja_suave(cx, cyy, w, h, p=4.0):
     """bulto con sección de superelipse (bloque redondeado): 1 en el centro, 0 fuera de la caja w×h"""
     d = (np.abs((V[:, 0] - cx) / (w / 2)) ** p + np.abs((V[:, 1] - cyy) / (h / 2)) ** p) ** (1 / p)
-    return ss(1.15 - d) * front
+    return ss((1.0 - d) / 0.6) * front
 o, nz, bo = R['ojos'], R['nariz'], R['boca']
 disp = np.zeros(len(V))
-for sx in (-1, 1): disp -= 0.012 * W * caja_suave(ctr[0] + sx * o['separacion'] * W / 2, y_eye, o['ancho'] * W * 1.1, o['alto'] * W * 1.1, 2.5)   # cuencas
-nariz = 0.06 * W * caja_suave(ctr[0], y_eye - nz['y_bajo_ojo'] * W, nz['ancho'] * W, nz['alto'] * W, 5.0)                        # nariz: bloque hacia +Z
+for sx in (-1, 1): disp -= R.get('ojos_hundidos', 0.0) * W * caja_suave(ctr[0] + sx * o['separacion'] * W / 2, y_eye, o['ancho'] * W * 1.1, o['alto'] * W * 1.1, 2.5)   # cuencas
+nariz = nz.get('sale', 0.06) * W * caja_suave(ctr[0], y_eye - nz['y_bajo_ojo'] * W, nz['ancho'] * W * 1.1, nz['alto'] * W * 1.3, 2.6)         # nariz: bloque redondeado hacia +Z (sale medido de perfil)
 disp -= 0.012 * W * caja_suave(ctr[0], y_eye - bo['y_bajo_ojo'] * W, bo['ancho'] * W, bo['alto'] * W * 1.5, 3.0)                   # boca: ranura
 V = V + Dh * disp[:, None]; V[:, 2] += nariz
 I = []
@@ -124,24 +126,29 @@ print(f'cabeza nueva: {len(I)} tris')
 
 # ================= 4. orejas: bloque redondeado (superelipsoide) pegado a la sien
 def ear(side):
-    e = R['orejas']; ax, ay, az = e['sale'] * W, e['alto'] * W / 2, e['fondo'] * W / 2
+    """oreja de Gamma: placa gruesa inclinada ~40° hacia atrás; de frente se ve 'sale' de ancho, de lado 'fondo' de largo"""
+    e = R['orejas']; sale = e['sale'] * W; ang = np.radians(40)
+    d = np.array([side * np.sin(ang), 0, -np.cos(ang)])                     # dirección de la placa (hacia afuera y atrás)
+    nrm = np.array([side * np.cos(ang), 0, np.sin(ang)])                    # normal de la placa
+    largo = sale / np.sin(ang) / 2; alto = e['alto'] * W / 2; grueso = 0.022 * W     # placa delgada como la de Gamma
     cyy = y_chin + e['y_sobre_barbilla'] * W
-    # x de la sien a esa altura: radio del superelipsoide en dirección ±x
-    nx = np.array([side, 0.0, 0.0]); cx = ctr[0] + side * radius(nx) * (1 - 0.3 * (1 - R['ancho_abajo']) * ss((y_eye - cyy) / (y_eye - y_chin)))
-    cz = ctr[2] + 0.02 * W
+    zr = (z_front - e['detras_de_cara'] * W) if 'detras_de_cara' in e else ctr[2]
+    base = np.array([ctr[0] + side * a_back * 0.95, cyy, zr])              # pegada al costado del cráneo
+    largo = max(sale - (a_back - a), 0.08 * W) / np.sin(ang) / 2           # sólo lo que la oreja sale más allá del cráneo
+    cen = base + d * largo * 0.9
     EP, EI = [], []; S2, R2 = 20, 10
     for k in range(R2):
         pa = np.pi * k / (R2 - 1)
         for s_ in range(S2):
             tb = 2 * np.pi * s_ / S2
             u = np.array([np.cos(pa), np.sin(pa) * np.cos(tb), np.sin(pa) * np.sin(tb)])
-            rr = (abs(u[0]) ** 3 + abs(u[1]) ** 3 + abs(u[2]) ** 3) ** (-1 / 3)
-            EP.append([cx + side * (ax * u[0] * rr - 0.4 * ax), cyy + ay * u[1] * rr, cz + az * u[2] * rr])
+            rr = (abs(u[0]) ** 4 + abs(u[1]) ** 4 + abs(u[2]) ** 4) ** (-1 / 4)
+            EP.append(cen + d * largo * u[0] * rr + np.array([0, alto, 0]) * u[1] * rr + nrm * grueso * u[2] * rr)
     EP = np.array(EP)
     for k in range(R2 - 1):
         for s_ in range(S2):
             p0, p1 = k * S2 + s_, k * S2 + (s_ + 1) % S2; p2, p3 = p0 + S2, p1 + S2
-            EI += [[p0, p2, p1], [p1, p2, p3]] if side > 0 else [[p0, p1, p2], [p1, p3, p2]]
+            EI += [[p0, p2, p1], [p1, p2, p3]]
     EI = np.array(EI)
     return EP, vnormals(EP, EI), EI
 
@@ -194,19 +201,17 @@ add_piece('Cabeza', V, N, I, gris, targets=[soplar, abrir])
 from PIL import Image, ImageDraw
 import io
 TW, TH = 256, 512
-im = Image.new('RGB', (TW, TH), (248, 246, 242)); dr = ImageDraw.Draw(im)
+im = Image.new('RGB', (TW, TH), (246, 244, 240)); dr = ImageDraw.Draw(im)
 cx_, cy_ = TW // 2, TH // 2
-# estilo ALTH (Theo/Alastor): el iris ocupa casi todo el ojo, la esclerótica apenas asoma en las esquinas
-r_i = int(0.47 * TW)
-dr.ellipse([cx_ - r_i, cy_ - int(r_i * 1.12), cx_ + r_i, cy_ + int(r_i * 1.12)], fill=(62, 36, 18))            # iris café oscuro (ovalado, más alto que ancho)
-dr.ellipse([cx_ - int(r_i * 0.86), cy_ - int(r_i * 0.84), cx_ + int(r_i * 0.86), cy_ + int(r_i * 1.00)], fill=(112, 66, 30))   # iris claro, abajo
-dr.ellipse([cx_ - int(r_i * 0.50), cy_ - int(r_i * 0.55), cx_ + int(r_i * 0.50), cy_ + int(r_i * 0.55)], fill=(22, 12, 6))     # pupila
-dr.ellipse([cx_ - int(r_i * 0.62), cy_ - int(r_i * 0.85), cx_ - int(r_i * 0.18), cy_ - int(r_i * 0.42)], fill=(255, 255, 255)) # brillo grande
-dr.ellipse([cx_ + int(r_i * 0.25), cy_ + int(r_i * 0.25), cx_ + int(r_i * 0.45), cy_ + int(r_i * 0.45)], fill=(255, 255, 255)) # brillo chico
-# párpado superior: banda oscura que sombrea el tercio de arriba (se desliza con el iris, que es lo que queremos)
-for k in range(int(0.16 * TH)):
-    y = cy_ - int(0.27 * TH) + k; f = 1 - k / (0.16 * TH)
-    dr.line([(0, y), (TW, y)], fill=(int(40 + 60 * (1 - f)), int(24 + 40 * (1 - f)), int(12 + 20 * (1 - f))))
+# proporciones del iris medidas en Gamma (medir_gamma.py): ancho ≈ 0.60 del ojo, alto ≈ todo el ojo; la placa ocupa V 0.25..0.75 (alto = TH/2)
+fi_w = o.get('iris_ancho', 0.6 * o['ancho']) / o['ancho']; fi_h = min(o.get('iris_alto', o['alto']) / o['alto'], 0.98)
+rw, rh = int(0.5 * fi_w * TW), int(0.5 * fi_h * TH / 2)
+dr.ellipse([cx_ - rw, cy_ - rh, cx_ + rw, cy_ + rh], fill=(70, 40, 20))                                  # iris café oscuro (Alastor)
+dr.ellipse([cx_ - int(rw * 0.85), cy_ - int(rh * 0.55), cx_ + int(rw * 0.85), cy_ + int(rh * 0.95)], fill=(112, 64, 28))   # aclarado abajo
+dr.ellipse([cx_ - int(rw * 0.48), cy_ - int(rh * 0.42), cx_ + int(rw * 0.48), cy_ + int(rh * 0.42)], fill=(20, 11, 5))    # pupila
+dr.ellipse([cx_ - int(rw * 0.05), cy_ - int(rh * 0.62), cx_ + int(rw * 0.55), cy_ - int(rh * 0.12)], fill=(255, 255, 255))  # brillo (arriba-derecha, como Gamma)
+# línea de pestañas arriba: banda delgada oscura en el borde superior de la placa (V 0.25 → y = TH/4)
+dr.rectangle([0, TH // 4 - 2, TW, TH // 4 + int(0.06 * TH / 2)], fill=(40, 24, 14))
 buf = io.BytesIO(); im.save(buf, 'PNG'); png = buf.getvalue()
 j.setdefault('images', []).append({'bufferView': append_bv(png), 'mimeType': 'image/png', 'name': 'ojo_alastor'})
 j.setdefault('samplers', []).append({'magFilter': 9729, 'minFilter': 9987, 'wrapS': 33071, 'wrapT': 33071})
@@ -219,24 +224,29 @@ def ojo(side):
     k = np.argmin((V[:, 0] - ex) ** 2 + (V[:, 1] - y_eye) ** 2 + (V[:, 2] < ctr[2]) * 10); ez = V[k, 2] + 0.002
     SEG2 = 40; EP = [[ex, y_eye, ez]]; UV = [[0.5, 0.5]]; EI = []
     for s_ in range(SEG2):
-        t = 2 * np.pi * s_ / SEG2; cx = np.sign(np.cos(t)) * abs(np.cos(t)) ** (2 / 2.4); cy = np.sign(np.sin(t)) * abs(np.sin(t)) ** (2 / 2.4)
-        cy = min(cy, 0.62)                                                                             # párpado superior recto: ojo en D
+        pe = float(np.interp(o.get('llenado_caja', 0.785), [0.785, 0.88, 0.93], [2.0, 3.0, 4.0])); pe = max(pe, 2.0)
+        t = 2 * np.pi * s_ / SEG2; cx = np.sign(np.cos(t)) * abs(np.cos(t)) ** (2 / pe); cy = np.sign(np.sin(t)) * abs(np.sin(t)) ** (2 / pe)
         EP.append([ex + ew / 2 * cx, y_eye + eh / 2 * cy, ez - 0.004 * (cx * cx + cy * cy)])          # ligera curvatura hacia atrás en el borde
         UV.append([0.5 + 0.5 * cx, 0.5 - 0.25 * cy])                                                  # la placa usa la mitad central de la textura: hay 25 % de recorrido arriba y abajo
         EI.append([0, 1 + s_, 1 + (s_ + 1) % SEG2])
     EP = np.array(EP); EI = np.array(EI); EN = np.tile([0, 0, 1.0], (len(EP), 1))
+    # la placa sigue la superficie de la cara: cada vértice toma la z del vértice frontal de la cabeza más cercano en (x, y) + 2.5 mm
+    Vf = V[V[:, 2] > ctr[2]]
+    for k_ in range(len(EP)):
+        q = np.argmin((Vf[:, 0] - EP[k_, 0]) ** 2 + (Vf[:, 1] - EP[k_, 1]) ** 2); EP[k_, 2] = Vf[q, 2] + 0.0025
     return EP, EN, EI, np.array(UV)
 for side, nm in ((1, 'OjoL'), (-1, 'OjoR')):
     EP, EN, EI, UV = ojo(side); add_piece(nm, EP, EN, EI, mat_ojo, UV=UV)
 j['materials'].append({'name': 'Ceja', 'pbrMetallicRoughness': {'baseColorFactor': [0.16, 0.09, 0.04, 1.0], 'metallicFactor': 0, 'roughnessFactor': 0.9}})
 mat_ceja = len(j['materials']) - 1
 def ceja(side):
-    cj = R['cejas']; bw, bh = cj['ancho'] * W, cj['alto'] * W; bx = ctr[0] + side * o['separacion'] * W / 2; by = y_eye + cj['y_sobre_ojo'] * W
+    cj = R['cejas']; bw, bh = cj['ancho'] * W, max(cj['alto'], 0.075) * W; bx = ctr[0] + side * o['separacion'] * W / 2; by = y_eye + cj['y_sobre_ojo'] * W
     k = np.argmin((V[:, 0] - bx) ** 2 + (V[:, 1] - by) ** 2 + (V[:, 2] < ctr[2]) * 10); bz = V[k, 2] + 0.004
     # bloque inclinado: más alto hacia el centro de la cara (ceño del estilo)
     pts = []
     for sx_, sy_ in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
-        x = bx + sx_ * bw / 2; y = by + sy_ * bh * 0.6 + (-0.45 * bh if (sx_ * side) < 0 else 0.15 * bh)   # el extremo interior baja (ceño)
+        ceno = cj.get('ceno', -0.3 * cj['alto']) * W
+        x = bx + sx_ * bw / 2; y = by + sy_ * bh / 2 + (ceno / 2 if (sx_ * side) < 0 else -ceno / 2)       # ceño medido: el extremo interior baja
         pts.append([x, y, bz])
     P2 = np.array(pts + [[p[0], p[1], p[2] - 0.012] for p in pts])                                       # grosor hacia atrás (entra en la cabeza)
     F = np.array([[0, 1, 2], [0, 2, 3], [4, 6, 5], [4, 7, 6], [0, 4, 5], [0, 5, 1], [1, 5, 6], [1, 6, 2], [2, 6, 7], [2, 7, 3], [3, 7, 4], [3, 4, 0]])
