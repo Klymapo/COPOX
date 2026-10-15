@@ -1,0 +1,49 @@
+{
+  "source": "build/g2c8/maniqui_G2C8_COLOR_UNIFORME_SIN_APROBAR.glb",
+  "source_sha256": "bf4ec71a56e94c61c3933c7194ec44026b6e8c31648175f4c497ba167c139e50",
+  "glb": "build/g2c9/maniqui_G2C9_HUECOS_MEJILLAS_SIN_APROBAR.glb",
+  "sha256": "4109abcfaf8e968fa5990a0a271a0f586bf85f9cf91252e9a06c799e33e0ba62",
+  "selected_boundary_loops": [
+    32,
+    33
+  ],
+  "added_triangles": [
+    [
+      3076,
+      3080,
+      3100
+    ],
+    [
+      3100,
+      3101,
+      3102
+    ]
+  ],
+  "added_triangle_count": 2,
+  "modified_vertices": 0,
+  "modified_weights": 0,
+  "before": {
+    "faces": 2081,
+    "used_vertices": 2153,
+    "welded_boundary_edges": 617,
+    "welded_nonmanifold_edges": 1,
+    "degenerate_faces": [],
+    "min_area": 3.1601320913363306e-08,
+    "components": 17
+  },
+  "after": {
+    "faces": 2083,
+    "used_vertices": 2153,
+    "welded_boundary_edges": 611,
+    "welded_nonmanifold_edges": 1,
+    "degenerate_faces": [],
+    "min_area": 3.1601320913363306e-08,
+    "components": 17
+  },
+  "new_proper_crossings": 0,
+  "coplanar_overlap_candidates": 0,
+  "status": "REJECTED_ARTISTICALLY_INVISIBLE",
+  "production_approved": false,
+  "scope_limit": "Three small cheek gaps only; large eye, nose and jaw gaps remain.",
+  "visual_assessment": "Two cheek triangles passed geometric checks but the three real Blender captures are pixel-identical to the baseline."
+}
