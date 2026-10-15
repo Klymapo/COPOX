@@ -18,6 +18,8 @@ Blender seleccionaba automáticamente `Sit-pose` al importar el GLB. Las captura
 
 Todos conservan 56 huesos, 29 definiciones de clip, pesos, materiales y estructura de skin. La funcionalidad de los morphs faciales sigue limitada por los 15 canales huérfanos heredados. Las copias compatibles derivadas por `gltf_sanitize.py` sirven para importar y renderizar; no se confunden con los GLB originales. No se afirma cierre completo de los huecos de ojos, nariz ni mandíbula.
 
+No se ejecutó una importación Godot nueva para los ensayos: quedaron rechazados en el filtro visual temprano. La comprobación Godot 4.7.2 de la base G2-C8 consta en `docs/maniqui/g2c8/RESULTADO.md`; no se extiende automáticamente a estos GLB.
+
 ## Comparativa T pose
 
 `build/g2c9/COMPARATIVA_T_POSE_REAL.png`: columnas G2-C8 base / H invisible / F rechazado; filas frontal completo, perfil derecho completo y acercamiento frontal. H muestra por qué un resultado técnicamente correcto puede carecer de valor visual; F muestra por qué no se acepta el suavizado sólo por sus métricas. Las capturas finales originales sin montaje están en `build/g2c9/captures_tpose/`; las anteriores en `captures_huecos/` y `captures_glabella/` corresponden al clip `Sit-pose` autoseleccionado por Blender y no deben etiquetarse como T pose.
