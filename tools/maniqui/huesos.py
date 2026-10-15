@@ -1,6 +1,6 @@
 """Ajusta largos de huesos del esqueleto (Beta) sin tocar las animaciones: escala la traslación local de los huesos
 indicados y recalcula las inverseBindMatrices de todo lo que cuelga de ellos (bind pose = pose de reposo, verificado).
-Uso: huesos.py in.glb out.glb [UpperArm=0.85] [LowerArm=0.85] [UpperLeg.x=1.2] ...   (el nombre se aplica a Left* y Right*)
+Uso: huesos.py in.glb out.glb [UpperArm=0.85] [LowerArm=0.85] [UpperLeg.x=1.2] [Shoulder.z+=0.045] ...   (el nombre se aplica a Left* y Right*)
 Nota: escalar 'UpperArm' acorta el brazo superior moviendo a LowerArm; 'LowerArm' acorta el antebrazo moviendo a Hand."""
 import json, struct, sys
 import numpy as np
@@ -16,9 +16,12 @@ nodes = j['nodes']; idx = {n['name']: i for i, n in enumerate(nodes)}
 hijo = {'UpperArm': 'LowerArm', 'LowerArm': 'Hand', 'UpperLeg': 'LowerLeg', 'LowerLeg': 'Foot'}   # el hueso cuyo largo se escala mueve a este hijo
 for k, f in fac.items():
     for side in ('Left', 'Right'):
-        if '.' in k:                                     # 'UpperLeg.x=1.2': escala UNA componente de la traslación propia de ese hueso (separar piernas, subir hombros…)
-            nm, comp = k.split('.'); n = nodes[idx[side + nm]]; t = np.array(n['translation']); t['xyz'.index(comp)] *= f; n['translation'] = t.tolist()
-            print(f'{side}{nm}.{comp} ×{f}: ahora {t.round(3)}'); continue
+        if '.' in k:                                     # 'UpperLeg.x=1.2' escala UNA componente de la traslación propia; 'Shoulder.z+=0.04' la desplaza
+            nm, comp = k.split('.'); suma = comp.endswith('+'); comp = comp.rstrip('+')
+            n = nodes[idx[side + nm]]; t = np.array(n['translation'])
+            if suma: t['xyz'.index(comp)] += f
+            else: t['xyz'.index(comp)] *= f
+            n['translation'] = t.tolist(); print(f'{side}{nm}.{comp}{"+" if suma else "×"}{f}: ahora {t.round(3)}'); continue
         n = nodes[idx[side + hijo[k]]]; t = np.array(n['translation']); n['translation'] = (t * f).tolist()
         print(f'{side}{k}: largo {np.linalg.norm(t)*100:.1f} → {np.linalg.norm(t)*f*100:.1f} cm')
 world = {}

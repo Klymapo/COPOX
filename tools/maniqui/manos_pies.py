@@ -44,13 +44,13 @@ for side, sgn in (('Left', 1), ('Right', -1)):
                    [wj((side + 'Hand', 1)), wj((side + 'ThumbMetacarpal', 1)), wj((side + 'ThumbProximal', 1)), wj((side + 'ThumbDistal', 1)), wj((side + 'ThumbDistal', 1))], seg=12, p=3.2)))
     # ----- pie: anillos en el plano x-y a lo largo de z (talón → punta), base plana en y=0
     ank, toe = P('Foot'), P('Toes'); EX = np.array([1.0, 0, 0])
-    prof = [(ank[2] - 0.055, 0.034, 0.052, 0.034, wj((side + 'Foot', 1))),          # (z, cy, rx, ry): botas a proporción 13 ancho × 9 alto × 19 largo
-            (ank[2] - 0.038, 0.045, 0.062, 0.045, wj((side + 'Foot', 1))),
-            (ank[2] + 0.010, 0.046, 0.065, 0.046, wj((side + 'Foot', 1))),
-            (ank[2] + 0.050, 0.046, 0.065, 0.046, wj((side + 'Foot', 0.6), (side + 'Toes', 0.4))),
-            (toe[2] + 0.020, 0.044, 0.063, 0.044, wj((side + 'Toes', 1))),
-            (toe[2] + 0.052, 0.039, 0.057, 0.039, wj((side + 'Toes', 1))),
-            (toe[2] + 0.068, 0.028, 0.044, 0.028, wj((side + 'Toes', 1)))]
+    prof = [(ank[2] - 0.055, 0.036, 0.052, 0.036, wj((side + 'Foot', 1))),          # (z, cy, rx, ry): botas 13 ancho × 19 largo; talón alto 10.5 cm
+            (ank[2] - 0.038, 0.050, 0.062, 0.050, wj((side + 'Foot', 1))),
+            (ank[2] + 0.005, 0.053, 0.065, 0.053, wj((side + 'Foot', 1))),          # caña: abraza el tobillo
+            (ank[2] + 0.040, 0.047, 0.065, 0.047, wj((side + 'Foot', 0.7), (side + 'Toes', 0.3))),   # empeine: baja hacia la punta
+            (toe[2] + 0.015, 0.039, 0.063, 0.039, wj((side + 'Toes', 1))),
+            (toe[2] + 0.050, 0.031, 0.057, 0.031, wj((side + 'Toes', 1))),
+            (toe[2] + 0.068, 0.022, 0.044, 0.022, wj((side + 'Toes', 1)))]
     rings = [(np.array([ank[0], cy, z]), rx, ry, EX, EY, 3.6) for z, cy, rx, ry, _ in prof]
     pieces.append(('Pie' + side[0], loft(rings, [w for *_, w in prof], seg=24)))
 
