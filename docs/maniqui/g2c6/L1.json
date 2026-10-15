@@ -129,10 +129,11 @@
   "limitations": [
     "Shoe termination intentionally overlaps the shin shell; this is not a welded anatomical ankle.",
     "Facial holes, scalp-to-face seam, folds, and other limb joints are outside this local operation.",
-    "Animation deformation requires separate pose inspection."
+    "Animation deformation requires separate pose inspection.",
+    "Only one Wave frame was visually inspected; complete deformation, especially ankle bending, remains unproven."
   ],
   "visual_evidence": "build/g2c6/COMPARATIVA_REAL_B2_L1_BLENDER.png",
-  "pose_evidence": "build/g2c6/captures_pose_mid",
+  "pose_evidence": "build/g2c6/captures_pose_wave",
   "godot_report": "build/g2c6/godot_report.json",
   "godot_compat_error": 0,
   "godot_raw_error_inherited": 43,
@@ -152,5 +153,12 @@
     0,
     0
   ],
-  "artistic_scope": "Ankle gap improved at rest; face, folds, scalp seam, other extremity joints unresolved"
+  "artistic_scope": "Ankle gap improved at rest; face, folds, scalp seam, other extremity joints unresolved",
+  "pose_clip": "Wave",
+  "pose_frame_blender": 24,
+  "pose_pixel_difference_from_rest_B2_L1": [
+    107315,
+    107809
+  ],
+  "invalid_pose_evidence_retained": "build/g2c6/captures_pose_mid; Sit-pose frames identical to rest, not validation"
 }
