@@ -1,0 +1,63 @@
+[
+ {
+  "tipo": "mover",
+  "huesos": "LeftLowerArm",
+  "delta": [
+   0.01282,
+   0,
+   0
+  ]
+ },
+ {
+  "tipo": "mover",
+  "huesos": "LeftHand",
+  "delta": [
+   0.01282,
+   0,
+   0
+  ]
+ },
+ {
+  "tipo": "mover",
+  "huesos": "RightLowerArm",
+  "delta": [
+   -0.01282,
+   0,
+   0
+  ]
+ },
+ {
+  "tipo": "mover",
+  "huesos": "RightHand",
+  "delta": [
+   -0.01282,
+   0,
+   0
+  ]
+ },
+ {
+  "tipo": "escala_vertices",
+  "huesos": "Neck",
+  "factores": [
+   0.85,
+   1,
+   1
+  ],
+  "pivote": [
+   0.0,
+   0.48832,
+   0.01354
+  ]
+ },
+ {
+  "tipo": "acortar",
+  "hasta": [
+   "LeftFoot",
+   "RightFoot"
+  ],
+  "fijos": [
+   "Root"
+  ],
+  "delta": 0.01079
+ }
+]

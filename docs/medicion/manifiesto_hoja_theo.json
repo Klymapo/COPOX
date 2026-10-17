@@ -1,0 +1,73 @@
+{
+ "modelo": "ADAN_V06_NEUTRO.glb",
+ "poses": [
+  [
+   "Idle-loop",
+   0.0
+  ]
+ ],
+ "elevaciones": [
+  5
+ ],
+ "distancias": [
+  null
+ ],
+ "referencias": [
+  {
+   "id": "hoja_frente",
+   "imagen": "hoja.png",
+   "recorte": [
+    0,
+    40,
+    334,
+    705
+   ],
+   "yaw": 0,
+   "ancla": "ojos"
+  },
+  {
+   "id": "hoja_perfil",
+   "imagen": "hoja.png",
+   "recorte": [
+    334,
+    40,
+    621,
+    705
+   ],
+   "yaw": [
+    90,
+    -90
+   ],
+   "ancla": "suelo"
+  },
+  {
+   "id": "hoja_espalda",
+   "imagen": "hoja.png",
+   "recorte": [
+    621,
+    40,
+    908,
+    705
+   ],
+   "yaw": 180,
+   "ancla": "suelo"
+  },
+  {
+   "id": "hoja_tres_cuartos",
+   "imagen": "hoja.png",
+   "recorte": [
+    908,
+    40,
+    1254,
+    705
+   ],
+   "yaw": [
+    30,
+    45,
+    -30,
+    -45
+   ],
+   "ancla": "suelo"
+  }
+ ]
+}

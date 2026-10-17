@@ -42,3 +42,18 @@ Salida:
 - La referencia está vestida y el modelo base no: las brechas mezclan cuerpo, ropa y pelo. El reporte las separa por clase, pero la interpretación es humana.
 - El rasterizador es CPU en Python: unos 4 min por hoja con búsqueda completa y unos 30 s con cámara fija.
 - IoU y anchos no prueban parecido; la revisión de Admin sigue siendo el filtro final.
+
+## Actualización · edición de proporciones (17 oct 2026, tarde)
+
+- `copox/medicion/proporciones.py`: edita proporciones por huesos en un GLB con skin.
+  - Mueve huesos y vértices con la mezcla de pesos.
+  - Escala segmentos a lo largo de su eje (manos) y escala solo vértices (cuello).
+  - Acorta piernas manteniendo los pies en el piso.
+  - Recalcula traslaciones locales, inverseBindMatrices y normales.
+  - Desplaza las claves de traslación animadas para que los clips sigan siendo válidos.
+- `comparar.py`:
+  - Margen de fondo alrededor de cada panel; antes el modelo se recortaba y la medida de la suela se pegaba al borde.
+  - Ancla horizontal opcional `"ancla_x": "cara"` (punta de la cara) para perfiles; el centro de cabeza con pelo sesgaba la postura.
+  - Guarda los mapas de clases (`clases_<vista>.npz`) y las anclas en el reporte.
+- Recetas usadas con Adán: `docs/medicion/ediciones_v07.json`, `docs/medicion/ediciones_v08.json`. Manifiesto: `docs/medicion/manifiesto_hoja_theo.json`.
+- Los GLB no se suben al repositorio público.

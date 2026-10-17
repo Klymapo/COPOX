@@ -76,7 +76,12 @@ def _ref(r, base: Path):
     if r.get("recorte"):
         im = im.crop(tuple(r["recorte"]))
     rgb = np.asarray(im)
-    return rgb, paleta.segmentar_referencia(rgb)
+    C = paleta.segmentar_referencia(rgb)
+    # margen de fondo alrededor del panel: el modelo puede sobresalir y no debe recortarse al medirlo
+    m = int(r.get("margen", 0.2) * max(C.shape))
+    rgb = np.pad(rgb, ((m, m), (m, m), (0, 0)), constant_values=236)
+    C = np.pad(C, m, constant_values=paleta.FONDO)
+    return rgb, C
 
 
 def _ojos_px(C):
@@ -125,6 +130,20 @@ def ajustar_frente(modelo, ref_C, poses, elevs, dists, yaw, excluir):
         raise RuntimeError("El modelo no mostró dos ojos en ninguna combinación")
     mejor = max(resultados, key=lambda r: r["iou"])
     return mejor, resultados, escenas[(mejor["clip"], mejor["frac"])]
+
+
+def frente_cara(C, y_ojos, ed):
+    """Columna de la punta de la cara (piel) en la franja ojos..ojos+0.6 ED, del lado hacia donde mira:
+    el lado donde la piel sobresale más allá del pelo."""
+    y0, y1 = int(y_ojos - 0.1 * ed), int(y_ojos + 0.6 * ed)
+    band = C[max(y0, 0):y1]
+    ps = np.nonzero((band == 2).any(0))[0]
+    hs = np.nonzero((band == 1).any(0))[0]
+    if not len(ps):
+        return None
+    if len(hs) and np.mean(ps) < np.mean(hs):
+        return float(ps.min())
+    return float(ps.max())
 
 
 def lamina(ruta, ref_rgb, mod_rgb, ref_C, mod_C, titulo):
@@ -189,6 +208,14 @@ def ejecutar(man: dict, base: Path, salida: Path) -> dict:
         _, yv, Cm, rgbm, cam, centro = mejor
         xc_r = ancla_x
         xc_m = rx if r is frente else ancla_x
+        if r.get("ancla_x") == "cara" and r is not frente:
+            # ancla horizontal = punta de la cara (piel) a la altura de los ojos; no depende del volumen de pelo
+            fr = frente_cara(Cr, ancla_y, red)
+            fm = frente_cara(Cm, ancla_y, red)
+            if fr is not None and fm is not None:
+                centro = (centro[0] + (fr - fm), centro[1])
+                Cm, rgbm = render(esc, cam, s, centro, (H, W))
+                xc_r = xc_m = fr
         y_ojo_m = ancla_y
         filas = []
         pr = piezas.perfil_anchos(Cr, ancla_y, red, xc_r, ALTURAS)
@@ -201,7 +228,9 @@ def ejecutar(man: dict, base: Path, salida: Path) -> dict:
         vista = {"yaw": yv, "camara": cam.dict(), "iou": piezas.iou_por_clase(Cr, Cm, GRUPOS),
                  "medidas_ref": piezas.medidas(Cr, red, ancla_y, xc_r), "medidas_modelo": piezas.medidas(Cm, red, y_ojo_m, xc_m),
                  "perfil_anchos": filas}
+        vista["ancla_px"] = {"x": float(xc_r), "y_ojos": float(ancla_y), "ed": float(red), "centro_modelo": [float(centro[0]), float(centro[1])]}
         reporte["vistas"][r["id"]] = vista
+        np.savez_compressed(salida / f"clases_{r['id']}.npz", ref=Cr, modelo=Cm)
         lamina(salida / f"lamina_{r['id']}.png", rgb, rgbm, Cr, Cm, f"{r['id']} · yaw {yv} · elev {ajuste['elevacion']} · dist {ajuste['distancia']} · pose {ajuste['clip']}@{ajuste['frac']}")
     (salida / "reporte.json").write_text(json.dumps(reporte, indent=1, ensure_ascii=False, default=float), encoding="utf-8")
     return reporte
