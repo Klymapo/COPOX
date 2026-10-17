@@ -1,0 +1,48 @@
+[
+ {
+  "tipo": "escala_eje",
+  "raiz": "LeftHand",
+  "hacia": "LeftMiddleProximal",
+  "factor": 0.7
+ },
+ {
+  "tipo": "escala_eje",
+  "raiz": "RightHand",
+  "hacia": "RightMiddleProximal",
+  "factor": 0.7
+ },
+ {
+  "tipo": "escala_vertices",
+  "huesos": "Neck",
+  "factores": [
+   0.81,
+   1,
+   1
+  ],
+  "pivote": [
+   0.0,
+   0.50181,
+   0.01354
+  ]
+ },
+ {
+  "tipo": "mover",
+  "huesos": "Head",
+  "delta": [
+   0,
+   -0.01349,
+   -0.03372
+  ]
+ },
+ {
+  "tipo": "acortar",
+  "hasta": [
+   "LeftFoot",
+   "RightFoot"
+  ],
+  "fijos": [
+   "Root"
+  ],
+  "delta": 0.01349
+ }
+]

@@ -1,0 +1,79 @@
+{
+ "version": "2026-10-17",
+ "unidad": "ED (distancia entre centros de ojos); v hacia abajo desde la línea de ojos; u horizontal desde el centro",
+ "metodo": "motor copox.medicion.rostro alinea por ojos; rasgos confiables automáticos (ojos, cejas) + lectura humana sobre cuadrícula calibrada (±0.05 ED) en caras frontales neutras",
+ "fuentes_lectura": {
+  "A0": "Hoja de vistas, acercamiento (Theo)",
+  "A1": "Hoja de vistas, frente (Theo)",
+  "A15": "1000222064 T (Theo)",
+  "A3": "escena ChatGPT, policía",
+  "S3": "10002131094 (Alastor)"
+ },
+ "theo_canon": {
+  "ceja_centro_v": -0.4,
+  "ceja_grosor": 0.16,
+  "ceja_largo": 0.6,
+  "ojo_ancho": 0.55,
+  "ojo_alto": 0.55,
+  "ojo_iris_llena": true,
+  "nariz_base_v": 0.45,
+  "nariz_ancho": 0.3,
+  "boca_v": 0.61,
+  "boca_ancho": 0.55,
+  "boca": "línea con sonrisa leve",
+  "barbilla_v": 0.94,
+  "cara_ancho_v0.5": 2.4,
+  "cara_ancho_v0.8": 2.0,
+  "oreja_v": [
+   0.0,
+   0.55
+  ],
+  "oreja_borde_u": 1.5,
+  "pelo_flequillo_v": -0.8
+ },
+ "rango_otros": {
+  "ceja_centro_v": [
+   -0.4,
+   -0.3
+  ],
+  "nariz_base_v": [
+   0.45,
+   0.55
+  ],
+  "boca_v": [
+   0.61,
+   0.85
+  ],
+  "barbilla_v": [
+   0.94,
+   1.35
+  ],
+  "nota": "Alastor: boca más baja (0.75) y más angosta (0.25), barbilla 1.05; policía: mandíbula grande (barbilla 1.3). La identidad vive en boca/barbilla; ojos/cejas/nariz son canon de estilo."
+ },
+ "auto_todas_las_caras": {
+  "ojo_ancho_mediana": 0.59,
+  "ojo_alto_mediana": 0.56,
+  "ceja_grosor_mediana": 0.22,
+  "caras_validas": 16,
+  "caras_detectadas": 89,
+  "excluidas": "guiño/borrosas (5), boca abierta o barba para boca/barbilla (8)"
+ },
+ "adan_v08": {
+  "ceja_centro_v": -0.36,
+  "ceja_grosor": 0.12,
+  "ojo_iris_ancho": 0.38,
+  "ojo_alto": 0.5,
+  "nariz_base_v": 0.43,
+  "nariz_ancho": 0.25,
+  "boca_v": 0.75,
+  "boca_ancho": 0.3,
+  "barbilla_v": 1.05,
+  "cara_ancho_v0.5": 2.4,
+  "cara_ancho_v0.8": 2.2,
+  "oreja_v": [
+   -0.2,
+   0.45
+  ],
+  "oreja_borde_u": 1.6
+ }
+}
