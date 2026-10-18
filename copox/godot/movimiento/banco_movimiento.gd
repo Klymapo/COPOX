@@ -198,6 +198,7 @@ func parpadear() -> void:
 
 
 func cuerpo_actual() -> String: return String(_cuerpo.get_current_node())
+func posicion_cuerpo() -> float: return _cuerpo.get_current_play_position()
 func cara_actual() -> String: return String(_cara.get_current_node())
 
 

@@ -49,6 +49,7 @@ func _ready() -> void:
 		cam.position = obj + Vector3(sin(yaw) * cos(el), sin(el), cos(yaw) * cos(el)) * 3.0
 		cam.look_at(obj, Vector3.UP)
 		await RenderingServer.frame_post_draw
+		if a.has("manos"): print("MANOS %d %s L=%s R=%s" % [k, banco.cuerpo_actual(), ctl.mano_actual("L"), ctl.mano_actual("R")])
 		get_viewport().get_texture().get_image().save_png(a.get("salida", "/tmp") + "/f_%03d.png" % k)
 		k += 1
 	get_tree().quit()

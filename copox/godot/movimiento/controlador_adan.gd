@@ -35,6 +35,65 @@ func montar(p: Node3D, b: BancoMovimiento) -> void:
 	escala = p.scale.x
 	for n in p.find_children("*", "Skeleton3D", true, false):
 		_sk = n
+	_montar_manos()
+
+
+# --- manos intercambiables (V40+): mallas MANO_<ESTADO>_<L|R>; el nodo MANOS dice qué mano lleva cada clip -------
+var _manos := {}                  ## "L"/"R" -> {estado: MeshInstance3D}
+var _mapa_manos := {}             ## extras de MANOS: variantes, defecto, por_clip
+var _forzada := {}                ## "L"/"R" -> estado forzado ("" = según el clip)
+
+
+func _montar_manos() -> void:
+	_manos = {"L": {}, "R": {}}
+	for m in personaje.find_children("MANO_*", "MeshInstance3D", true, false):
+		var partes := String(m.name).split("_")           # MANO, ESTADO, L|R
+		if partes.size() == 3 and partes[2] in _manos:
+			_manos[partes[2]][partes[1].to_lower()] = m
+	var nodo := personaje.find_child("MANOS", true, false)
+	_mapa_manos = nodo.get_meta("extras", {}) if nodo else {}
+	_forzada = {"L": "", "R": ""}
+	_actualizar_manos()
+
+
+## Fija la mano de un lado ("L"/"R") a un estado ("abierta", "puno", "senalar", …). "" vuelve a la del clip.
+func forzar_mano(lado: String, estado: String) -> void:
+	_forzada[lado] = estado
+	_actualizar_manos()
+
+
+func mano_actual(lado: String) -> String:
+	for e in _manos.get(lado, {}):
+		if _manos[lado][e].visible:
+			return e
+	return ""
+
+
+func _estado_mano(lado: String) -> String:
+	if _forzada.get(lado, "") != "":
+		return _forzada[lado]
+	var defecto: String = _mapa_manos.get("defecto", "abierta")
+	var clip := banco.cuerpo_actual() if banco else ""
+	var tramos: Array = _mapa_manos.get("por_clip", {}).get(clip, {}).get(lado, [])
+	if tramos.is_empty():
+		return defecto
+	var t := banco.posicion_cuerpo()
+	var e: String = tramos[0][1]
+	for tr in tramos:
+		if t >= float(tr[0]):
+			e = tr[1]
+	return e
+
+
+func _actualizar_manos() -> void:
+	for lado in _manos:
+		if _manos[lado].is_empty():
+			continue
+		var e := _estado_mano(lado)
+		if not e in _manos[lado]:
+			e = _mapa_manos.get("defecto", "abierta")
+		for k in _manos[lado]:
+			_manos[lado][k].visible = (k == e)
 
 
 func mover(direccion: Vector3, corriendo := false) -> void:
@@ -185,6 +244,7 @@ func avanzar(dt: float) -> void:
 		personaje.global_position += vel * dt
 	banco.avanzar(dt)
 	_avanzar_accion_mano(dt)
+	_actualizar_manos()
 
 
 func _girar_hacia(d: Vector3, dt: float) -> void:
