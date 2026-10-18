@@ -117,5 +117,29 @@ class TestCompactar(unittest.TestCase):
             self.assertTrue(np.array_equal(Modelo(b).posar()[0], Modelo(c).posar()[0]))
 
 
+class TestOrientar(unittest.TestCase):
+    def test_voltea_cubo_invertido(self):
+        from copox.medicion.gltf import leer_glb
+        from copox.medicion.orientar import diagnostico, orientar
+        with tempfile.TemporaryDirectory() as d:
+            a, b, c = (os.path.join(d, n) for n in ("a.glb", "b.glb", "c.glb"))
+            _glb_cubo(a)
+            j, binc = leer_glb(a)
+            inv = not diagnostico(j, binc)[0]["invertida"]
+            # cubo con el orden de triángulos al revés
+            raw = bytearray(open(a, "rb").read())
+            jl = struct.unpack("<I", raw[12:16])[0]
+            o = 28 + jl + 96
+            F = np.frombuffer(bytes(raw[o:o + 72]), np.uint16).reshape(-1, 3)[:, ::-1].copy()
+            raw[o:o + 72] = F.tobytes()
+            open(b, "wb").write(raw)
+            j, binc = leer_glb(b)
+            self.assertNotEqual(diagnostico(j, binc)[0]["invertida"], not inv)
+            if diagnostico(j, binc)[0]["invertida"]:
+                orientar(b, c)
+                j, binc = leer_glb(c)
+                self.assertFalse(diagnostico(j, binc)[0]["invertida"])
+
+
 if __name__ == "__main__":
     unittest.main()

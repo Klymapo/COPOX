@@ -69,3 +69,21 @@ Salida:
   - Concordancia con el render anterior (`clases_tri`, sin descarte de caras): 100% de píxeles iguales en 6 vistas de Adán V10 y 6 de Theo V03.
 - `copox/medicion/compactar.py`: quita datos huérfanos que dejan las ediciones. Adán V10 24.0 → 7.9 MB; Theo V03 35.2 → 7.9 MB; 112 clips × 5 tiempos idénticos (diferencia 0.0) y texturas iguales.
 - Pruebas: `python -m unittest tests.test_render`.
+
+## Nombres y likeness de rostro (17 oct 2026, noche)
+
+- Nombres de Admin: **CHXP** = renderizador (`copox/render`); **SENKU** = motor matemático (`copox/medicion`).
+- `copox/medicion/orientar.py`: detecta piezas con caras invertidas (volumen con signo) y las voltea (orden de triángulos y normales). En Adán: 22 piezas de brazos, piernas y manos, más 2 del short. Se excluyen la cavidad de la boca y las placas doubleSided.
+- `copox/render/rostro.py`: render del rostro en el marco de SENKU (ojos en u = ±0.5 ED, 40 px/ED) y lámina contra los parches de referencia `R_*/P_*`.
+- `ocultar` en los códigos de vista acepta también nombres de material.
+- Receta `docs/medicion/receta_theo_v05.py`:
+  - Ojos: forma ancha, iris alto y oscuro, brillo único y párpado grueso.
+  - Cejas: barra levemente inclinada, 0.08 ED más abajo.
+  - Nariz: ×0.72 de ancho y ×0.65 de saliente.
+  - Rasgos de Theo: cara baja −9 % y media sonrisa.
+  - Con `--solo-estilo` aplica solo el canon de estilo (para Adán).
+- IoU de rasgos en el marco SENKU (oscuro: ojos, cejas, boca), Theo V03 → V05:
+  - R_15: 0.415 → 0.482
+  - R_1: 0.352 → 0.439
+  - R_0: 0.345 → 0.443
+  - Esclerótica (claro): de ~0.09 a ~0.28.

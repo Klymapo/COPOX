@@ -18,7 +18,7 @@ Claves:
   modo              color | arcilla | malla | normales | curvatura | clases | clases_tri
   tam               lado de la imagen en px (512 iterar, 1024 final)
   sombreado         suave | facetas
-  ocultar           nombres de nodo separados por coma
+  ocultar           nombres de nodo o de material separados por coma
 """
 from __future__ import annotations
 

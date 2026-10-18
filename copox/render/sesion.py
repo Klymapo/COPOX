@@ -206,7 +206,9 @@ class Sesion:
         v = leer(vista) if isinstance(vista, str) else replace(vista)
         clip = None if v.clip == "reposo" else (v.clip if v.clip in self.m.clips else None)
         geo = self.geo(clip, v.t)
-        visibles = ~np.isin(self.nodoF, v.ocultar) if v.ocultar else np.ones(len(self.F), bool)
+        visibles = np.ones(len(self.F), bool)
+        if v.ocultar:  # por nombre de nodo o de material
+            visibles &= ~np.isin(self.nodoF, v.ocultar) & ~np.isin(np.array(self.mat_nombre)[self.prim], v.ocultar)
         if v.modo == "clases_tri":
             visibles &= self.visF
         cam, esc, cen = self.encuadre(v, geo, visibles)
