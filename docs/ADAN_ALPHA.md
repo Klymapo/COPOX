@@ -1,6 +1,6 @@
 # ADÁN ALPHA
 
-17 oct 2026 · Elio (Claude) · nombre dado por Admin.
+17 oct 2026 · Elio (Claude) · nombre dado por Admin. **Fuente de medidas definitiva: las referencias renderizadas; el PDF `ALTH_META_Modelado.pdf` queda solo como histórico.**
 
 **Adán Alpha** es la base universal de personajes ALTH-META aprobada como hito: el cuerpo de Adán con el rostro y la cabeza en canon ALTH (sin rasgos de un personaje). Su derivado de identidad es **Theo Alpha**. El pelo con mechones queda para después (decisión de Admin: «el pelo al final»).
 
