@@ -13,6 +13,9 @@ Ediciones soportadas (lista en ``ediciones``):
       escala a lo largo del eje raíz→hacia, con pivote en la raíz; afecta la raíz y su descendencia.
   {"tipo": "escala_vertices", "huesos": "Neck", "factores": [sx, sy, sz], "pivote": [x, y, z]}
       escala solo los vértices pesados por esos huesos (no mueve huesos).
+  {"tipo": "rotar", "raiz": "LeftThumbMetacarpal", "eje": [0, 1, 0], "grados": 30}
+      gira el hueso, su descendencia y sus vértices (pivote = cabeza del hueso). Las claves de rotación de los
+      clips se conjugan con ``conjugar_claves`` para que las poses giren igual.
   {"tipo": "acortar", "hasta": ["LeftFoot", "RightFoot"], "fijos": ["Root"], "delta": 0.0135}
       acorta las piernas manteniendo los pies en el piso: todo lo que NO es la
       descendencia de ``hasta`` (ni ``fijos``) baja ``delta``.
@@ -88,6 +91,19 @@ def editar(src: str, dst: str, ediciones: list[dict], nota: str = "") -> dict:
             for k in _desc(j, r):
                 if k in L:
                     componer(k, S, piv - S @ piv)
+        elif e["tipo"] == "rotar":
+            # gira el hueso raíz, su descendencia y sus vértices en el reposo (pivote = cabeza de la raíz);
+            # las rotaciones de los clips de esos huesos se conjugan aparte (rotar_claves) para que cada pose
+            # quede girada igual que el reposo
+            r = _idx(j, e["raiz"])
+            piv = P0[r]
+            ax = np.asarray(e["eje"], float); ax /= np.linalg.norm(ax)
+            a = np.radians(e["grados"])
+            K = np.array([[0, -ax[2], ax[1]], [ax[2], 0, -ax[0]], [-ax[1], ax[0], 0]])
+            Rm = np.eye(3) + np.sin(a) * K + (1 - np.cos(a)) * K @ K
+            for k in _desc(j, r):
+                if k in L:
+                    componer(k, Rm, piv - Rm @ piv)
         elif e["tipo"] == "escala_vertices":
             S = np.diag(e["factores"]).astype(float)
             piv = np.array(e["pivote"], float)
@@ -193,3 +209,48 @@ def editar(src: str, dst: str, ediciones: list[dict], nota: str = "") -> dict:
         f.write(struct.pack("<II", len(js), 0x4E4F534A)); f.write(js)
         f.write(struct.pack("<II", len(out), 0x004E4942)); f.write(out)
     return resumen
+
+
+def conjugar_claves(src: str, dst: str, giros: list[dict]) -> int:
+    """Para cada giro {"raiz", "eje", "grados"}: las claves de rotación de la raíz y su descendencia pasan a
+    q' = R q R⁻¹ (R en el marco de reposo, sin rotación). Así la cadena posada queda igual que antes, girada R
+    alrededor de la cabeza de la raíz en el marco del padre."""
+    j, b = leer_glb(src)
+    out = bytearray(b)
+
+    def qmul(a, c):
+        x1, y1, z1, w1 = a.T if a.ndim > 1 else a
+        x2, y2, z2, w2 = c.T if c.ndim > 1 else c
+        return np.stack([w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2, w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
+                         w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2, w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2], -1)
+    n = 0
+    for gi in giros:
+        ax = np.asarray(gi["eje"], float); ax /= np.linalg.norm(ax)
+        h = np.radians(gi["grados"]) / 2
+        R = np.r_[ax * np.sin(h), np.cos(h)]; Ri = np.r_[-ax * np.sin(h), np.cos(h)]
+        nodos = set(_desc(j, _idx(j, gi["raiz"])))
+        for a in j.get("animations", []):
+            for ch in a["channels"]:
+                if ch["target"]["node"] in nodos and ch["target"]["path"] == "rotation":
+                    sm = a["samplers"][ch["sampler"]]
+                    Q = accesor(j, b, sm["output"]).astype(float).reshape(-1, 4)
+                    Q2 = qmul(qmul(np.broadcast_to(R, Q.shape), Q), np.broadcast_to(Ri, Q.shape))
+                    arr = np.ascontiguousarray(Q2, np.float32)
+                    while len(out) % 4:
+                        out.append(0)
+                    j["bufferViews"].append({"buffer": 0, "byteOffset": len(out), "byteLength": arr.nbytes})
+                    out.extend(arr.tobytes())
+                    j["accessors"].append({"bufferView": len(j["bufferViews"]) - 1, "componentType": 5126,
+                                           "count": len(arr), "type": "VEC4"})
+                    sm["output"] = len(j["accessors"]) - 1
+                    n += 1
+    while len(out) % 4:
+        out.append(0)
+    j["buffers"] = [{"byteLength": len(out)}]
+    js = json.dumps(j, separators=(",", ":"), ensure_ascii=False).encode()
+    js += b" " * (-len(js) % 4)
+    with open(dst, "wb") as f:
+        f.write(struct.pack("<III", 0x46546C67, 2, 28 + len(js) + len(out)))
+        f.write(struct.pack("<II", len(js), 0x4E4F534A)); f.write(js)
+        f.write(struct.pack("<II", len(out), 0x004E4942)); f.write(out)
+    return n
