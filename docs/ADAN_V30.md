@@ -1,4 +1,4 @@
-# Adán V30 · boca plana sin escalón en la quijada (SIN APROBAR)
+# Adán V30 · boca plana sin escalón en la quijada (APROBADA)
 
 - **Pedido de Admin (18 oct 2026):** en V29 se veía un desnivel en la mandíbula; primero mejorar el render para verlo, luego arreglarlo.
 - **Resultado:** `ADAN_V30.glb`, SHA-256 `98454d28664bf1dc690dc78bfadb7c2f496c1d45d78a62a063ebf9a25718d29a` (en `Klymapo/copox-modelos`). Receta: `docs/medicion/receta_adan_v30.py ADAN_V22_HABLA.glb ADAN_V30.glb`, reproducible bit a bit (verificado).
@@ -36,4 +36,4 @@ Con gestos (luz de juego): sonrisa 0.93, vis_A 1.05, vis_E 1.06, triste 0.90 (V2
 ## Pendiente
 
 - Queda un brillo muy leve bajo el centro de la boca (no lo marca SENKU).
-- Revisión visual y aprobación de Admin.
+- Aprobada por Admin el 18 oct 2026, 09:28.
