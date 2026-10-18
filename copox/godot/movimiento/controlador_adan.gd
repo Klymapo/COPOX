@@ -1,0 +1,140 @@
+## COPOX · controlador de movimiento para Adán (y derivados con su rig).
+## Usa BancoMovimiento (cuerpo + cara + parpadeo + mirada) y mueve el nodo del personaje sin física,
+## a las velocidades medidas de los clips (pies sin patinar):
+##   caminar 0.259 u/s · correr 0.834 u/s (Adán mide 0.848 u; escala el nodo y las velocidades escalan igual).
+## En el juego: llama mover(direccion, corriendo) cada cuadro desde tu input; saltar(), dash(), golpe("R"/"L"),
+## senalar(), equipar(ruta_glb) y desequipar(). Si tu personaje usa CharacterBody3D, toma `velocidad_deseada`
+## y pásala a velocity antes de move_and_slide() en lugar de dejar que este nodo mueva la posición.
+class_name ControladorAdan
+extends Node
+
+const VEL_CAMINAR := 0.259
+const VEL_CORRER := 0.834
+const DASH_DIST := 0.42          ## u recorridas en el dash
+const DASH_T := 0.55
+const SALTO_AVANCE := 0.6        ## fracción de la velocidad que se conserva en el aire
+
+var personaje: Node3D
+var banco: BancoMovimiento
+var mueve_nodo := true
+var velocidad_deseada := Vector3.ZERO
+var escala := 1.0
+
+var _estado := "Idle"
+var _t_accion := 0.0
+var _accion := ""
+var _dir := Vector3.ZERO
+var _corriendo := false
+var _arma: Node3D
+var _sk: Skeleton3D
+
+
+func montar(p: Node3D, b: BancoMovimiento) -> void:
+	personaje = p
+	banco = b
+	escala = p.scale.x
+	for n in p.find_children("*", "Skeleton3D", true, false):
+		_sk = n
+
+
+func mover(direccion: Vector3, corriendo := false) -> void:
+	_dir = Vector3(direccion.x, 0, direccion.z)
+	if _dir.length() > 1.0:
+		_dir = _dir.normalized()
+	_corriendo = corriendo
+
+
+func saltar() -> void:
+	_accion = "Jump"; _t_accion = 1.0
+	banco.gesto("Jump")
+
+
+func dash() -> void:
+	_accion = "Dash"; _t_accion = DASH_T
+	banco.gesto("Dash")
+
+
+func golpe(lado := "R") -> void:
+	_accion = "Punch_" + lado; _t_accion = 0.6
+	banco.gesto(_accion)
+
+
+func senalar() -> void:
+	_accion = "PointFwd"; _t_accion = 1.6
+	banco.gesto("PointFwd")
+
+
+## Apuntar con el arma (bucle). Se sale al moverse o con otra acción.
+func apuntar() -> void:
+	_accion = "Aim"; _t_accion = INF
+	banco.gesto("Aim")
+
+
+## Arma con nodo AGARRE (ver copox/armas/armas_alth.py). Se pega a la mano derecha.
+func equipar(ruta: String) -> void:
+	desequipar()
+	var escena: PackedScene = load(ruta)
+	_arma = escena.instantiate()
+	var agarre: Node3D = _arma.find_child("AGARRE", true, false)
+	var ba := BoneAttachment3D.new()
+	ba.bone_name = "RightHand"
+	_sk.add_child(ba)
+	# marco de agarre en la pose de reposo del esqueleto (constante respecto al hueso de la mano)
+	var g := func(n): return _sk.get_bone_global_rest(_sk.find_bone(n)).origin
+	var W: Vector3 = g.call("RightHand"); var Ip: Vector3 = g.call("RightIndexProximal")
+	var Lp: Vector3 = g.call("RightLittleProximal"); var Fa: Vector3 = g.call("RightLowerArm")
+	var y := (Ip - Lp).normalized()
+	var x := (W - Fa); x = (x - y * x.dot(y)).normalized()
+	var z := x.cross(y).normalized()
+	var palma := W.lerp((Ip + Lp) * 0.5, 0.75)
+	var G := Transform3D(Basis(x, y, z), palma + (x * 0.012) - (z * 0.008))
+	var mano := _sk.get_bone_global_rest(_sk.find_bone("RightHand"))
+	ba.add_child(_arma)
+	_arma.transform = mano.affine_inverse() * G * agarre.transform.affine_inverse()
+
+
+func desequipar() -> void:
+	if _arma:
+		_arma.get_parent().queue_free()
+		_arma = null
+
+
+func avanzar(dt: float) -> void:
+	var vel := Vector3.ZERO
+	if _accion != "":
+		_t_accion -= dt
+		var adelante := personaje.global_transform.basis.z      # el modelo mira hacia +z
+		match _accion:
+			"Dash":
+				var u := clampf(1.0 - _t_accion / DASH_T, 0, 1)
+				vel = adelante * DASH_DIST * escala * 2.0 * (1.0 - u) / DASH_T   # se frena al final
+			"Jump":
+				vel = _dir * (VEL_CORRER if _corriendo else VEL_CAMINAR) * escala * SALTO_AVANCE
+		if _accion == "Aim" and _dir.length() > 0.05:
+			_t_accion = 0.0
+		if _t_accion <= 0.0:
+			_accion = ""
+			_estado = ""
+	if _accion == "":
+		var obj := "Idle"
+		var v := 0.0
+		if _dir.length() > 0.05:
+			obj = "Run" if _corriendo else "Walk"
+			v = VEL_CORRER if _corriendo else VEL_CAMINAR
+			_girar_hacia(_dir, dt)
+		vel = personaje.global_transform.basis.z * v * escala
+		if obj != _estado:
+			_estado = obj
+			banco.gesto(obj)
+	velocidad_deseada = vel
+	if mueve_nodo:
+		personaje.global_position += vel * dt
+	banco.avanzar(dt)
+
+
+func _girar_hacia(d: Vector3, dt: float) -> void:
+	var actual := personaje.global_transform.basis.z
+	var ang := atan2(d.x, d.z)
+	var ang0 := atan2(actual.x, actual.z)
+	var diff := wrapf(ang - ang0, -PI, PI)
+	personaje.rotate_y(clampf(diff, -8.0 * dt, 8.0 * dt))
