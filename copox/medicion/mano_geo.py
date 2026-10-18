@@ -38,7 +38,8 @@ def _elipsoide(P, c, rad):
 class Diseno:
     """Parámetros de la mano (izquierda, pose T, palma abajo, dedos hacia +x). Unidades del modelo."""
     def __init__(self, H, puntas, pulgar_punta, palma_x0, palma_y, palma_z, grosor, dedo_r, pulgar_r,
-                 tenar, k_membrana, conico=0.85, angosta_muneca=0.82, radio_palma=0.009, angosta_pulgar=0.82, membrana_pulgar=None, canto_fijo=False):
+                 tenar, k_membrana, conico=0.85, angosta_muneca=0.82, radio_palma=0.009, angosta_pulgar=0.82, membrana_pulgar=None, canto_fijo=False,
+                 ovalo_dedos=None, ovalo_pulgar=None, grosor_muneca=None):
         self.H, self.puntas, self.pulgar_punta = H, puntas, pulgar_punta
         self.palma_x0, self.palma_y, self.palma_z, self.grosor = palma_x0, palma_y, palma_z, grosor
         self.dedo_r, self.pulgar_r, self.tenar, self.k = dedo_r, pulgar_r, tenar, k_membrana
@@ -46,6 +47,16 @@ class Diseno:
         self.angosta_pulgar = angosta_pulgar
         self.membrana_pulgar = membrana_pulgar
         self.canto_fijo = canto_fijo
+        # V38: dedos/pulgar ovalados — más gruesos del dorso a la palma (eje y en reposo) sin cambiar su ancho: el puño
+        # gana volumen (Hoja de vistas) y la silueta de la mano abierta (mano con regla) no cambia
+        self.ovalo_dedos, self.ovalo_pulgar = ovalo_dedos, ovalo_pulgar
+        # V38: la palma es más gruesa en la muñeca (factor sobre `grosor`) y se adelgaza hacia los nudillos, como en
+        # la referencia del brazo de Adán: el antebrazo entra a la mano sin escalón (de frente no cambia nada)
+        self.grosor_muneca = grosor_muneca
+        # V38: muñeca dentro de la misma superficie implícita. dict con x0 (dentro del antebrazo), c0 (y, z del eje del
+        # antebrazo), r0 (radios y, z del último anillo del antebrazo ×0.97), x1 (dentro de la palma). Un cilindro
+        # elíptico que se angosta de r0 a la sección de la palma y se funde con ella (smin): sin escalón ni labio.
+        self.muneca = None
 
     def cadenas(self):
         H = self.H
@@ -73,7 +84,14 @@ class Diseno:
         c = np.array([cx, self.palma_y, cz])
         if self.canto_fijo:
             hzx = np.maximum(hz * esc, self.rp + 1e-4)
-            q = np.abs(P - c) - np.stack([np.full(len(P), hx - self.rp), np.full(len(P), self.grosor / 2 - self.rp), hzx - self.rp], 1)
+            hy = np.full(len(P), self.grosor / 2)
+            cc = np.broadcast_to(c, P.shape).copy()
+            if self.grosor_muneca:
+                hy = hy * (self.grosor_muneca + (1 - self.grosor_muneca) * su)
+                # el grueso extra crece hacia el DORSO (+y en reposo): la cara de la palma queda plana (agarres) y el
+                # dorso continúa la línea del antebrazo, como en la referencia de lado
+                cc[:, 1] = c[1] + (hy - self.grosor / 2)
+            q = np.abs(P - cc) - np.stack([np.full(len(P), hx - self.rp), hy - self.rp, hzx - self.rp], 1)
             d = np.linalg.norm(np.maximum(q, 0), axis=1) + np.minimum(q.max(1), 0) - self.rp
         else:                                   # V36 (se conserva para reproducir esa versión bit a bit)
             Q = P.copy(); Q[:, 2] = cz + (P[:, 2] - cz) / esc
@@ -83,6 +101,18 @@ class Diseno:
         if self.membrana_pulgar is not None:
             a, b, r = self.membrana_pulgar
             d = _smin(d, _capsula(P, a, b, r, r), self.k)
+        if self.muneca is not None:
+            m = self.muneca
+            x0, x1 = m["x0"], m["x1"]
+            t = np.clip((P[:, 0] - x0) / (x1 - x0), 0, 1); st = t * t * (3 - 2 * t)
+            ry = m["r0"][0] + (m["r1"][0] - m["r0"][0]) * st
+            rz = m["r0"][1] + (m["r1"][1] - m["r0"][1]) * st
+            cyy = m["c0"][0] + (m["c1"][0] - m["c0"][0]) * st
+            czz = m["c0"][1] + (m["c1"][1] - m["c0"][1]) * st
+            e = np.sqrt(((P[:, 1] - cyy) / ry) ** 2 + ((P[:, 2] - czz) / rz) ** 2)
+            dm = (e - 1) * np.minimum(ry, rz)
+            dm = np.maximum(dm, np.maximum(x0 - P[:, 0], P[:, 0] - x1))     # tapas
+            d = _smin(d, dm, m.get("k", self.k * 1.6))
         # tenar (base del pulgar)
         d = _smin(d, _elipsoide(P, self.tenar[0], self.tenar[1]), self.k)
         dedos = None                                # dedos entre sí: unión dura (no se pegan como mitón)
@@ -96,7 +126,15 @@ class Diseno:
                     a = a - (b - a) / np.linalg.norm(b - a) * 0.006     # la falange entra un poco en la palma
                 r1 = r0 * (1 - (1 - self.conico) * i / (len(seg) - 1))
                 r2 = r0 * (1 - (1 - self.conico) * (i + 1) / (len(seg) - 1))
-                c = _capsula(P, a, b, r1, r2)
+                ov = self.ovalo_pulgar if nombre == "Thumb" else self.ovalo_dedos
+                if ov:
+                    ab = b - a
+                    t = np.clip(((P - a) @ ab) / (ab @ ab), 0, 1)
+                    yax = a[1] + t * ab[1]
+                    Q = P.copy(); Q[:, 1] = yax + (P[:, 1] - yax) / ov
+                    c = _capsula(Q, a, b, r1, r2)
+                else:
+                    c = _capsula(P, a, b, r1, r2)
                 dd = c if dd is None else np.minimum(dd, c)
             dedos = dd if dedos is None else np.minimum(dedos, dd)
         d = _smin(d, dedos, self.k)                 # solo palma ↔ dedos se funden: membranas y nudillos
@@ -108,6 +146,11 @@ class Diseno:
         lo = np.array([self.palma_x0 - 0.006, pts[:, 1].min() - 0.03, min(self.palma_z[0], pts[:, 2].min()) - 0.02])
         hi = np.array([pts[:, 0].max() + 0.02, pts[:, 1].max() + 0.03, max(self.palma_z[1], pts[:, 2].max()) + 0.02])
         lo[0] = self.palma_x0 - 0.001
+        if self.muneca is not None:                 # la malla empieza dentro del antebrazo
+            m = self.muneca
+            lo[0] = m["x0"] + 0.0012
+            lo[1] = min(lo[1], m["c0"][0] - m["r0"][0] - 0.004); hi[1] = max(hi[1], m["c0"][0] + m["r0"][0] + 0.004)
+            lo[2] = min(lo[2], m["c0"][1] - m["r0"][1] - 0.004); hi[2] = max(hi[2], m["c0"][1] + m["r0"][1] + 0.004)
         n = np.ceil((hi - lo) / paso).astype(int) + 1
         ejes = [lo[i] + paso * np.arange(n[i]) for i in range(3)]
         F = np.empty(n, np.float32)

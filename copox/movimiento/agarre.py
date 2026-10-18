@@ -191,6 +191,10 @@ class Mano:
         self.huesos = [lado + "Hand"] + [lado + d + f for d in DEDOS for f in FAL] + \
                       [lado + "Thumb" + f for f in ("Metacarpal", "Proximal", "Distal")]
         cols = [self.nombres.index(h) for h in self.huesos]
+        # peso del antebrazo (V38: la muñeca es parte de la malla de la mano; lo que es antebrazo no cuenta para el
+        # agarre: en la pose real la muñeca se acomoda y el arma no choca con el antebrazo)
+        ia = self.nombres.index(lado + "LowerArm") if lado + "LowerArm" in self.nombres else None
+        self.w_antebrazo = Wf[:, ia] / np.maximum(Wf.sum(1), 1e-9) if ia is not None else np.zeros(len(self.V))
         self.W = Wf[:, cols] / np.maximum(Wf[:, cols].sum(1, keepdims=True), 1e-9)
         H = self.H; L = lado
         self.s = 1.0 if lado == "Left" else -1.0
@@ -524,7 +528,10 @@ class AgarreCierre(Agarre):
         self.sub = {d: np.unique(np.concatenate(self.seg[d])) for d in self.seg}
         dedos = np.concatenate([self.sub[d] for d in self.sub])
         self.rigido = np.setdiff1d(np.arange(len(m.V)), dedos)
-        self.palma = np.argsort((m.V - m.centro_palma) @ m.n_palma)[-60:]
+        self.rigido = self.rigido[m.w_antebrazo[self.rigido] < 0.25]
+        # cara de la palma: entre la muñeca y los nudillos (no la muñeca/antebrazo, que en V38 es más gruesa)
+        enpalma = self.rigido[((m.V[self.rigido] - m.H[L + "Hand"]) @ m.x) > 0.008]
+        self.palma = enpalma[np.argsort((m.V[enpalma] - m.centro_palma) @ m.n_palma)[-60:]]
         # eje de abducción palmar: a lo largo del metacarpo del pulgar, con el signo que lleva la punta hacia la palma
         td = m.H[L + "ThumbDistal"] - m.H[L + "ThumbMetacarpal"]; td = td / np.linalg.norm(td)
         e = np.cross(m.n_palma, td); e /= np.linalg.norm(e)
@@ -675,6 +682,8 @@ class AgarreCierre(Agarre):
             Vo = (self._posar_sub(self.rot3({d: a}, (0, 0, 0)), m.yema[d]) - t) @ R
             rel = Vo - eje_o; rel -= np.outer(rel @ ey, ey)
             envol += max(0.004 - float(np.max(rel @ dp)), 0) * 1e3 + max(min(sds) - self.TOCA, 0) * 1e3
+            # agarre de fuerza: la falange media y la distal también tocan (si no, "envuelve" con la pura punta)
+            envol += sum(max(v - self.TOCA, 0) for v in sds[1:]) * 300
         res = {"pen": pen, "palma": palma, "envol": envol, "ang": ang, "toques": toques}
         dist = 0.0
         if completo or True:
@@ -683,7 +692,7 @@ class AgarreCierre(Agarre):
                     a, dd, v = self._contacto(d, R, t)
                     ang[d] = a; res.setdefault("dist", {})[d] = dd; res.setdefault("x_contacto", {})[d] = v
                     dist += dd * 1e3
-        res["costo"] = pen * 10 + palma * 2 + envol + dist * 3
+        res["costo"] = pen * 10 + palma * 2 + envol + dist * 3 + getattr(self, "_reg", 0.0)
         return res
 
     def _apoyar(self, R, t):
@@ -705,7 +714,7 @@ class AgarreCierre(Agarre):
     def colocar(self, rejilla=None):
         m = self.m
         if rejilla is None:
-            rejilla = dict(dx=np.arange(-0.016, 0.0121, 0.004), dy=np.arange(-0.008, 0.0321, 0.004),
+            rejilla = dict(dx=np.arange(-0.016, 0.0241, 0.004), dy=np.arange(-0.008, 0.0321, 0.004),
                            giro=(-0.6, -0.45, -0.3, -0.15, 0.0, 0.15))
         c0 = self.R0 @ self.o.agarre[:3, 3] + self.t0           # centro del mango (mundo)
         mejor = None
@@ -716,9 +725,13 @@ class AgarreCierre(Agarre):
                     # girar alrededor del centro del mango, luego desplazar y apoyar en la palma
                     t = c0 - R @ self.o.agarre[:3, 3] + m.x * dx + m.y * dy
                     t = self._apoyar(R, t)
+                    # lejos del pliegue de la palma (la pose anatómica de partida) cuesta: sin esto el mango se va
+                    # bajo los dedos, donde "envolver" se cumple con poco cierre
+                    self._reg = ((dx / 0.008) ** 2 + (dy / 0.012) ** 2) * 2.0
                     r = self._evaluar(R, t)
                     if mejor is None or r["costo"] < mejor[0]["costo"]:
                         mejor = (r, R, t, (dx, float((t - (c0 - R @ self.o.agarre[:3, 3] + m.x * dx + m.y * dy)) @ m.n_palma), dy, g))
+        self._reg = 0.0
         return mejor
 
     def resolver(self, iter_=1):

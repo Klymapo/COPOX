@@ -85,8 +85,8 @@ def diseno(E):
     e = ESCALA_R
     extra = {k: (v(H) if callable(v) else v) for k, v in DISENO_EXTRA.items()}
     return mg.Diseno(H, puntas, pulgar_punta, palma_x0=float(palma[:, 0].min()), palma_y=float(H["LeftHand"][1]),
-                     palma_z=(float(z0), float(z1)), grosor=GROSOR * e, dedo_r={k: v * e for k, v in DEDO_R.items()},
-                     pulgar_r=PULGAR_R * e, tenar=(tenar[0], tenar[1] * e), k_membrana=K_MEMBRANA * e,
+                     palma_z=(float(z0), float(z1)), grosor=GROSOR * e, dedo_r={k: v * e * DEDO_R_FACTOR for k, v in DEDO_R.items()},
+                     pulgar_r=PULGAR_R * e * PULGAR_R_FACTOR, tenar=(tenar[0], tenar[1] * e), k_membrana=K_MEMBRANA * e,
                      radio_palma=RADIO_PALMA * e, angosta_pulgar=ANGOSTA_PULGAR, **extra), nombres
 
 
@@ -219,6 +219,8 @@ def pulgar_en_puno(E):
 EXTRA_EDICIONES = []         # ediciones de proporciones añadidas antes de construir la mano
 DISENO_EXTRA = {}            # parámetros extra para mano_geo.Diseno
 ESCALA_R = 1.0               # multiplica radios, grosor y redondeo de la mano
+DEDO_R_FACTOR = 1.0          # engrosa sólo dedos (y PULGAR_R_FACTOR el pulgar); V38+
+PULGAR_R_FACTOR = 1.0
 
 
 PUNO_V36 = {"Proximal": 82.0, "Intermediate": 88.0, "Distal": 45.0}

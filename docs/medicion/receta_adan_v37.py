@@ -66,15 +66,22 @@ def agarre_pistola(glb, salida):
     return A.detalle()
 
 
+DISENO_EXTRA_V38 = {}   # ganchos para V38 (sin efecto en V37)
+GROSOR_V38 = 1.0
+
+
 def main(src, dst):
     v36.EXTRA_EDICIONES = [{"tipo": "escalar", "raiz": f"{l}Hand", "factor": ESCALA_MANO} for l in ("Left", "Right")]
     v36.ESCALA_R = ESCALA_MANO
-    v36.DISENO_EXTRA = {"canto_fijo": True, "membrana_pulgar": membrana}
+    v36.DISENO_EXTRA = {"canto_fijo": True, "membrana_pulgar": membrana, **DISENO_EXTRA_V38}
+    grosor0 = v36.GROSOR
+    v36.GROSOR = grosor0 * GROSOR_V38
     t36 = dst + ".v36.glb"
     try:
         log = v36.main(src, t36)
     finally:
         v36.EXTRA_EDICIONES, v36.ESCALA_R, v36.DISENO_EXTRA = [], 1.0, {}
+        v36.GROSOR = grosor0
     from copox.movimiento import locomocion
     t36b = dst + ".v36b.glb"
     locomocion.escribir(t36, t36b, clips_fn=clip_apuntar_pistola)

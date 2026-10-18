@@ -24,7 +24,7 @@ def mascara_ref(ruta=REF):
     return piel
 
 
-def mascara_modelo(glb, forma, lado="L"):
+def mascara_modelo(glb, forma, lado="L", punta_robusta=False):
     from .gltf import Modelo, accesor
     from ..render.raster import rasterizar
     M = Modelo(glb)
@@ -38,7 +38,13 @@ def mascara_modelo(glb, forma, lado="L"):
     H = {j["nodes"][k]["name"]: np.linalg.inv(ibm[i])[:3, 3] for i, k in enumerate(sk["joints"])}
     P, F = pr.pos, pr.indices.reshape(-1, 3)
     W = H["LeftHand"]
-    punta = P[np.argmax(P[:, 0] * (np.abs(P[:, 2] - H["LeftMiddleProximal"][2]) < 0.006))]
+    banda = np.abs(P[:, 2] - H["LeftMiddleProximal"][2]) < 0.006
+    punta = P[np.argmax(P[:, 0] * banda)]
+    if punta_robusta:
+        # promedio de la yema (≤1 mm de la punta, en la banda del dedo medio): un solo vértice hace girar toda la
+        # silueta ~1.5° cuando cambia la malla (V38: ±0.02 de IoU sin cambio real de forma)
+        cerca = banda & (P[:, 0] > punta[0] - 0.001)
+        punta = P[cerca].mean(0)
     # plano de palma: u = −z (izquierda en la foto = +z del modelo → pulgar a la izquierda), v = x (arriba)
     def a2d(Q):
         return np.stack([-(Q[:, 2]), Q[:, 0]], 1)
@@ -60,10 +66,10 @@ def mascara_modelo(glb, forma, lado="L"):
     return m
 
 
-def comparar(glb, salida=None, raiz="."):
+def comparar(glb, salida=None, raiz=".", punta_robusta=False):
     import os
     ref = mascara_ref(os.path.join(raiz, REF))
-    mod = mascara_modelo(glb, ref.shape)
+    mod = mascara_modelo(glb, ref.shape, punta_robusta=punta_robusta)
     inter, union = (ref & mod).sum(), (ref | mod).sum()
     filas = {"total": float(inter / max(union, 1))}
     for nombre, (y0, y1, x0, x1) in {"dedos": (0, 440, 200, 640), "palma": (440, 760, 230, 640),

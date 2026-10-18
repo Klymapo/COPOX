@@ -21,6 +21,10 @@ Ediciones soportadas (lista en ``ediciones``):
   {"tipo": "acortar", "hasta": ["LeftFoot", "RightFoot"], "fijos": ["Root"], "delta": 0.0135}
       acorta las piernas manteniendo los pies en el piso: todo lo que NO es la
       descendencia de ``hasta`` (ni ``fijos``) baja ``delta``.
+  {"tipo": "mover_articulacion", "hueso": "LeftLowerArm", "delta": -0.015}
+      mueve SOLO esa articulación a lo largo del eje padre→hueso (p. ej. subir el codo) sin mover sus hijos: el
+      segmento del padre se escala con pivote en su cabeza y el del hueso con pivote en la cabeza de su hijo
+      (la muñeca queda fija). En el codo ambas transformaciones coinciden: la piel no se rompe.
 Requisito: reposo sin rotaciones/escalas en los nodos del esqueleto (se verifica).
 """
 from __future__ import annotations
@@ -106,6 +110,20 @@ def editar(src: str, dst: str, ediciones: list[dict], nota: str = "") -> dict:
             for k in _desc(j, r):
                 if k in L:
                     componer(k, Rm, piv - Rm @ piv)
+        elif e["tipo"] == "mover_articulacion":
+            k = _idx(j, e["hueso"]); pa = padre[k]
+            hijos = [c for c in j["nodes"][k].get("children", []) if c in L]
+            if not hijos:
+                raise ValueError("mover_articulacion necesita un hijo en el esqueleto")
+            ch = hijos[0]
+            ps, pe, pw = P0[pa], P0[k], P0[ch]
+            d = (pe - ps) / np.linalg.norm(pe - ps)
+            Lu, Lf, dl = float(np.linalg.norm(pe - ps)), float(np.linalg.norm(pw - pe)), float(e["delta"])
+            Su = np.eye(3) + ((Lu + dl) / Lu - 1) * np.outer(d, d)
+            dw = (pw - pe) / Lf
+            Sf = np.eye(3) + ((Lf - dl) / Lf - 1) * np.outer(dw, dw)
+            componer(pa, Su, ps - Su @ ps)
+            componer(k, Sf, pw - Sf @ pw)
         elif e["tipo"] == "escalar":
             # escala uniforme del hueso raíz, su descendencia y sus vértices (pivote = cabeza de la raíz)
             r = _idx(j, e["raiz"]); piv = P0[r]
