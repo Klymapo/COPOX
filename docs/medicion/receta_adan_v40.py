@@ -38,6 +38,7 @@ TRIS_MANO = {"abierta": 2600, "puno": 2400, "senalar": 2500}
 ENTRA = 0.006                 # u: la mano empieza dentro del antebrazo
 CORTE = 0.002                 # u: se corta 2 mm después del anillo y se cose a él
 RAMPA_MUNECA = 0.006          # u: pesos del antebrazo → mano, hasta 6 mm después de la muñeca
+MANO_FIJA = {"Idle": "abierta"}   # Admin: en reposo, mano abierta relajada (el clip traía puños)
 UMBRAL_PUNO, UMBRAL_RECTO = 55.0, 30.0   # grados de la falange proximal para decidir la mano de cada clip
 
 
@@ -132,6 +133,10 @@ def mapa_manos(E):
             continue
         nombre = a["name"]
         cl = {}
+        fija = MANO_FIJA.get(nombre.replace("-loop", ""))
+        if fija:
+            out[nombre] = out[nombre.replace("-loop", "")] = {l: [[0.0, fija]] for l in porlado}
+            continue
         for lado, dd in porlado.items():
             ts = sorted(set(np.concatenate([v[0] for v in dd.values()]).round(4)))
             estados = []

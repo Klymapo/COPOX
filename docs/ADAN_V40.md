@@ -13,6 +13,8 @@
 - Las manos van en el archivo de Adán.
 - La hoja del brazo y la del cuerpo no coinciden en el tamaño de la mano contra el antebrazo. Decisión: "manos más grandes" (×1.3), para igualar el antebrazo de V39.
 - La mano con pistola se hace después de aprobar las manos base.
+- Manos de bloques: "así van". En reposo (Idle), mano abierta relajada aunque el clip traía puños (`MANO_FIJA`).
+- Después de V40: piernas, cadera y short.
 
 **Resultado:**
 - `ADAN_V40.glb`; el SHA-256 está en `copox-modelos/adan/SHA256SUMS`.
@@ -39,7 +41,7 @@
    - Se acaban los picos del puño: el puño ya no es piel doblada por el skinning.
 3. **Intercambio.**
    - Seis mallas: `MANO_{ABIERTA|PUNO|SENALAR}_{L|R}`.
-   - El nodo `MANOS` lleva en extras qué mano usa cada clip y cuándo. Se calcula de la flexión de los dedos que traía cada clip; por ejemplo, Idle = puño, PointFwd = señalar, y en Wave se cambia en el tiempo.
+   - El nodo `MANOS` lleva en extras qué mano usa cada clip y cuándo. Se calcula de la flexión de los dedos que traía cada clip; por ejemplo, PointFwd = señalar, y en Wave se cambia en el tiempo.
    - En Godot, `ControladorAdan` muestra la mano que toca cada cuadro. `forzar_mano(lado, estado)` la fija, por ejemplo para un asset sosteniendo algo.
    - Se quitaron las manos viejas de una pieza.
 
@@ -53,4 +55,4 @@
 
 - `manos_ref.png`: la hoja del brazo arriba y la primera mano (×1.0) abajo, con el cuello en la muñeca.
 - `manos_ref2.png`: lo mismo con la mano ×1.3.
-- `godot_manos.png`: Idle (puños), PointFwd (señalar) y Wave (abierta), con el intercambio en Godot.
+- `godot_manos.png` (dev, antes de `MANO_FIJA`): Idle (puños), PointFwd (señalar) y Wave (abierta), con el intercambio en Godot.
