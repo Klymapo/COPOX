@@ -350,6 +350,10 @@ def y_rendija(x):
     return Y0 + KY * x ** 2
 
 
+# caídas (ED) del campo de la boca; V25 las ensancha para que no queden surcos al abrir
+CAIDA_SUP, CAIDA_LABIO, CAIDA_COMISURA = 0.12, 0.08, 0.15
+
+
 def campo_boca(arriba, mand, labio, perfil, ancho, comisuras, trompa):
     def f(V):
         x, y = V[:, 0], V[:, 1]
@@ -360,9 +364,9 @@ def campo_boca(arriba, mand, labio, perfil, ancho, comisuras, trompa):
         d = (y - y_rendija(x)) / ED                       # + arriba, - abajo (en ED)
         sup = d >= 0
         forma = np.clip(1 - sc ** 2, 0, 1) ** perfil if perfil > 0 else np.ones_like(sc)
-        dy_sup = arriba * np.exp(-(d / 0.12) ** 2) * g_lat
-        dy_inf = -(mand * np.exp(-(d / 0.60) ** 2) * g_mand + labio * forma * np.exp(-(d / 0.08) ** 2) * g_lat)
-        dy = np.where(sup, dy_sup, dy_inf) + comisuras * sc ** 2 * np.exp(-(d / 0.15) ** 2) * g_lat
+        dy_sup = arriba * np.exp(-(d / CAIDA_SUP) ** 2) * g_lat
+        dy_inf = -(mand * np.exp(-(d / 0.60) ** 2) * g_mand + labio * forma * np.exp(-(d / CAIDA_LABIO) ** 2) * g_lat)
+        dy = np.where(sup, dy_sup, dy_inf) + comisuras * sc ** 2 * np.exp(-(d / CAIDA_COMISURA) ** 2) * g_lat
         # ancho: escala en x cerca de la rendija; más allá de las comisuras se desvanece
         xs = np.where(np.abs(sx) <= 1, x, np.sign(x) * XW * np.exp(-((np.abs(sx) - 1) / 0.5) ** 2))
         dx = (ancho - 1) * xs * np.exp(-(d / 0.25) ** 2)
