@@ -525,6 +525,10 @@ class AgarreCierre(Agarre):
         dedos = np.concatenate([self.sub[d] for d in self.sub])
         self.rigido = np.setdiff1d(np.arange(len(m.V)), dedos)
         self.palma = np.argsort((m.V - m.centro_palma) @ m.n_palma)[-60:]
+        # eje de abducción palmar: a lo largo del metacarpo del pulgar, con el signo que lleva la punta hacia la palma
+        td = m.H[L + "ThumbDistal"] - m.H[L + "ThumbMetacarpal"]; td = td / np.linalg.norm(td)
+        e = np.cross(m.n_palma, td); e /= np.linalg.norm(e)
+        self.eje_abd = e if (rot(e, 0.3) @ td) @ m.n_palma > 0 else -e
 
     # rotaciones con 3 ángulos por dedo y (oposición, flexión1, flexión2) en el pulgar
     def rot3(self, ang, pulg):
@@ -532,8 +536,10 @@ class AgarreCierre(Agarre):
         for d in DEDOS:
             for f, a in zip(FAL, ang.get(d, (0, 0, 0))):
                 R[L + d + f] = rot(m.eje[d], a)
-        op, f1, f2 = pulg
-        R[L + "ThumbMetacarpal"] = rot(-m.n_palma, -m.s * op)
+        op, f1, f2 = pulg[:3]
+        abd = pulg[3] if len(pulg) > 3 else 0.0
+        # abd: abducción palmar (el pulgar sale del plano de la palma hacia el lado de la palma, para cruzar el mango)
+        R[L + "ThumbMetacarpal"] = rot(self.eje_abd, abd) @ rot(-m.n_palma, -m.s * op)
         R[L + "ThumbProximal"] = rot(m.eje["Thumb"], f1)
         R[L + "ThumbDistal"] = rot(m.eje["Thumb"], f2)
         return R
@@ -606,6 +612,31 @@ class AgarreCierre(Agarre):
             if mejor is None or c < mejor[0]:
                 mejor = (c, (float(op), float(f[0]), float(f[1])))
         return mejor[1] if mejor else (0.3, 0.2, 0.2)
+
+    def _pulgar_contacto(self, R, t):
+        """Pulgar a su CONTACTO_Thumb (p. ej. el costado opuesto del mango, bajo la corredera) sin penetrar:
+        rejilla de (oposición, abducción) y afinado de los 4 grados (oposición, flexión 1, flexión 2, abducción)."""
+        p = self.o.contacto("Thumb")
+        idx = self.sub["Thumb"]; pos = {v: i for i, v in enumerate(idx)}
+        yema = np.array([pos[v] for v in self.m.yema["Thumb"] if v in pos])
+        # la base del pulgar (metacarpo) se apoya en el lomo del mango y puede hundirse lo de la piel; el castigo de
+        # penetración cuenta sólo las falanges que se mueven
+        mov = np.array([pos[v] for v in np.concatenate(self.seg["Thumb"][1:])])
+
+        def c(v):
+            Vo = (self._posar_sub(self.rot3({}, tuple(v)), idx) - t) @ R
+            sd = self.o.sdf(Vo[mov])
+            dist = np.min(np.linalg.norm(Vo[yema] - p, axis=1))
+            return dist ** 2 * 1e6 + np.sum(np.clip(-self.PIEL - sd, 0, None) ** 2) * 1e7
+        b = [(-0.4, 1.2), (0.0, 1.0), (0.0, 1.2), (-0.9, 1.4)]
+        G = [(c((op, f, f, ab)), (op, f, f, ab)) for op in np.linspace(-0.4, 1.2, 9)
+             for ab in np.linspace(-0.9, 1.4, 12) for f in (0.0, 0.3, 0.6, 0.9)]
+        x0 = min(G, key=lambda g: g[0])[1]
+        r = optimize.minimize(c, x0, method="Powell", bounds=b, options={"xtol": 1e-4, "ftol": 1e-10})
+        Vo = (self._posar_sub(self.rot3({}, tuple(r.x)), idx) - t) @ R
+        self.dist_pulgar = float(np.min(np.linalg.norm(Vo[yema] - p, axis=1)))
+        self.pen_pulgar = float(-min(self.o.sdf(Vo[mov]).min(), 0))
+        return tuple(float(v) for v in r.x)
 
     def _contacto(self, d, R, t, giros=None, x0=None):
         """Lleva la yema de d a su CONTACTO sin penetrar (rejilla + afinado)."""
@@ -696,7 +727,7 @@ class AgarreCierre(Agarre):
         self.ang = dict(r["ang"])
         for d in DEDOS:
             self.ang.setdefault(d, (0.3, 0.3, 0.2))
-        self.pulg = self._pulgar(R, t)
+        self.pulg = self._pulgar_contacto(R, t) if "Thumb" in self.o.contactos else self._pulgar(R, t)
         return r
 
     def accion(self, movil, n=7):
@@ -724,4 +755,6 @@ class AgarreCierre(Agarre):
                 "dist_contacto_mm": {d: round(v * 1e3, 2) for d, v in e.get("dist", {}).items()},
                 "colocacion_mm_rad": [round(float(v), 4) for v in self.prm],
                 "angulos_grados": {d: [round(float(np.degrees(v)), 1) for v in a] for d, a in self.ang.items()},
-                "pulgar_grados": [round(float(np.degrees(v)), 1) for v in self.pulg]}
+                "pulgar_grados": [round(float(np.degrees(v)), 1) for v in self.pulg],
+                **({"pulgar_dist_mm": round(self.dist_pulgar * 1e3, 2), "pulgar_pen_mm": round(self.pen_pulgar * 1e3, 2)}
+                   if hasattr(self, "dist_pulgar") else {})}
