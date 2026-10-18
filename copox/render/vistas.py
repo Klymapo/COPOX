@@ -20,12 +20,16 @@ Claves:
   sombreado         suave | facetas | archivo (normales guardadas en el GLB, como Godot)
   ocultar           nombres de nodo o de material separados por coma
   morph             pesos de gesto: nombre:peso,nombre:peso (p. ej. boca_abrir:1,ceja_ceno_L:0.5)
+  luz               estudio (3 puntos, sin sombras) | juego (el sol del visor de Godot con sombras
+                    proyectadas: lo que se ve en el juego se ve aquí, p. ej. desniveles con luz rasante)
+Modo quiebres: mapa de calor de cambios bruscos de forma (curvatura menos su promedio local): pinta
+desniveles, escalones y piquitos que la curvatura sola muestra débiles.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
 
-MODOS = ("color", "arcilla", "malla", "normales", "curvatura", "clases", "clases_tri")
+MODOS = ("color", "arcilla", "malla", "normales", "curvatura", "quiebres", "clases", "clases_tri")
 
 
 @dataclass
@@ -44,6 +48,7 @@ class Vista:
     sombreado: str = "suave"
     ocultar: tuple = field(default_factory=tuple)
     morphs: tuple = field(default_factory=tuple)   # ((nombre, peso), ...)
+    luz: str = "estudio"                           # estudio | juego (sol del visor de Godot + sombras proyectadas)
 
     def codigo(self) -> str:
         d = "orto" if self.dist is None else f"{self.dist:g}"
@@ -53,6 +58,8 @@ class Vista:
             s += ";ocultar=" + ",".join(self.ocultar)
         if self.morphs:
             s += ";morph=" + ",".join(f"{n}:{w:g}" for n, w in self.morphs)
+        if self.luz != "estudio":
+            s += f";luz={self.luz}"
         return s
 
 
@@ -104,6 +111,10 @@ def leer(codigo: str) -> Vista:
             v.morphs = tuple((a, float(b)) for a, _, b in (x.partition(":") for x in x.split(",") if x))
         elif k == "ocultar":
             v.ocultar = tuple(n for n in x.split(",") if n)
+        elif k == "luz":
+            if x not in ("estudio", "juego"):
+                raise ValueError("luz: estudio | juego")
+            v.luz = x
         elif k in ("region", "enc", "clip", "sombreado", "nombre"):
             setattr(v, k, x)
         else:

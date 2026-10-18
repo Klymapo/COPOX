@@ -60,8 +60,11 @@ El sello de cada captura imprime el código completo: cópialo para repetir exac
 | `malla` | Arcilla con aristas: topología |
 | `normales` | Orientación de caras (rojo = derecha, verde = arriba, azul = hacia cámara) |
 | `curvatura` | Rojo convexo, azul cóncavo |
+| `quiebres` | Mapa de calor de cambios bruscos de forma (curvatura menos su promedio local): escalones, "U", piquitos. Escala fija (comparable entre versiones) |
 | `clases` | Paleta ALTH por píxel (lo que mide el motor) |
 | `clases_tri` | Clase por triángulo, idéntico al render anterior del motor |
+
+Luz: `luz=estudio` (por defecto) o `luz=juego` = el sol del visor de Godot (rotación −40, −30, 0) con sombras proyectadas y normales del archivo. Úsala para ver lo que se verá en el juego: desniveles que la luz de estudio aplana (p. ej. la "U" bajo la boca de Adán V29). Medida SENKU equivalente: `copox/medicion/quiebres.py`.
 
 Láminas: `ref` = referencia | modelo | superposición | diferencia (rojo = solo modelo, azul = solo referencia, amarillo = clase distinta) con IoU por clase. `ab` = lo mismo entre dos versiones con el mismo encuadre.
 

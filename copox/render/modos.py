@@ -57,7 +57,7 @@ class Capas:
 
     def normal(self):
         if "N" not in self._cache:
-            if self.v.sombreado == "archivo":  # normales del GLB, como las usa Godot
+            if self.v.sombreado == "archivo" or self.v.luz == "juego":  # normales del GLB, como las usa Godot
                 N = self.interp(self.geo.Na)
             elif self.v.sombreado == "facetas":
                 T = self.geo.P[self.Fv]
@@ -147,6 +147,73 @@ def iluminar(cap: Capas, albedo_lineal: np.ndarray) -> np.ndarray:
     return albedo_lineal * luz[:, None]
 
 
+# Sol del visor de Godot (copox/godot/visor.gd): DirectionalLight3D rotation_degrees (-40, -30, 0); Godot
+# compone Euler en orden YXZ y la luz apunta hacia −Z de su base.
+def _sol_godot():
+    rx, ry = np.radians(-40), np.radians(-30)
+    Rx = np.array([[1, 0, 0], [0, np.cos(rx), -np.sin(rx)], [0, np.sin(rx), np.cos(rx)]])
+    Ry = np.array([[np.cos(ry), 0, np.sin(ry)], [0, 1, 0], [-np.sin(ry), 0, np.cos(ry)]])
+    d = Ry @ Rx @ np.array([0.0, 0.0, -1.0])
+    return -d / np.linalg.norm(d)          # hacia la luz
+
+
+SOL = _sol_godot()
+
+
+def sombra(cap: Capas, res=512, sesgo=0.05):
+    """Sombras proyectadas del sol (mapa de profundidad desde la luz, ortográfico). 1 = iluminado.
+    El sesgo grande imita al de Godot (bias 0.1 + normal bias con texel grande): las sombras chicas (nariz, ceja)
+    no aparecen en el juego, solo las de piezas grandes (cabeza sobre el cuello, brazos sobre el cuerpo)."""
+    from .raster import rasterizar
+    L = SOL
+    up = np.array([0.0, 1.0, 0.0]); u = np.cross(up, L); u /= np.linalg.norm(u); vv = np.cross(L, u)
+    geo, ses = cap.geo, cap.ses
+    T = geo.P[ses.F]
+    Pu, Pv, Pz = T @ u, T @ vv, T @ L          # Pz mayor = más cerca de la luz
+    m = cap.interp(geo.P)
+    lo, hi = np.r_[Pu.min(), Pv.min()], np.r_[Pu.max(), Pv.max()]
+    # el mapa se limita a lo que se ve (más un margen) para tener resolución
+    mu, mv = m @ u, m @ vv
+    lo = np.maximum(lo, [mu.min() - 0.15, mv.min() - 0.15]); hi = np.minimum(hi, [mu.max() + 0.15, mv.max() + 0.15])
+    esc = (res - 1) / max(hi[0] - lo[0], hi[1] - lo[1])
+    X = (Pu - lo[0]) * esc; Y = (hi[1] - Pv) * esc
+    tri, bary, prof = rasterizar(X, Y, Pz, (res, res))
+    px = np.clip(((mu - lo[0]) * esc).astype(int), 0, res - 1); py = np.clip(((hi[1] - mv) * esc).astype(int), 0, res - 1)
+    dz = m @ L
+    # filtro 3×3 (bordes suaves, como PCF)
+    vis = np.zeros(len(dz))
+    for oy in (-1, 0, 1):
+        for ox in (-1, 0, 1):
+            q = prof[np.clip(py + oy, 0, res - 1), np.clip(px + ox, 0, res - 1)]
+            vis += np.where(np.isfinite(q) & (q > dz + sesgo), 0.0, 1.0)
+    return vis / 9.0
+
+
+def iluminar_juego(cap: Capas, albedo_lineal):
+    N = cap.normal()
+    sh = sombra(cap)
+    # calibrado contra el visor de Godot (amb 0.55 + sol 0.12, tonemap lineal): zona al sol / zona de canto ≈ 1.7
+    luz = 0.60 + 0.62 * np.clip(N @ SOL, 0, 1) * sh
+    return albedo_lineal * luz[:, None]
+
+
+def quiebres(cap: Capas):
+    """|curvatura − promedio local de la curvatura| por vértice (malla soldada), normalizado."""
+    ses, geo = cap.ses, cap.geo
+    if "q" not in getattr(geo, "__dict__", {}):
+        w = ses._soldadura(np.concatenate([p.pos for p in ses.m.prims]))
+        nw = w.max() + 1
+        Fw = w[ses.F]
+        E = np.unique(np.sort(np.concatenate([Fw[:, [0, 1]], Fw[:, [1, 2]], Fw[:, [2, 0]]]), 1), axis=0)
+        k = np.zeros(nw); c = np.bincount(w, minlength=nw); np.add.at(k, w, geo.curv); k /= np.maximum(c, 1)
+        ks = k.copy(); deg = np.bincount(E.ravel(), minlength=nw)
+        for _ in range(6):
+            sm = np.zeros(nw); np.add.at(sm, E[:, 0], ks[E[:, 1]]); np.add.at(sm, E[:, 1], ks[E[:, 0]])
+            ks = 0.5 * ks + 0.5 * sm / np.maximum(deg, 1)
+        geo.q = np.abs(k - ks)[w]
+    return geo.q
+
+
 def pintar(cap: Capas) -> np.ndarray:
     H, W = cap.tri.shape
     img = np.tile(FONDO, (H, W, 1))
@@ -161,11 +228,14 @@ def pintar(cap: Capas) -> np.ndarray:
         img[cap.fg] = np.stack([N @ der, N @ arriba, N @ hc], 1) * 0.5 + 0.5
         return (img * 255).astype(np.uint8)
     ao = cap.oclusion()[cap.fg][:, None]
+    luzf = iluminar_juego if cap.v.luz == "juego" else iluminar
+    if cap.v.luz == "juego":
+        ao = 1.0
     if modo == "color":
-        lin = iluminar(cap, a_lineal(cap.base())) * ao
+        lin = luzf(cap, a_lineal(cap.base())) * ao
         img[cap.fg] = a_srgb(lin)
     else:
-        gris = iluminar(cap, np.full((cap.fg.sum(), 3), a_lineal(0.72))) * ao
+        gris = luzf(cap, np.full((cap.fg.sum(), 3), a_lineal(0.72))) * ao
         img[cap.fg] = a_srgb(gris)
         if modo == "curvatura":
             k = cap.interp(cap.geo.curv[:, None])[:, 0]
@@ -176,6 +246,12 @@ def pintar(cap: Capas) -> np.ndarray:
             tinte = np.where(k > 0, rojo, azul)
             lum = img[cap.fg].mean(1, keepdims=True)
             img[cap.fg] = (1 - np.abs(k)) * img[cap.fg] + np.abs(k) * tinte * (0.45 + 0.75 * lum)
+        elif modo == "quiebres":
+            q = cap.interp(quiebres(cap)[:, None])[:, 0]
+            q = np.clip(q / 12.0, 0, 1) ** 0.8                      # 12 = quiebre fuerte (escala fija: comparable entre versiones)
+            calor = np.stack([np.clip(2 * q, 0, 1), np.clip(2 * q - 1, 0, 1) * 0.9, np.zeros_like(q)], 1)
+            lum = img[cap.fg].mean(1, keepdims=True)
+            img[cap.fg] = (1 - q[:, None]) * lum * np.array([0.75, 0.80, 0.90]) + q[:, None] * (0.25 + 0.75 * calor)
         elif modo == "malla":
             tl = cap.tri_l[cap.fg]
             Xs, Ys = cap.X[tl], cap.Y[tl]
