@@ -149,3 +149,18 @@ Salida:
   - Huecos (la cabeza es una cáscara abierta): la piel pasa a ser de dos caras y el fondo de la boca se ensancha. Theo pasa de 2,926 px a 161, Adán de 1,160 a 155. Se probó un relleno interior con elipsoide y se descartó.
   - `rostro_edicion`: `agregar_malla` y `elipsoide`.
 - Mediciones sin cambio (rasgos 0.453, piel 0.730): es pulido, no forma.
+
+## Zonas lisas (Theo V10, Adán V17)
+
+- Receta `docs/medicion/receta_theo_v10.py`: suavizado Taubin (conserva volumen) sobre la malla soldada, pesado por zona.
+  - Zonas: boca, ojos (incluye ojeras), nariz, orejas y una pasada suave de toda la cara.
+  - Protegidos: bordes abiertos y la abertura de la boca.
+- Rugosidad mediana (laplaciano / arista media), antes → después:
+  - Ojos: 0.146 → 0.055
+  - Boca: 0.101 → 0.072
+  - Nariz: 0.160 → 0.094
+  - Orejas: 0.090 → 0.066
+  - Cara: 0.087 → 0.056
+- Desplazamiento máximo: 4.3 mm.
+- Se probó rehacer la nariz como bloque ideal (`nariz_limpia`): deformaba el puente y se descartó.
+- Mediciones de parecido sin cambio (rasgos 0.453, piel 0.730). Huecos: 163 px en 90 tomas.
