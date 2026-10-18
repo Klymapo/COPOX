@@ -180,3 +180,14 @@ Salida:
   - Huecos: 129 px.
 - Pendiente de decisión de Admin: boca como calcomanía. Hoy la boca se anima con 8 morphs (boca_soplar, abrir, sonrisa, triste, o, tensa, lado_L y lado_R); con calcomanía se cambiaría por texturas.
 - Pelo: al final, por pedido de Admin.
+
+## Sin partes sumidas (Theo V12, Adán V19)
+
+- Receta `docs/medicion/receta_theo_v12.py`:
+  - Relleno de hundidos: el laplaciano solo se aplica hacia afuera, así llena cuencas sin rebajar bultos.
+  - Después, Taubin suave en toda la piel de la cabeza.
+  - Protegidos: la boca y los bordes. Nariz, cejas, ojos y orejas ya son piezas aparte.
+- Vértices cóncavos fuera de la boca: 2.6 % → 0.2 %. Desplazamiento máximo 4.9 mm.
+- Rasgos 0.470, piel 0.730. Huecos: 130 px.
+- Decisión de Admin: la boca NO será calcomanía (se queda de malla con sus 8 morphs).
+- Pupilas: hoy no se mueven. No hay huesos de ojo, y los morphs de las placas de ojo son solo `alegre_L/R`; el iris está pintado en la textura.
