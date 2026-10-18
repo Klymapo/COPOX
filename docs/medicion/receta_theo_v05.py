@@ -41,12 +41,12 @@ def _reducir(img, ss=3):
     return img.reshape(H, ss, H, ss, -1).mean((1, 3))
 
 
-def textura_ojo(lado):
+def textura_ojo(lado, a=0.325, b=0.285, Y0=0.005, iris_w=0.215, iris_h=0.34, xi=-0.04, yi=0.025, parpado=0.085):
+    """a, b: semiejes de la abertura; iris_w/h: semiejes del iris; xi, yi: centro del iris (ED, xi hacia afuera)."""
     m = OJO[lado]
 
     def f(_rgba):
         Xo, Y, Xw = _rejilla(m)
-        a, b, Y0 = 0.325, 0.285, 0.005
         forma = (np.abs(Xo / a) ** 3 + np.abs((Y - Y0) / b) ** 3) <= 1
         tope = -0.255 + 0.05 * (Xo / a) ** 2
         forma &= Y >= tope
@@ -55,8 +55,7 @@ def textura_ojo(lado):
         t = np.clip((Y - tope) / 0.25, 0, 1)
         col[:] = np.array([214, 204, 194]) * (1 - t[..., None]) + np.array([246, 241, 233]) * t[..., None]
         # iris alto y oscuro, un poco hacia la nariz
-        xi, yi = -0.04, 0.025
-        iris = ((Xo - xi) / 0.215) ** 2 + ((Y - yi) / 0.34) ** 2 <= 1
+        iris = ((Xo - xi) / iris_w) ** 2 + ((Y - yi) / iris_h) ** 2 <= 1
         g = np.clip((Y - yi + 0.30) / 0.62, 0, 1)[..., None]
         col[iris] = (np.array([34, 19, 12]) * (1 - g) + np.array([104, 60, 32]) * g)[iris]
         pup = ((Xo - xi) / 0.11) ** 2 + ((Y - yi + 0.01) / 0.16) ** 2 <= 1
@@ -66,9 +65,9 @@ def textura_ojo(lado):
         brillo = (np.maximum(np.abs(Xw - hx), np.abs(Y - hy)) <= 0.045)
         col[brillo] = (255, 255, 255)
         # línea gruesa del párpado superior
-        grosor = 0.085 - 0.03 * (Xo / a) ** 2
-        parpado = (Y - tope) <= grosor
-        col[parpado] = (34, 21, 15)
+        grosor = parpado - 0.03 * (Xo / a) ** 2
+        linea = (Y - tope) <= grosor
+        col[linea] = (34, 21, 15)
         rgba = np.concatenate([col, forma[..., None] * 255.0], -1)
         rgba[~forma, :3] = (240, 190, 150)
         return np.clip(_reducir(rgba), 0, 255).round().astype(np.uint8)

@@ -112,3 +112,13 @@ Salida:
   - Esclerótica: 0.283 (V03 0.089).
   - Piel de la cara baja: 0.738.
 - Huecos visibles en 48 tomas de cabeza: de 7,420 px (V05) a 944 (V06); 0 en la boca.
+
+## Pómulos y orejas (Theo V07, Adán V14)
+
+- Pedido de Admin: «pómulos muy marcados, orejas sumidas». Receta `docs/medicion/receta_theo_v07.py`:
+  - Costados del cráneo y pómulos: ancho máximo de 1.28 a 1.12 ED en v −0.2…0.6, para costados rectos como en las referencias.
+  - Frente de las mejillas hacia una superficie suave, más suavizado laplaciano.
+  - Orejas: misma posición externa, cara interna estirada hasta el cráneo. Sobresalen ≈0.33 ED en vez de ≈0.17, y llevan un panel interior más oscuro (COLOR_0).
+  - Mandíbula ×1.08 (solo Theo).
+- Theo V07: rasgos oscuros 0.460 (V06 0.453); piel de la cara baja 0.731 (V06 0.738).
+- Techo realista: las referencias entre sí coinciden en piel 0.75–0.93 y en rasgos 0.53–0.78 (R_15 vs R_1/R_0). Un IoU de 1.0 contra todas a la vez no es alcanzable; la meta útil es acercarse a ese techo.
