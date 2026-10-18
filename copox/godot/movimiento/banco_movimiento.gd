@@ -106,6 +106,11 @@ func montar(personaje: Node, semilla := 7) -> void:
 	_cuerpo.start(REPOSO if REPOSO in _estados_cuerpo else _estados_cuerpo[0])
 	_cara.start("neutra")
 
+	# Los párpados, dientes y lengua están plegados en reposo y se despliegan con morphs: los LOD automáticos
+	# los colapsan (se ve el ojo "roto" de lejos). Importa los personajes con meshes/generate_lods = false;
+	# esto es un respaldo por si el GLB se importó con LOD.
+	for mi in personaje.find_children("*", "MeshInstance3D", true, false):
+		(mi as GeometryInstance3D).lod_bias = 128.0
 	ojos = OjosALTH.new()
 	ojos.aplicar(personaje)
 	ojos.mirada = mirada

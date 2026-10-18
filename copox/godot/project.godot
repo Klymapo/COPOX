@@ -18,3 +18,9 @@ config/features=PackedStringArray("4.7")
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+
+[importer_defaults]
+
+scene={
+"meshes/generate_lods": false
+}
