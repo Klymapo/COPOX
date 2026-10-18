@@ -34,6 +34,9 @@ CODO = -0.015               # u: el codo sube 1.5 cm (hacia el hombro)
 # brazo (u=1.625), cada 40 px
 REF_ANCHO = [179, 187, 195, 202, 211, 218, 226, 214, 198, 207, 217, 226, 236, 245]     # de frente (palma)
 REF_GRUESO = [161, 168, 177, 185, 192, 200, 208, 199, 184, 192, 203, 212, 222, 231]    # de lado
+ANCHOS_DEDO = None          # gancho V39: rampas de pesos en nudillo / media / distal (mano_geo: 0.008, 0.006, 0.005)
+PLIEGUES = None             # gancho V39: (profundidad, ancho) de los pliegues de los dedos, fracción del radio
+FACTOR_PERFIL = [(0.0, 1.0), (1.6, 1.0)]   # (u, factor) sobre el perfil; V39 engruesa antebrazo y codo (hoja del cuerpo)
 U_MAX = 1.625               # hasta dónde llega la referencia; de ahí al hombro el factor se desvanece
 U_FIN = 1.9
 REF_MANO_PX = 440                                             # muñeca → punta del dedo medio (sólo informativo)
@@ -97,8 +100,10 @@ def antebrazo(E, lado):
     grueso_antebrazo = REF_CUERPO_ANTEBRAZO_PX / REF_CUERPO_ENVERGADURA_PX * envergadura
     k = grueso_antebrazo / _perfil(0.5, REF_GRUESO)    # u por px de la hoja del brazo
     k_mano = largo_mano / REF_MANO_PX
-    ancho = lambda u: _perfil(u, REF_ANCHO) * k        # noqa: E731
-    grueso = lambda u: _perfil(u, REF_GRUESO) * k      # noqa: E731
+    fp = np.array(FACTOR_PERFIL, float)
+    fac = lambda u: np.interp(u, fp[:, 0], fp[:, 1])   # noqa: E731
+    ancho = lambda u: _perfil(u, REF_ANCHO) * k * fac(u)        # noqa: E731
+    grueso = lambda u: _perfil(u, REF_GRUESO) * k * fac(u)      # noqa: E731
 
     # --- 3. anillos del antebrazo ---------------------------------------------------------------------
     pb = _prim(E, "Brazo" + L)
@@ -177,6 +182,7 @@ def mano_con_muneca(E, D, nombres, anillo, carpeta):
     D.muneca = {"x0": anillo["anillo_x"] - METE_EN_ANTEBRAZO, "x1": D.palma_x0 + PALMA_DESDE,
                 "c0": anillo["anillo_c"], "r0": [anillo["anillo_r"][0] * RADIO_DENTRO, anillo["anillo_r"][1] * RADIO_DENTRO],
                 "c1": [D.palma_y + (g - D.grosor / 2), cz], "r1": [g * 0.92, hz * D.angosta * 0.92]}
+    D.pliegues = PLIEGUES
     V, T = D.malla()
     n0 = len(T)
     V, T = v36.simplificar(V, T, TRIS_MANO, carpeta)
@@ -186,7 +192,7 @@ def mano_con_muneca(E, D, nombres, anillo, carpeta):
     if vol < 0:
         T = T[:, ::-1].copy()
     N = mg.normales(V, T)
-    J4, W4 = mg.pesos(V, T, D, nombres, v27.pesos_cadena)
+    J4, W4 = mg.pesos(V, T, D, nombres, v27.pesos_cadena, **({"anchos_dedo": ANCHOS_DEDO} if ANCHOS_DEDO else {}))
     J4, W4 = _pesos_muneca(V, J4, W4, nombres, anillo["anillo_x"], float(D.H["LeftHand"][0]))
     prims = E.j["meshes"][0]["primitives"]
     vieja = _prim(E, "ManoL")

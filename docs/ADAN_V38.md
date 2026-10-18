@@ -70,3 +70,7 @@
 - `godot_v38.png`, `disparo_zoom_v38.gif`, `disparo_amplio_v38.gif`: agarre y gatillo.
 - Reproducible bit a bit (verificado).
 - `punos_abc.png`: los tres puños probados.
+
+## Corrección (18 oct 2026, durante V39)
+
+El agarre que quedó dentro de `ADAN_V38.glb` NO tiene el pulgar en su contacto: está a 30.7 mm y penetra 4.3 mm. La receta resolvía el agarre con la mano intermedia (antes de la muñeca nueva). La prueba que había dado "pulgar en el armazón, 0 mm" se corrió sobre la mano final, fuera de la receta. En V39 el agarre se resuelve con la mano final.

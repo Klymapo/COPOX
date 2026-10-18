@@ -16,7 +16,7 @@ func _ready() -> void:
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR; e.ambient_light_color = Color(1, 1, 1); e.ambient_light_energy = 0.55
 	e.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	env.environment = e; add_child(env)
-	var sol := DirectionalLight3D.new(); sol.rotation_degrees = Vector3(-40, -30, 0); sol.light_energy = 0.12; sol.shadow_enabled = true; add_child(sol)
+	var sol := DirectionalLight3D.new(); sol.rotation_degrees = Vector3(-40, -30, 0); sol.light_energy = 0.12; sol.shadow_enabled = not a.has("sinsombra"); add_child(sol)
 	var adan: Node3D = load(a.get("modelo", "res://theo.glb")).instantiate(); add_child(adan)
 	var banco := BancoMovimiento.new(); banco.manual = true; add_child(banco); banco.montar(adan); banco.parpadeo_auto = false
 	var sk: Skeleton3D

@@ -475,8 +475,11 @@ def escribir_en_personaje(E, nombre, res, lado="Right", t_apretar=0.10, t_sosten
         nodo["extras"] = {"accion_nodo": acc["nodo"], "accion_tiempos": [float(t) for t in tiempos],
                           "accion_angulos": [float(a) for a in angulos], "clip_agarre": f"{nombre}_Agarre",
                           "clip_accion": f"{nombre}_Accion"}
-    j["nodes"].append(nodo)
-    j["nodes"][idx[lado + "Hand"]].setdefault("children", []).append(len(j["nodes"]) - 1)
+    if nodo["name"] in idx:                     # ya existía (se vuelve a resolver): se reemplaza en su lugar
+        j["nodes"][idx[nodo["name"]]] = nodo
+    else:
+        j["nodes"].append(nodo)
+        j["nodes"][idx[lado + "Hand"]].setdefault("children", []).append(len(j["nodes"]) - 1)
 
     def clip(nombre_clip, ts, poses):
         it = E._add(np.asarray(ts, np.float32), "SCALAR")
@@ -624,7 +627,13 @@ class AgarreCierre(Agarre):
         """Pulgar a su CONTACTO_Thumb (p. ej. el costado opuesto del mango, bajo la corredera) sin penetrar:
         rejilla de (oposición, abducción) y afinado de los 4 grados (oposición, flexión 1, flexión 2, abducción)."""
         p = self.o.contacto("Thumb")
+        p1 = self.o.contacto("Thumb_fin") if "Thumb_fin" in self.o.contactos else p
         idx = self.sub["Thumb"]; pos = {v: i for i, v in enumerate(idx)}
+
+        def dist_tramo(Y):
+            ab = p1 - p; L2 = max(float(ab @ ab), 1e-12)
+            tt = np.clip((Y - p) @ ab / L2, 0, 1)
+            return np.linalg.norm(Y - (p + tt[:, None] * ab), axis=1)
         yema = np.array([pos[v] for v in self.m.yema["Thumb"] if v in pos])
         # la base del pulgar (metacarpo) se apoya en el lomo del mango y puede hundirse lo de la piel; el castigo de
         # penetración cuenta sólo las falanges que se mueven
@@ -633,7 +642,7 @@ class AgarreCierre(Agarre):
         def c(v):
             Vo = (self._posar_sub(self.rot3({}, tuple(v)), idx) - t) @ R
             sd = self.o.sdf(Vo[mov])
-            dist = np.min(np.linalg.norm(Vo[yema] - p, axis=1))
+            dist = np.min(dist_tramo(Vo[yema]))
             return dist ** 2 * 1e6 + np.sum(np.clip(-self.PIEL - sd, 0, None) ** 2) * 1e7
         b = [(-0.4, 1.2), (0.0, 1.0), (0.0, 1.2), (-0.9, 1.4)]
         G = [(c((op, f, f, ab)), (op, f, f, ab)) for op in np.linspace(-0.4, 1.2, 9)
@@ -641,7 +650,7 @@ class AgarreCierre(Agarre):
         x0 = min(G, key=lambda g: g[0])[1]
         r = optimize.minimize(c, x0, method="Powell", bounds=b, options={"xtol": 1e-4, "ftol": 1e-10})
         Vo = (self._posar_sub(self.rot3({}, tuple(r.x)), idx) - t) @ R
-        self.dist_pulgar = float(np.min(np.linalg.norm(Vo[yema] - p, axis=1)))
+        self.dist_pulgar = float(np.min(dist_tramo(Vo[yema])))
         self.pen_pulgar = float(-min(self.o.sdf(Vo[mov]).min(), 0))
         return tuple(float(v) for v in r.x)
 
@@ -684,6 +693,8 @@ class AgarreCierre(Agarre):
             envol += max(0.004 - float(np.max(rel @ dp)), 0) * 1e3 + max(min(sds) - self.TOCA, 0) * 1e3
             # agarre de fuerza: la falange media y la distal también tocan (si no, "envuelve" con la pura punta)
             envol += sum(max(v - self.TOCA, 0) for v in sds[1:]) * 300
+            # y cierran: un agarre de fuerza dobla cada dedo ≥ ~90° en total (si no, el mango queda bajo los dedos)
+            envol += max(0.0, 1.6 - float(sum(a))) * 3.0
         res = {"pen": pen, "palma": palma, "envol": envol, "ang": ang, "toques": toques}
         dist = 0.0
         if completo or True:

@@ -127,7 +127,10 @@ def glock():
     agarre["contactos"] = {"Index": {"padre": "GATILLO", "translation": [0.0009 - 0.0010 + 0.0006, 0.0091 - 0.0194, 0.0]}}
     # pulgar: acostado en el costado del armazón, bajo la corredera (con el pulgar chibi el costado opuesto queda a
     # 1.5–2.6 cm de alcance; así no se mete en la corredera, que es lo que marcó el visual-critic de V37)
-    agarre["contactos"]["Thumb"] = {"translation": [-0.030, 0.026, 0.0165]}
+    agarre["contactos"]["Thumb"] = {"translation": [-0.040, 0.026, 0.0165]}
+    # V39: el pulgar se apoya en un TRAMO (de CONTACTO_Thumb a CONTACTO_Thumb_fin), no en un punto: llega desde más
+    # colocaciones del arma
+    agarre["contactos"]["Thumb_fin"] = {"translation": [-0.008, 0.026, 0.0165]}
     agarre["recorrido"] = {"GATILLO": 0.30}
     return piezas, agarre
 

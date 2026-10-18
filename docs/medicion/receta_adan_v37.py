@@ -28,6 +28,9 @@ def membrana(H):
     return (a, b, MEMBRANA_R * ESCALA_MANO)
 
 
+PRONACION_V39 = None        # gancho V39 (sin efecto en V37/V38)
+
+
 def clip_apuntar_pistola(A):
     """Apuntar con una mano: brazo derecho al frente y la mano girada (palma hacia adentro, nudillos en vertical) —
     así el arma queda derecha, con la corredera arriba. El brazo izquierdo descansa."""
@@ -38,6 +41,8 @@ def clip_apuntar_pistola(A):
     c.mira("RightUpperArm", ts, [r_] * 3).mira("RightLowerArm", ts, [r_] * 3)
     # mano: dedos al frente (siguen al antebrazo) y palma hacia adentro (+x: el centro del cuerpo)
     c.orienta("RightHand", ts, [(r_, [1.0, 0.0, 0.0])] * 3, ([-1.0, 0.0, 0.0], [0.0, -1.0, 0.0]))
+    if PRONACION_V39:
+        c.pronacion("RightHand", PRONACION_V39)   # V39: parte del giro lo hace el antebrazo (la muñeca no se tuerce)
     c.g("Spine", "y", ts, [8, 8, 8]).g("Spine", "x", ts, [2, 3, 2]).g("Head", "y", ts, [-6, -6, -6])
     # el brazo izquierdo descansa como en Idle (sin pista, Godot lo deja en pose T)
     for h in ("LeftShoulder", "LeftUpperArm", "LeftLowerArm", "LeftHand", "RightShoulder"):

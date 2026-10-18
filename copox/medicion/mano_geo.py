@@ -57,6 +57,9 @@ class Diseno:
         # antebrazo), r0 (radios y, z del último anillo del antebrazo ×0.97), x1 (dentro de la palma). Un cilindro
         # elíptico que se angosta de r0 a la sección de la palma y se funde con ella (smin): sin escalón ni labio.
         self.muneca = None
+        # V39: pliegues del lado de la palma en las articulaciones de los dedos (fracción del radio): al cerrar el
+        # puño la piel de adentro no se encima (los picos del puño)
+        self.pliegues = None
 
     def cadenas(self):
         H = self.H
@@ -136,6 +139,17 @@ class Diseno:
                 else:
                     c = _capsula(P, a, b, r1, r2)
                 dd = c if dd is None else np.minimum(dd, c)
+            if self.pliegues and nombre != "Thumb":
+                prof, ancho = self.pliegues
+                n_palma = np.array([0.0, -1.0, 0.0])
+                for i, j_ in enumerate(("Intermediate", "Distal")):
+                    cj = self.H[f"Left{nombre}{j_}"]
+                    eje = seg[i + 2] - seg[i + 1]; eje = eje / np.linalg.norm(eje)
+                    lat = np.cross(eje, n_palma); lat = lat / np.linalg.norm(lat)
+                    rj = r0 * (1 - (1 - self.conico) * (i + 1) / (len(seg) - 1))
+                    cc = cj + n_palma * rj * (1.0 + ancho - prof)
+                    surco = _capsula(P, cc - lat * rj, cc + lat * rj, rj * ancho, rj * ancho)
+                    dd = -_smin(-dd, surco, rj * 0.35)          # resta suave
             dedos = dd if dedos is None else np.minimum(dedos, dd)
         d = _smin(d, dedos, self.k)                 # solo palma ↔ dedos se funden: membranas y nudillos
         return d

@@ -148,6 +148,14 @@ class Clip:
         self.orientas[hueso] = (ts, pares, ejes_reposo)
         return self
 
+    def pronacion(self, hueso, fraccion=0.75):
+        """Del giro de `hueso` (con orienta) alrededor del eje del antebrazo, `fraccion` lo hace el padre (pronación /
+        supinación del antebrazo) y el resto la muñeca: la piel de la muñeca no se tuerce (V39)."""
+        if not hasattr(self, "pronaciones"):
+            self.pronaciones = {}
+        self.pronaciones[hueso] = fraccion
+        return self
+
     def mover_cadera(self, ts, d):
         self.cadera = (ts, d)
         return self
@@ -188,8 +196,10 @@ def muestrear(A: Autor, c: Clip):
                 cad.append(nm)
         padres_de[h] = cad
     Q = {h: [] for h in huesos}
+    pron = getattr(c, "pronaciones", {})
     for ti in t:
         Rtot = {}
+        Rowns = {}
         for h in huesos:
             Rp = np.eye(3)
             for pa in reversed(padres_de[h]):   # el ancestro más alto primero
@@ -214,6 +224,21 @@ def muestrear(A: Autor, c: Clip):
                 W = _base_de(a, nn) @ _base_de(np.asarray(a0, float), np.asarray(n0, float)).T   # reposo → mundo
                 # Rtot·Rw_base debe ser W (Rw_base = orientación mundo de la pose base respecto al reposo)
                 Rown = Rp.T @ W @ A.Rw[h].T
+                if h in pron and padres_de[h]:
+                    pa = padres_de[h][0]
+                    tr = np.asarray(A.M.j["nodes"][A.idx[h]].get("translation", [1, 0, 0]), float)
+                    d = tr / np.linalg.norm(tr)                     # eje del antebrazo (reposo, mundo)
+                    qh = _m2q(Rown)                                  # (x, y, z, w)
+                    tw = np.array([*(d * (qh[:3] @ d)), qh[3]]); tw /= max(np.linalg.norm(tw), 1e-12)
+                    phi = 2 * np.arctan2(tw[:3] @ d, tw[3])
+                    Rtw = _rot(d, float(np.degrees(pron[h] * phi)))      # _rot va en grados
+                    Rowns[pa] = Rowns[pa] @ Rtw
+                    Rtot[pa] = Rtot[pa] @ Rtw
+                    Rl_pa = A.Rw[pa].T @ Rowns[pa] @ A.Rw[pa]
+                    Q[pa][-1] = q_mul(A.base_q[pa], _m2q(Rl_pa))
+                    Rp = Rtot[pa]
+                    Rown = Rtw.T @ Rown
+            Rowns[h] = Rown
             Rtot[h] = Rp @ Rown
             # local: q_base ⊗ q(R_base_mundoᵀ · Rown)
             Rl = A.Rw[h].T @ Rown @ A.Rw[h]
