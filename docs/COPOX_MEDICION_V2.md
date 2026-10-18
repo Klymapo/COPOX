@@ -87,3 +87,28 @@ Salida:
   - R_1: 0.352 → 0.439
   - R_0: 0.345 → 0.443
   - Esclerótica (claro): de ~0.09 a ~0.28.
+
+## Rostro y cabeza, segunda pasada (Theo V06, Adán V13)
+
+- CHXP:
+  - `sombreado=archivo` usa las normales guardadas en el GLB, como Godot.
+  - Lee `COLOR_0` (multiplica el color base en espacio lineal).
+  - `render_rostro(..., px=)` permite el marco SENKU a más resolución.
+- Hallazgo con `sombreado=archivo`: desde V09 (Adán) y V01 (Theo), las ediciones de rostro dejaban normales viejas. ~3,800 vértices de la cara con más de 45° de error; en Godot se verían "labios fantasma" y pliegues falsos.
+  - `Editor.recalcular_normales` las rehace con el mismo criterio que el original.
+  - V06/V13: 0 vértices con error.
+- `Editor.color_vertices`: rubor en mejillas y nariz más rosada con `COLOR_0`. Hay que verificar en Godot que el material use el color de vértice.
+- Receta `docs/medicion/receta_theo_v06.py` (sobre V05; `--solo-estilo` para Adán):
+  - Boca: +0.05 ED arriba y ×1.12 de ancho, con labios e interior movidos por el mismo campo.
+  - Sonrisa de lado.
+  - Cara baja aplanada, sin papada.
+  - Fondo negro de la boca y materiales de dos caras (boca y gorro de pelo).
+  - Rubor y normales.
+- Se probaron y descartaron por medición:
+  - Cejas más gruesas: IoU de rasgos 0.453 → 0.441.
+  - Costados de la cabeza más angostos: IoU de piel de la cara baja 0.738 → 0.718.
+- Theo V06 contra R_15, R_1, R_0 y el acercamiento de la Hoja (media de las 4):
+  - Rasgos oscuros: 0.453 (V03 0.365).
+  - Esclerótica: 0.283 (V03 0.089).
+  - Piel de la cara baja: 0.738.
+- Huecos visibles en 48 tomas de cabeza: de 7,420 px (V05) a 944 (V06); 0 en la boca.

@@ -82,6 +82,39 @@ class Editor:
             self.escribir(p, V1, T1)
         self.log.append({"operacion": nombre, "material": material, "vertices_movidos": total})
 
+    def recalcular_normales(self, material, primitiva=None, nombre="normales recalculadas"):
+        """Normales por vértice ponderadas por área (mismo criterio que el original: sin soldar costuras).
+        Necesario tras deformar: Godot usa las normales guardadas, no las recalcula."""
+        total = 0
+        for p in self.prims(material):
+            V, _ = self.leer(p)
+            if primitiva is not None and not primitiva(V):
+                continue
+            F = accesor(self.j, self.b, p["indices"]).reshape(-1, 3).astype(np.int64)
+            T = V[F]
+            Nf = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0])
+            N = np.zeros_like(V)
+            for i in range(3):
+                np.add.at(N, F[:, i], Nf)
+            n = np.linalg.norm(N, axis=1, keepdims=True)
+            viejo = accesor(self.j, self.b, p["attributes"]["NORMAL"]).astype(float) if "NORMAL" in p["attributes"] else None
+            N = np.where(n > 1e-12, N / np.maximum(n, 1e-12), viejo if viejo is not None else 0)
+            p["attributes"]["NORMAL"] = self._add(N, "VEC3", 34962)
+            self.b = bytes(self.out)
+            total += len(V)
+        self.log.append({"operacion": nombre, "material": material, "vertices": total})
+
+    def color_vertices(self, material, funcion, nombre, primitiva=None):
+        """COLOR_0 (RGBA lineal) = funcion(V) → (n,3) multiplicador del color base. Godot lo usa como albedo."""
+        for p in self.prims(material):
+            V, _ = self.leer(p)
+            if primitiva is not None and not primitiva(V):
+                continue
+            C = np.clip(funcion(V), 0, 1)
+            p["attributes"]["COLOR_0"] = self._add(np.c_[C, np.ones(len(C))], "VEC4", 34962)
+            self.b = bytes(self.out)
+        self.log.append({"operacion": nombre, "material": material})
+
     def textura(self, material, funcion, nombre):
         mat = next(m for m in self.j["materials"] if m["name"] == material)
         ti = mat["pbrMetallicRoughness"]["baseColorTexture"]["index"]

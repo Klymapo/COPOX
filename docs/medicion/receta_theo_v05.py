@@ -75,16 +75,17 @@ def textura_ojo(lado):
     return f
 
 
-def textura_ceja(lado, color=(88, 56, 32)):
+def textura_ceja(lado, color=(88, 56, 32), extremos=(-0.25, 0.35), arriba=(-0.47, -0.50), abajo=(-0.30, -0.35)):
+    """extremos: interno/externo en ED desde el centro del ojo; arriba/abajo: borde (interno, externo) en v."""
     m = CEJA[lado]
 
     def f(_rgba):
         Xo, Y, _ = _rejilla(m)
         Y = Y + BAJAR_CEJA                      # posición final tras bajar la placa
-        i0, i1 = -0.25, 0.35                    # extremos interno y externo (ED desde el centro del ojo)
+        i0, i1 = extremos
         t = np.clip((Xo - i0) / (i1 - i0), 0, 1)
-        top = -0.47 + (-0.50 + 0.47) * t        # sube levemente hacia afuera
-        bot = -0.30 + (-0.35 + 0.30) * t
+        top = arriba[0] + (arriba[1] - arriba[0]) * t   # sube levemente hacia afuera
+        bot = abajo[0] + (abajo[1] - abajo[0]) * t
         dentro = (Xo >= i0) & (Xo <= i1) & (Y >= top) & (Y <= bot)
         # chaflán externo inferior (corte low-poly)
         dentro &= ~((Xo > i1 - 0.08) & (Y > bot - (Xo - (i1 - 0.08)) * 0.9))

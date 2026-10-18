@@ -82,6 +82,8 @@ class Primitiva:
     morphs: list = field(default_factory=list)
     uv: np.ndarray | None = None
     textura: np.ndarray | None = None  # RGBA float 0-1
+    color: np.ndarray | None = None    # COLOR_0 (lineal, RGB 0-1) si existe
+    normal: np.ndarray | None = None   # NORMAL guardada en el archivo
 
 
 class Modelo:
@@ -117,7 +119,9 @@ class Modelo:
                     joints=accesor(j, self.b, at["JOINTS_0"]).astype(np.int64) if "JOINTS_0" in at else None,
                     weights=accesor(j, self.b, at["WEIGHTS_0"]).astype(float) if "WEIGHTS_0" in at else None,
                     morphs=[accesor(j, self.b, t["POSITION"]).astype(float) for t in p.get("targets", []) if "POSITION" in t],
-                    uv=uv, textura=tex))
+                    uv=uv, textura=tex,
+                    color=accesor(j, self.b, at["COLOR_0"])[:, :3].astype(float) if "COLOR_0" in at else None,
+                    normal=accesor(j, self.b, at["NORMAL"]).astype(float) if "NORMAL" in at else None))
 
     def _imagen(self, i: int) -> np.ndarray:
         if i not in self._img:
@@ -186,13 +190,14 @@ class Modelo:
             return W[i]
         return g
 
-    def posar(self, clip: str | None = None, frac: float = 0.0) -> list[np.ndarray]:
-        """Posiciones en mundo de cada primitiva (skin + morphs) en clip/fracción."""
+    def posar(self, clip: str | None = None, frac: float = 0.0, normales: bool = False):
+        """Posiciones en mundo de cada primitiva (skin + morphs) en clip/fracción.
+        Con normales=True devuelve (posiciones, normales del archivo transformadas)."""
         t = self.duracion(clip) * frac if clip else 0.0
         trs, pesos = self.muestrear(clip, t)
         g = self._mundo(trs)
         cache = {}
-        out = []
+        out, outn = [], []
         for p in self.prims:
             n = self.j["nodes"][p.nodo]
             P = p.pos.copy()
@@ -212,11 +217,20 @@ class Modelo:
                 JM = cache[si]
                 M = (JM[p.joints] * p.weights[:, :, None, None]).sum(1)
                 P = np.einsum("nij,nj->ni", M[:, :3, :3], P) + M[:, :3, 3]
+                if normales and p.normal is not None:
+                    Nn = np.einsum("nij,nj->ni", M[:, :3, :3], p.normal)
             else:
                 M = g(p.nodo)
                 P = P @ M[:3, :3].T + M[:3, 3]
+                if normales and p.normal is not None:
+                    Nn = p.normal @ M[:3, :3].T
             out.append(P)
-        return out
+            if normales:
+                if p.normal is None:
+                    outn.append(np.zeros_like(P))
+                else:
+                    outn.append(Nn / np.maximum(np.linalg.norm(Nn, axis=1, keepdims=True), 1e-12))
+        return (out, outn) if normales else out
 
     def color_triangulos(self, p: Primitiva) -> tuple[np.ndarray, np.ndarray]:
         """RGB (0-1, sRGB) y máscara de visibilidad por triángulo (alfa MASK)."""

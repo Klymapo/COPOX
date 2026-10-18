@@ -57,7 +57,9 @@ class Capas:
 
     def normal(self):
         if "N" not in self._cache:
-            if self.v.sombreado == "facetas":
+            if self.v.sombreado == "archivo":  # normales del GLB, como las usa Godot
+                N = self.interp(self.geo.Na)
+            elif self.v.sombreado == "facetas":
                 T = self.geo.P[self.Fv]
                 N = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0])
             else:
@@ -87,6 +89,8 @@ class Capas:
                 if s.any():
                     uv = np.einsum("nk,nkd->nd", self.bp[s], self.ses.UV[self.Fv[s]])
                     C[s] = muestrear(tex, uv)[:, :3]
+            if self.ses.hay_vc:  # COLOR_0 multiplica el color base en espacio lineal (glTF)
+                C = a_srgb(a_lineal(C) * self.interp(self.ses.VC))
             self._cache["base"] = C
         return self._cache["base"]
 

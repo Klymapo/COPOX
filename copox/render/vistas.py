@@ -17,7 +17,7 @@ Claves:
   clip, t           animación y fracción 0–1 ('reposo' = sin animación)
   modo              color | arcilla | malla | normales | curvatura | clases | clases_tri
   tam               lado de la imagen en px (512 iterar, 1024 final)
-  sombreado         suave | facetas
+  sombreado         suave | facetas | archivo (normales guardadas en el GLB, como Godot)
   ocultar           nombres de nodo o de material separados por coma
 """
 from __future__ import annotations

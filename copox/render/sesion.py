@@ -33,6 +33,7 @@ class Geo:
     P: np.ndarray          # (V,3) posiciones posadas
     N: np.ndarray          # (V,3) normales suaves (soldadas por posición)
     curv: np.ndarray       # (V,) curvatura media aproximada (+ convexo)
+    Na: np.ndarray = None  # (V,3) normales guardadas en el archivo (las que usa Godot)
 
 
 @dataclass
@@ -71,7 +72,7 @@ class Sesion:
         self.m = m = Modelo(glb)
         j = m.j
         F, prim, off = [], [], 0
-        UV, rgbF, visF, dom = [], [], [], []
+        UV, rgbF, visF, dom, VC = [], [], [], [], []
         self.nodo_de_prim = []
         self.tex = []        # por primitiva: textura RGBA o None
         self.mask = []       # por primitiva: corte alfa o None
@@ -84,6 +85,7 @@ class Sesion:
             k = len(self.tex)
             F.append(p.indices + off); prim.append(np.full(len(p.indices), k, np.int32))
             UV.append(p.uv if p.uv is not None else np.zeros((len(p.pos), 2)))
+            VC.append(p.color if p.color is not None else np.ones((len(p.pos), 3)))
             rgb, vis = m.color_triangulos(p)
             rgbF.append(rgb); visF.append(vis)
             self.tex.append(p.textura)
@@ -100,6 +102,8 @@ class Sesion:
         self.F = np.concatenate(F)
         self.prim = np.concatenate(prim)
         self.UV = np.concatenate(UV)
+        self.VC = np.concatenate(VC)                      # color de vértice (lineal), 1 si no hay
+        self.hay_vc = any(p.color is not None for p in m.prims)
         self.rgbF = np.concatenate(rgbF)
         self.visF = np.concatenate(visF)
         self.claseF = paleta.clasificar(self.rgbF * 255)
@@ -124,7 +128,8 @@ class Sesion:
                 clip = None
             elif clip not in self.m.clips:
                 raise KeyError(f"Clip desconocido: {clip}")
-            P = np.concatenate(self.m.posar(clip, t))
+            Pl, Nl = self.m.posar(clip, t, normales=True)
+            P, Na = np.concatenate(Pl), np.concatenate(Nl)
             # soldadura en reposo (estable entre poses)
             w = self._soldadura(np.concatenate([p.pos for p in self.m.prims]))
             nw = w.max() + 1
@@ -152,7 +157,7 @@ class Sesion:
                 sc = np.zeros(nw)
                 np.add.at(sc, E[:, 0], curv[E[:, 1]]); np.add.at(sc, E[:, 1], curv[E[:, 0]])
                 curv = 0.5 * curv + 0.5 * sc / c
-            self._poses[clave] = Geo(P, Nw[w], curv[w])
+            self._poses[clave] = Geo(P, Nw[w], curv[w], Na)
             if len(self._poses) > 8:
                 self._poses.pop(next(iter(self._poses)))
         return self._poses[clave]

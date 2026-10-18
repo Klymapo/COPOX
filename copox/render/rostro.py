@@ -31,8 +31,10 @@ def ojos_px(ses, res) -> list:
     return sorted(out)
 
 
-def render_rostro(ses, codigo: str = "cara_frente", autor: str = "elio", tam_aux: int = 400):
-    """Render en el marco SENKU (200×200). Devuelve (resultado, info)."""
+def render_rostro(ses, codigo: str = "cara_frente", autor: str = "elio", tam_aux: int = 400, px: int = senku.PX):
+    """Render en el marco SENKU (200×200 a 40 px/ED; px mayor = más detalle, mismo marco). Devuelve (resultado, info)."""
+    tam = int(round((senku.U[1] - senku.U[0]) * px))
+    centro = (-senku.U[0] * px, -senku.V[0] * px)
     v = leer(codigo)
     base = ses.render(f"{codigo};modo=clases;tam={tam_aux}", autor)
     oj = ojos_px(ses, base)
@@ -40,14 +42,14 @@ def render_rostro(ses, codigo: str = "cara_frente", autor: str = "elio", tam_aux
         raise ValueError(f"Se esperaban 2 ojos y hay {len(oj)}")
     (x0, y0), (x1, y1) = oj
     ed_px = float(np.hypot(x1 - x0, y1 - y0))
-    f = senku.PX / ed_px
+    f = px / ed_px
     esc = base.escala * f
     mx, my = (x0 + x1) / 2, (y0 + y1) / 2
     # punto del plano (unidades) que cae en el centro de los ojos
     ux, uy = (mx - base.centro[0]) / base.escala, (base.centro[1] - my) / base.escala
-    cen = (CENTRO[0] - ux * esc, CENTRO[1] + uy * esc)
-    r = ses.render(f"{codigo};tam={TAM}", autor, fijar=(esc, cen))
-    rc = r if v.modo in ("clases", "clases_tri") else ses.render(f"{codigo};modo=clases;tam={TAM}", autor, fijar=(esc, cen))
+    cen = (centro[0] - ux * esc, centro[1] + uy * esc)
+    r = ses.render(f"{codigo};tam={tam}", autor, fijar=(esc, cen))
+    rc = r if v.modo in ("clases", "clases_tri") else ses.render(f"{codigo};modo=clases;tam={tam}", autor, fijar=(esc, cen))
     return r, {"clases": rc.clases, "ed_unidades": ed_px / base.escala, "inclinacion_px": y1 - y0}
 
 
