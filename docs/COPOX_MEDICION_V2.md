@@ -191,3 +191,12 @@ Salida:
 - Rasgos 0.470, piel 0.730. Huecos: 130 px.
 - Decisión de Admin: la boca NO será calcomanía (se queda de malla con sus 8 morphs).
 - Pupilas: hoy no se mueven. No hay huesos de ojo, y los morphs de las placas de ojo son solo `alegre_L/R`; el iris está pintado en la textura.
+
+## Cabeza lisa (Theo V13, Adán V20)
+
+- Receta `docs/medicion/receta_theo_v13.py`: la piel de la cabeza y el gorro de pelo se reemplazan por una superficie ajustada.
+  - Ajuste: radio por dirección desde el centro de la cabeza, con un polinomio de grado 12 (piel) y 10 (gorro).
+  - Se conserva el detalle solo en la boca, en las caras interiores y junto a los bordes.
+  - Las piezas pegadas a la cara (ojos, párpados, cejas, nariz, orejas) siguen a la piel nueva.
+- Movimiento de la piel: mediana 0.28 mm, p95 1.3 mm, máximo 4.8 mm.
+- Se probó una relajación tangencial con reproyección: movía hasta 9 mm y empeoraba las uniones; se descartó.
