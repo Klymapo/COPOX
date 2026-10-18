@@ -1,6 +1,6 @@
 # Adán V25 · boca sin surcos y orejas nuevas (SIN APROBAR)
 
-- **Base:** Adán V22 HABLA → V24 → V25. **Resultado:** `ADAN_V25.glb`, SHA-256 `cf0e60d52c23ba55e68f2d20d2b54c6369b42c35c2fc40c2a17a2ec3b8f79844` (no se sube al repo).
+- **Base:** Adán V22 HABLA → V24 → V25. **Resultado:** `ADAN_V25.glb`, SHA-256 `b36c73dd8014e3cd12b4da3a5dc12201b4052dd24967319ef0695304c71440fe` (no se sube al repo).
 - **Receta:** `docs/medicion/receta_adan_v25.py ADAN_V22_HABLA.glb ADAN_V25.glb` (~6 s; corre V24 por dentro).
 
 ## Boca: los surcos
