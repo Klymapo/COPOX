@@ -164,3 +164,19 @@ Salida:
 - Desplazamiento máximo: 4.3 mm.
 - Se probó rehacer la nariz como bloque ideal (`nariz_limpia`): deformaba el puente y se descartó.
 - Mediciones de parecido sin cambio (rasgos 0.453, piel 0.730). Huecos: 163 px en 90 tomas.
+
+## Auditoría artística aplicada (Theo V11, Adán V18)
+
+- Receta `docs/medicion/receta_theo_v11.py`:
+  - Nuca ×1.15 en profundidad.
+  - Entrecejo plano y nariz vieja fundida en la cara.
+  - Nariz nueva: cubo biselado rosado de 0.26×0.24 ED que sale 0.14 ED.
+  - Cejas en bloque: 10 tramos que siguen la frente, material `CEJA_BLOQUE`. Los gestos se copian de la placa vieja, que queda escondida.
+  - Cara baja hacia una superficie simétrica de 4.º orden.
+  - Orejas con ranura en C.
+- Theo V11:
+  - Rasgos oscuros: 0.469 (V10 0.453).
+  - Perfil contra la Hoja: silueta 0.832 (0.804) y sin pelo 0.653 (0.634).
+  - Huecos: 129 px.
+- Pendiente de decisión de Admin: boca como calcomanía. Hoy la boca se anima con 8 morphs (boca_soplar, abrir, sonrisa, triste, o, tensa, lado_L y lado_R); con calcomanía se cambiaría por texturas.
+- Pelo: al final, por pedido de Admin.
