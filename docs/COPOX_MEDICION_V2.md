@@ -57,3 +57,15 @@ Salida:
   - Guarda los mapas de clases (`clases_<vista>.npz`) y las anclas en el reporte.
 - Recetas usadas con Adán: `docs/medicion/ediciones_v07.json`, `docs/medicion/ediciones_v08.json`. Manifiesto: `docs/medicion/manifiesto_hoja_theo.json`.
 - Los GLB no se suben al repositorio público.
+
+## Renderizador v1 y compactador (17 oct 2026, noche)
+
+- `copox/render/`: renderizador para Elio y Argos (NumPy + Pillow). Instrucciones: `copox/render/LEEME_IA.md`.
+  - Rasterizador vectorizado con capas por píxel; modos color, arcilla, malla, normales, curvatura, clases y clases_tri.
+  - Vistas guardadas y códigos de vista; sello con modelo, hash, vista, modo, autor, fecha y código.
+  - Láminas contra referencia (ancla ojos → suela) y A/B entre versiones.
+  - Descarta caras traseras como Godot.
+  - Medido en Theo V03 (≈90 mil triángulos): 0.1–0.3 s en `clases`, 0.6–1.1 s en modos con luz a 512 px, 2–4.5 s a 1024 px. El render anterior tardaba ≈6.5 s por vista en `clases`.
+  - Concordancia con el render anterior (`clases_tri`, sin descarte de caras): 100% de píxeles iguales en 6 vistas de Adán V10 y 6 de Theo V03.
+- `copox/medicion/compactar.py`: quita datos huérfanos que dejan las ediciones. Adán V10 24.0 → 7.9 MB; Theo V03 35.2 → 7.9 MB; 112 clips × 5 tiempos idénticos (diferencia 0.0) y texturas iguales.
+- Pruebas: `python -m unittest tests.test_render`.
