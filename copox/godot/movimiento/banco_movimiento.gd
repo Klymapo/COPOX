@@ -7,6 +7,7 @@
 ##   banco.gesto("Wave", "G23_1_Saludo")  # gesto de cuerpo + expresión
 ##   banco.cara("Talk-loop")              # solo cambia la cara
 ##   banco.mirada = Vector2(0.3, 0.1)
+##   banco.mano_derecha("Pistola_Agarre") / banco.mano_accion("Pistola_Accion")   # agarres (copox/movimiento/agarre.py)
 ## Por defecto se reproduce sola (_process). Con manual = true se avanza con avanzar(dt).
 class_name BancoMovimiento
 extends Node
@@ -28,6 +29,9 @@ var mirada := Vector2.ZERO:
 
 var _cuerpo: AnimationNodeStateMachinePlayback
 var _cara: AnimationNodeStateMachinePlayback
+var _mano_r: AnimationNodeStateMachinePlayback
+var _estados_mano_r: PackedStringArray = []
+var _mano_r_base := ""             ## pose de agarre a la que vuelve después de una acción
 var _estados_cuerpo: PackedStringArray = []
 var _estados_cara: PackedStringArray = []
 var _prox_parpadeo := 2.0
@@ -69,6 +73,23 @@ func montar(personaje: Node, semilla := 7) -> void:
 			_estados_cara.append(nombre)
 	_poblar(sm_cara, _estados_cara, FUNDIDO_CARA)
 
+	# Mano derecha (agarres de copox/movimiento/agarre.py): clips *_Agarre (pose sosteniendo) y *_Accion (p. ej.
+	# apretar el gatillo). Capa filtrada a los huesos de esa mano, encima del cuerpo y la cara.
+	var pistas_mano_r := {}
+	_estados_mano_r.append("suelta")
+	for nombre in lista:
+		if _es_mano(nombre):
+			_estados_mano_r.append(nombre)
+			# Godot rellena cada clip con pistas de TODOS los huesos (en reposo): el filtro va solo a los dedos de
+			# la mano derecha (si no, la capa pisaría el cuerpo con la pose T)
+			var an := ap.get_animation(nombre)
+			for t in an.get_track_count():
+				var hueso := String(an.track_get_path(t).get_concatenated_subnames())
+				if hueso.begins_with("Right") and _es_dedo(hueso):
+					pistas_mano_r[an.track_get_path(t)] = true
+	var sm_mano := AnimationNodeStateMachine.new()
+	_poblar(sm_mano, _estados_mano_r, 0.12)
+
 	var capa := AnimationNodeBlend2.new()
 	capa.filter_enabled = true
 	for p in pistas_cara: capa.set_filter_path(p, true)
@@ -86,9 +107,16 @@ func montar(personaje: Node, semilla := 7) -> void:
 	raiz.add_node("capa_cara", capa, Vector2(300, 0))
 	raiz.add_node("blink", blink, Vector2(300, 200))
 	raiz.add_node("parpadeo", parp, Vector2(600, 0))
+	var capa_mano := AnimationNodeBlend2.new()
+	capa_mano.filter_enabled = true
+	for p in pistas_mano_r: capa_mano.set_filter_path(p, true)
+	raiz.add_node("mano_r", sm_mano, Vector2(300, 400))
+	raiz.add_node("capa_mano_r", capa_mano, Vector2(450, 0))
 	raiz.connect_node("capa_cara", 0, "cuerpo")
 	raiz.connect_node("capa_cara", 1, "cara")
-	raiz.connect_node("parpadeo", 0, "capa_cara")
+	raiz.connect_node("capa_mano_r", 0, "capa_cara")
+	raiz.connect_node("capa_mano_r", 1, "mano_r")
+	raiz.connect_node("parpadeo", 0, "capa_mano_r")
 	raiz.connect_node("parpadeo", 1, "blink")
 	raiz.connect_node("output", 0, "parpadeo")
 
@@ -103,8 +131,11 @@ func montar(personaje: Node, semilla := 7) -> void:
 	tree.set("parameters/capa_cara/blend_amount", 1.0)
 	_cuerpo = tree.get("parameters/cuerpo/playback")
 	_cara = tree.get("parameters/cara/playback")
+	_mano_r = tree.get("parameters/mano_r/playback")
+	tree.set("parameters/capa_mano_r/blend_amount", 0.0)
 	_cuerpo.start(REPOSO if REPOSO in _estados_cuerpo else _estados_cuerpo[0])
 	_cara.start("neutra")
+	_mano_r.start("suelta")
 
 	# Los párpados, dientes y lengua están plegados en reposo y se despliegan con morphs: los LOD automáticos
 	# los colapsan (se ve el ojo "roto" de lejos). Importa los personajes con meshes/generate_lods = false;
@@ -141,6 +172,27 @@ func cara(nombre: String) -> void:
 		push_warning("BancoMovimiento: no existe la cara '%s'" % nombre)
 
 
+## Pose de la mano derecha sosteniendo algo (clip *_Agarre). "" la suelta (vuelven los dedos del cuerpo).
+func mano_derecha(nombre: String) -> void:
+	if nombre == "":
+		_mano_r_base = ""
+		tree.set("parameters/capa_mano_r/blend_amount", 0.0)
+		return
+	if nombre in _estados_mano_r:
+		_mano_r_base = nombre
+		_mano_r.start(nombre)            # start (no travel): funciona aunque el árbol aún no haya procesado
+		tree.set("parameters/capa_mano_r/blend_amount", 1.0)
+	else:
+		push_warning("BancoMovimiento: no existe el agarre '%s'" % nombre)
+
+
+## Acción de la mano derecha (clip *_Accion, p. ej. apretar el gatillo); al terminar vuelve al agarre.
+func mano_accion(nombre: String) -> void:
+	if nombre in _estados_mano_r:
+		_mano_r.start(nombre)
+		tree.set("parameters/capa_mano_r/blend_amount", 1.0)
+
+
 func parpadear() -> void:
 	tree.set("parameters/parpadeo/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 
@@ -156,6 +208,10 @@ func avanzar(dt: float) -> void:
 		var an := ap.get_animation(actual)
 		if an.loop_mode == Animation.LOOP_NONE and _cuerpo.get_current_play_position() >= an.length - FUNDIDO_CUERPO:
 			_cuerpo.travel(REPOSO)
+	var am := String(_mano_r.get_current_node())
+	if _mano_r_base != "" and am != _mano_r_base and ap.has_animation(am):
+		if _mano_r.get_current_play_position() >= ap.get_animation(am).length - 0.001:
+			_mano_r.start(_mano_r_base)
 	if parpadeo_auto:
 		_prox_parpadeo -= dt
 		if _prox_parpadeo <= 0.0:
@@ -173,7 +229,7 @@ func _poblar(sm: AnimationNodeStateMachine, nombres: PackedStringArray, fundido:
 	var i := 0
 	for n in nombres:
 		var nodo := AnimationNodeAnimation.new()
-		nodo.animation = "banco/cara_neutra" if n == "neutra" else n
+		nodo.animation = "banco/cara_neutra" if n in ["neutra", "suelta"] else n
 		sm.add_node(n, nodo, Vector2(200 * (i % 6), 120 * (i / 6)))
 		i += 1
 	for a in nombres:
@@ -185,7 +241,20 @@ func _poblar(sm: AnimationNodeStateMachine, nombres: PackedStringArray, fundido:
 			sm.add_transition(a, b, tr)
 
 
+func _es_dedo(hueso: String) -> bool:
+	for d in ["Thumb", "Index", "Middle", "Ring", "Little"]:
+		if hueso.contains(d):
+			return true
+	return false
+
+
+func _es_mano(nombre: String) -> bool:
+	return nombre.contains("_Agarre") or nombre.contains("_Accion")
+
+
 func _es_cuerpo(an: Animation, nombre: String) -> bool:
+	if _es_mano(nombre):
+		return false
 	# G*/V04*/Talk/Blink son cara; P*/M* son poses de autor de 0.3 s (se prueban con modo=clips, no en el árbol).
 	if nombre.begins_with("G2") or nombre.begins_with("V04") or nombre in ["Talk", "Blink"]:
 		return false

@@ -131,6 +131,7 @@ class Clip:
         self.cadera = None     # (ts, [(dx,dy,dz)])
         self.dedos = {}        # hueso_mano_lado -> (ts, peso_puño)
         self.miras = {}        # hueso -> (ts, [dirección mundo o None = la de la pose base])
+        self.orientas = {}     # hueso -> (ts, [(adelante, normal) mundo], (adelante_reposo, normal_reposo))
 
     def g(self, hueso, eje, ts, grados):
         self.canales[(hueso, eje)] = (ts, grados)
@@ -139,6 +140,12 @@ class Clip:
     def mira(self, hueso, ts, dirs):
         """El hueso apunta (de su cabeza a la de su hijo) en esas direcciones del mundo; se compone con el padre."""
         self.miras[hueso] = (ts, dirs)
+        return self
+
+    def orienta(self, hueso, ts, pares, ejes_reposo):
+        """Orientación completa del hueso en el mundo: su eje `adelante_reposo` (en el marco de reposo/pose T) va a
+        `adelante` y su `normal_reposo` a `normal` (p. ej. la mano: dedos al frente y palma hacia adentro)."""
+        self.orientas[hueso] = (ts, pares, ejes_reposo)
         return self
 
     def mover_cadera(self, ts, d):
@@ -154,11 +161,16 @@ class Clip:
 EJES = {"x": X, "y": Y, "z": Z}
 
 
+def _base_de(a, n):
+    a = a / np.linalg.norm(a); n = n - a * (n @ a); n = n / np.linalg.norm(n)
+    return np.stack([a, n, np.cross(a, n)], 1)
+
+
 def muestrear(A: Autor, c: Clip):
     n = int(round(c.dur * FPS)) + 1
     t = np.linspace(0, c.dur, n)
     pistas = {}
-    huesos = sorted({h for h, _ in c.canales} | set(c.miras))
+    huesos = sorted({h for h, _ in c.canales} | set(c.miras) | set(getattr(c, "orientas", {})))
     # orden jerárquico (padres antes que hijos)
     prof = {h: 0 for h in huesos}
     for h in huesos:
@@ -195,6 +207,13 @@ def muestrear(A: Autor, c: Clip):
                 D = np.array([d0 if d is None else np.asarray(d, float) / np.linalg.norm(d) for d in ds])
                 tgt = _interp(ti, ts, D, c.ciclo); tgt = tgt / np.linalg.norm(tgt)
                 Rown = _entre(d0, Rp.T @ tgt)
+            if h in getattr(c, "orientas", {}):
+                ts, pares, (a0, n0) = c.orientas[h]
+                A_ = np.array([np.asarray(p[0], float) for p in pares]); N_ = np.array([np.asarray(p[1], float) for p in pares])
+                a = _interp(ti, ts, A_, c.ciclo); nn = _interp(ti, ts, N_, c.ciclo)
+                W = _base_de(a, nn) @ _base_de(np.asarray(a0, float), np.asarray(n0, float)).T   # reposo → mundo
+                # Rtot·Rw_base debe ser W (Rw_base = orientación mundo de la pose base respecto al reposo)
+                Rown = Rp.T @ W @ A.Rw[h].T
             Rtot[h] = Rp @ Rown
             # local: q_base ⊗ q(R_base_mundoᵀ · Rown)
             Rl = A.Rw[h].T @ Rown @ A.Rw[h]

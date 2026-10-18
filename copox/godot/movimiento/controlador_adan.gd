@@ -70,11 +70,26 @@ func apuntar() -> void:
 	banco.gesto("Aim")
 
 
+var _socket: Node3D
+var _accion_mano := {}
+
+
 ## Arma con nodo AGARRE (ver copox/armas/armas_alth.py). Se pega a la mano derecha.
-func equipar(ruta: String) -> void:
+## Si el personaje trae el nodo AGARRE_<NOMBRE> (resuelto por copox/movimiento/agarre.py: dedos rodeando el mango,
+## índice en el gatillo), el arma va exactamente ahí y la mano toma la pose de ese agarre. Si no, marco aproximado.
+func equipar(ruta: String, nombre_agarre := "") -> void:
 	desequipar()
 	var escena: PackedScene = load(ruta)
 	_arma = escena.instantiate()
+	if nombre_agarre != "":
+		_socket = personaje.find_child("AGARRE_" + nombre_agarre.to_upper(), true, false)
+		if _socket:
+			_socket.add_child(_arma)
+			_arma.transform = Transform3D.IDENTITY
+			_accion_mano = _socket.get_meta("extras", {})
+			banco.mano_derecha(_accion_mano.get("clip_agarre", ""))
+			return
+		push_warning("ControladorAdan: el personaje no trae AGARRE_%s; uso el marco aproximado" % nombre_agarre.to_upper())
 	var agarre: Node3D = _arma.find_child("AGARRE", true, false)
 	var ba := BoneAttachment3D.new()
 	ba.bone_name = "RightHand"
@@ -95,8 +110,47 @@ func equipar(ruta: String) -> void:
 
 func desequipar() -> void:
 	if _arma:
-		_arma.get_parent().queue_free()
+		if _socket and _arma.get_parent() == _socket:
+			_arma.queue_free()
+		else:
+			_arma.get_parent().queue_free()
 		_arma = null
+	_socket = null
+	_accion_mano = {}
+	if banco: banco.mano_derecha("")
+
+
+## Acción del arma equipada con agarre (p. ej. apretar el gatillo): la mano hace su clip *_Accion y la pieza móvil
+## (GATILLO) sigue la misma curva de tiempos/ángulos que se resolvió junto con el dedo.
+func disparar() -> void:
+	if _accion_mano.is_empty() or _arma == null:
+		return
+	banco.mano_accion(_accion_mano.get("clip_accion", ""))
+	_pieza_accion = _arma.find_child(_accion_mano.get("accion_nodo", "GATILLO"), true, false)
+	_t_accion_mano = 0.0
+
+
+var _pieza_accion: Node3D
+var _t_accion_mano := -1.0
+
+
+## Avanza la pieza móvil del arma con la curva de la acción (mismo reloj que el banco: sin tweens, reproducible).
+func _avanzar_accion_mano(dt: float) -> void:
+	if _t_accion_mano < 0.0 or _pieza_accion == null:
+		return
+	_t_accion_mano += dt
+	var ts: Array = _accion_mano.get("accion_tiempos", [])
+	var angs: Array = _accion_mano.get("accion_angulos", [])
+	var ang := 0.0
+	if _t_accion_mano >= float(ts[-1]):
+		_t_accion_mano = -1.0
+	else:
+		for i in range(1, ts.size()):
+			if _t_accion_mano <= float(ts[i]):
+				var u := (_t_accion_mano - float(ts[i - 1])) / maxf(float(ts[i]) - float(ts[i - 1]), 1e-6)
+				ang = lerpf(float(angs[i - 1]), float(angs[i]), u)
+				break
+	_pieza_accion.rotation.z = -ang
 
 
 func avanzar(dt: float) -> void:
@@ -130,6 +184,7 @@ func avanzar(dt: float) -> void:
 	if mueve_nodo:
 		personaje.global_position += vel * dt
 	banco.avanzar(dt)
+	_avanzar_accion_mano(dt)
 
 
 func _girar_hacia(d: Vector3, dt: float) -> void:

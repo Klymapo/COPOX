@@ -16,6 +16,8 @@ Ediciones soportadas (lista en ``ediciones``):
   {"tipo": "rotar", "raiz": "LeftThumbMetacarpal", "eje": [0, 1, 0], "grados": 30}
       gira el hueso, su descendencia y sus vértices (pivote = cabeza del hueso). Las claves de rotación de los
       clips se conjugan con ``conjugar_claves`` para que las poses giren igual.
+  {"tipo": "escalar", "raiz": "LeftHand", "factor": 1.08}
+      escala uniforme del hueso, su descendencia y sus vértices (pivote = cabeza del hueso).
   {"tipo": "acortar", "hasta": ["LeftFoot", "RightFoot"], "fijos": ["Root"], "delta": 0.0135}
       acorta las piernas manteniendo los pies en el piso: todo lo que NO es la
       descendencia de ``hasta`` (ni ``fijos``) baja ``delta``.
@@ -104,6 +106,13 @@ def editar(src: str, dst: str, ediciones: list[dict], nota: str = "") -> dict:
             for k in _desc(j, r):
                 if k in L:
                     componer(k, Rm, piv - Rm @ piv)
+        elif e["tipo"] == "escalar":
+            # escala uniforme del hueso raíz, su descendencia y sus vértices (pivote = cabeza de la raíz)
+            r = _idx(j, e["raiz"]); piv = P0[r]
+            S = np.eye(3) * float(e["factor"])
+            for k in _desc(j, r):
+                if k in L:
+                    componer(k, S, piv - S @ piv)
         elif e["tipo"] == "escala_vertices":
             S = np.diag(e["factores"]).astype(float)
             piv = np.array(e["pivote"], float)

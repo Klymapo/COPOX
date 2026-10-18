@@ -38,12 +38,14 @@ def _elipsoide(P, c, rad):
 class Diseno:
     """Parámetros de la mano (izquierda, pose T, palma abajo, dedos hacia +x). Unidades del modelo."""
     def __init__(self, H, puntas, pulgar_punta, palma_x0, palma_y, palma_z, grosor, dedo_r, pulgar_r,
-                 tenar, k_membrana, conico=0.85, angosta_muneca=0.82, radio_palma=0.009, angosta_pulgar=0.82):
+                 tenar, k_membrana, conico=0.85, angosta_muneca=0.82, radio_palma=0.009, angosta_pulgar=0.82, membrana_pulgar=None, canto_fijo=False):
         self.H, self.puntas, self.pulgar_punta = H, puntas, pulgar_punta
         self.palma_x0, self.palma_y, self.palma_z, self.grosor = palma_x0, palma_y, palma_z, grosor
         self.dedo_r, self.pulgar_r, self.tenar, self.k = dedo_r, pulgar_r, tenar, k_membrana
         self.conico, self.angosta, self.rp = conico, angosta_muneca, radio_palma
         self.angosta_pulgar = angosta_pulgar
+        self.membrana_pulgar = membrana_pulgar
+        self.canto_fijo = canto_fijo
 
     def cadenas(self):
         H = self.H
@@ -66,8 +68,21 @@ class Diseno:
         # regla), así el pulgar sale de la palma en vez de quedar tapado
         esc_p = self.angosta_pulgar + (1 - self.angosta_pulgar) * su
         esc = np.where(P[:, 2] > cz, esc_p, esc)
-        Q = P.copy(); Q[:, 2] = cz + (P[:, 2] - cz) / esc
-        d = _caja_red(Q, np.array([cx, self.palma_y, cz]), np.array([hx, self.grosor / 2, hz]), self.rp)
+        # el ancho cambia con x, pero el redondeo del canto NO se aplasta (antes se escalaba z y el canto del lado
+        # del pulgar quedaba vivo: la "costura" del dorso que vio visual-critic en V36)
+        c = np.array([cx, self.palma_y, cz])
+        if self.canto_fijo:
+            hzx = np.maximum(hz * esc, self.rp + 1e-4)
+            q = np.abs(P - c) - np.stack([np.full(len(P), hx - self.rp), np.full(len(P), self.grosor / 2 - self.rp), hzx - self.rp], 1)
+            d = np.linalg.norm(np.maximum(q, 0), axis=1) + np.minimum(q.max(1), 0) - self.rp
+        else:                                   # V36 (se conserva para reproducir esa versión bit a bit)
+            Q = P.copy(); Q[:, 2] = cz + (P[:, 2] - cz) / esc
+            d = _caja_red(Q, c, np.array([hx, self.grosor / 2, hz]), self.rp)
+        # membrana pulgar–índice: lámina delgada entre la base del pulgar y el nudillo del índice (en la mano con regla
+        # la membrana llega más alto que en V36)
+        if self.membrana_pulgar is not None:
+            a, b, r = self.membrana_pulgar
+            d = _smin(d, _capsula(P, a, b, r, r), self.k)
         # tenar (base del pulgar)
         d = _smin(d, _elipsoide(P, self.tenar[0], self.tenar[1]), self.k)
         dedos = None                                # dedos entre sí: unión dura (no se pegan como mitón)

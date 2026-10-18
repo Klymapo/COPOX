@@ -82,9 +82,12 @@ def diseno(E):
     del zs
     meta = H["LeftThumbMetacarpal"]
     tenar = (meta + np.array([0.004, -0.002, -0.009]), np.array([0.017, 0.0115, 0.013]))
+    e = ESCALA_R
+    extra = {k: (v(H) if callable(v) else v) for k, v in DISENO_EXTRA.items()}
     return mg.Diseno(H, puntas, pulgar_punta, palma_x0=float(palma[:, 0].min()), palma_y=float(H["LeftHand"][1]),
-                     palma_z=(float(z0), float(z1)), grosor=GROSOR, dedo_r=DEDO_R, pulgar_r=PULGAR_R,
-                     tenar=tenar, k_membrana=K_MEMBRANA, radio_palma=RADIO_PALMA, angosta_pulgar=ANGOSTA_PULGAR), nombres
+                     palma_z=(float(z0), float(z1)), grosor=GROSOR * e, dedo_r={k: v * e for k, v in DEDO_R.items()},
+                     pulgar_r=PULGAR_R * e, tenar=(tenar[0], tenar[1] * e), k_membrana=K_MEMBRANA * e,
+                     radio_palma=RADIO_PALMA * e, angosta_pulgar=ANGOSTA_PULGAR, **extra), nombres
 
 
 def simplificar(V, T, meta, carpeta):
@@ -212,6 +215,12 @@ def pulgar_en_puno(E):
 
 # Con la mano de una pieza el puño de V35 (85/100/70°) metía las puntas en la palma (puntas dentadas, visual-critic);
 # aquí se cierra menos en las falanges finales.
+# Ganchos para versiones siguientes (vacíos en V36: no cambian su resultado)
+EXTRA_EDICIONES = []         # ediciones de proporciones añadidas antes de construir la mano
+DISENO_EXTRA = {}            # parámetros extra para mano_geo.Diseno
+ESCALA_R = 1.0               # multiplica radios, grosor y redondeo de la mano
+
+
 PUNO_V36 = {"Proximal": 82.0, "Intermediate": 88.0, "Distal": 45.0}
 
 
@@ -258,7 +267,7 @@ def main(src, dst):
         if f != 1.0:
             largos += [{"tipo": "escala_eje", "raiz": f"{l}{d}Proximal", "hacia": f"{l}{d}Distal", "factor": f} for l in ("Left", "Right")]
     t35c = dst + ".v35c.glb"
-    proporciones.editar(t35b, t35c, giros + largos, nota="Adán V36: abanico de dedos y pulgar.")
+    proporciones.editar(t35b, t35c, giros + largos + EXTRA_EDICIONES, nota="Adán V36: abanico de dedos y pulgar.")
     proporciones.conjugar_claves(t35c, t35, giros)
     os.remove(t35b); os.remove(t35c)
     E = re.Editor(t35)

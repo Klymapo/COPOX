@@ -99,13 +99,20 @@ def glock():
     piezas = [
         ("corredera", negro, caja(-0.060, 0.066, 0.034, 0.066, -0.0165, 0.0165, 0.0055)),
         ("armazon", negro2, caja(-0.052, 0.060, 0.018, 0.037, -0.0145, 0.0145, 0.004)),
-        # empuñadura inclinada 18° hacia atrás
-        ("empunadura", negro2, caja_inclinada((-0.083, -0.040, -0.052), (-0.058, -0.016, 0.022), 0.0160, 0.0050)),
-        ("base_cargador", oscuro, caja_inclinada((-0.086, -0.040, -0.058), (-0.085, -0.040, -0.050), 0.0170, 0.0020)),
+        # empuñadura inclinada 18° hacia atrás. V3 del agarre: más delgada (±0.8 cm, antes ±1.6) y menos profunda
+        # (3.3 cm, antes 4.3): los dedos chibi miden la mitad que los reales y no podían rodear un mango de 15 cm de
+        # perímetro; el frente (donde va el dedo medio) no se mueve, así el índice sigue alcanzando el gatillo.
+        ("empunadura", negro2, caja_inclinada((-0.073, -0.040, -0.052), (-0.048, -0.016, 0.022), 0.0080, 0.0035)),
+        ("base_cargador", oscuro, caja_inclinada((-0.076, -0.040, -0.058), (-0.075, -0.040, -0.050), 0.0090, 0.0020)),
         # guardamonte: barra de abajo y barra de enfrente
-        ("guardamonte_abajo", negro2, caja(-0.020, 0.016, -0.002, 0.005, -0.0045, 0.0045, 0.0018)),
-        ("guardamonte_frente", negro2, mover(caja(-0.003, 0.004, -0.002, 0.024, -0.0045, 0.0045, 0.0015), (0.012, 0, 0), rot_z(0.20))),
-        ("gatillo", metal, mover(caja(-0.0025, 0.0025, 0.004, 0.020, -0.0028, 0.0028, 0.0010), (-0.004, 0, 0), rot_z(-0.25))),
+        # (V2 del agarre: gatillo y guardamonte 1 cm más cerca del mango; con la mano chibi de Adán el índice no
+        # alcanzaba el gatillo: del nudillo al gatillo había 5.2 cm y el índice mide 4.4)
+        # y más alto por dentro: el dedo chibi mide 2 cm de grueso y antes no cabía (hueco de 1.3 cm)
+        ("guardamonte_abajo", negro2, caja(-0.032, 0.008, -0.012, -0.005, -0.0045, 0.0045, 0.0018)),
+        ("guardamonte_frente", negro2, mover(caja(-0.003, 0.004, -0.012, 0.024, -0.0045, 0.0045, 0.0015), (0.004, 0, 0), rot_z(0.20))),
+        # gatillo: pieza móvil (nodo GATILLO con bisagra arriba); el índice lo empuja en su cara de enfrente
+        ("gatillo", metal, mover(caja(-0.0025, 0.0025, 0.004, 0.020, -0.0028, 0.0028, 0.0010), (-0.014, 0, 0), rot_z(-0.25)),
+         {"nodo": "GATILLO", "pivote": [-0.0090, 0.0194, 0.0]}),
         ("mira_atras", oscuro, caja(-0.056, -0.046, 0.065, 0.071, -0.0080, 0.0080, 0.0015)),
         ("mira_frente", oscuro, caja(0.054, 0.060, 0.065, 0.070, -0.0030, 0.0030, 0.0012)),
         ("boca", oscuro, mover(anillos([0.0655, 0.0668], [0.0062, 0.0052], 8), (0, 0.052, 0))),
@@ -114,7 +121,11 @@ def glock():
     for k, x in enumerate((-0.050, -0.044, -0.038)):    # estrías de la corredera (relieve)
         piezas.append((f"estria_{k}", oscuro, caja(x, x + 0.003, 0.038, 0.062, -0.0172, 0.0172, 0.0008)))
     # agarre: centro de la empuñadura; +y a lo largo de la empuñadura (inclinada 18° hacia atrás)
-    agarre = {"translation": [-0.052, -0.012, 0.0], "rotation": _q_z(np.radians(18))}
+    agarre = {"translation": [-0.043, -0.012, 0.0], "rotation": _q_z(np.radians(18))}
+    # contactos para el sistema de agarre (copox/movimiento/agarre.py): la yema del índice en la cara de enfrente del
+    # gatillo (hijo de GATILLO, así se mueve con él al disparar). Recorrido del gatillo: 0.30 rad hacia atrás.
+    agarre["contactos"] = {"Index": {"padre": "GATILLO", "translation": [0.0009 - 0.0010 + 0.0006, 0.0091 - 0.0194, 0.0]}}
+    agarre["recorrido"] = {"GATILLO": 0.30}
     return piezas, agarre
 
 
@@ -168,8 +179,13 @@ def escribir_glb(ruta, nombre, piezas, agarre):
         return len(j["accessors"]) - 1
 
     prims = []
+    moviles = {}                    # nodo → (pivote, [prims])
     rng = np.random.default_rng(7)
-    for nom, color, (P, F) in piezas:
+    for pieza in piezas:
+        nom, color, (P, F) = pieza[:3]
+        extra = pieza[3] if len(pieza) > 3 else None
+        if extra:
+            P = P - np.asarray(extra["pivote"])
         if color not in mats:
             mats[color] = len(j["materials"])
             j["materials"].append({"name": f"ALTH_{color[1:]}", "pbrMetallicRoughness": {
@@ -182,14 +198,32 @@ def escribir_glb(ruta, nombre, piezas, agarre):
         var = np.repeat(1 + rng.uniform(-0.035, 0.035, len(F)), 3)[:, None]
         C = np.concatenate([np.clip(var, 0, 1.2) * np.ones((len(V), 3)), np.ones((len(V), 1))], 1).astype(np.float32)
         I = np.arange(len(V), dtype=np.uint32)
-        prims.append({"attributes": {"POSITION": add(V, "VEC3", target=34962, minmax=True),
-                                     "NORMAL": add(Nv, "VEC3", target=34962),
-                                     "COLOR_0": add(np.clip(C, 0, 1), "VEC4", target=34962)},
-                      "indices": add(I, "SCALAR", 5125, 34963), "material": mats[color]})
+        prim = {"attributes": {"POSITION": add(V, "VEC3", target=34962, minmax=True),
+                               "NORMAL": add(Nv, "VEC3", target=34962),
+                               "COLOR_0": add(np.clip(C, 0, 1), "VEC4", target=34962)},
+                "indices": add(I, "SCALAR", 5125, 34963), "material": mats[color]}
+        if extra:
+            moviles.setdefault(extra["nodo"], (extra["pivote"], []))[1].append(prim)
+        else:
+            prims.append(prim)
     j["meshes"].append({"name": nombre, "primitives": prims})
+    contactos = agarre.pop("contactos", {})
+    recorrido = agarre.pop("recorrido", {})
     j["nodes"] = [{"name": nombre, "children": [1, 2]},
                   {"name": nombre + "_malla", "mesh": 0},
                   {"name": "AGARRE", **agarre}]
+    idx_nodo = {}
+    for nodo, (piv, ps) in moviles.items():
+        j["meshes"].append({"name": nodo, "primitives": ps})
+        idx_nodo[nodo] = len(j["nodes"])
+        j["nodes"].append({"name": nodo, "mesh": len(j["meshes"]) - 1, "translation": [float(v) for v in piv],
+                           "extras": {"recorrido_rad": recorrido.get(nodo, 0.0)}})
+        j["nodes"][0]["children"].append(idx_nodo[nodo])
+    for dedo, c in contactos.items():
+        k = len(j["nodes"])
+        j["nodes"].append({"name": "CONTACTO_" + dedo, "translation": [float(v) for v in c["translation"]]})
+        padre = idx_nodo.get(c.get("padre"), 0)
+        j["nodes"][padre].setdefault("children", []).append(k)
     j["buffers"] = [{"byteLength": len(bin_)}]
     while len(bin_) % 4:
         bin_.append(0)
@@ -198,7 +232,7 @@ def escribir_glb(ruta, nombre, piezas, agarre):
         f.write(struct.pack("<III", 0x46546C67, 2, 28 + len(js) + len(bin_)))
         f.write(struct.pack("<II", len(js), 0x4E4F534A)); f.write(js)
         f.write(struct.pack("<II", len(bin_), 0x004E4942)); f.write(bin_)
-    return sum(len(F) for _, _, (P, F) in piezas)
+    return sum(len(p[2][1]) for p in piezas)
 
 
 def main(salida):
