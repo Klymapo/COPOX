@@ -211,3 +211,9 @@ Salida:
 - Godot 4.7.2 (oficial, descargado de GitHub) corre en el entorno de Elio con Xvfb + Mesa llvmpipe (Compatibilidad; sin Vulkan). Visor mínimo en `copox/godot/`.
   - Confirmado en Godot: skin y 112 clips, morphs, color de vértice (rubor, nariz, orejas), materiales de dos caras y tamaño.
   - Godot quita el sufijo `-loop` de los clips.
+
+## ADÁN ALPHA (17 oct 2026)
+
+- Admin nombra **Adán Alpha** a la versión Adán V21 (sha `bf6ec140…`); Theo Alpha = Theo V14 (sha `6dcf8acd…`).
+- Documentación completa y cadena de reconstrucción: `docs/ADAN_ALPHA.md`. Reconstrucción V10 → Alpha verificada bit a bit (`docs/medicion/construir_adan_alpha.sh`).
+- Se agregan al repo las recetas que faltaban (hallazgo de la auditoría): `receta_adan_v05_limpieza.py`, `receta_adan_v06_neutro.py` y `glb.py`.
