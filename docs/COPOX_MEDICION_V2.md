@@ -136,3 +136,16 @@ Salida:
 - Boca sumida: la zona se lleva a la superficie suave de la cara baja conservando el 35 % del detalle de los labios. El interior y el fondo se mueven igual.
 - Pendiente aparte: el morph de ceja enojada (p. ej. G25_3_Amenazante) dentea la ceja. Ya venía así desde antes; es del morph original de la placa.
 - Medición: rasgos 0.453, piel 0.730, Hoja sin pelo 0.718 (sin cambio). Son arreglos de forma que el IoU frontal no ve.
+
+## Pulido (Theo V09, Adán V16)
+
+- Receta `docs/medicion/receta_theo_v09.py`. Imperfecciones detectadas con CHXP (barrido de huecos en 90 tomas de cabeza, detector de picos por laplaciano, acercamientos):
+  - Astillas en la nariz y picos en sienes y barbilla: 436 picos suavizados; se protegen los bordes abiertos y la boca.
+  - Ceja dentada en gestos: se suavizan los deltas de sus 3 morphs.
+  - Línea del pelo dentada:
+    - Se suaviza el borde del gorro.
+    - El relleno entra 1.5 mm y el contorno sale 0.8 mm.
+    - El borde superior de la máscara de la cara queda bajo la tira de contorno.
+  - Huecos (la cabeza es una cáscara abierta): la piel pasa a ser de dos caras y el fondo de la boca se ensancha. Theo pasa de 2,926 px a 161, Adán de 1,160 a 155. Se probó un relleno interior con elipsoide y se descartó.
+  - `rostro_edicion`: `agregar_malla` y `elipsoide`.
+- Mediciones sin cambio (rasgos 0.453, piel 0.730): es pulido, no forma.

@@ -394,3 +394,72 @@ def agregar_caja(E: "Editor", nodo_nombre: str, material: str, centro, semiejes,
     malla["primitives"].append(prim)
     E.b = bytes(E.out)
     E.log.append({"operacion": f"caja nueva {nodo_nombre}/{material}", "centro": c.round(4).tolist(), "semiejes": h.round(4).tolist(), "triangulos": int(len(F2))})
+
+
+def agregar_malla(E: "Editor", nodo_nombre: str, material: str, V, F, hueso: str, nombre: str, color=None):
+    """Agrega una malla cerrada cualquiera (V, F) como primitiva nueva, pesada 100 % a ``hueso``.
+    Normales suaves por vértice; morphs en cero (glTF exige el mismo número de targets)."""
+    V = np.asarray(V, float); F = np.asarray(F, np.int64)
+    T = V[F]; Nf = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0])
+    N = np.zeros_like(V)
+    for i in range(3):
+        np.add.at(N, F[:, i], Nf)
+    N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
+    nodo = next(n for n in E.j["nodes"] if n.get("name") == nodo_nombre)
+    malla = E.j["meshes"][nodo["mesh"]]
+    mat = next(i for i, m in enumerate(E.j["materials"]) if m["name"] == material)
+    jn = [E.j["nodes"][k]["name"] for k in E.j["skins"][0]["joints"]].index(hueso)
+
+    def add_raw(arr, ctype, typ, target=None):
+        arr = np.ascontiguousarray(arr)
+        while len(E.out) % 4:
+            E.out.append(0)
+        v = {"buffer": 0, "byteOffset": len(E.out), "byteLength": arr.nbytes}
+        if target:
+            v["target"] = target
+        E.out.extend(arr.tobytes()); E.j["bufferViews"].append(v)
+        E.j["accessors"].append({"bufferView": len(E.j["bufferViews"]) - 1, "componentType": ctype, "count": len(arr), "type": typ})
+        return len(E.j["accessors"]) - 1
+    J = np.zeros((len(V), 4), np.uint16); J[:, 0] = jn
+    W = np.zeros((len(V), 4), np.float32); W[:, 0] = 1
+    at = {"POSITION": E._add(V, "VEC3", 34962, True), "NORMAL": E._add(N, "VEC3", 34962),
+          "JOINTS_0": add_raw(J, 5123, "VEC4", 34962), "WEIGHTS_0": add_raw(W, 5126, "VEC4", 34962)}
+    if color is not None:
+        at["COLOR_0"] = E._add(np.tile(list(color) + [1.0], (len(V), 1)), "VEC4", 34962)
+    prim = {"attributes": at, "indices": add_raw(F.astype(np.uint32).ravel(), 5125, "SCALAR", 34963), "material": mat}
+    ntar = len(malla["primitives"][0].get("targets", []))
+    if ntar:
+        prim["targets"] = []
+        for _ in range(ntar):
+            E.j["accessors"].append({"componentType": 5126, "count": len(V), "type": "VEC3", "min": [0.0] * 3, "max": [0.0] * 3})
+            prim["targets"].append({"POSITION": len(E.j["accessors"]) - 1})
+    malla["primitives"].append(prim)
+    E.b = bytes(E.out)
+    E.log.append({"operacion": nombre, "material": material, "vertices": int(len(V)), "triangulos": int(len(F))})
+
+
+def elipsoide(centro, radios, nu=32, nv=20):
+    c = np.array(centro, float); r = np.array(radios, float)
+    V = [c + r * [0, 1, 0]]
+    for i in range(1, nv):
+        th = np.pi * i / nv
+        for k in range(nu):
+            ph = 2 * np.pi * k / nu
+            V.append(c + r * [np.sin(th) * np.sin(ph), np.cos(th), np.sin(th) * np.cos(ph)])
+    V.append(c + r * [0, -1, 0])
+    V = np.array(V); F = []
+    for k in range(nu):
+        F.append([0, 1 + k, 1 + (k + 1) % nu])
+    for i in range(nv - 2):
+        a, b = 1 + i * nu, 1 + (i + 1) * nu
+        for k in range(nu):
+            k2 = (k + 1) % nu
+            F += [[a + k, b + k, b + k2], [a + k, b + k2, a + k2]]
+    last = len(V) - 1; a = 1 + (nv - 2) * nu
+    for k in range(nu):
+        F.append([last, a + (k + 1) % nu, a + k])
+    F = np.array(F)
+    T = V[F]; n = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0])
+    flip = (n * (T.mean(1) - c)).sum(1) < 0
+    F[flip] = F[flip][:, ::-1]
+    return V, F
