@@ -31,3 +31,9 @@ xvfb-run -a godot --path . -- salida=/ruta/out.png yaw=-35 elev=5 alto=0.55 cy=0
 - `ojos/generar_capas.py` regenera las capas con el mismo diseño que la textura horneada en el GLB. El GLB conserva su textura como respaldo para otros programas.
 - En el visor: `mirada=x:y`.
 - Verificado en Godot 4.7.2 (Compatibilidad): centro, derecha, izquierda, arriba, abajo y diagonal; también con el parpadeo.
+
+## Movimiento (gestos, cara, parpadeo y mirada)
+
+- `movimiento/banco_movimiento.gd` (`BancoMovimiento`): AnimationTree por capas para el rig de Adán. Uso en el juego: `banco.montar($Adan)`, `banco.gesto("Wave", "G23_1_Saludo")`, `banco.cara("Talk-loop")`, `banco.mirada = Vector2(x, y)`.
+- `movimiento/prueba_movimiento.tscn`: banco de pruebas headless, modos `secuencia`, `clips` y `caras`.
+- Detalle y hallazgos: `docs/PRUEBAS_MOVIMIENTO_2026-10-17.md`.
