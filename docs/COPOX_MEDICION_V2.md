@@ -122,3 +122,17 @@ Salida:
   - Mandíbula ×1.08 (solo Theo).
 - Theo V07: rasgos oscuros 0.460 (V06 0.453); piel de la cara baja 0.731 (V06 0.738).
 - Techo realista: las referencias entre sí coinciden en piel 0.75–0.93 y en rasgos 0.53–0.78 (R_15 vs R_1/R_0). Un IoU de 1.0 contra todas a la vez no es alcanzable; la meta útil es acercarse a ese techo.
+
+## Cráneo, contorno de ojos y boca (Theo V08, Adán V15)
+
+- Receta `docs/medicion/receta_theo_v08.py`.
+- Cráneo: el cráneo real es el gorro de pelo + la máscara de la cara (la piel no cubre la parte de arriba).
+  - Antes era una "bala": punta estrecha (0.78 ED en v −1.5), ancho máximo de 1.33 y pellizco en las sienes (1.13).
+  - Ahora es una caja redondeada: 1.24 ED de v −1.0 a −0.5, bajada suave a 1.14 y parte alta más llena.
+- Contorno de ojos: el marco venía de dos cosas.
+  - Las cuencas con borde en la máscara: se rellenaron.
+  - Los 4 párpados con morph de parpadeo asomaban por la placa. Abiertos quedan bajo la placa y se suma lo bajado a su morph, así el parpadeo cerrado no cambia.
+  - Las placas de ojo y ceja se apoyan sobre la cara (ceja: superficie suave, nunca bajo la piel).
+- Boca sumida: la zona se lleva a la superficie suave de la cara baja conservando el 35 % del detalle de los labios. El interior y el fondo se mueven igual.
+- Pendiente aparte: el morph de ceja enojada (p. ej. G25_3_Amenazante) dentea la ceja. Ya venía así desde antes; es del morph original de la placa.
+- Medición: rasgos 0.453, piel 0.730, Hoja sin pelo 0.718 (sin cambio). Son arreglos de forma que el IoU frontal no ve.
