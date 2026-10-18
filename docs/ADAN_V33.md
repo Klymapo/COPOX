@@ -1,4 +1,4 @@
-# Adán V33 · cabeza con aristas más afiladas (EXPERIMENTO, SIN APROBAR)
+# Adán V33 · cabeza con aristas más afiladas (CABEZA APROBADA)
 
 - **Pedido de Admin (18 oct 2026):** "afilar" las aristas de la cabeza para parecerse más a las referencias (Hoja de vistas).
 - **Resultado:** `ADAN_V33.glb`, SHA-256 `9467cdd48878e1335d0f58f3ff8402cff766167bbb618dd2d525332c95e689a3`. Receta `docs/medicion/receta_adan_v33.py` (V32 + este paso), reproducible bit a bit.
@@ -20,3 +20,5 @@ Cortes horizontales de la piel de la cabeza: cada corte es casi una elipse (supe
 ## Probado y descartado
 
 - Campo sin proteger la cara: deformaba párpados y ojos (capas con separaciones de décimas de mm) e inflaba las mejillas.
+
+- **Admin (18 oct 2026, 09:56):** "Me gusta la cabeza" → cabeza afilada aprobada; las manos siguen en trabajo (V34).
