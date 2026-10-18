@@ -1,0 +1,58 @@
+{
+  "project": "COPOX G2-C5",
+  "status": "experimental not approved",
+  "source_pr": 47,
+  "experiment_pr": 48,
+  "files": [
+    {
+      "file": "COPOX_G2C5_REGIONALES_CONSERVADOR_SIN_APROBAR.glb",
+      "size_bytes": 11723252,
+      "sha256": "34ccc30b0f5565204c2b16395daff8d6303da869dbf432ef51b8db6080e8e070"
+    },
+    {
+      "file": "COPOX_G2C5_CANDIDATO_SIN_APROBAR.glb",
+      "size_bytes": 11826468,
+      "sha256": "908aef0e812c4997e6e241691fdfebbb7e4caeb844e310da88a962414a278342"
+    },
+    {
+      "file": "COPOX_G2C5_COMPARATIVA_6V.png",
+      "size_bytes": 615674,
+      "sha256": "6f71a84ec731e9c0b0f0df11acc9b958d189e5814ca3efc6789d5e70ec8f7542"
+    },
+    {
+      "file": "COPOX_G2C5_COMPARATIVA_CULL_4V.png",
+      "size_bytes": 312385,
+      "sha256": "18c43f056b6c29b2b05d198c9a3179bdcc3ecc941ddc611efd27c8943709759d"
+    },
+    {
+      "file": "COPOX_G2C5_OJOS_ZOOM.png",
+      "size_bytes": 82399,
+      "sha256": "def406c2dd93fceeb21730e693fa533d7308c7fec7a627c438491a2f56302c4e"
+    },
+    {
+      "file": "COPOX_G2C5_LAMINA_FINAL_4V.png",
+      "size_bytes": 416573,
+      "sha256": "e02f0a783430ca438b8499165b51c8e20e19e36ba97431ff3503d5aee9279f38"
+    },
+    {
+      "file": "COPOX_G2C5_EVALUACION.md",
+      "size_bytes": 3487,
+      "sha256": "8ffd128290297383ba8981c56a21cfc52875826d3695b7dbbebe59d1446f0a66"
+    },
+    {
+      "file": "COPOX_G2C5_CONSERVADOR_REPORTE.json",
+      "size_bytes": 1262,
+      "sha256": "6b3a56a11ad3018406ddcbf6f974f38ccddca0b745e050dceaaf8f700fab89aa"
+    },
+    {
+      "file": "COPOX_G2C5_REPORTE.json",
+      "size_bytes": 1647,
+      "sha256": "5478152227f3f68a7f34dff21c054427abfeeb6eac98115b3baa18856501f0e4"
+    },
+    {
+      "file": "COPOX_G2C5_ENTREGA_EXPERIMENTAL.zip",
+      "size_bytes": 10406945,
+      "sha256": "fd8ab683dee93f10ac7b12ad1ee97c2a255463fc5450e3815e5ce8ab780cc8b7"
+    }
+  ]
+}

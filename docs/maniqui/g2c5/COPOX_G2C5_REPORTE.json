@@ -1,0 +1,50 @@
+{
+  "status": "EXPERIMENTAL_VISUAL_REVIEW_REQUIRED",
+  "glb": "/mnt/data/COPOX_G2C5_CANDIDATO_SIN_APROBAR.glb",
+  "sha256": "908aef0e812c4997e6e241691fdfebbb7e4caeb844e310da88a962414a278342",
+  "sources": {
+    "V3": "0a100a9400e87251cbdd64328c0c13ffc4bbf829ae4c85d5b54aee2c1e67565b",
+    "A": "e5660a56d9d611dec63209a22d0857947ea44cadb871fee9026d67d24438e308",
+    "B2": "daf3737d0cb5b6469fa407ffab5dc761b2fc0e0acd9c69652cb283d41b4b05ec",
+    "C": "3a045efdbef61dfe3f0f4c458ab1037ec2e815c7c6f46a3d1e74919bfc125bd9"
+  },
+  "face_triangles_previous": 2826,
+  "face_triangles_new": 5155,
+  "removed_frame_B2": 71,
+  "removed_hair_A": 156,
+  "restored_skin_right_ear": {
+    "input_right_hair_faces": 156,
+    "reconstructed_skin_faces": 120,
+    "isolated_fragments_left_shaved": 36,
+    "edited_interior_vertices": 84,
+    "protected_border_vertices": 19,
+    "max_smoothing_displacement_m": 0.019139735028147697,
+    "new_inversions": 0,
+    "facial_voids": {
+      "filled_grid_cells": 1098,
+      "new_faces": 2196,
+      "new_vertices": 1353,
+      "original_grid_shape": [
+        65,
+        129
+      ]
+    },
+    "submandibular_voids": {
+      "filled_grid_cells": 120,
+      "new_faces": 240,
+      "new_vertices": 189,
+      "original_grid_shape": [
+        37,
+        98
+      ]
+    }
+  },
+  "retained_C_jaw_displaced_count": 124,
+  "underlays_are_true_meshes_not_welded": true,
+  "known_limitations": [
+    "Added eye and jaw underlay surfaces cover visible gaps but are not boundary welded",
+    "No claim of rigged neck or functional facial animation",
+    "Needs Godot structural QA and aesthetic approval"
+  ],
+  "no_merge": true
+}
