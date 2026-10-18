@@ -121,14 +121,14 @@ class Sesion:
             self._soldar = inv.reshape(-1)
         return self._soldar
 
-    def geo(self, clip: str | None, t: float) -> Geo:
-        clave = (clip, round(t, 6))
+    def geo(self, clip: str | None, t: float, morphs: tuple = ()) -> Geo:
+        clave = (clip, round(t, 6), morphs)
         if clave not in self._poses:
             if clip in (None, "reposo"):
                 clip = None
             elif clip not in self.m.clips:
                 raise KeyError(f"Clip desconocido: {clip}")
-            Pl, Nl = self.m.posar(clip, t, normales=True)
+            Pl, Nl = self.m.posar(clip, t, normales=True, morphs=dict(morphs))
             P, Na = np.concatenate(Pl), np.concatenate(Nl)
             # soldadura en reposo (estable entre poses)
             w = self._soldadura(np.concatenate([p.pos for p in self.m.prims]))
@@ -210,7 +210,7 @@ class Sesion:
         t0 = time.time()
         v = leer(vista) if isinstance(vista, str) else replace(vista)
         clip = None if v.clip == "reposo" else (v.clip if v.clip in self.m.clips else None)
-        geo = self.geo(clip, v.t)
+        geo = self.geo(clip, v.t, tuple(sorted(v.morphs)))
         visibles = np.ones(len(self.F), bool)
         if v.ocultar:  # por nombre de nodo o de material
             visibles &= ~np.isin(self.nodoF, v.ocultar) & ~np.isin(np.array(self.mat_nombre)[self.prim], v.ocultar)

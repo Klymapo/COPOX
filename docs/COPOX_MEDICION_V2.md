@@ -200,3 +200,14 @@ Salida:
   - Las piezas pegadas a la cara (ojos, párpados, cejas, nariz, orejas) siguen a la piel nueva.
 - Movimiento de la piel: mediana 0.28 mm, p95 1.3 mm, máximo 4.8 mm.
 - Se probó una relajación tangencial con reproyección: movía hasta 9 mm y empeoraba las uniones; se descartó.
+
+## Gestos y Godot (Theo V14, Adán V21)
+
+- CHXP: clave `morph=nombre:peso,...` en los códigos de vista (`Modelo.posar(morphs=...)`).
+- Revisión de los 18 gestos (`tools`: lámina por gesto con base, frente, 3/4 y arcilla; huecos 0 en todos):
+  - Roto: parpadeo. El párpado cerrado quedaba detrás de la placa y se veía un aro blanco.
+  - Receta `docs/medicion/receta_theo_v14.py`: el párpado cerrado queda 1 mm delante de la placa y la placa se encoge al 80 % y se mete 3 mm al cerrar.
+  - Débiles pero no rotos: `boca_o` y `boca_soplar` abren poco, porque la boca de Theo es una línea fina.
+- Godot 4.7.2 (oficial, descargado de GitHub) corre en el entorno de Elio con Xvfb + Mesa llvmpipe (Compatibilidad; sin Vulkan). Visor mínimo en `copox/godot/`.
+  - Confirmado en Godot: skin y 112 clips, morphs, color de vértice (rubor, nariz, orejas), materiales de dos caras y tamaño.
+  - Godot quita el sufijo `-loop` de los clips.

@@ -19,6 +19,7 @@ Claves:
   tam               lado de la imagen en px (512 iterar, 1024 final)
   sombreado         suave | facetas | archivo (normales guardadas en el GLB, como Godot)
   ocultar           nombres de nodo o de material separados por coma
+  morph             pesos de gesto: nombre:peso,nombre:peso (p. ej. boca_abrir:1,ceja_ceno_L:0.5)
 """
 from __future__ import annotations
 
@@ -42,6 +43,7 @@ class Vista:
     tam: int = 512
     sombreado: str = "suave"
     ocultar: tuple = field(default_factory=tuple)
+    morphs: tuple = field(default_factory=tuple)   # ((nombre, peso), ...)
 
     def codigo(self) -> str:
         d = "orto" if self.dist is None else f"{self.dist:g}"
@@ -49,6 +51,8 @@ class Vista:
              f"enc={self.enc};clip={self.clip};t={self.t:g};modo={self.modo};tam={self.tam};sombreado={self.sombreado}")
         if self.ocultar:
             s += ";ocultar=" + ",".join(self.ocultar)
+        if self.morphs:
+            s += ";morph=" + ",".join(f"{n}:{w:g}" for n, w in self.morphs)
         return s
 
 
@@ -96,6 +100,8 @@ def leer(codigo: str) -> Vista:
             if x not in MODOS:
                 raise ValueError(f"Modo desconocido: {x}. Modos: {', '.join(MODOS)}")
             v.modo = x
+        elif k == "morph":
+            v.morphs = tuple((a, float(b)) for a, _, b in (x.partition(":") for x in x.split(",") if x))
         elif k == "ocultar":
             v.ocultar = tuple(n for n in x.split(",") if n)
         elif k in ("region", "enc", "clip", "sombreado", "nombre"):

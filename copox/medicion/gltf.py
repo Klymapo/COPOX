@@ -190,11 +190,25 @@ class Modelo:
             return W[i]
         return g
 
-    def posar(self, clip: str | None = None, frac: float = 0.0, normales: bool = False):
+    def posar(self, clip: str | None = None, frac: float = 0.0, normales: bool = False, morphs: dict | None = None):
         """Posiciones en mundo de cada primitiva (skin + morphs) en clip/fracción.
-        Con normales=True devuelve (posiciones, normales del archivo transformadas)."""
+        Con normales=True devuelve (posiciones, normales del archivo transformadas).
+        morphs={nombre: peso} fija pesos de morph por nombre (extras.targetNames) sobre lo que traiga el clip."""
         t = self.duracion(clip) * frac if clip else 0.0
         trs, pesos = self.muestrear(clip, t)
+        if morphs:
+            for ni, n in enumerate(self.j["nodes"]):
+                if "mesh" not in n:
+                    continue
+                m = self.j["meshes"][n["mesh"]]
+                nombres = m.get("extras", {}).get("targetNames", [])
+                if not nombres:
+                    continue
+                w = np.array(pesos.get(ni, m.get("weights", [0.0] * len(nombres))), float).copy()
+                for k, val in morphs.items():
+                    if k in nombres:
+                        w[nombres.index(k)] = val
+                pesos[ni] = w
         g = self._mundo(trs)
         cache = {}
         out, outn = [], []
