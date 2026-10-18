@@ -223,11 +223,23 @@ def sellar(img: np.ndarray, texto: str, codigo: str = "", t: int | None = None) 
     from PIL import Image, ImageDraw
     W = img.shape[1]
     t = t or max(11, min(W, img.shape[0]) // 46)
-    alto = int(t * 1.5) * (2 if codigo else 1) + 6
+    fc = _fuente(max(9, int(t * 0.8)))
+    lineas = []
+    if codigo:  # el código se parte en renglones que quepan (nunca se corta)
+        actual = ""
+        for parte in codigo.split(";"):
+            prueba = f"{actual};{parte}" if actual else parte
+            if actual and fc.getlength(prueba) > W - 12:
+                lineas.append(actual + ";"); actual = parte
+            else:
+                actual = prueba
+        lineas.append(actual)
+    paso = int(t * 1.5)
+    alto = paso + int(t * 1.2) * len(lineas) + 8
     out = Image.new("RGB", (W, img.shape[0] + alto), (24, 26, 32))
     out.paste(Image.fromarray(img), (0, 0))
     d = ImageDraw.Draw(out)
     d.text((6, img.shape[0] + 3), texto, fill=(235, 235, 235), font=_fuente(t))
-    if codigo:
-        d.text((6, img.shape[0] + 3 + int(t * 1.5)), codigo, fill=(150, 160, 175), font=_fuente(max(9, int(t * 0.8))))
+    for i, ln in enumerate(lineas):
+        d.text((6, img.shape[0] + 3 + paso + i * int(t * 1.2)), ln, fill=(150, 160, 175), font=fc)
     return np.asarray(out)
