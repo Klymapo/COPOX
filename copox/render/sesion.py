@@ -189,6 +189,11 @@ class Sesion:
     def encuadre(self, v: Vista, geo: Geo, visibles: np.ndarray):
         """Devuelve (cam, escala, centro) para el tamaño v.tam (sin supermuestreo)."""
         H = W = v.tam
+        if v.enc != "auto" and v.enc.count(",") == 3:      # 'alto,x,y,z': objetivo 3D al centro de la imagen
+            alto, ox, oy, oz = (float(x) for x in v.enc.split(","))
+            cam = Camara(v.yaw, v.elev, v.roll, v.dist, objetivo=(ox, oy, oz))
+            esc = H / alto
+            return cam, esc, (W / 2, H / 2)
         if v.enc != "auto":
             alto, cx, cy = (float(x) for x in v.enc.split(","))
             cam = Camara(v.yaw, v.elev, v.roll, v.dist, objetivo=(0.0, cy, 0.0))

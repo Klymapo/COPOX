@@ -12,7 +12,8 @@ Claves:
   yaw, elev, roll   grados (yaw 0 = frente, 90 = costado izquierdo del personaje, 180 = espalda)
   dist              'orto' (ortográfica) o distancia en unidades del modelo (perspectiva)
   region            cuerpo | cara | mano_izq | mano_der | pies (qué se encuadra con enc=auto)
-  enc               'auto' o 'alto,cx,cy': alto visible y centro en unidades del modelo
+  enc               'auto', 'alto,cx,cy' (alto visible y centro en unidades del modelo) o 'alto,x,y,z'
+                    (punto 3D del modelo al centro de la imagen; útil con roll o vistas desde arriba/abajo)
                     (fijo: misma toma para todas las versiones de un modelo)
   clip, t           animación y fracción 0–1 ('reposo' = sin animación)
   modo              color | arcilla | malla | normales | curvatura | clases | clases_tri

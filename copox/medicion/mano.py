@@ -47,6 +47,8 @@ def _piezas(m, lado="Left"):
 
 def medir(m, lado="Left"):
     pz, H = _piezas(m, lado)
+    if "palma" not in pz:
+        raise ValueError("Mano de una pieza (V36+): usa copox.medicion.mano_silueta (silueta contra la referencia)")
     s = 1.0 if lado == "Left" else -1.0
     x = lambda P: s * P[:, 0]
     muneca = s * H[lado + "Hand"][0]
