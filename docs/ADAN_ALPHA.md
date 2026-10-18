@@ -32,9 +32,9 @@ Los GLB **no se suben a este repo** (es público). Tampoco al Drive automáticam
   - Piel, boca y gorro de dos caras.
   - Huecos visibles en 90 tomas de cabeza: ≈110 px.
   - Pasa la prueba de carga en Godot 4.7.2.
+- **Hecho después de Alpha:** pupilas con shader en Godot (`copox/godot/ojos/`) y boca para hablar: 8 morphs de visemas y mandíbula, `Talk-loop` y `Blink` reales (Theo V15 / Adán V22, receta `receta_theo_v15.py`).
 - **Pendiente:**
   - Pelo con mechones (≤2,000 triángulos, móviles).
-  - Pupilas con shader en Godot (decidido).
   - Ropa por capas.
   - `boca_o` y `boca_soplar` abren poco.
 

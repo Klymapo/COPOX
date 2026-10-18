@@ -217,3 +217,19 @@ Salida:
 - Admin nombra **Adán Alpha** a la versión Adán V21 (sha `bf6ec140…`); Theo Alpha = Theo V14 (sha `6dcf8acd…`).
 - Documentación completa y cadena de reconstrucción: `docs/ADAN_ALPHA.md`. Reconstrucción V10 → Alpha verificada bit a bit (`docs/medicion/construir_adan_alpha.sh`).
 - Se agregan al repo las recetas que faltaban (hallazgo de la auditoría): `receta_adan_v05_limpieza.py`, `receta_adan_v06_neutro.py` y `glb.py`.
+
+## Decisión definitiva y boca para hablar (Theo V15, Adán V22)
+
+- Decisión de Admin (definitiva): las referencias renderizadas mandan. `ALTH_META_Modelado.pdf` queda solo como histórico y no se usa más.
+- Pupilas: shader de mirada en Godot (`copox/godot/ojos/`), verificado.
+- Hallazgo: `Talk-loop` y `Blink` estaban vacíos (2 claves en Root), y solo 23 de 112 clips mueven la cara (expresiones fijas).
+- `copox/medicion/gestos.py`:
+  - `agregar_morph`: combinación de gestos + campo, en todas las primitivas, con suavizado del desplazamiento para bordes limpios.
+  - `rellenar_pesos`: extiende las pistas existentes.
+  - `pista_pesos`: pistas nuevas.
+- Receta `docs/medicion/receta_theo_v15.py`:
+  - 8 morphs nuevos: `mandibula`, `vis_A`, `vis_E`, `vis_I`, `vis_O`, `vis_U`, `vis_MBP` y `vis_FV`. La mandíbula baja la cara inferior y la barbilla. O y U se hacen con campos propios, porque `boca_o` arrugaba el centro.
+  - `Talk-loop`: 6 s de frase de prueba con pausas, mandíbula y un parpadeo.
+  - `Blink`: 0.26 s.
+  - Verificado cuadro por cuadro en Godot.
+- Theo V15 `629c4b75…`, Adán V22 `df8d4b96…`. Ahora tienen 26 morphs.

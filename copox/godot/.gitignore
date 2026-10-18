@@ -2,3 +2,4 @@
 *.glb
 *.import
 *.png
+!ojos/*.png

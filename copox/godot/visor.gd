@@ -1,5 +1,5 @@
 extends Node3D
-# Uso: godot --path . -- modelo=res://theo.glb salida=/ruta/out.png yaw=35 elev=5 alto=0.5 cy=0.62 clip=Idle-loop t=0 tam=512
+# Uso: godot --path . -- modelo=res://theo.glb salida=/ruta/out.png yaw=35 elev=5 alto=0.5 cy=0.62 clip=Idle-loop t=0 tam=512 [mirada=x:y]
 func _ready():
 	var a := {}
 	for s in OS.get_cmdline_user_args():
@@ -35,6 +35,11 @@ func _ready():
 	if ap and not ap.has_animation(clip): clip = clip.trim_suffix("-loop")   # Godot quita el sufijo -loop al importar
 	if ap and ap.has_animation(clip):
 		ap.play(clip); ap.seek(float(a.get("t", "0")) * ap.current_animation_length, true); ap.pause()
+	if a.has("mirada"):
+		var ojos = load("res://ojos/ojos_alth.gd").new()
+		print("OJOS shader en ", ojos.aplicar(escena), " superficies")
+		var mv = a["mirada"].split(":")
+		ojos.mirada = Vector2(float(mv[0]), float(mv[1]))
 	for m in a.get("morph", "").split(",", false):
 		var kv = m.split(":")
 		for mi in escena.find_children("*", "MeshInstance3D", true, false):
