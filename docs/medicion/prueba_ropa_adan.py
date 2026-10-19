@@ -52,11 +52,15 @@ def prendas(E):
     bl, br = pz("BrazoL"), pz("BrazoR")
     short_, pretina = pz("Short_AZUL"), pz("Short_PRETINA")
     partes = {}
-    cad = ra.Prenda([short_, pretina, torso],
+    # desde V49 el cuerpo tiene pelvis: la cadera del pantalón sale de ella (el short ya no hace falta como molde)
+    hay_pelvis = "Pelvis_PIEL" in P
+    base_cad = [pz("Pelvis_PIEL"), torso] if hay_pelvis else [short_, pretina, torso]
+    resp_cad = [] if hay_pelvis else [short_, pretina]
+    cad = ra.Prenda(base_cad,
                     region=lambda Q: np.maximum(Q[:, 1] - PANT["cintura"], 0.168 - Q[:, 1]),
                     holgura=0.0040, k=0.012)
     cad.visible = lambda Q: Q[:, 1] - PANT["cintura"]
-    partes["pantalon_cadera"] = (cad, "pantalon", [torso], [short_, pretina])
+    partes["pantalon_cadera"] = (cad, "pantalon", base_cad if hay_pelvis else [torso], resp_cad)
     for nombre, pierna in (("pantalon_pierna_l", pl), ("pantalon_pierna_r", pr_)):
         pn = ra.Prenda([pierna], region=lambda Q: np.maximum(Q[:, 1] - 0.214, PANT["dobladillo"] - Q[:, 1]),
                        orilla=lambda Q: _ss((PANT["dobladillo"] + PANT["vuelta"] - Q[:, 1]) / 0.003),
@@ -68,7 +72,7 @@ def prendas(E):
                     region=lambda Q: np.maximum(CAMISA["borde"] - Q[:, 1], Q[:, 1] - CAMISA["cuello"]),
                     holgura=0.0040, k=0.010, extra=afuera_cad)
     cam.visible = cam.region
-    partes["camisa_torso"] = (cam, "camisa", [torso, cuello], [short_, pretina])
+    partes["camisa_torso"] = (cam, "camisa", [torso, cuello], resp_cad)
     for nombre, brazo, sg in (("camisa_manga_l", bl, 1), ("camisa_manga_r", br, -1)):
         mg = ra.Prenda([brazo], region=lambda Q, sg=sg: np.maximum(0.090 - sg * Q[:, 0], sg * Q[:, 0] - CAMISA["manga"]),
                        orilla=lambda Q, sg=sg: _ss((sg * Q[:, 0] - (CAMISA["manga"] - CAMISA["puno"])) / 0.003),
@@ -121,7 +125,7 @@ def ropa(E, carpeta):
     return log
 
 
-CULL_PIEZAS = ("Torso_PIEL", "BrazoL", "BrazoR", "PiernaL_PIEL", "PiernaR_PIEL")
+CULL_PIEZAS = ("Torso_PIEL", "BrazoL", "BrazoR", "PiernaL_PIEL", "PiernaR_PIEL", "Pelvis_PIEL")
 
 
 def ocultar_bajo_ropa(E):
@@ -133,6 +137,8 @@ def ocultar_bajo_ropa(E):
     P = _prims(E)
     log = {"operacion": "piel oculta bajo la ropa (solo en la prueba)"}
     for n in CULL_PIEZAS:
+        if n not in P:
+            continue
         q = P[n]
         V = v39._leer(E, q, "POSITION").astype(float)
         T = accesor(E.j, E.b, q["indices"]).reshape(-1, 3)
@@ -143,6 +149,12 @@ def ocultar_bajo_ropa(E):
             f = np.maximum(pr_.sdf(V), pr_.visible(V) + 0.010)
             dentro |= f < -0.0015
         quedan = ~dentro[T].all(1)
+        if not quedan.any():                         # pieza tapada entera: fuera la primitiva (Godot no acepta 0 triángulos)
+            for m in E.j["meshes"]:
+                if q in m["primitives"]:
+                    m["primitives"].remove(q)
+            log[n] = "toda"
+            continue
         import receta_adan_v24 as v24
         q["indices"] = v24._add_raw(E, np.ascontiguousarray(T[quedan].ravel(), np.uint32), 5125, "SCALAR", 34963)
         E.b = bytes(E.out)
