@@ -33,6 +33,12 @@ python -m copox.render.chxp2 MODELO.glb --salida SALIDA/ \
 **Límites conocidos:** sin GPU, Godot usa el renderer Compatibility (sin SSAO propio); la sombra de contacto la calcula
 Python desde la profundidad. Las pasadas sin luz salen con una curva ~v^1.15 (corregida al decodificar).
 
+**Fabricar más rápido (19 oct 2026):** las mallas implícitas (pelo, ropa, pelvis, tenis) ahora se calculan en dos
+niveles (`copox/medicion/malla_rapida.py`): rejilla gruesa y solo la banda cerca de la superficie en fino.
+- `ALTH_CALIDAD=borrador` → rejilla 2× más gruesa y sin simplificar: para iterar forma (V49 completa ~1 min).
+- Sin variable → calidad final (V49 completa ~3.5 min; antes ~12 min; pelo por mechones 60 s, antes 9.5 min).
+- `ALTH_MALLA=exacta` → evalúa todo como antes (para reproducir bit a bit un GLB publicado con receta vieja).
+
 El CHXP de abajo (numpy) queda para diagnóstico de curvatura, normales y clases; para revisar cómo se ve, usa V2.
 
 ---

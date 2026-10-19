@@ -63,50 +63,46 @@ class PeloMechones:
         return (w * self.base.Rd[j]).sum(1)
 
     def sdf_mechones(self, P):
+        """Cada mechón solo se evalúa en su caja, y cada bolita solo en su esfera (+k): fuera de eso no cambia la
+        superficie (la unión suave de valores > k no mueve el cero). Medido: el 78 % del tiempo del pelo era esto."""
         d = np.full(len(P), 1.0)
-        cerca, _ = self.centros.query(P, distance_upper_bound=self.rmax + 0.02)
-        idx = np.where(np.isfinite(cerca))[0]
-        if not len(idx):
-            return d
-        Q = P[idx]
         for C, Tg, D, B, r in self.cadenas:
+            alcance = float(r.max()) + self.k_mechon
+            lo = C.min(0) - alcance; hi = C.max(0) + alcance
+            sel = np.where(((P >= lo) & (P <= hi)).all(1))[0]
+            if not len(sel):
+                continue
+            Q = P[sel]
             dm = np.full(len(Q), 1.0)
             for i in range(len(C)):
                 L = Q - C[i]
-                loc = np.stack([L @ Tg[i], L @ D[i], L @ B[i]], 1)
-                dm = smin(dm, _elipsoide(loc, r[i]), self.k_mechon)
-            d[idx] = np.minimum(d[idx], dm)
+                ri = float(r[i].max()) + self.k_mechon
+                dentro = np.einsum("ij,ij->i", L, L) < ri * ri
+                if not dentro.any():
+                    continue
+                Mi = np.stack([Tg[i], D[i], B[i]])
+                loc = L[dentro] @ Mi.T
+                dm[dentro] = smin(dm[dentro], _elipsoide(loc, r[i]), self.k_mechon)
+            d[sel] = np.minimum(d[sel], dm)
         return d
 
     def sdf(self, P):
         return smin(self.base.sdf(P) + self.hundir, self.sdf_mechones(P), self.k_union)
 
     def malla(self, paso=0.0012, pulido=2):
-        from skimage.measure import marching_cubes
-        from .mano_geo import taubin
+        from .malla_rapida import malla_banda
         rmax = float(self.base.Rd.max()) + 0.03
+        rmin = float(self.base.Rd.min()) - 0.03
         c = self.base.c
-        lo = c - rmax; hi = c + rmax
-        n = np.ceil((hi - lo) / paso).astype(int) + 1
-        ejes = [lo[i] + paso * np.arange(n[i]) for i in range(3)]
-        F = np.full(n, 1.0, np.float32)
-        gy, gz = np.meshgrid(ejes[1], ejes[2], indexing="ij")
-        for ix in range(n[0]):
-            g = np.stack([np.full(gy.size, ejes[0][ix]), gy.ravel(), gz.ravel()], 1)
+
+        def campo(g):
             r = np.linalg.norm(g - c, axis=1)
-            cerca = (r > self.base.Rd.min() - 0.03) & (r < rmax)
             f = np.ones(len(g), np.float32)
+            cerca = (r > rmin) & (r < rmax)
             if cerca.any():
                 f[cerca] = self.sdf(g[cerca])
-            F[ix] = f.reshape(n[1], n[2])
-        V, T, _, _ = marching_cubes(F, 0.0, spacing=(paso, paso, paso))
-        V = V + lo
-        vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
-        if vol < 0:
-            T = T[:, ::-1].copy()
-        if pulido:
-            V = taubin(V, T, pulido)
-        return V, T
+            return f
+        return malla_banda(campo, c - rmax, c + rmax, paso, pulido=pulido, etiqueta="pelo_mechones")
 
     def normales(self, V, h=0.0004):
         g = np.zeros_like(V)

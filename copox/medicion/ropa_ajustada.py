@@ -124,39 +124,14 @@ class Prenda:
         return np.maximum(d - h, self.region(P))
 
     def malla(self, lo, hi, paso=0.0014, banda=0.010, pulido=6):
-        from scipy.spatial import cKDTree
-        from skimage.measure import marching_cubes
-        from .mano_geo import taubin
-        todos = cKDTree(np.vstack([p.V for p in self.piezas]))     # muestras densas: la banda no deja huecos
-        lo = np.asarray(lo, float); hi = np.asarray(hi, float)
-        n = np.ceil((hi - lo) / paso).astype(int) + 1
-        ejes = [lo[i] + paso * np.arange(n[i]) for i in range(3)]
-        F = np.full(n, 1.0, np.float32)
-        B = np.zeros(n, bool)
-        gy, gz = np.meshgrid(ejes[1], ejes[2], indexing="ij")
-        for ix in range(n[0]):
-            g = np.stack([np.full(gy.size, ejes[0][ix]), gy.ravel(), gz.ravel()], 1)
-            d0, _ = todos.query(g, distance_upper_bound=banda, workers=-1)
-            cerca = np.isfinite(d0)
-            if self.extra is not None:
-                cerca |= np.abs(self.extra(g)) < banda
-            f = np.ones(len(g), np.float32)
-            if cerca.any():
-                f[cerca] = self.sdf(g[cerca])
-            F[ix] = f.reshape(n[1], n[2]); B[ix] = cerca.reshape(n[1], n[2])
-        # fuera de la banda: adentro si no conecta con el borde de la caja (sin superficies fantasma en el interior)
-        from scipy.ndimage import label
-        lab, _ = label(~B | (F > 0))
-        borde = np.unique(np.concatenate([lab[0].ravel(), lab[-1].ravel(), lab[:, 0].ravel(), lab[:, -1].ravel(),
-                                          lab[:, :, 0].ravel(), lab[:, :, -1].ravel()]))
-        F[(~B) & ~np.isin(lab, borde)] = -1.0
-        V, T, _, _ = marching_cubes(F, 0.0, spacing=(paso, paso, paso))
-        V = V + lo
+        from .malla_rapida import malla_banda
+        V, T = malla_banda(self.sdf, lo, hi, paso, pulido=0, rellenar=True, etiqueta="ropa")
         V, T = solo_mayor(V, T)            # fuera las superficies fantasma internas (p. ej. el brazo metido en el torso)
         vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
         if vol < 0:
             T = T[:, ::-1].copy()
         if pulido:
+            from .mano_geo import taubin
             V = taubin(V, T, pulido)
         return V, T
 

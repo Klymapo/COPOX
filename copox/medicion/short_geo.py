@@ -152,17 +152,5 @@ def cordon(y, z_frente, ancho=0.018, r=0.0026, caida=0.024):
 
 
 def malla_sdf(sdf, lo, hi, paso=0.0006, pulido=2):
-    from skimage.measure import marching_cubes
-    lo, hi = np.asarray(lo, float), np.asarray(hi, float)
-    n = np.ceil((hi - lo) / paso).astype(int) + 1
-    ejes = [lo[i] + paso * np.arange(n[i]) for i in range(3)]
-    g = np.stack(np.meshgrid(*ejes, indexing="ij"), -1).reshape(-1, 3)
-    F = sdf(g).reshape(n).astype(np.float32)
-    V, T, _, _ = marching_cubes(F, 0.0, spacing=(paso, paso, paso))
-    V = V + lo
-    vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
-    if vol < 0:
-        T = T[:, ::-1].copy()
-    if pulido:
-        V = taubin(V, T, pulido)
-    return V, T
+    from .malla_rapida import malla_banda
+    return malla_banda(sdf, lo, hi, paso, pulido=pulido, etiqueta="malla_sdf")

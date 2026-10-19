@@ -91,8 +91,10 @@ def diseno(E):
 
 
 def simplificar(V, T, meta, carpeta):
-    """meshoptimizer vía Godot (ImporterMesh.generate_lods): se elige el LOD más cercano a `meta` triángulos."""
-    if not GODOT or not os.path.exists(GODOT):
+    """meshoptimizer vía Godot (ImporterMesh.generate_lods): se elige el LOD más cercano a `meta` triángulos.
+    En ALTH_CALIDAD=borrador no se simplifica (iteración rápida; la malla sale más pesada)."""
+    from copox.medicion.malla_rapida import simplificar_activo
+    if not simplificar_activo() or not GODOT or not os.path.exists(GODOT):
         return V, T
     np.save(os.path.join(carpeta, "V.npy"), V.astype(np.float32)); np.save(os.path.join(carpeta, "T.npy"), T.astype(np.int32))
     with open(os.path.join(carpeta, "malla.json"), "w") as f:

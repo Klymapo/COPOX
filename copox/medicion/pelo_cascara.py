@@ -230,30 +230,18 @@ class PeloImplicitoEsfera(PeloImplicito):
         return np.maximum(capa, region)
 
     def malla(self, paso=0.0015, pulido=2):
-        from skimage.measure import marching_cubes
-        from .mano_geo import taubin
+        from .malla_rapida import malla_banda
         rmax = float(self.Rd.max()) + 0.01
-        lo = self.c - rmax; hi = self.c + rmax
-        n = np.ceil((hi - lo) / paso).astype(int) + 1
-        ejes = [lo[i] + paso * np.arange(n[i]) for i in range(3)]
-        F = np.full(n, 1.0, np.float32)
-        gy, gz = np.meshgrid(ejes[1], ejes[2], indexing="ij")
-        for ix in range(n[0]):
-            g = np.stack([np.full(gy.size, ejes[0][ix]), gy.ravel(), gz.ravel()], 1)
+        rmin = float(self.Rd.min()) - 0.02
+
+        def campo(g):
             r = np.linalg.norm(g - self.c, axis=1)
-            cerca = (r > self.Rd.min() - 0.02) & (r < rmax)            # banda estrecha: el resto queda afuera
+            cerca = (r > rmin) & (r < rmax)                       # banda estrecha: el resto queda afuera
             f = np.ones(len(g), np.float32)
             if cerca.any():
                 f[cerca] = self.sdf(g[cerca])
-            F[ix] = f.reshape(n[1], n[2])
-        V, T, _, _ = marching_cubes(F, 0.0, spacing=(paso, paso, paso))
-        V = V + lo
-        vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
-        if vol < 0:
-            T = T[:, ::-1].copy()
-        if pulido:
-            V = taubin(V, T, pulido)
-        return V, T
+            return f
+        return malla_banda(campo, self.c - rmax, self.c + rmax, paso, pulido=pulido, etiqueta=type(self).__name__)
 
 
 class PeloImplicitoRas(PeloImplicitoEsfera):
