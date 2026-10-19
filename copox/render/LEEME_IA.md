@@ -1,5 +1,44 @@
 # COPOX · Renderizador para IA (Elio = Claude, Argos = ChatGPT)
 
+## CHXP V2 — lo primero que usas (19 oct 2026)
+
+**Qué es:** el render de revisión con **Godot real** (lo mismo que verá el juego), por lotes: un solo proceso hace todas
+las vistas y GIF de un asset. Escena estándar: luz ALTH (clave cálida con sombra, relleno frío, contraluz), piso con
+rejilla en unidades ALTH (cuadro fino 0.05 u, línea fuerte 0.25 u), silueta de Adán a escala al lado, sombra de
+contacto (AO) y referencia lado a lado.
+
+**Necesitas:** Godot 4.7 (`GODOT_BIN`), `xvfb-run`, Python 3.10+ con numpy, scipy y Pillow. Sin GPU. Sin internet.
+
+```bash
+python -m copox.render.chxp2 MODELO.glb --salida SALIDA/ \
+    --silueta ADAN_V49.glb \                      # silueta a escala (opcional)
+    --ref refs/personajes/adan/adan-cuerpo-4-vistas.jpg --ref-2x2 \   # hoja 2x2: frente, perfil / espalda, 3/4
+    --vistas personaje|objeto|edificio \           # edificio agrega vista cenital
+    --visible CAPA_SHORT=0,PIES_TENIS=1 \          # piezas intercambiables por nombre de nodo
+    --gif Idle-loop,Walk-loop,Run-loop
+```
+
+**Te entrega** (todo en `SALIDA/`):
+- `NOMBRE_HOJA.png` — hoja vertical: referencia | render por vista, con SHA, altura, triángulos y tira de paleta.
+- `NOMBRE_<vista>.png` y `NOMBRE_<vista>_mascara.png` (vista previa de la máscara por pieza).
+- `NOMBRE_<clip>.gif` — 16 cuadros por clip, vista 3/4.
+- `NOMBRE_REPORTE.json` — `alto_u`, `caja_u`, `triangulos_visibles`, piezas visibles/ocultas, `cobertura_px` por vista
+  y pieza, `colores_fuera_de_paleta` (ΔE contra `spec/alth_spec.json`), tiempos.
+- `_crudo/` — pasadas de Godot (color, normal, profundidad, máscara) y `ids` por vista en `.npy` para medir IoU.
+
+**Cómo leerlo:** primero el REPORTE (números), luego la HOJA (imagen). Si una pieza que pediste oculta aparece en
+`cobertura_px`, o falta una visible, la visibilidad está mal. Un color con ΔE > 6 se propone antes de usarlo.
+**Tiempo:** ~15 s para 4 vistas; ~2–3 min con 3 GIF (calidad primero, 1024 px).
+
+**Límites conocidos:** sin GPU, Godot usa el renderer Compatibility (sin SSAO propio); la sombra de contacto la calcula
+Python desde la profundidad. Las pasadas sin luz salen con una curva ~v^1.15 (corregida al decodificar).
+
+El CHXP de abajo (numpy) queda para diagnóstico de curvatura, normales y clases; para revisar cómo se ve, usa V2.
+
+---
+
+# COPOX · Renderizador para IA (Elio = Claude, Argos = ChatGPT)
+
 Render de modelos GLB del proyecto ALTH-META para comparar contra referencias y medir con el motor (`copox/medicion`). Solo usa **Python 3.10+, NumPy y Pillow**: sin internet, sin GPU, sin Blender.
 
 ## Qué necesitas
