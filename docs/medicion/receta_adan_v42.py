@@ -26,6 +26,20 @@ PARAMS = dict(pierna=(0.049, 0.050), tobillo=(0.045, 0.046), talon_z=-0.032, pun
               alto_talon=0.062, alto_dedos=0.026, largo_dedos=0.036)
 
 
+def _muslo(V, J4, W4, nombres, lado, y_rodilla, rampa=0.020):
+    """Sobre la rodilla la pierna es del muslo (las piezas viejas no llegaban ahí): rampa de `rampa` en la rodilla."""
+    lad = "Left" if lado == "L" else "Right"
+    ia, ib = nombres.index(lad + "UpperLeg"), nombres.index(lad + "LowerLeg")
+    f = np.clip((V[:, 1] - (y_rodilla - rampa / 2)) / rampa, 0, 1); f = f * f * (3 - 2 * f)
+    Wd = np.zeros((len(V), len(nombres)))
+    np.add.at(Wd, (np.repeat(np.arange(len(V)), 4), J4.ravel().astype(int)), W4.ravel())
+    Wd *= (1 - f)[:, None]
+    Wd[:, ia] += f * 0.85; Wd[:, ib] += f * 0.15
+    top = np.argsort(-Wd, axis=1)[:, :4]
+    Wt = np.take_along_axis(Wd, top, 1); Wt /= np.maximum(Wt.sum(1, keepdims=True), 1e-9)
+    return top.astype(np.uint16), Wt.astype(np.float32)
+
+
 def piernas(E, carpeta):
     import receta_adan_v36 as v36
     from copox.medicion import mano_geo as mg
@@ -35,9 +49,9 @@ def piernas(E, carpeta):
     malla = E.j["meshes"][0]
     viejas = [p for p in malla["primitives"] if p.get("extras", {}).get("pieza") in PIEZAS_VIEJAS]
     y_dob = float(min(v39._leer(E, q, "POSITION")[:, 1].min() for q in v39._prims(E, "Short_AZUL")))
-    y_arriba = float(max(v39._leer(E, q, "POSITION")[:, 1].max() for q in v39._prims(E, "PiernaL_PIEL")))
+    y_arriba = float(H["LeftUpperLeg"][1]) - 0.010                 # la pierna sube dentro del short hasta la cadera
     x, z = float(H["LeftUpperLeg"][0]), float(H["LeftUpperLeg"][2])
-    PP = pg.PiernaPie(x, z, y_arriba, y_tobillo=y_dob * TOBILLO_FRAC, **PARAMS)
+    PP = pg.PiernaPie(x, z, y_arriba, y_tobillo=y_dob * TOBILLO_FRAC, y_oculta=y_dob + 0.008, **PARAMS)
     V, T = PP.malla()
     n0 = len(T)
     fuentes = [(v39._leer(E, q, "POSITION").astype(float), v39._leer(E, q, "JOINTS_0").astype(int),
@@ -57,6 +71,7 @@ def piernas(E, carpeta):
         Vs[Vs[:, 1] < 0.0015, 1] = 0.0
         N = mg.normales(Vs, Ts)
         J4, W4 = tg.transferir_pesos(Vs, Ts, fuentes, len(nombres), suavizado=6)
+        J4, W4 = _muslo(Vs, J4, W4, nombres, lado, float(H["LeftLowerLeg"][1]))
         p = v41._prim_nueva(E, Vs, Ts, N, J4, W4, mat, f"Pierna{lado}_PIEL")
         if ntar:
             ceros = E._add(np.zeros((len(Vs), 3), np.float32), "VEC3", None, True)

@@ -25,13 +25,13 @@ class PiernaPie:
     def __init__(self, x, z, y_arriba, pierna=(0.048, 0.050), tobillo=(0.044, 0.046), y_tobillo=0.060,
                  talon_z=-0.030, punta_z=0.152, ancho_pie=0.052, alto_talon=0.050, alto_dedos=0.022,
                  largo_dedos=0.040, dedos=(1.45, 1.0, 0.95, 0.85), hueco=0.0025, abre=0.006, p=2.8,
-                 abre_talon=0.005, k_tobillo=0.005):
+                 abre_talon=0.005, k_tobillo=0.005, y_oculta=None):
         self.x, self.z, self.y_arriba = x, z, y_arriba
         self.pierna, self.tobillo, self.y_tobillo = np.asarray(pierna), np.asarray(tobillo), y_tobillo
         self.talon_z, self.punta_z, self.ancho_pie = talon_z, punta_z, ancho_pie
         self.alto_talon, self.alto_dedos, self.largo_dedos = alto_talon, alto_dedos, largo_dedos
         self.dedos, self.hueco, self.abre, self.p = dedos, hueco, abre, p
-        self.abre_talon, self.k_tobillo = abre_talon, k_tobillo
+        self.abre_talon, self.k_tobillo, self.y_oculta = abre_talon, k_tobillo, y_oculta
         self._dedos()
 
     def _dedos(self):
@@ -56,6 +56,9 @@ class PiernaPie:
         t = np.clip((self.y_arriba - y) / (self.y_arriba - self.y_tobillo), 0, 1)
         a = self.pierna[0] + (self.tobillo[0] - self.pierna[0]) * t
         b = self.pierna[1] + (self.tobillo[1] - self.pierna[1]) * t
+        if self.y_oculta is not None:                                # dentro del short se angosta (no atraviesa la tela)
+            o = np.clip((y - self.y_oculta) / 0.012, 0, 1); o = o * o * (3 - 2 * o)
+            a = a * (1 - 0.22 * o); b = b * (1 - 0.22 * o)
         u = np.abs(P[:, 0] - self.x) / a; v = np.abs(P[:, 2] - self.z) / b
         d = ((u ** self.p + v ** self.p) ** (1 / self.p) - 1) * np.minimum(a, b)
         d = np.maximum(d, np.maximum(y - self.y_arriba, 0.004 - y))

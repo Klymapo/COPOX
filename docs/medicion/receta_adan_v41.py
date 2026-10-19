@@ -37,13 +37,16 @@ def _lineal(hexa):
 
 
 def _material(E, nombre, hexa):
+    """La tela es de dos caras: al caminar se ve el interior del short por la muesca y las perneras."""
     j = E.j
     for i, m in enumerate(j["materials"]):
         if m["name"] == nombre:
             m["pbrMetallicRoughness"]["baseColorFactor"] = _lineal(hexa)
+            m["doubleSided"] = True
             return i
     j["materials"].append({"name": nombre, "pbrMetallicRoughness": {"baseColorFactor": _lineal(hexa),
-                                                                    "metallicFactor": 0, "roughnessFactor": 0.9}})
+                                                                    "metallicFactor": 0, "roughnessFactor": 0.9},
+                           "doubleSided": True})
     return len(j["materials"]) - 1
 
 
@@ -57,13 +60,13 @@ def _prim_nueva(E, V, T, N, J4, W4, mat, pieza):
             "material": mat, "extras": {"pieza": pieza}}
 
 
-def pesos_short(V, nombres, y_ent, y_cint, alto=0.045, centro=0.012):
+def pesos_short(V, nombres, y_ent, y_cint, alto=0.060, centro=0.016, maximo=0.92):
     """Hips arriba; bajo la entrepierna cada lado pasa a su muslo (rampa de `alto`). Cerca del centro (|x| < centro)
     el muslo pesa menos: la muesca no cuelga entre las piernas al caminar."""
     ih, il, ir = nombres.index("Hips"), nombres.index("LeftUpperLeg"), nombres.index("RightUpperLeg")
     t = np.clip((y_ent + alto * 0.35 - V[:, 1]) / alto, 0, 1); t = t * t * (3 - 2 * t)
     c = np.clip(np.abs(V[:, 0]) / centro, 0, 1); c = c * c * (3 - 2 * c)
-    w = t * (0.35 + 0.65 * c)
+    w = t * maximo * (0.3 + 0.7 * c)                              # la tela sigue al muslo, sin pegarse del todo
     J4 = np.zeros((len(V), 4), np.uint16); W4 = np.zeros((len(V), 4), np.float32)
     J4[:, 0] = ih; J4[:, 1] = np.where(V[:, 0] >= 0, il, ir)
     W4[:, 0] = 1 - w; W4[:, 1] = w
