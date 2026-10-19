@@ -139,3 +139,12 @@ a la malla de la piel (no radial): pelo = {distancia a la piel < g(máscara)} af
   copia un escalón de la piel escondida), orilla irregular en la patilla y, en Godot, orilla con dientes donde pelo y
   piel están a ~1 mm (precisión de profundidad).
   GLB reproducible: SHA-256 `63029e57…c8f1`. SIN APROBAR.
+
+### V48.3 · bordes del pelo cerrados (19 oct 2026, Martillo: "Cierra los bordes del pelo nada más")
+
+- `cerrar_bordes`: solo la piel bajo la franja de la orilla (máscara 0.5–0.65) se mete hasta 2 mm bajo el pelo, tope 3 mm
+  (99 vértices, máx 2.5 mm). Afuera del pelo no se mueve nada.
+- Taubin extra (25) en la franja de la orilla de la malla del pelo antes de simplificar: orilla más redonda.
+- Probado y descartado: que el pelo abrace la piel alisada (doble orilla en la frente) y meter la piel sin tope (hueco
+  de 35 mm en la sien).
+GLB reproducible: SHA-256 `14595da2f8b5129e2442f67f678077ba22a4ec8b2c89b0f04867b56dd02bd867` (reemplaza a 63029e57…). SIN APROBAR.

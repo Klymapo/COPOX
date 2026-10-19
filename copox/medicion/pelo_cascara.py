@@ -370,4 +370,10 @@ class PeloOrilla(PeloImplicitoEsfera):
             afuera[hay] = np.maximum(np.minimum(afuera[hay], h - self.cubre * (M[hay] > 0.5)), h - g)
             piso[hay] = np.minimum(piso[hay], -self.fondo - h)
         region = (0.5 - M) * R * self.paso_ang * 2.5
+        self._ult = (afuera, M)
         return np.maximum(np.maximum(afuera, piso), region)
+
+    def techo(self, P):
+        """(afuera, M): distancia (con signo) a la cara exterior del pelo y máscara, para meter la piel."""
+        self.sdf(P)
+        return self._ult

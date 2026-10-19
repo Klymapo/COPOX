@@ -54,6 +54,7 @@ def nuca_piel(E):
 
 TRIS_PELO = 12000
 PASO_PELO = 0.0011
+ORILLA_PULIDO = 25
 
 
 def pelo(E, carpeta):
@@ -71,8 +72,14 @@ def pelo(E, carpeta):
     N0 = v39._leer(E, P[v482.PIEL], "NORMAL").astype(float)
     sel = (np.abs(S0[:, 0]) <= 0.133) & (S0[:, 1] > 0.47)
     H = pc.PeloOrilla(CENTRO, R, S0[sel], N0[sel])
+    E._pelo = H
     V, T = H.malla(paso=PASO_PELO)
     n0 = len(T)
+    # orilla sin dientes: Taubin extra solo en la franja del borde (máscara 0.5–0.62), antes de simplificar
+    from copox.medicion.mano_geo import taubin
+    _, Mv = H.techo(V)
+    w = np.clip((0.62 - Mv) / 0.06, 0, 1); w = w * w * (3 - 2 * w)
+    V = V + (taubin(V, T, ORILLA_PULIDO) - V) * w[:, None]
     V, T = v36.simplificar(V, T, TRIS_PELO, carpeta)
     vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
     if vol < 0:
@@ -91,6 +98,33 @@ def pelo(E, carpeta):
     c = np.asarray(CENTRO)
     log["contorno_escondido"] = v482._escribir(E, q, S, c + (S - c) * 0.95)
     return log
+
+
+BORDE = dict(hueco=0.0020, rampa=0.03, iter_=4, tope=0.003, banda=0.65)
+
+
+def cerrar_bordes(E):
+    """Bordes del pelo cerrados: la piel que queda debajo del pelo (y solo esa) se mete hasta quedar `hueco` bajo la
+    cara exterior del pelo. Afuera del pelo no se mueve nada; la orilla ya no comparte plano con la piel."""
+    H = E._pelo
+    q = _prims(E)[v482.PIEL]
+    S = v39._leer(E, q, "POSITION").astype(float)
+    N = v39._leer(E, q, "NORMAL").astype(float)
+    N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
+    cand = np.where((np.abs(S[:, 0]) <= 0.14) & (S[:, 1] > 0.47))[0]
+    S1 = S.copy()
+    for _ in range(BORDE["iter_"]):
+        a, M = H.techo(S1[cand])
+        w = np.clip((M - 0.5) / BORDE["rampa"], 0, 1); w = w * w * (3 - 2 * w)
+        w *= np.clip((BORDE["banda"] - M) / 0.05, 0, 1)                 # solo la franja de la orilla
+        S1[cand] -= N[cand] * (np.maximum(a + BORDE["hueco"], 0) * w)[:, None]
+        D = S1 - S; L = np.linalg.norm(D, axis=1)                     # nunca más de `tope` mm
+        S1 = S + D * np.minimum(1, BORDE["tope"] / np.maximum(L, 1e-12))[:, None]
+    _, inv = np.unique(np.round(S, 6), axis=0, return_inverse=True); inv = inv.ravel()
+    Sw = np.zeros((inv.max() + 1, 3)); Sw[inv] = S1                     # costuras soldadas: misma posición
+    S1 = Sw[inv]
+    return {"operacion": "bordes del pelo cerrados", "piel_metida": v482._escribir(E, q, S, S1),
+            "max_mm": round(float(np.abs(S1 - S).max()) * 1000, 2)}
 
 
 def frente(E):
@@ -138,7 +172,7 @@ def main(src, dst):
     from copox.medicion.compactar import compactar
     E = re.Editor(src)
     carpeta = os.path.dirname(os.path.abspath(dst))
-    log = [nuca_piel(E), frente(E), pelo(E, carpeta)]
+    log = [nuca_piel(E), frente(E), pelo(E, carpeta), cerrar_bordes(E)]
     for f_ in ("V.npy", "T.npy", "malla.json", "lod.json"):
         if os.path.exists(os.path.join(carpeta, f_)):
             os.remove(os.path.join(carpeta, f_))
