@@ -48,3 +48,33 @@ Walk, Run, Jump y Dash en frente, 3/4 y perfil: el pie no se rompe ni raya. Peso
 - `par_piernas_V46.png`
 - `godot_pies_cerca.png`
 - `godot_movimiento.png`
+
+---
+
+# Adán V46.1 · pendientes del pie (SIN APROBAR)
+
+**Pedido de Admin (19 oct 2026):** "Continúa los pendientes de V46".
+
+**Resultado:**
+- `ADAN_V46_1.glb`, SHA-256 `f0898da2b357b986121813e8a255ac3c219f57d826d2acab1e9eb2353944edfd`. Reproducible.
+- Receta: `docs/medicion/receta_adan_v46_1.py ADAN_V45.glb ADAN_V46_1.glb`.
+- `pie_loft.py` suma parámetros nuevos; con los valores por defecto, V46 sale idéntico (`857552f9…`).
+
+**Qué cambió:**
+1. **Abultamiento de lado:** el pie llegaba a lo más ancho a media altura (11.4 cm) y se volvía a cerrar hacia la planta (10.4 cm). Ahora solo se abre el talón (vista BACK); los lados de adelante bajan planos de la pierna y se abren hacia los dedos.
+2. **Escalón alrededor del tobillo:** el paso de la sección de la pierna a la del pie pasa del 15 % al 35 % de la altura del pie.
+3. **Dedos como la hoja:**
+   - Más bajos: 1.7 cm (el gordo ×1.2).
+   - Más largos: 4.4 cm.
+   - Más separados: 4.5 mm.
+   - Más caídos (45 %) y con las puntas más escalonadas (1 cm).
+4. **Planos un poco más marcados:** esquinas de 4–2.5 mm (antes 5.5–3.5 mm), con sombreado suave.
+
+**Godot:** Walk, Run y Jump limpios.
+
+**Queda:** el pie se sigue leyendo más suave que los planos facetados de la hoja. Es el límite de "liso" con sombreado suave.
+
+**Evidencia** (rama `capturas`, `capturas/2026-10-19/adan_v46_1/`):
+- `par_pies_V46_1.png`
+- `pies_v46_v46_1.png`
+- `godot_v46_1.png`

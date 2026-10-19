@@ -78,7 +78,8 @@ class PiernaPieLoft:
     def __init__(self, xc, zc, y_arriba, y_tobillo, y_oculta, pierna=(0.049, 0.050), tobillo=(0.045, 0.046), p=2.8,
                  talon_z=-0.032, punta_z=0.150, largo_dedos=0.040, alto_dedos=0.022, abre_afuera=0.016,
                  abre_adentro=0.002, talon_angosta=0.12, maleolo=0.14, chaflan=0.0035,
-                 dedos=(1.45, 1.0, 0.92, 0.82), hueco=0.0032, escalon=0.007, caida=0.3, segmentos=56):
+                 dedos=(1.45, 1.0, 0.92, 0.82), hueco=0.0032, escalon=0.007, caida=0.3, segmentos=56,
+                 abre_frente=0.5, transicion=0.15, radio=(0.0055, 0.0035), alto_gordo=1.1):
         self.xc, self.zc = xc, zc
         self.y_arriba, self.y_t, self.y_oculta = y_arriba, y_tobillo, y_oculta
         self.pierna, self.tobillo, self.p = np.asarray(pierna), np.asarray(tobillo), p
@@ -86,6 +87,7 @@ class PiernaPieLoft:
         self.abre_afuera, self.abre_adentro, self.talon_angosta, self.maleolo = abre_afuera, abre_adentro, talon_angosta, maleolo
         self.chaflan = chaflan
         self.dedos, self.hueco, self.escalon, self.caida = dedos, hueco, escalon, caida
+        self.abre_frente, self.transicion, self.radio, self.alto_gordo = abre_frente, transicion, radio, alto_gordo   # V46.1
         self.ang = np.linspace(-np.pi / 2, 1.5 * np.pi, segmentos, endpoint=False)   # empieza atrás al centro (−z)
         self.z_base = punta_z - largo_dedos                                           # cara frontal del pie (base de los dedos)
 
@@ -111,20 +113,21 @@ class PiernaPieLoft:
         s = np.clip((self.y_t - y) / (self.y_t - self.alto_dedos), 0, 1)
         zf = b + (self.z_base - self.zc - b) * s
         ah = a * (1 + abre) * bisel
-        fin = -(a * (1 + 0.5 * abre) + self.abre_adentro * t) * (0.5 + 0.5 * bisel)   # adentro casi recto
-        fout = a * (1 + 0.5 * abre) + self.abre_afuera * _ss(s)                       # afuera se abre hacia los dedos
+        fa = self.abre_frente * abre
+        fin = -(a * (1 + fa) + self.abre_adentro * t) * (0.5 + 0.5 * bisel)          # adentro casi recto
+        fout = a * (1 + fa) + self.abre_afuera * _ss(s)                               # afuera se abre hacia los dedos
         return np.array([[-ah, zb], [ah, zb], [fout, zf], [fin, zf]]), t
 
     def seccion_pie(self, y):
         Q, t = self.limites_pie(y)
         a, b = self.tobillo
         # Q en orden antihorario visto desde arriba con ejes (x, z): atrás-adentro, atrás-afuera, frente-afuera, frente-adentro
-        r = 0.0055 * (1 - t) + 0.0035 * t                                            # aristas suaves pero planos marcados
+        r = self.radio[0] * (1 - t) + self.radio[1] * t                              # aristas suaves pero planos marcados
         R = _redondeado(Q, r)
         c = Q.mean(0)
         Pq = _rayos_poligono(R, self.ang, c)
         Ps = _superelipse(a, b, self.p, self.ang)                                     # la sección de la pierna en el tobillo
-        w = _ss(t / 0.15)
+        w = _ss(t / self.transicion)
         P = Ps * (1 - w) + Pq * w
         return np.c_[self.xc + P[:, 0], np.full(len(P), y), self.zc + P[:, 1]]
 
@@ -175,7 +178,7 @@ class PiernaPieLoft:
         n = 0
         for i, w in enumerate(anchos):
             largo = self.largo_dedos * (1.0 if i == 0 else 0.92 - 0.06 * (i - 1))
-            alto = self.alto_dedos * (1.1 if i == 0 else 0.9)
+            alto = self.alto_dedos * (self.alto_gordo if i == 0 else 0.9)
             z_fin = self.punta_z - self.escalon * i / max(len(anchos) - 1, 1)
             z_ini = self.z_base - 0.006
             zs = np.linspace(z_ini, z_fin - 0.0015, 7)
