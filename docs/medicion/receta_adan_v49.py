@@ -30,8 +30,8 @@ import receta_adan_v48_2 as v482  # noqa: E402
 import receta_adan_v48_3 as v483  # noqa: E402
 
 COLOR_SUELA, COLOR_TENIS = "#F7F0E7", "#A8453B"
-CADERA = dict(y_top=0.280, y_bot=0.192, ancho_top=0.112, ancho_bot=0.028, fondo_top=0.080, fondo_bot=0.046, zc=0.022,
-              k=0.030, arriba=0.292, abajo=0.180, hundir=0.0015)
+CADERA = dict(y_top=0.272, y_pierna=0.218, y_bot=0.190, ancho_top=0.092, ancho_pierna=0.110, ancho_bot=0.012,
+              fondo_top=0.072, fondo_bot=0.042, zc=0.022, k=0.018, arriba=0.282, abajo=0.180, hundir=0.0015)
 CUERO = 0.0045
 TENIS = dict(holgura_x=0.008, holgura_z=0.010, suela=0.007, collar=0.058, punta=0.032, sobre_pie=0.007, n=4.0,
              corte_suela=0.007, redondeo=0.014)
@@ -106,13 +106,16 @@ class _Pelvis:
         piernas con un radio grande: una sola pieza orgánica."""
         ra, c = self.ra, CADERA
         y = P[:, 1]
-        t = np.clip((c["y_top"] - y) / (c["y_top"] - c["y_bot"]), 0, 1)
-        w = c["ancho_top"] + (c["ancho_bot"] - c["ancho_top"]) * t ** 0.85
-        dz = c["fondo_top"] + (c["fondo_bot"] - c["fondo_top"]) * t
-        zc = c["zc"]
-        k = np.sqrt((P[:, 0] / w) ** 2 + ((P[:, 2] - zc) / dz) ** 2)
+        # ancho por altura: arriba un poco DENTRO del torso (no abulta sobre el short); a la altura de las tapas de las
+        # piernas, tan ancho como ellas; abajo se cierra en V hasta la entrepierna (triángulo de frente)
+        a = np.clip((c["y_top"] - y) / (c["y_top"] - c["y_pierna"]), 0, 1); a = a * a * (3 - 2 * a)
+        w = c["ancho_top"] + (c["ancho_pierna"] - c["ancho_top"]) * a
+        b = np.clip((c["y_pierna"] - y) / (c["y_pierna"] - c["y_bot"]), 0, 1)
+        w = w * (1 - b) + c["ancho_bot"] * b
+        dz = c["fondo_top"] + (c["fondo_bot"] - c["fondo_top"]) * np.clip((c["y_top"] - y) / (c["y_top"] - c["y_bot"]), 0, 1)
+        k = np.sqrt((P[:, 0] / w) ** 2 + ((P[:, 2] - c["zc"]) / dz) ** 2)
         d = (k - 1) * np.minimum(w, dz)
-        d = -ra.smin(-d, -(c["y_bot"] - y), 0.014)                 # fondo redondo en la entrepierna
+        d = -ra.smin(-d, -(c["y_bot"] - y), 0.012)                 # fondo redondo en la entrepierna
         for p in self.piezas:
             d = ra.smin(d, p.sdf(P), c["k"])
         sobre = 0.0012 * np.exp(-((y - 0.214) / 0.010) ** 2)
@@ -313,7 +316,7 @@ MECHONES_ALTH = [
     (120, 55, 128, -10, 40, 10), (-120, 55, -128, -10, 40, 10),
     (0, 88, 140, 64, 46, 14), (60, 85, 175, 58, 44, 13), (-60, 85, -175, 58, 44, 13), (0, 86, -150, 62, 44, 13),
 ]
-FACETAS = True
+FACETAS = False
 
 
 def _facetado(V, T):
@@ -329,7 +332,7 @@ def pelo_mechones(E, src_v47, carpeta):
     from copox.medicion import pelo_mechones as pm
     pc, R, S, N = _base_pelo(E, src_v47)
     H = pc.PeloOrilla(v483.CENTRO, R, S, N)
-    M = pm.PeloMechones(H, mechones=MECHONES_ALTH, escala=1.0, levanta=0.8, k_mechon=0.007, k_union=0.005)
+    M = pm.PeloMechones(H, mechones=MECHONES_ALTH, escala=1.35, levanta=0.9, k_mechon=0.006, k_union=0.004)
     V, T = M.malla(paso=0.0012)
     n0 = len(T)
     V, T = v36.simplificar(V, T, TRIS["mechones"], carpeta)
