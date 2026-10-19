@@ -94,3 +94,22 @@ Opciones a Admin: A2 (caja de V48 a media fuerza con las facciones fijas), A3 (s
 - `cabeza_v47_v48_2.png`
 - `v48_2_godot.png`
 - `godot_caras_v48_2.png`
+
+---
+
+# V48.2 no aprobada · V48.3 en curso (sin GLB publicado)
+
+**V48.2:** Admin no la aprobó. En las mismas vistas de sus capturas casi no cambiaba, y de espalda la terraza se veía más grumosa.
+
+**V48.3** (`receta_adan_v48_3.py`, `pelo_cascara.py`), sobre V47:
+- La piel de la nuca se alisa.
+- La frente queda recta hasta la sien.
+- El radio del pelo se suaviza sobre su propia malla, con la orilla fija.
+- La piel escondida bajo el pelo se mete para no asomar.
+
+**Estado:**
+- La terraza ya no está: de espalda y de perfil el pelo es una sola superficie.
+- Queda una textura granulosa en el pelo y unos pedacitos de piel en la orilla de atrás.
+- Intentos que no funcionaron: envolvente por dirección (inflaba la nuca 4 cm) y piso de piel (copiaba su grano).
+
+**Siguiente técnica propuesta:** pelo nuevo con malla nueva, por campo implícito y marching cubes, en lugar de mover la malla vieja.
