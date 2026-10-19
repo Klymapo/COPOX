@@ -25,13 +25,14 @@ class PiernaPie:
     def __init__(self, x, z, y_arriba, pierna=(0.048, 0.050), tobillo=(0.044, 0.046), y_tobillo=0.060,
                  talon_z=-0.030, punta_z=0.152, ancho_pie=0.052, alto_talon=0.050, alto_dedos=0.022,
                  largo_dedos=0.040, dedos=(1.45, 1.0, 0.95, 0.85), hueco=0.0025, abre=0.006, p=2.8,
-                 abre_talon=0.005, k_tobillo=0.005, y_oculta=None):
+                 abre_talon=0.005, k_tobillo=0.005, y_oculta=None, escalon=0.0, caida=0.0):
         self.x, self.z, self.y_arriba = x, z, y_arriba
         self.pierna, self.tobillo, self.y_tobillo = np.asarray(pierna), np.asarray(tobillo), y_tobillo
         self.talon_z, self.punta_z, self.ancho_pie = talon_z, punta_z, ancho_pie
         self.alto_talon, self.alto_dedos, self.largo_dedos = alto_talon, alto_dedos, largo_dedos
         self.dedos, self.hueco, self.abre, self.p = dedos, hueco, abre, p
         self.abre_talon, self.k_tobillo, self.y_oculta = abre_talon, k_tobillo, y_oculta
+        self.escalon, self.caida = escalon, caida      # V45: puntas en diagonal hacia afuera; punta del dedo que baja
         self._dedos()
 
     def _dedos(self):
@@ -45,7 +46,8 @@ class PiernaPie:
             cx = x0 + w / 2
             largo = self.largo_dedos * (1.0 if i == 0 else 0.92 - 0.06 * (i - 1))   # el gordo llega más adelante
             alto = self.alto_dedos * (1.1 if i == 0 else 0.9)
-            self.cajas.append((np.array([cx, alto / 2, z1 - largo / 2]), np.array([w / 2, alto / 2, largo / 2])))
+            zf = z1 - self.escalon * i / max(len(anchos) - 1, 1)                    # puntas en diagonal (V45)
+            self.cajas.append((np.array([cx, alto / 2, zf - largo / 2]), np.array([w / 2, alto / 2, largo / 2])))
             x0 += w + self.hueco
         self.z_dedos = z0
 
@@ -84,7 +86,11 @@ class PiernaPie:
         fuera = np.linalg.norm(np.maximum(planos + r, 0), axis=1) - r
         pie = np.where(dentro < -r, dentro, fuera)
         for c, h in self.cajas:
-            pie = np.minimum(pie, _caja(P, c, h, 0.004))            # dedos separados: unión dura
+            dd = _caja(P, c, h, 0.004)
+            if self.caida > 0:                                       # la punta baja: el lomo del dedo es una rampa
+                tz = np.clip((P[:, 2] - (c[2] - h[2])) / (2 * h[2]), 0, 1)
+                dd = np.maximum(dd, P[:, 1] - 2 * h[1] * (1 - self.caida * tz))
+            pie = np.minimum(pie, dd)                                # dedos separados: unión dura
         pie = np.maximum(pie, -y)
         return _smin(d, pie, self.k_tobillo)                         # tobillo: arista suave, sin anillo
 
