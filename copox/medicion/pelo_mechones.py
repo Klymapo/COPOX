@@ -34,8 +34,8 @@ def _elipsoide(Q, r):
 
 
 class PeloMechones:
-    def __init__(self, base, mechones=MECHONES, hundir=0.0025, n_bolas=10, k_mechon=0.004, k_union=0.003,
-                 levanta=0.5):
+    def __init__(self, base, mechones=MECHONES, hundir=0.0, n_bolas=14, k_mechon=0.008, k_union=0.004,
+                 levanta=0.6, escala=1.6):
         """base: PeloOrilla (u otra con .c, ._radio(D) vía Rd/arbol y .sdf)."""
         self.base, self.hundir, self.k_union = base, hundir, k_union
         self.cadenas = []
@@ -44,14 +44,14 @@ class PeloMechones:
             az = az0 + (az1 - az0) * s; el = el0 + (el1 - el0) * s
             D = _dir(az, el)
             R = self._R(D)
-            g = grueso / 1000 * (1 - 0.75 * s)
-            w = ancho / 1000 * np.maximum((1 - s) ** 0.8, 0.12)
-            lift = levanta * g * np.sin(np.pi * s) + g * 0.35
+            g = escala * grueso / 1000 * (1 - 0.7 * s)
+            w = escala * ancho / 1000 * np.maximum((1 - s) ** 0.7, 0.15)
+            lift = levanta * g * np.sin(np.pi * s) - g * 0.15
             C = base.c + D * (R + lift)[:, None]
             Tg = np.gradient(C, axis=0); Tg /= np.linalg.norm(Tg, axis=1, keepdims=True)
             B = np.cross(D, Tg); B /= np.linalg.norm(B, axis=1, keepdims=True)
             paso = np.linalg.norm(np.diff(C, axis=0), axis=1).mean()
-            self.cadenas.append((C, Tg, D, B, np.stack([np.full(n_bolas, paso * 0.9), g, w / 2], 1)))
+            self.cadenas.append((C, Tg, D, B, np.stack([np.full(n_bolas, paso * 1.5), g, w / 2], 1)))
         self.k_mechon = k_mechon
         todos = np.vstack([c[0] for c in self.cadenas])
         from scipy.spatial import cKDTree

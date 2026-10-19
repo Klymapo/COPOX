@@ -23,7 +23,8 @@ import receta_adan_v41 as v41  # noqa: E402
 COLOR_CAMISA, COLOR_PANTALON = "#FBEFE1", "#4A5770"
 PANT = dict(cintura=0.276, dobladillo=0.060, vuelta=0.014)
 CAMISA = dict(borde=0.215, cuello=0.492, manga=0.212, puno=0.015)
-TRIS = dict(pantalon=9000, camisa=12000)
+TRIS = dict(pantalon_cadera=9000, pantalon_pierna_l=6000, pantalon_pierna_r=6000, camisa_torso=16000,
+            camisa_manga_l=5000, camisa_manga_r=5000)
 
 
 def _prims(E):
@@ -36,58 +37,72 @@ def _ss(t):
 
 
 def prendas(E):
+    """Partes separadas como el cuerpo (torso de la camisa, mangas, cadera del pantalón, perneras), encimadas igual que
+    las piezas del cuerpo: cada parte sigue SOLO los pesos de su pieza y al posar no se pellizca en hombro ni ingle."""
     from copox.medicion import ropa_ajustada as ra
-    P = _prims(E)
     from copox.medicion.gltf import accesor
+    P = _prims(E)
 
     def pz(n):
         q = P[n]
         return ra.Pieza(v39._leer(E, q, "POSITION"), v39._leer(E, q, "NORMAL"),
                         accesor(E.j, E.b, q["indices"]).reshape(-1, 3), J=v39._leer(E, q, "JOINTS_0"),
                         W=v39._leer(E, q, "WEIGHTS_0"))
-    pierna_l, pierna_r, torso = pz("PiernaL_PIEL"), pz("PiernaR_PIEL"), pz("Torso_PIEL")
+    pl, pr_, torso, cuello = pz("PiernaL_PIEL"), pz("PiernaR_PIEL"), pz("Torso_PIEL"), pz("Cuello")
+    bl, br = pz("BrazoL"), pz("BrazoR")
     short_, pretina = pz("Short_AZUL"), pz("Short_PRETINA")
-    pant = ra.Prenda([short_, pretina, pierna_l, pierna_r, torso],
-                     region=lambda Q: np.maximum(Q[:, 1] - PANT["cintura"], PANT["dobladillo"] - Q[:, 1]),
-                     orilla=lambda Q: _ss((PANT["dobladillo"] + PANT["vuelta"] - Q[:, 1]) / 0.003),
-                     holgura=0.0040, adentro=0.0025, puno=0.0030, k=0.012)
-    afuera_pant = lambda Q: np.where(Q[:, 1] > 0.19, pant.cuerpo(Q) - 0.0065, 1.0)              # noqa: E731
-    camisa = ra.Prenda([torso, pz("BrazoL"), pz("BrazoR"), pz("Cuello")],
-                       region=lambda Q: np.maximum.reduce([CAMISA["borde"] - Q[:, 1], Q[:, 1] - CAMISA["cuello"],
-                                                           np.abs(Q[:, 0]) - CAMISA["manga"]]),
-                       orilla=lambda Q: _ss((np.abs(Q[:, 0]) - (CAMISA["manga"] - CAMISA["puno"])) / 0.003),
-                       holgura=0.0040, adentro=0.0025, puno=0.0030, k=0.010, extra=afuera_pant)
-    pant.todas = pant.piezas
-    camisa.todas = camisa.piezas + [short_, pierna_l, pierna_r]
-    return pant, camisa
+    partes = {}
+    cad = ra.Prenda([short_, pretina, torso],
+                    region=lambda Q: np.maximum(Q[:, 1] - PANT["cintura"], 0.168 - Q[:, 1]),
+                    holgura=0.0040, k=0.012)
+    cad.visible = lambda Q: Q[:, 1] - PANT["cintura"]
+    partes["pantalon_cadera"] = (cad, "pantalon", [torso], [short_, pretina])
+    for nombre, pierna in (("pantalon_pierna_l", pl), ("pantalon_pierna_r", pr_)):
+        pn = ra.Prenda([pierna], region=lambda Q: np.maximum(Q[:, 1] - 0.214, PANT["dobladillo"] - Q[:, 1]),
+                       orilla=lambda Q: _ss((PANT["dobladillo"] + PANT["vuelta"] - Q[:, 1]) / 0.003),
+                       holgura=0.0045, puno=0.0030)
+        pn.visible = lambda Q: PANT["dobladillo"] - Q[:, 1]
+        partes[nombre] = (pn, "pantalon", [pierna], [])
+    afuera_cad = lambda Q: np.where(Q[:, 1] > 0.19, cad.cuerpo(Q) - 0.0065, 1.0)              # noqa: E731
+    cam = ra.Prenda([torso, cuello],
+                    region=lambda Q: np.maximum(CAMISA["borde"] - Q[:, 1], Q[:, 1] - CAMISA["cuello"]),
+                    holgura=0.0040, k=0.010, extra=afuera_cad)
+    cam.visible = cam.region
+    partes["camisa_torso"] = (cam, "camisa", [torso, cuello], [short_, pretina])
+    for nombre, brazo, sg in (("camisa_manga_l", bl, 1), ("camisa_manga_r", br, -1)):
+        mg = ra.Prenda([brazo], region=lambda Q, sg=sg: np.maximum(0.090 - sg * Q[:, 0], sg * Q[:, 0] - CAMISA["manga"]),
+                       orilla=lambda Q, sg=sg: _ss((sg * Q[:, 0] - (CAMISA["manga"] - CAMISA["puno"])) / 0.003),
+                       holgura=0.0045, puno=0.0030)
+        mg.visible = lambda Q, sg=sg: sg * Q[:, 0] - CAMISA["manga"]
+        partes[nombre] = (mg, "camisa", [brazo], [])
+    return partes
 
 
 def ropa(E, carpeta):
     import receta_adan_v36 as v36
     from copox.medicion import ropa_ajustada as ra
-    P = _prims(E)
     nombres, _ = v40.v38_skin(E)
-    fuente = lambda n: (v39._leer(E, P[n], "POSITION").astype(float), v39._leer(E, P[n], "JOINTS_0").astype(int),  # noqa: E731
-                        v39._leer(E, P[n], "WEIGHTS_0").astype(float))
-    pant, camisa = prendas(E)
-    cajas = {"pantalon": ((-0.16, 0.045, -0.05), (0.16, 0.29, 0.13)),
-             "camisa": ((-0.235, 0.20, -0.095), (0.235, 0.515, 0.14))}
-    fuentes = {"pantalon": [fuente(n) for n in ("PiernaL_PIEL", "PiernaR_PIEL", "Short_AZUL", "Torso_PIEL")],
-               "camisa": [fuente(n) for n in ("Torso_PIEL", "BrazoL", "BrazoR", "Cuello", "Short_AZUL")]}
+    partes = prendas(E)
     mats = {"pantalon": v41._material(E, "ROPA_PANTALON_AZUL", COLOR_PANTALON),
             "camisa": v41._material(E, "ROPA_CAMISA_BLANCA", COLOR_CAMISA)}
     log = {"operacion": "ropa de prueba"}
     prims = []
-    for nombre, prenda in (("pantalon", pant), ("camisa", camisa)):
-        V, T = prenda.malla(*cajas[nombre])
+    for nombre, (prenda, mat, piel, respaldo) in partes.items():
+        Vp = np.vstack([p.V0 for p in prenda.piezas])
+        V, T = prenda.malla(Vp.min(0) - 0.015, Vp.max(0) + 0.015)
         n0 = len(T)
         V, T = v36.simplificar(V, T, TRIS[nombre], carpeta)
         vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
         if vol < 0:
             T = T[:, ::-1].copy()
         N = prenda.normales(V)
-        J4, W4, cuenta = ra.pesos_por_dueno(V, prenda.todas, len(nombres))
-        prims.append(v41._prim_nueva(E, V, T, N, J4, W4, mats[nombre], f"ROPA_{nombre.upper()}"))
+        # el simplificador deja triángulos volteados: cada uno se orienta con la normal del campo (hacia afuera)
+        fn = np.cross(V[T[:, 1]] - V[T[:, 0]], V[T[:, 2]] - V[T[:, 0]])
+        al_reves = np.einsum("ij,ij->i", fn, N[T].mean(1)) < 0
+        T[al_reves] = T[al_reves][:, ::-1]
+        log.setdefault("volteados", {})[nombre] = int(al_reves.sum())
+        J4, W4 = ra.pesos_por_piel_visible(V, piel, len(nombres), respaldo)
+        prims.append(v41._prim_nueva(E, V, T, N, J4, W4, mats[mat], f"ROPA_{nombre.upper()}"))
         log[nombre] = {"tris_marching": int(n0), "tris": int(len(T))}
     E.j["meshes"].append({"name": "ROPA_PRUEBA", "primitives": prims})
     E.j["nodes"].append({"name": "CAPA_ROPA_PRUEBA", "mesh": len(E.j["meshes"]) - 1, "skin": 0})
@@ -106,11 +121,40 @@ def ropa(E, carpeta):
     return log
 
 
+CULL_PIEZAS = ("Torso_PIEL", "BrazoL", "BrazoR", "PiernaL_PIEL", "PiernaR_PIEL")
+
+
+def ocultar_bajo_ropa(E):
+    """Skill vestuario: "prever culling bajo ropa solo en derivado reversible". En ESTE archivo de prueba se quitan los
+    triángulos de piel que la ropa tapa por completo (a más de 1 cm de cualquier orilla): al posar, la piel escondida
+    (el torso metido en el hombro, la cadera) ya no atraviesa la tela. El GLB de Adán no se toca."""
+    from copox.medicion.gltf import accesor
+    partes = prendas(E)
+    P = _prims(E)
+    log = {"operacion": "piel oculta bajo la ropa (solo en la prueba)"}
+    for n in CULL_PIEZAS:
+        q = P[n]
+        V = v39._leer(E, q, "POSITION").astype(float)
+        T = accesor(E.j, E.b, q["indices"]).reshape(-1, 3)
+        dentro = np.zeros(len(V), bool)
+        for pr_, *_ in partes.values():
+            # margen de 1 cm solo junto a las orillas que se ven (puño, dobladillo, cuello, cintura); las orillas
+            # internas (arranque de la manga dentro del torso) no dejan piel que asome al girar
+            f = np.maximum(pr_.sdf(V), pr_.visible(V) + 0.010)
+            dentro |= f < -0.0015
+        quedan = ~dentro[T].all(1)
+        import receta_adan_v24 as v24
+        q["indices"] = v24._add_raw(E, np.ascontiguousarray(T[quedan].ravel(), np.uint32), 5125, "SCALAR", 34963)
+        E.b = bytes(E.out)
+        log[n] = int((~quedan).sum())
+    return log
+
+
 def main(src, dst):
     from copox.medicion import rostro_edicion as re
     from copox.medicion.compactar import compactar
     E = re.Editor(src)
-    log = [ropa(E, os.path.dirname(os.path.abspath(dst)))]
+    log = [ropa(E, os.path.dirname(os.path.abspath(dst))), ocultar_bajo_ropa(E)]
     tmp = dst + ".tmp.glb"
     E.guardar(tmp, nota="PRUEBA de vestuario sobre Adán V48.3: camisa y pantalón ajustados. No es versión del personaje.")
     compactar(tmp, dst)

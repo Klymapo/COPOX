@@ -24,15 +24,31 @@ def smin(a, b, k):
     return b * (1 - h) + a * h - k * h * (1 - h)
 
 
+def solo_mayor(V, T):
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    n = len(V)
+    e = np.vstack([T[:, [0, 1]], T[:, [1, 2]], T[:, [2, 0]]])
+    A = coo_matrix((np.ones(len(e)), (e[:, 0], e[:, 1])), shape=(n, n))
+    _, lab = connected_components(A, directed=False)
+    tl = lab[T[:, 0]]
+    mayor = np.bincount(tl).argmax()
+    T = T[tl == mayor]
+    u = np.unique(T); mp = -np.ones(n, np.int64); mp[u] = np.arange(len(u))
+    return V[u], mp[T]
+
+
 class Pieza:
     """Distancia con signo a una pieza del cuerpo. Con T, la superficie se muestrea densa (lado ≤ `lado`) con normales
     interpoladas: el plano local sale de puntos a ~1 mm, sin los bultos de una malla de vértices espaciados."""
 
-    def __init__(self, V, N, T=None, k=6, lado=0.0012, J=None, W=None):
+    def __init__(self, V, N, T=None, k=4, lado=0.002, J=None, W=None):
         from scipy.spatial import cKDTree
         V = np.asarray(V, float); N = np.asarray(N, float)
         N = N / np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
         self.V0, self.J, self.W = V, J, W
+        self.vert = [np.c_[np.arange(len(V)), np.arange(len(V)), np.arange(len(V))]]
+        self.bar = [np.c_[np.ones(len(V)), np.zeros(len(V)), np.zeros(len(V))]]
         if T is not None:
             T = np.asarray(T, np.int64)
             Ps, Ns = [V], [N]
@@ -45,22 +61,42 @@ class Pieza:
                 a = (u[ok] / n)[None, :, None]; b = (v[ok] / n)[None, :, None]; c = 1 - a - b
                 Ps.append((c * V[t[:, 0]][:, None] + a * V[t[:, 1]][:, None] + b * V[t[:, 2]][:, None]).reshape(-1, 3))
                 Ns.append((c * N[t[:, 0]][:, None] + a * N[t[:, 1]][:, None] + b * N[t[:, 2]][:, None]).reshape(-1, 3))
+                k_ = ok.sum()
+                self.vert.append(np.repeat(t, k_, axis=0))
+                self.bar.append(np.tile(np.c_[c[0, :, 0], a[0, :, 0], b[0, :, 0]], (len(t), 1)))
             V = np.vstack(Ps); N = np.vstack(Ns)
             N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
+        self.vert = np.vstack(self.vert); self.bar = np.vstack(self.bar)
         self.V, self.N = V, N
         self.arbol = cKDTree(self.V); self.k = k
 
     def sdf(self, P):
-        d, j = self.arbol.query(P, k=self.k)
-        w = np.exp(-(d / (d[:, :1] + 0.0015)) ** 2); w /= w.sum(1, keepdims=True)
-        S = (w[..., None] * self.V[j]).sum(1); N = (w[..., None] * self.N[j]).sum(1)
-        N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
-        dp = np.einsum("ij,ij->i", P - S, N)
+        out = np.full(len(P), 0.03)                   # lejos: afuera (ver nota abajo)
+        d, j = self.arbol.query(P, k=self.k, workers=-1, distance_upper_bound=self.confianza)
+        ok = np.isfinite(d[:, 0])
+        if ok.any():
+            d, j, Q = d[ok], j[ok], P[ok]
+            fin = np.isfinite(d)
+            j = np.where(fin, j, 0); d = np.where(fin, d, 1.0)
+            w = np.exp(-(d / (d[:, :1] + 0.0015)) ** 2) * fin; w /= w.sum(1, keepdims=True)
+            S = (w[..., None] * self.V[j]).sum(1); N = (w[..., None] * self.N[j]).sum(1)
+            N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
+            out[ok] = np.einsum("ij,ij->i", Q - S, N)
         # lejos de la pieza el plano local no sirve (piezas abiertas: el signo sale al azar) → afuera; el interior lejano
         # lo resuelve el relleno por conexión de Prenda.malla.
-        return np.where(d[:, 0] > self.confianza, d[:, 0], dp)
+        return out
 
     confianza = 0.012
+
+    def pesos(self, idx, n_huesos):
+        """Pesos (densos) en las muestras idx: interpolación baricéntrica de los 3 vértices de su triángulo."""
+        Wn = self.W / np.maximum(self.W.sum(1, keepdims=True), 1e-9)
+        out = np.zeros((len(idx), n_huesos))
+        for c in range(3):
+            v = self.vert[idx, c]
+            for q in range(4):
+                np.add.at(out, (np.arange(len(idx)), self.J[v, q].astype(int)), Wn[v, q] * self.bar[idx, c])
+        return out
 
 
 class Prenda:
@@ -87,11 +123,11 @@ class Prenda:
         # de los cortes (cuello, mangas, dobladillos) quedan dentro del cuerpo, invisibles; la orilla se ve con grosor.
         return np.maximum(d - h, self.region(P))
 
-    def malla(self, lo, hi, paso=0.0013, banda=0.012, pulido=6):
+    def malla(self, lo, hi, paso=0.0014, banda=0.010, pulido=6):
         from scipy.spatial import cKDTree
         from skimage.measure import marching_cubes
         from .mano_geo import taubin
-        todos = cKDTree(np.vstack([p.V0 for p in self.piezas]))
+        todos = cKDTree(np.vstack([p.V for p in self.piezas]))     # muestras densas: la banda no deja huecos
         lo = np.asarray(lo, float); hi = np.asarray(hi, float)
         n = np.ceil((hi - lo) / paso).astype(int) + 1
         ejes = [lo[i] + paso * np.arange(n[i]) for i in range(3)]
@@ -100,7 +136,7 @@ class Prenda:
         gy, gz = np.meshgrid(ejes[1], ejes[2], indexing="ij")
         for ix in range(n[0]):
             g = np.stack([np.full(gy.size, ejes[0][ix]), gy.ravel(), gz.ravel()], 1)
-            d0, _ = todos.query(g, distance_upper_bound=banda)
+            d0, _ = todos.query(g, distance_upper_bound=banda, workers=-1)
             cerca = np.isfinite(d0)
             if self.extra is not None:
                 cerca |= np.abs(self.extra(g)) < banda
@@ -116,6 +152,7 @@ class Prenda:
         F[(~B) & ~np.isin(lab, borde)] = -1.0
         V, T, _, _ = marching_cubes(F, 0.0, spacing=(paso, paso, paso))
         V = V + lo
+        V, T = solo_mayor(V, T)            # fuera las superficies fantasma internas (p. ej. el brazo metido en el torso)
         vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
         if vol < 0:
             T = T[:, ::-1].copy()
@@ -129,6 +166,45 @@ class Prenda:
             e = np.zeros(3); e[i] = h
             g[:, i] = self.sdf(V + e) - self.sdf(V - e)
         return g / np.maximum(np.linalg.norm(g, axis=1, keepdims=True), 1e-12)
+
+
+def pesos_por_piel_visible(V, piezas, n_huesos, respaldo=(), lejos=0.015, k=4):
+    """Pesos de la piel que la prenda tapa: el punto de piel VISIBLE más cercano (muestras de cada pieza que no quedan
+    dentro de otra pieza: el brazo metido en el torso no cuenta, cuenta el torso). `respaldo`: piezas que no son piel
+    (p. ej. el short) y solo se usan donde no hay piel visible a menos de `lejos`."""
+    from scipy.spatial import cKDTree
+
+    def nube(grupo, filtrar):
+        P, ref = [], []
+        for a, p in enumerate(grupo):
+            m = np.ones(len(p.V), bool)
+            if filtrar:
+                for b, q in enumerate(grupo):
+                    if b != a:
+                        m &= q.sdf(p.V) > -0.0005
+            P.append(p.V[m]); ref.append(np.c_[np.full(m.sum(), a), np.where(m)[0]])
+        return np.vstack(P), np.vstack(ref)
+
+    def evaluar(grupo, ref, j):
+        Wv = np.zeros((len(j), n_huesos))
+        for a, p in enumerate(grupo):
+            s_ = ref[j, 0] == a
+            if s_.any():
+                Wv[s_] = p.pesos(ref[j[s_], 1], n_huesos)
+        return Wv
+
+    P, ref = nube(piezas, True)
+    d, j = cKDTree(P).query(V, workers=-1)                   # el punto de piel exacto debajo (muestras a ≤ 2 mm)
+    Wv = evaluar(piezas, ref, j)
+    if respaldo:
+        Pr, rr = nube(list(respaldo), False)
+        sel = d > lejos
+        if sel.any():
+            _, jr = cKDTree(Pr).query(V[sel], workers=-1)
+            Wv[sel] = evaluar(list(respaldo), rr, jr)
+    top = np.argsort(-Wv, axis=1)[:, :4]
+    Wt = np.take_along_axis(Wv, top, 1); Wt /= np.maximum(Wt.sum(1, keepdims=True), 1e-9)
+    return top.astype(np.uint16), Wt.astype(np.float32)
 
 
 def pesos_por_dueno(V, piezas, n_huesos, k=4):
