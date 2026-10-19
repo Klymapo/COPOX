@@ -127,3 +127,15 @@ Técnica: malla nueva del pelo desde un campo implícito (`pelo_cascara.py`), ma
 
 Tope de 3 iteraciones del método alcanzado → PLATEAU. Propuesta para la siguiente técnica: la orilla con distancia real
 a la malla de la piel (no radial): pelo = {distancia a la piel < g(máscara)} afuera de la piel, con g → 0 en la orilla.
+
+### V48.3 · técnica nueva tras el PLATEAU: orilla con distancia real a la piel (19 oct 2026, Martillo)
+
+- d) `PeloDistancia` (todo el pelo = piel inflada): **descartada**. La piel expuesta no cubre el cuero cabelludo; arriba
+  no hay piel de referencia y el pelo salió en placas.
+- e–g) `PeloOrilla`: arriba la cáscara en esfera intacta; solo donde hay piel a < 12 mm, techo = piel + g (g = 1 mm en la
+  orilla, crece hacia adentro) y piso 3 mm bajo la piel; el pelo abraza la piel que asome (1.6 mm) en lugar de empujar
+  la piel (meter_piel quitado: hacía un labio). CONTORNO viejo escondido (escala 0.95 al centro).
+  Resultado: nacimiento de la frente limpio y al ras; nuca sin motas de piel. Queda: línea tenue en la nuca baja (el pelo
+  copia un escalón de la piel escondida), orilla irregular en la patilla y, en Godot, orilla con dientes donde pelo y
+  piel están a ~1 mm (precisión de profundidad).
+  GLB reproducible: SHA-256 `63029e57…c8f1`. SIN APROBAR.

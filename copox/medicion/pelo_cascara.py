@@ -291,3 +291,83 @@ class PeloImplicitoRas(PeloImplicitoEsfera):
         capa = np.maximum(r - fuera, dentro - r)
         region = (0.5 - M) * R * self.paso_ang * 2.5
         return np.maximum(capa, region)
+
+
+class PeloDistancia(PeloImplicitoEsfera):
+    """V48.3 d (técnica nueva tras PLATEAU): el pelo es la piel inflada. Alto sobre la piel = distancia REAL (plano
+    local de los k vecinos de la piel, con su normal) — no radial, así cuello y cabeza no se mezclan. El alto pleno sale
+    del pelo viejo en cada dirección y baja suave a ~0 en la orilla (máscara): sin canto, sin escalón, sin piel asomando.
+    Adentro, la capa llega `fondo` bajo la piel."""
+
+    def __init__(self, centro, pelo, piel, normales, rampa=0.22, ras=0.0006, fondo=0.003, k=10, **kw):
+        from scipy.spatial import cKDTree
+        super().__init__(centro, pelo, piel, **kw)
+        self.S = np.asarray(piel, float); self.N = np.asarray(normales, float)
+        self.N /= np.maximum(np.linalg.norm(self.N, axis=1, keepdims=True), 1e-12)
+        self.ts = cKDTree(self.S); self.k = k
+        self.rampa, self.ras, self.fondo = rampa, ras, fondo
+        afuera = self.c + self.D * self.Rd[:, None]
+        G = np.maximum(self._dpiel(afuera), 0.002)
+        # suavizado sobre la esfera (vecinos de Fibonacci)
+        _, j = self.arbol.query(self.D, k=24)
+        for _ in range(3):
+            G = G[j].mean(1)
+        self.G = G
+
+    def _dpiel(self, P):
+        d, j = self.ts.query(P, k=self.k)
+        w = np.exp(-(d / (d[:, :1] + 0.004)) ** 2); w /= w.sum(1, keepdims=True)
+        S = (w[..., None] * self.S[j]).sum(1); N = (w[..., None] * self.N[j]).sum(1)
+        N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
+        return np.einsum("ij,ij->i", P - S, N)
+
+    def sdf(self, P):
+        Q = P - self.c; r = np.linalg.norm(Q, axis=1); d = Q / np.maximum(r, 1e-12)[:, None]
+        dist, j = self.arbol.query(d, k=6)
+        w = 1.0 / np.maximum(dist, 1e-6) ** 2; w /= w.sum(1, keepdims=True)
+        M = (w * self.Md[j]).sum(1); G = (w * self.G[j]).sum(1); R = (w * self.Rd[j]).sum(1)
+        t = np.clip((M - 0.5) / self.rampa, 0, 1); t = t * t * (3 - 2 * t)
+        g = self.ras + (G - self.ras) * t
+        h = self._dpiel(P)
+        capa = np.maximum(h - g, -self.fondo - h)
+        region = (0.5 - M) * R * self.paso_ang * 2.5
+        return np.maximum(capa, region)
+
+
+class PeloOrilla(PeloImplicitoEsfera):
+    """V48.3 e: la piel expuesta NO cubre el cuero cabelludo (arriba el pelo es la cabeza), así que el alto sobre la piel
+    solo vale en la orilla. Cáscara de la variante en esfera (arriba, intacta) + dos ajustes donde hay piel cerca:
+    - techo: afuera nunca más que piel + g, con g = `ras` en la orilla que crece rápido hacia adentro (rampa en la
+      máscara) → la orilla baja al ras de la piel, sin canto;
+    - piso: la capa se rellena hacia abajo hasta `fondo` bajo la piel → sin hueco entre pelo y piel.
+    Distancia a la piel: plano local de los k vecinos (no radial)."""
+
+    def __init__(self, centro, pelo, piel, normales, rampa=0.18, ras=0.0010, fondo=0.003, cerca=0.012, k=10, cubre=0.0016, **kw):
+        from scipy.spatial import cKDTree
+        super().__init__(centro, pelo, piel, **kw)
+        self.cubre = cubre
+        self.S = np.asarray(piel, float); self.N = np.asarray(normales, float)
+        self.N /= np.maximum(np.linalg.norm(self.N, axis=1, keepdims=True), 1e-12)
+        self.ts = cKDTree(self.S); self.k = k
+        self.rampa, self.ras, self.fondo, self.cerca = rampa, ras, fondo, cerca
+
+    _dpiel_k = PeloDistancia._dpiel
+
+    def sdf(self, P):
+        Q = P - self.c; r = np.linalg.norm(Q, axis=1); d = Q / np.maximum(r, 1e-12)[:, None]
+        dist, j = self.arbol.query(d, k=16)
+        w = np.exp(-(dist / 0.012) ** 2) + 1e-12; w /= w.sum(1, keepdims=True)
+        M = (w * self.Md[j]).sum(1); R = (w * self.Rd[j]).sum(1)
+        afuera = r - R
+        piso = (R - self.grosor) - r
+        d0, _ = self.ts.query(P)
+        hay = d0 < self.cerca
+        if hay.any():
+            h = self._dpiel_k(P[hay])
+            t = np.clip((M[hay] - 0.5) / self.rampa, 0, 1); t = t * t * (3 - 2 * t)
+            g = self.ras + 0.03 * t
+            # la piel que asome bajo el pelo queda cubierta (el pelo la abraza a `cubre`), sin mover la piel
+            afuera[hay] = np.maximum(np.minimum(afuera[hay], h - self.cubre * (M[hay] > 0.5)), h - g)
+            piso[hay] = np.minimum(piso[hay], -self.fondo - h)
+        region = (0.5 - M) * R * self.paso_ang * 2.5
+        return np.maximum(np.maximum(afuera, piso), region)
