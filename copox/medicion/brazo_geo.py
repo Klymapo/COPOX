@@ -38,7 +38,8 @@ def _suave(x, y, sigma):
 
 
 class Brazo:
-    def __init__(self, V, T, x0, x1, codo_x, paso=0.004, sigma=0.012, codo_max=0.03, p=2.6, margen=0.010):
+    def __init__(self, V, T, x0, x1, codo_x, paso=0.004, sigma=0.012, codo_max=0.03, p=2.6, margen=0.010,
+                 lineal=False, muneca=None, hombro=0.035):
         """V, T: brazo anterior (marco izquierdo). x0: inicio (dentro del torso). x1: plano de la muñeca.
         codo_x: x del codo; codo_max: estrechamiento máximo permitido en el codo (fracción)."""
         xs = np.arange(x0, x1 + 1e-9, paso)
@@ -67,6 +68,19 @@ class Brazo:
         for a, f in ((self.ay, F[:, 2]), (self.az, F[:, 3])):
             t = np.linspace(0, 1, n)
             a[-n:] = a[-n:] * (1 - t) + f[-n:] * t
+        if lineal:
+            # V47 ("brazo recto"): de `hombro` (desde x0) a la muñeca, semiejes en línea recta; el tramo del hombro
+            # (dentro del torso) conserva el tamaño del brazo anterior en ese punto. muneca = (semi alto, semi fondo).
+            xs = x0 + hombro
+            i = int(np.argmin(np.abs(xs_ := self.xs - xs)))
+            ays, azs = self.ay[i], self.az[i]
+            ayw, azw = muneca if muneca is not None else (self.ay[-1], self.az[-1])
+            t = np.clip((self.xs - xs) / (x1 - xs), 0, 1)
+            ly, lz = ays + (ayw - ays) * t, azs + (azw - azs) * t
+            w = np.clip((self.xs - (xs - 0.015)) / 0.015, 0, 1); w = w * w * (3 - 2 * w)
+            self.ay = self.ay * (1 - w) + ly * w
+            self.az = self.az * (1 - w) + lz * w
+            del xs_
         self.x0, self.x1, self.p = x0, x1, p
         self.margen = margen          # el barrido sigue `margen` más allá de las bocas: el corte no toca las tapas
 

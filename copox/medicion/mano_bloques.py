@@ -144,8 +144,13 @@ class ManoBloques:
         ten = _caja_orientada(P, np.array([0.004, b0[1], b0[2] - self.dedo_ancho * 0.6]), b0 + (b1 - b0) * 0.35,
                               np.array([0, 1.0, 0]), self.dedo_ancho * 1.6, self.grosor * 0.8, self.r * 1.5)
         d = _smin(d, ten, 0.008)
+        bloque = self.pose.get("bloque")
+        if bloque:                                                  # V47: dedos doblados = un bloque al ras del dorso
+            d = _smin(d, self._bloque(P, bloque), 0.006)              # sin línea entre la palma y el bloque
         dedos = None
-        for grupo in self.grupos:
+        for k, grupo in enumerate(self.grupos):
+            if bloque and k < len(DEDOS) and DEDOS[k] in bloque:   # esos dedos ya están en el bloque
+                continue
             g = None
             for (a, b, lado, an, gr) in grupo:                    # falanges del mismo dedo: unión suave (barra
                 f = _caja_orientada(P, a, b, lado, an, gr, self.r)  # continua; los dedos entre sí quedan separados)
@@ -164,6 +169,28 @@ class ManoBloques:
             dm = (e - 1) * np.minimum(ry, rz)
             dm = np.maximum(dm, np.maximum(x0 - P[:, 0], P[:, 0] - x1))
             d = _smin(d, dm, 0.018)          # suave: sin línea en el dorso donde la losa de la palma empieza
+        return d
+
+    def _bloque(self, P, dedos):
+        """Puño de bloques (Admin, 19 oct 2026: "que no se vean los nudillos sobresalir"): los dedos doblados son UNA caja
+        redondeada que sigue la palma. Arriba queda al ras del dorso, adelante tiene una cara plana y abajo llega bajo la
+        palma. Entre dedos lleva ranuras poco profundas, al frente y abajo."""
+        L, G, g = self.palma_largo, self.grosor, self.dedo_grueso
+        idx = [DEDOS.index(x) for x in dedos]
+        ws = [self.w0 + (1.5 - i) * self.paso for i in idx]
+        z0, z1 = min(ws) - self.dedo_ancho / 2, max(ws) + self.dedo_ancho / 2
+        x0, x1 = L * 0.55, L + g * 1.05
+        y0, y1 = -G / 2 - g * 0.95, G / 2
+        c = np.array([(x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2])
+        h = np.array([(x1 - x0) / 2, (y1 - y0) / 2, (z1 - z0) / 2])
+        r = min(0.0045, g * 0.45)
+        q = np.abs(P - c) - (h - r)
+        d = np.linalg.norm(np.maximum(q, 0), axis=1) + np.minimum(q.max(1), 0) - r
+        prof, med = 0.0011, 0.0007
+        for a_, b_ in zip(idx[:-1], idx[1:]):
+            wb = self.w0 + (1.5 - (a_ + b_) / 2) * self.paso
+            ranura = np.maximum(np.abs(P[:, 2] - wb) - med, np.minimum(x1 - prof - P[:, 0], P[:, 1] - (y0 + prof)))
+            d = np.maximum(d, -ranura)
         return d
 
     def malla(self, paso=0.0008, pulido=3):
