@@ -24,6 +24,13 @@ REF_PX = {"palma_largo": 235, "palma_ancho": 238, "Middle": 205, "Index": 165, "
 LARGO_DEDO = 0.86
 GRUESO_DEDO = 0.92                     # grueso / ancho del dedo (antes 0.74)
 SEPARACION_DEDO = 2                    # px de la hoja entre dedos (antes 5); el ancho absorbe la diferencia
+# Estilo de la mano. Los valores por defecto son los de V40–V43.1 (se reproducen bit a bit); una receta nueva pasa los
+# suyos con ManoBloques(..., estilo={...}).
+ESTILO = {"largo_dedo": LARGO_DEDO, "grueso_dedo": GRUESO_DEDO, "separacion": SEPARACION_DEDO,
+          "grosor_palma": 0.36,     # grosor de la losa / ancho de la palma
+          "cuna": 1.75,             # la palma es esta tanto más gruesa en la muñeca que en los nudillos
+          "pulgar_ang": 32.0, "pulgar_baja": 22.0,   # apertura del pulgar hacia afuera y hacia la palma (grados)
+          "pulgar_ancho": 1.3, "pulgar_grueso": 1.2}  # ÷ ancho / grueso del dedo
 DEDOS = ("Index", "Middle", "Ring", "Little")
 REPARTO = (0.45, 0.30, 0.25)          # largo de cada falange (fracción del dedo)
 
@@ -52,18 +59,19 @@ def _caja_orientada(P, a, b, lado, ancho, grueso, r):
 
 
 class ManoBloques:
-    def __init__(self, largo_mano, pose, palma_w0=0.0, grosor_palma=None, radio=0.0038):
+    def __init__(self, largo_mano, pose, palma_w0=0.0, grosor_palma=None, radio=0.0038, estilo=None):
+        self.e = e = {**ESTILO, **(estilo or {})}
         k = largo_mano / REF_PX["mano"]
         self.k = k
         self.palma_largo = REF_PX["palma_largo"] * k
         self.palma_ancho = REF_PX["palma_ancho"] * k
-        ancho_px = REF_PX["dedo_ancho"] + (REF_PX["separacion"] - SEPARACION_DEDO)
+        ancho_px = REF_PX["dedo_ancho"] + (REF_PX["separacion"] - e["separacion"])
         self.dedo_ancho = ancho_px * k
-        self.paso = (ancho_px + SEPARACION_DEDO) * k
-        self.largos = {d: REF_PX[d] * k * LARGO_DEDO for d in DEDOS}
+        self.paso = (ancho_px + e["separacion"]) * k
+        self.largos = {d: REF_PX[d] * k * e["largo_dedo"] for d in DEDOS}
         self.pulgar_largo = REF_PX["pulgar"] * k
-        self.dedo_grueso = self.dedo_ancho * GRUESO_DEDO
-        self.grosor = grosor_palma or self.palma_ancho * 0.36      # losa
+        self.dedo_grueso = self.dedo_ancho * e["grueso_dedo"]
+        self.grosor = grosor_palma or self.palma_ancho * e["grosor_palma"]      # losa
         self.r = radio
         self.w0 = palma_w0
         self.pose = pose
@@ -113,7 +121,8 @@ class ManoBloques:
             a_ = pts[j]
             if j > 0:
                 a_ = pts[j] - (pts[j + 1] - pts[j]) / np.linalg.norm(pts[j + 1] - pts[j]) * self.dedo_grueso * 0.4
-            self.segs.append((a_, pts[j + 1], lado_p, self.dedo_ancho * 1.3, self.dedo_grueso * 1.2))
+            self.segs.append((a_, pts[j + 1], lado_p, self.dedo_ancho * self.e["pulgar_ancho"],
+                              self.dedo_grueso * self.e["pulgar_grueso"]))
         self.grupos.append(self.segs[n0:])
         self.pulgar_pts = pts
 
@@ -122,7 +131,8 @@ class ManoBloques:
         # palma: losa con canto redondeado, se angosta hacia la muñeca
         u = np.clip(P[:, 0] / L, 0, 1); su = u * u * (3 - 2 * u)
         hw = A / 2 * (0.78 + 0.22 * su)
-        hh = G / 2 * (1.75 - 0.75 * su)                          # cuña: gruesa en la muñeca (hoja del brazo)                             # un poco más gruesa en la muñeca
+        cu = self.e["cuna"]
+        hh = G / 2 * (cu - (cu - 1) * su)                          # cuña: gruesa en la muñeca (hoja del brazo)                             # un poco más gruesa en la muñeca
         ch = G / 2 - hh                                             # el extra va al lado de la palma: dorso recto
         x0 = -0.012 if self.muneca is not None else 0.0              # con muñeca, la losa entra al tubo: sin borde en el dorso
         q = np.stack([np.abs(P[:, 0] - (L + x0) / 2) - ((L - x0) / 2 - self.r * 2),
@@ -296,8 +306,9 @@ def _base_pulgar(M):
     return np.array([REF_PX["palma_largo"] * 0.22 * M.k, -M.grosor * 0.25, M.w0 + M.palma_ancho / 2 - M.dedo_ancho * 0.75])
 
 
-def _pulgar_abierto(M, ang=32.0, baja=22.0, f1=0.45):
-    a, b = np.radians(ang), np.radians(baja)
+def _pulgar_abierto(M, ang=None, baja=None, f1=0.45):
+    a = np.radians(M.e["pulgar_ang"] if ang is None else ang)
+    b = np.radians(M.e["pulgar_baja"] if baja is None else baja)
     d = np.array([np.cos(a), -np.sin(b), np.sin(a)]); d /= np.linalg.norm(d)
     base = _base_pulgar(M)
     return [base + d * M.pulgar_largo * f1, base + d * M.pulgar_largo * 1.08]
