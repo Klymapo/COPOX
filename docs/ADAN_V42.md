@@ -3,7 +3,8 @@
 **Pedido de Admin (18 oct 2026):** "Sigue con piernas desde cadera y pies".
 
 **Resultado:**
-- `ADAN_V42.glb`; el SHA-256 está en `copox-modelos/adan/SHA256SUMS`.
+- `ADAN_V42.glb`; el SHA-256 está en `copox-modelos/adan/SHA256SUMS` (`84faed12…65fa`).
+- Reproducible bit a bit: dos armados en paralelo dan el mismo SHA.
 - V41 exacto se reproduce con el commit `2c2b968`: V42 cambia código compartido con V40 y V41.
 - Receta: `GODOT_BIN=… docs/medicion/receta_adan_v42.py ADAN_V22_HABLA.glb ADAN_V42.glb` (V41 + este paso).
 
@@ -43,7 +44,26 @@ Una superficie implícita por pierna reemplaza `Pierna*_PIEL`, `Pie*`, `Cana*` y
 4. **Talón:** se abre también hacia adentro, pero sólo atrás. El tobillo es una arista suave (unión 0.005), sin anillo.
 5. **Muñeca como puño de manga:** la palma ahora es una cuña, gruesa en la muñeca (×1.75) y delgada en los nudillos, como en la hoja del brazo. La mano conserva el perfil del anillo del antebrazo en 28 mm.
 
+## Segunda revisión independiente
+
+- **Dobladillo y muesca:** PASS. Queda una duda: atrás la muesca se lee delgada.
+- **Pie:** PASS. Talón abierto a los dos lados y cuatro dedos. Queda una duda por un pliegue leve en el tobillo.
+- **Short al caminar y correr en Godot:** FAIL para el revisor.
+  - Al caminar, la tela se arruga donde la jala el muslo.
+  - Al correr, el frente se levanta.
+  - Ya no hay huecos ni piernas que atraviesen la tela. Lo que queda es cómo la tela sigue al muslo, y eso se decide visualmente; lo decide Admin.
+- **Muñeca:** FAIL para el revisor. Queda una línea en el dorso, donde empieza la cuña de la palma. Ya no es el escalón de V40.
+- Se publica SIN APROBAR para que Admin decida. Siguiente técnica posible para la tela: una forma correctiva o un hueso de tela en la entrepierna.
+
 ## Pendiente
 
 - La costura trasera del short y el pliegue del frente.
 - La mano con pistola, después de aprobar las manos.
+
+## Evidencia (rama `capturas`, `capturas/2026-10-18/adan_v42/`)
+
+- `hoja_v42.png`: la referencia del cuerpo arriba y V42 abajo.
+- `pies_v42.png`: los pies de cerca, contra la hoja de pies.
+- `short_v42.png`: el short en 4 vistas.
+- `manos_v42.png`: mano abierta (3/4 y por la espalda), puño y señalar.
+- `godot_v42.png`: Idle, dos cuadros de Walk, Run y PointFwd.
