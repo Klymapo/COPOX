@@ -28,15 +28,16 @@ COLOR = "#D2AE72"                 # medidos/rubio_arena
 VOLUMEN = dict(corona=0.026, lados=0.004, el0=10.0, el1=70.0)
 RAIZ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 ARCO = True                       # SENKU pelo_arco: la base sigue el casco de la hoja; los mechones van encima
-ESPESOR_ARCO = 0.032              # la base queda bajo el arco este tanto: la cubren los mechones
-TRIS_BASE = 500                   # base del cráneo: pocas caras grandes
+ESPESOR_ARCO = 0.026              # la base queda bajo el arco este tanto: la cubren los mechones
+TRIS_BASE = 400                   # base del cráneo: pocas caras grandes
 ESCALA = 1.55
+JITTER = 0.0                      # planos limpios y grandes (como la hoja); 0.08 = facetas irregulares
 AFILAR = 0.55
 # (az_raíz, el_raíz, az_punta, el_punta, ancho_mm, grueso_mm, despega_m); az 0 = frente, +90 = su izquierda (+x)
 MECHONES_THEO = [
     # (con ARCO la altura y el ancho los pone el casco de la hoja; aquí solo va el trazo de cada mechón)
     # barridos de arriba: nacen sobre la frente y corren por el arco hacia la coronilla (los planos grandes del perfil)
-    (-34, 58, -150, 52, 92, 30, 0.0, 8), (0, 60, 180, 54, 96, 32, 0.0), (34, 58, 150, 52, 92, 30, 0.0, -8),
+    (-36, 58, -150, 52, 110, 30, 0.0, 8), (0, 60, 180, 54, 110, 32, 0.0), (36, 58, 150, 52, 110, 30, 0.0, -8),
     # picos del copete: suben desde la raya (la "M" vista de frente)
     (-12, 56, -40, 86, 70, 28, 0.010, 14), (12, 56, 40, 86, 70, 28, 0.010, -14),
     # fleco en "M": caen sobre la frente, despegados
@@ -47,8 +48,7 @@ MECHONES_THEO = [
     # lados sobre la oreja
     (-80, 62, -102, 8, 72, 22, 0.006), (80, 62, 102, 8, 72, 22, 0.006),
     # atrás: bloques verticales grandes hacia la nuca
-    (-150, 66, -156, -34, 90, 24, 0.008), (-112, 60, -126, -24, 80, 22, 0.008), (150, 66, 156, -34, 90, 24, 0.008),
-    (112, 60, 126, -24, 80, 22, 0.008), (180, 68, 180, -36, 90, 24, 0.008),
+    (-138, 64, -146, -32, 116, 26, 0.008), (138, 64, 146, -32, 116, 26, 0.008), (180, 68, 180, -36, 116, 26, 0.008),
     # coronilla: un bloque que se levanta
     (165, 74, 150, 88, 64, 24, 0.008),
 ]
@@ -63,6 +63,8 @@ MECHONES_CUBRE = [
     (-94, 26, -95, -4, 50, 14, 0.002), (94, 26, 95, -4, 50, 14, 0.002),
     (-58, 24, -60, -12, 44, 14, 0.002), (58, 24, 60, -12, 44, 14, 0.002),
     (-112, 20, -114, -26, 50, 14, 0.003), (112, 20, 114, -26, 50, 14, 0.003),
+    (-76, 18, -77, -14, 44, 14, 0.002), (76, 18, 77, -14, 44, 14, 0.002),
+    (-124, 10, -124, -34, 52, 14, 0.003), (124, 10, 124, -34, 52, 14, 0.003),
 ]
 
 
@@ -105,6 +107,7 @@ def pelo_theo(E, src_v47, carpeta):
     else:
         os.environ["ALTH_CALIDAD"] = previo
     Tb = _hacia_afuera(Vb, Tb, np.asarray(v483.CENTRO))
+    pb.JITTER = JITTER
     Vm, Tm, ids, sv, curvas = pb.peinado(H, MECHONES_THEO + MECHONES_CUBRE, escala=ESCALA, afilar=AFILAR, punta=0.30, romo=True,
                                          detalle=True, arco=guia)
     V = np.vstack([Vb, Vm]); T = np.vstack([Tb, Tm + len(Vb)])

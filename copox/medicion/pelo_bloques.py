@@ -16,7 +16,8 @@ from .pelo_mechones import _dir
 
 # sección: (x a lo ancho en unidades de w, y hacia afuera en unidades de g)
 SECCION = np.array([[-1.0, 0.0], [-0.40, 1.0], [0.30, 0.85], [1.0, 0.0], [0.05, -0.55]])
-ESTACIONES = np.array([0.0, 0.38, 0.72])          # la punta va en s = 1
+ESTACIONES = np.array([0.0, 0.38, 0.72])
+JITTER = 0.08                                     # variación por vértice (0 = planos limpios)          # la punta va en s = 1
 
 
 def radio_base(base, D):
@@ -39,7 +40,7 @@ def mechon(base, m, escala=1.0, afilar=0.55, rng=None, punta=0.0, romo=False, ar
     g = escala * grueso / 1000 * (1 - 0.55 * s)
     w = escala * ancho / 1000 / 2 * np.maximum((1 - s) ** afilar, punta)
     if arco is not None:                         # SENKU pelo_arco: el mechón corre por el arco (su cara exterior toca el casco)
-        R = np.maximum(R, radio_base(arco, D) - 1.15 * g)
+        R = np.maximum(R, radio_base(arco, D) - 0.9 * g)                # cara exterior ≈ casco + 0.25 g
     C = base.c + D * (R + despega * s ** 1.4 + 0.15 * g)[:, None]
     Tg = np.gradient(C, axis=0)
     Tg /= np.linalg.norm(Tg, axis=1, keepdims=True)
@@ -51,7 +52,7 @@ def mechon(base, m, escala=1.0, afilar=0.55, rng=None, punta=0.0, romo=False, ar
     for i in range(len(ESTACIONES)):
         ca, sa = np.cos(giro * s[i]), np.sin(giro * s[i])          # el mechón se tuerce un poco hacia la punta
         Bi, Ni = ca * B[i] + sa * N[i], -sa * B[i] + ca * N[i]
-        jit = 1.0 if rng is None else 1.0 + rng.uniform(-0.08, 0.08, k)[:, None]
+        jit = 1.0 if (rng is None or JITTER == 0) else 1.0 + rng.uniform(-JITTER, JITTER, k)[:, None]
         V.append(C[i] + (SECCION[:, :1] * w[i] * Bi + SECCION[:, 1:] * g[i] * Ni) * jit)
     if romo:                                                          # punta cortada en bisel (como la hoja), no aguja
         V.append(C[-1] + SECCION[:, :1] * w[-1] * B[-1] + SECCION[:, 1:] * 0.35 * g[-1] * N[-1])

@@ -90,7 +90,7 @@ def _uv(P, vista):
     raise ValueError(vista)
 
 
-def alinear(ref, joints, torso_z=None):
+def alinear(ref, joints, torso_z=None, consistente=True):
     """-> {vista: (escala px/u, u0 px, piso px)}: px = u0 + u·escala ; fila = piso − y·escala."""
     y_hombro = float((joints["LeftUpperArm"][1] + joints["RightUpperArm"][1]) / 2)
     al = {}
@@ -107,10 +107,37 @@ def alinear(ref, joints, torso_z=None):
     cols = np.nonzero(r["oscuro"][f0:f1].any(0))[0]
     zc = float(torso_z if torso_z is not None else joints["Chest"][2])
     al["perfil"] = (esc, float(cols.min() + cols.max()) / 2 - zc * esc, r["piso"])
+    if consistente:
+        al = _consistente(ref, al)
     return al
 
 
-def casco(c, D, ref, al, r0, r1, paso=0.0015, vistas=("frente", "perfil", "espalda"), n_super=2.6):
+def _cabeza_px(m):
+    filas = np.nonzero(m.any(1))[0]
+    cols = np.nonzero(m.any(0))[0]
+    return filas.min(), cols.min(), cols.max()
+
+
+def _consistente(ref, al):
+    """Cada vista con su propia escala, pero el MISMO objeto: la coronilla queda a la misma altura en las tres vistas y
+    la espalda tiene el mismo ancho de cabeza que el frente (la hoja no trae las vistas exactamente a la misma escala).
+    El frente manda (es la que se alinea con el esqueleto)."""
+    e, u0, piso = al["frente"]
+    top, c0, c1 = _cabeza_px(ref["frente"]["cabeza"])
+    y_top = (piso - top) / e
+    ancho = (c1 - c0) / e
+    x_c = ((c0 + c1) / 2 - u0) / e                          # centro de la cabeza en x (frente)
+    out = dict(al)
+    t, b0, b1 = _cabeza_px(ref["espalda"]["cabeza"])
+    eb = (b1 - b0) / ancho
+    out["espalda"] = (eb, (b0 + b1) / 2 + x_c * eb, t + y_top * eb)    # u = −x en espalda
+    ep, up, _ = al["perfil"]
+    t, _, _ = _cabeza_px(ref["perfil"]["cabeza"])
+    out["perfil"] = (ep, up, t + y_top * ep)
+    return out
+
+
+def casco(c, D, ref, al, r0, r1, paso=0.0015, vistas=("frente", "perfil", "espalda"), n_super=3.0):
     """Radio máximo (desde c, por dirección D) que queda dentro de la cabeza en todas las vistas. Busca de r0 a r1."""
     rs = np.arange(r0, r1, paso)
     dentro = np.ones((len(D), len(rs)), bool)
