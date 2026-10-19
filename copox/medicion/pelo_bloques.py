@@ -74,13 +74,19 @@ def mechon(base, m, escala=1.0, afilar=0.55, rng=None, punta=0.0, romo=False):
     fn = np.cross(V[T[:, 1]] - V[T[:, 0]], V[T[:, 2]] - V[T[:, 0]])
     malo = np.einsum("ij,ij->i", fn, fc - ref[T].mean(1)) < 0
     T[malo] = T[malo][:, ::-1]
-    return V, T
+    Sv = np.append(np.repeat(s[:n_est], k), 1.0)                      # parámetro a lo largo del mechón (raíz 0, punta 1)
+    return V, T, Sv, C
 
 
-def peinado(base, mechones, escala=1.0, afilar=0.55, semilla=7, punta=0.0, romo=False):
+def peinado(base, mechones, escala=1.0, afilar=0.55, semilla=7, punta=0.0, romo=False, detalle=False):
+    """V, T de todos los mechones. detalle=True devuelve además, por vértice, el mechón y su parámetro s, y la curva
+    central de cada mechón (para ponerle huesos: pelo_huesos)."""
     rng = np.random.default_rng(semilla)
-    Vs, Ts, n = [], [], 0
-    for m in mechones:
-        V, T = mechon(base, m, escala, afilar, rng, punta, romo)
-        Vs.append(V); Ts.append(T + n); n += len(V)
-    return np.vstack(Vs), np.vstack(Ts)
+    Vs, Ts, Ids, Ss, Cs, n = [], [], [], [], [], 0
+    for i, m in enumerate(mechones):
+        V, T, Sv, C = mechon(base, m, escala, afilar, rng, punta, romo)
+        Vs.append(V); Ts.append(T + n); Ids.append(np.full(len(V), i)); Ss.append(Sv); Cs.append(C); n += len(V)
+    V, T = np.vstack(Vs), np.vstack(Ts)
+    if detalle:
+        return V, T, np.concatenate(Ids), np.concatenate(Ss), Cs
+    return V, T

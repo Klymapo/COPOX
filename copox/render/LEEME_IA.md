@@ -126,3 +126,17 @@ Láminas: `ref` = referencia | modelo | superposición | diferencia (rojo = solo
 - Luz aproximada (Lambert + oclusión en pantalla): sirve para forma y color plano, no imita el render original al 100%.
 - Sin sombras proyectadas ni transparencia parcial (solo alfa MASK).
 - `curvatura` invierte el color en piezas con caras invertidas (ver reporte de Adán: brazos, piernas, manos y short).
+
+## Pelo: cobertura y movimiento (19 oct 2026, reglas fijas de Admin)
+
+- **Siempre cubrir toda el área de pelo.** Todo peinado pasa `copox/medicion/pelo_cobertura.py`: rayos desde el centro
+  de la cabeza por el área de la guía capilar (PeloOrilla.Md > 0.5); cada rayo debe tocar pelo (o piel que llega al
+  nivel del pelo: oreja, cara). Mínimo 99.5 %, si no es FAIL y la receta se detiene. Medido en V49: guía 100 %,
+  corto 99.8 %, mechones 99.87 %, Theo 99.7 %.
+- **El pelo se mueve.** Peinados por bloques (`pelo_bloques.py`) llevan una cadena de 4 huesos por mechón
+  (`pelo_huesos.py`, Pelo_NN_0…3, hijos de Head) y su configuración de resortes en `extras` del nodo. En Godot:
+  `preload("res://alth_resortes.gd").aplicar(personaje)` arma un SpringBoneSimulator3D (nativo 4.4+) con esfera de
+  colisión en la cabeza. Llamarlo con el árbol ya corriendo (antes del primer cuadro no simula). CHXP V2 lo aplica solo
+  y corre Godot con `--fixed-fps 60` (GIF deterministas); `--sin-resortes` para comparar contra rígido.
+  Valores medidos (rigidez 4, arrastre 0.6, gravedad 0.1): puntas en Idle ~7 mm, Run mediana 18 mm / p95 46 mm.
+  Mechones de cobertura (patillas, nuca) van fijos a Head.

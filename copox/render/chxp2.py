@@ -44,7 +44,7 @@ def correr_godot(trabajo: dict, ruta_trabajo: str, timeout=3600) -> dict:
     trabajo.setdefault("lejos_prof", LEJOS_PROF)
     with open(ruta_trabajo, "w") as f:
         json.dump(trabajo, f)
-    cmd = ["xvfb-run", "-a", "-s", "-screen 0 1280x1024x24", GODOT, "--path", PROYECTO, "--rendering-driver", "opengl3",
+    cmd = ["xvfb-run", "-a", "-s", "-screen 0 1280x1024x24", GODOT, "--fixed-fps", "60", "--path", PROYECTO, "--rendering-driver", "opengl3",
            "--script", "res://chxp2/chxp2.gd", "--", ruta_trabajo]
     t0 = time.time()
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
@@ -239,20 +239,23 @@ def sha(ruta):
 
 
 def render(glb, salida, silueta=None, ref=None, vistas="personaje", visible=None, clip="Idle-loop", t=0.0,
-           gifs=(), cuadros_gif=16, tam=1024, tam_gif=512, vista_gif="tres_cuartos", nombre=None, ref_2x2=False):
+           gifs=(), cuadros_gif=16, tam=1024, tam_gif=512, vista_gif="tres_cuartos", nombre=None, ref_2x2=False,
+           resortes=True):
     """Una llamada = un proceso de Godot para todas las vistas y todos los GIF de este asset."""
     from PIL import Image
     nombre = nombre or os.path.splitext(os.path.basename(glb))[0].lower()
     crudo = os.path.join(salida, "_crudo"); os.makedirs(crudo, exist_ok=True)
     vs = VISTAS[vistas] if isinstance(vistas, str) else vistas
-    base = {"glb": os.path.abspath(glb), "visible": visible or {}, "silueta": os.path.abspath(silueta) if silueta else ""}
+    base = {"glb": os.path.abspath(glb), "visible": visible or {}, "silueta": os.path.abspath(silueta) if silueta else "",
+            "resortes": bool(resortes)}                    # pelo con huesos Pelo_*: se simula (alth_resortes.gd)
     if isinstance(vistas, str) and vistas in CAJAS:
         base["caja_fija"] = list(CAJAS[vistas])
     tomas = [dict(base, nombre=nombre, vistas=[{"nombre": n, "yaw": y, "elev": e} for n, y, e in vs], clip=clip,
                   tiempos=[t])]
     gv = [v for v in vs if v[0] == vista_gif] or vs[:1]
+    base_gif = {k: v for k, v in base.items() if k != "caja_fija"}   # el GIF sigue al cuerpo entero (saltos, carrera)
     for g in gifs:
-        tomas.append(dict(base, nombre=f"{nombre}__{g}", vistas=[{"nombre": gv[0][0], "yaw": gv[0][1], "elev": gv[0][2]}],
+        tomas.append(dict(base_gif, nombre=f"{nombre}__{g}", vistas=[{"nombre": gv[0][0], "yaw": gv[0][1], "elev": gv[0][2]}],
                           clip=g, tiempos=[i / cuadros_gif for i in range(cuadros_gif)], pasadas=["color", "profundidad", "mascara"],
                           encuadre_con_silueta=False, silueta=""))
     t0 = time.time()
@@ -326,10 +329,12 @@ def main():
     ap.add_argument("--t", type=float, default=0.0)
     ap.add_argument("--gif", default="", help="clips separados por coma, p. ej. Idle-loop,Walk-loop,Run-loop")
     ap.add_argument("--tam", type=int, default=1024)
+    ap.add_argument("--sin-resortes", action="store_true", help="no simular el pelo (comparar contra rígido)")
     a = ap.parse_args()
     vis = {kv.split("=")[0]: kv.split("=")[1] not in ("0", "no", "false") for kv in a.visible.split(",") if "=" in kv}
     r = render(a.glb, a.salida, silueta=a.silueta, ref=a.ref, vistas=a.vistas, visible=vis, clip=a.clip, t=a.t,
-               gifs=[g for g in a.gif.split(",") if g], tam=a.tam, ref_2x2=a.ref_2x2)
+               gifs=[g for g in a.gif.split(",") if g], tam=a.tam, ref_2x2=a.ref_2x2,
+               resortes=not a.sin_resortes)
     print(json.dumps({k: r[k] for k in ("asset", "alto_u", "triangulos_visibles", "colores_fuera_de_paleta",
                                          "segundos_godot", "segundos_total")}, ensure_ascii=False))
 

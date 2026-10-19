@@ -25,7 +25,7 @@ import receta_adan_v48_3 as v483  # noqa: E402
 import receta_adan_v49 as v49  # noqa: E402
 
 COLOR = "#D2AE72"                 # medidos/rubio_arena
-VOLUMEN = dict(corona=0.020, lados=0.004, el0=10.0, el1=70.0)
+VOLUMEN = dict(corona=0.026, lados=0.004, el0=10.0, el1=70.0)
 TRIS_BASE = 500                   # base del cráneo: pocas caras grandes
 ESCALA = 1.55
 AFILAR = 0.55
@@ -37,7 +37,7 @@ MECHONES_THEO = [
     (-26, 70, -58, -14, 52, 18, 0.016), (26, 70, 58, -14, 52, 18, 0.016),
     (-44, 66, -74, 0, 56, 20, 0.012), (44, 66, 74, 0, 56, 20, 0.012),
     # copete: nacen arriba de la frente y suben hacia atrás (picos con altura)
-    (-22, 66, -60, 92, 70, 28, 0.036), (22, 66, 60, 92, 70, 28, 0.036), (0, 70, 0, 96, 66, 28, 0.042),
+    (-24, 64, -70, 90, 80, 30, 0.058, 12), (24, 64, 70, 90, 80, 30, 0.058, -12), (0, 68, 0, 98, 76, 32, 0.072),
     # arriba-atrás: barren hacia la coronilla y se levantan
     (-70, 66, -130, 84, 80, 26, 0.028, 10), (70, 66, 130, 84, 80, 26, 0.028, -10),
     # lados sobre la oreja
@@ -47,6 +47,16 @@ MECHONES_THEO = [
     (118, 60, 132, -24, 78, 20, 0.008), (180, 66, 180, -36, 84, 22, 0.008),
     # coronilla: dos bloques que suben
     (-160, 76, -175, 92, 60, 22, 0.022), (160, 76, 175, 92, 60, 22, 0.022),
+]
+# cobertura (compuerta pelo_cobertura): patillas, sobre y detrás de la oreja, nuca baja. Fijos a Head (sin resorte):
+# son cortos y van pegados al cuero.
+MECHONES_CUBRE = [
+    (-70, 24, -68, -20, 46, 14, 0.002), (70, 24, 68, -20, 46, 14, 0.002),
+    (-118, 30, -120, -24, 56, 16, 0.003), (118, 30, 120, -24, 56, 16, 0.003),
+    (-136, 40, -140, -48, 64, 18, 0.004), (136, 40, 140, -48, 64, 18, 0.004),
+    (-168, 40, -172, -58, 70, 18, 0.004), (168, 40, 172, -58, 70, 18, 0.004), (180, 40, 180, -58, 60, 18, 0.004),
+    (-152, 40, -154, -56, 60, 18, 0.004), (152, 40, 154, -56, 60, 18, 0.004),
+    (-94, 26, -95, -4, 50, 14, 0.002), (94, 26, 95, -4, 50, 14, 0.002),
 ]
 
 
@@ -61,6 +71,8 @@ def pelo_theo(E, src_v47, carpeta):
     """Técnica 3: base del cráneo low-poly (cáscara V48.3 inflada, simplificada) + mechones explícitos (pelo_bloques)."""
     import receta_adan_v36 as v36
     from copox.medicion import pelo_bloques as pb
+    from copox.medicion import pelo_cobertura as pcob
+    from copox.medicion import pelo_huesos as ph
     pc, R, S, N = v49._base_pelo(E, src_v47)
     H = pc.PeloOrilla(v483.CENTRO, R, S, N)
     el = np.degrees(np.arcsin(np.clip(H.D[:, 1], -1, 1)))
@@ -76,19 +88,43 @@ def pelo_theo(E, src_v47, carpeta):
     else:
         os.environ["ALTH_CALIDAD"] = previo
     Tb = _hacia_afuera(Vb, Tb, np.asarray(v483.CENTRO))
-    Vm, Tm = pb.peinado(H, MECHONES_THEO, escala=ESCALA, afilar=AFILAR, punta=0.30, romo=True)
+    Vm, Tm, ids, sv, curvas = pb.peinado(H, MECHONES_THEO + MECHONES_CUBRE, escala=ESCALA, afilar=AFILAR, punta=0.30, romo=True,
+                                         detalle=True)
     V = np.vstack([Vb, Vm]); T = np.vstack([Tb, Tm + len(Vb)])
+    # compuerta: el pelo cubre toda el área de pelo de la guía (si no, no se entrega)
+    piel = v49._prims(E)[v482.PIEL]
+    import receta_adan_v39 as v39
+    from copox.medicion.gltf import accesor
+    Vs = v39._leer(E, piel, "POSITION").astype(float); Ts = accesor(E.j, E.b, piel["indices"]).reshape(-1, 3)
+    Ts = Ts[(Vs[Ts][:, :, 1] > 0.47).all(1)]
+    cob = pcob.cobertura(V, T, v483.CENTRO, H.D, H.Md, piel=(Vs, Ts), Rd=H.Rd)
+    print("cobertura del pelo:", cob)
+    if cob["veredicto"] != "PASS":
+        raise SystemExit("FAIL cobertura del pelo: " + str(cob))
+    # huesos por mechón (resortes en el motor) y pesos: base en Head, mechones de la raíz (Head) a su cadena
+    cadenas, jh = ph.agregar_cadenas(E, curvas[:len(MECHONES_THEO)])
+    J, W = ph.pesos(ids, sv, cadenas, jh, n_base=len(Vb))
+    J, W = J[T].reshape(-1, 4), W[T].reshape(-1, 4)            # mismo orden que el facetado (un vértice por esquina)
     V, T, Nv = v49._facetado(V, T)
-    J, W = v49._pesos_cabeza(E, V)
+    c = np.asarray(v483.CENTRO)
+    r_col = min(float(np.linalg.norm(C[1:] - c, axis=1).min()) for C in curvas[:len(MECHONES_THEO)]) - 0.012
+    import copox.medicion.gltf as gl
+    sk = E.j["skins"][0]
+    IBM = gl.accesor(E.j, E.b, sk["inverseBindMatrices"]).reshape(-1, 4, 4).transpose(0, 2, 1)
+    c_local = (IBM[jh] @ np.append(c, 1.0))[:3]
+    nombres = [[E.j["nodes"][sk["joints"][k]]["name"] for k in cad] for cad in cadenas]
+    extras = ph.config(nombres, c_local, r_col)
     mat = v41._material(E, "PELO_THEO_RUBIO", COLOR)
     E.j["materials"][mat]["doubleSided"] = False
     v49._nodo(E, "CAPA_PELO_THEO", [v41._prim_nueva(E, V, T, Nv, J, W, mat, "PELO_THEO")], junto_a="CAPA_GUIA_CAPILAR")
+    E.j["nodes"][-1]["extras"] = extras
     for n in E.j["nodes"]:                                     # en este archivo de prueba solo se ve el pelo de Theo
         if n.get("name") in ("CAPA_GUIA_CAPILAR", "CAPA_PELO_CORTO", "CAPA_PELO_MECHONES"):
             n["extensions"] = {"KHR_node_visibility": {"visible": False}}
     v49._limpiar(carpeta)
-    return {"operacion": "pelo de Theo (bloques)", "tris_base": int(len(Tb)), "tris_mechones": int(len(Tm)),
-            "tris": int(len(T))}
+    return {"operacion": "pelo de Theo (bloques + resortes)", "tris_base": int(len(Tb)), "tris_mechones": int(len(Tm)),
+            "tris": int(len(T)), "cobertura": cob["cobertura"], "huesos_pelo": 4 * len(cadenas),
+            "radio_colision": round(r_col, 4)}
 
 
 def main(src, src_v47, dst):

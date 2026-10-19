@@ -7,6 +7,7 @@ extends SceneTree
 ## y un JSON por toma con medidas, piezas, materiales y triángulos. La composición (AO, hoja, GIF) la hace Python.
 
 const FONDO := Color("#E3E2E9")
+const Resortes := preload("res://alth_resortes.gd")
 
 var trabajo: Dictionary
 var vp: SubViewport
@@ -141,6 +142,22 @@ func _posar(ap: AnimationPlayer, clip: String, t: float) -> void:
 	ap.pause()
 
 
+func _simular(ap: AnimationPlayer, clip: String, t0: float, t1: float) -> void:
+	# avanza la animación de t0 a t1 (fracción del clip) cuadro a cuadro a 60 fps (Godot corre con --fixed-fps 60):
+	# los resortes del pelo simulan con el tiempo real del clip. Sin dibujar el viewport en los pasos intermedios.
+	if t1 < t0:
+		t1 += 1.0                                          # el GIF da la vuelta: seguir hacia adelante
+	var c := clip if ap.has_animation(clip) else clip.trim_suffix("-loop")
+	var largo := ap.get_animation(c).length if ap.has_animation(c) else 1.0
+	var pasos := maxi(1, int(ceil((t1 - t0) * largo * 60.0)))
+	vp.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	for k in pasos:
+		var tt := t0 + (t1 - t0) * float(k + 1) / float(pasos)
+		_posar(ap, clip, fmod(tt, 1.0) if tt < 1.0 or clip.ends_with("-loop") else minf(tt, 1.0))
+		await process_frame
+	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+
+
 func _caja(mallas: Array) -> AABB:
 	var a := AABB()
 	var hay := false
@@ -264,8 +281,23 @@ func _correr() -> void:
 		var pasadas: Array = toma.get("pasadas", ["color", "normal", "profundidad", "mascara"])
 		var clip: String = toma.get("clip", "reposo")
 		var ap_sil: AnimationPlayer = _anim(silueta) if silueta != null else null
+		# pelo con resortes (huesos Pelo_*): simulación determinista, avanzando el esqueleto a mano entre cuadros
+		var esqueletos := []
+		if bool(toma.get("resortes", true)) and ap != null and clip != "reposo":
+			for sim in Resortes.aplicar(escena, false):
+				esqueletos.append(sim.get_parent())
+		var t_prev := 0.0
+		if esqueletos.size() > 0:
+			info["resortes"] = esqueletos.size()
+			await _simular(ap, clip, 0.0, 1.0)                  # una vuelta del clip para asentar el pelo
+			await _simular(ap, clip, 0.0, float(tiempos[0]))
+			t_prev = float(tiempos[0])
 		for t in tiempos:
-			_posar(ap, clip, float(t))
+			if esqueletos.size() > 0:
+				await _simular(ap, clip, t_prev, float(t))
+				t_prev = float(t)
+			else:
+				_posar(ap, clip, float(t))
 			_posar(ap_sil, clip, float(t))
 			await process_frame
 			var caja := _caja(mallas)
