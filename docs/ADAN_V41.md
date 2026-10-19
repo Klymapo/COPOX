@@ -3,7 +3,8 @@
 **Pedido de Admin (18 oct 2026):** "Corrige lo del revisor y pasamos a parte inferior del cuerpo."
 
 **Resultado:**
-- `ADAN_V41.glb`; el SHA-256 está en `copox-modelos/adan/SHA256SUMS`.
+- `ADAN_V41.glb`; el SHA-256 está en `copox-modelos/adan/SHA256SUMS` (`3c772139…5785`).
+- Reproducible bit a bit: dos armados en paralelo dan el mismo SHA.
 - Receta: `GODOT_BIN=… docs/medicion/receta_adan_v41.py ADAN_V22_HABLA.glb ADAN_V41.glb` (V40 + este paso).
 - Los cambios de manos viven en `mano_bloques.py` y `receta_adan_v40.py`. Por eso, para reproducir V40 exacto hay que usar el commit `1006f42`.
 
@@ -49,8 +50,21 @@ Cómo queda ahora:
   - Cordón: `medidos/cabello_blanco` #DDDDE7.
 - **Pesos:** transferidos de las piezas viejas del short y suavizados.
 
+## Godot
+
+- Idle, Walk y PointFwd: el intercambio de manos funciona.
+- Al caminar, cada pernera sigue a su muslo (pesos de las piezas viejas). La pernera de enfrente se estira y la muesca se abre: se lee como tela, pero hay que revisarlo cuando lleguen las piernas nuevas.
+
 ## Pendiente
 
 - **Pies:** etapa siguiente de la parte inferior. Tobillo más bajo, dedos y talón como la hoja de pies.
 - **Short:** costura trasera (canesú) y pliegue del frente, como la hoja. Detalles menores.
 - **Mano con pistola**, después de aprobar las manos.
+
+## Evidencia (rama `capturas`, `capturas/2026-10-18/adan_v41/`)
+
+- `hoja_v41.png`: la referencia del cuerpo arriba y V41 abajo.
+- `manos_v41.png`: mano abierta (3/4 y desde arriba), puño y señalar.
+- `short_v41.png`: el short en 4 vistas.
+- `defectos_v40.png`: los defectos que vio el revisor en V40.
+- `godot_v41.png`: Idle, dos cuadros de Walk y PointFwd.
