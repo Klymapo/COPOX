@@ -101,3 +101,193 @@ def meter_piel(piel, relleno_nuevo, centro, holgura=0.003, cono=0.012):
     tope = np.array([rh[v].min() - holgura if len(v) else np.inf for v in vec])
     r2 = np.minimum(rs, tope)
     return c + ds * r2[:, None], int((r2 < rs - 1e-7).sum())
+
+
+class PeloImplicito:
+    """V48.3 (técnica nueva): el pelo es una cáscara implícita de grosor `grosor` sobre una superficie radial lisa
+    R(dirección), recortada por la región del pelo viejo (máscara en la esfera, suavizada: orilla limpia).
+    R sale del PROMEDIO de radios del pelo viejo por celda (no del máximo: la orilla enrollada inflaba la nuca), muy
+    suavizado. La malla se genera nueva con marching cubes: sin el grano de la malla vieja."""
+
+    def __init__(self, centro, pelo, nb=(144, 72), sigma=3.0, sigma_mask=2.0, grosor=0.004):
+        from scipy.ndimage import gaussian_filter
+        self.c = np.asarray(centro, float)
+        na, ne = nb
+        az, el, r = _esf(pelo, self.c)
+        ia = np.clip(((az + np.pi) / (2 * np.pi) * na).astype(int), 0, na - 1)
+        ie = np.clip(((el + np.pi / 2) / np.pi * ne).astype(int), 0, ne - 1)
+        S = np.zeros((na, ne)); N = np.zeros((na, ne))
+        np.add.at(S, (ia, ie), r); np.add.at(N, (ia, ie), 1)
+        M = (N > 0).astype(float)
+        pad = 3 * int(max(sigma, sigma_mask)) + 3
+        f = lambda A, s: gaussian_filter(np.pad(A, ((pad, pad), (0, 0)), mode="wrap"), s, mode=("wrap", "nearest"))[pad:-pad]  # noqa: E731
+        Rm = f(S, sigma) / np.maximum(f(N, sigma), 1e-9)                      # promedio normalizado
+        self.R = Rm
+        self.M = f(M, sigma_mask)
+        self.grosor = grosor
+        self.az_c = (np.arange(na) + 0.5) / na * 2 * np.pi - np.pi
+        self.el_c = (np.arange(ne) + 0.5) / ne * np.pi - np.pi / 2
+        self.paso_ang = 2 * np.pi / na
+
+    def _interp(self, G, az, el):
+        from scipy.interpolate import RegularGridInterpolator
+        azp = np.r_[self.az_c[-1] - 2 * np.pi, self.az_c, self.az_c[0] + 2 * np.pi]
+        Gp = np.vstack([G[-1:], G, G[:1]])
+        f = RegularGridInterpolator((azp, self.el_c), Gp, bounds_error=False, fill_value=None)
+        return f(np.c_[az, np.clip(el, self.el_c[0], self.el_c[-1])])
+
+    def sdf(self, P):
+        az, el, r = _esf(P, self.c)
+        R = self._interp(self.R, az, el)
+        M = self._interp(self.M, az, el)
+        capa = np.abs(r - (R - self.grosor / 2)) - self.grosor / 2
+        region = (0.5 - M) * R * self.paso_ang * 4                           # ~distancia angular a la orilla
+        return np.maximum(capa, region)
+
+    def malla(self, paso=0.0015, pulido=2):
+        from skimage.measure import marching_cubes
+        from .mano_geo import taubin
+        rmax = float(self.R.max()) + 0.01
+        lo = self.c - rmax; hi = self.c + rmax
+        n = np.ceil((hi - lo) / paso).astype(int) + 1
+        ejes = [lo[i] + paso * np.arange(n[i]) for i in range(3)]
+        F = np.empty(n, np.float32)
+        gy, gz = np.meshgrid(ejes[1], ejes[2], indexing="ij")
+        for ix in range(n[0]):
+            g = np.stack([np.full(gy.size, ejes[0][ix]), gy.ravel(), gz.ravel()], 1)
+            F[ix] = self.sdf(g).reshape(n[1], n[2])
+        V, T, _, _ = marching_cubes(F, 0.0, spacing=(paso, paso, paso))
+        V = V + lo
+        vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
+        if vol < 0:
+            T = T[:, ::-1].copy()
+        if pulido:
+            V = taubin(V, T, pulido)
+        return V, T
+
+    def normales(self, V, h=0.0004):
+        g = np.zeros_like(V)
+        for i in range(3):
+            d = np.zeros(3); d[i] = h
+            g[:, i] = self.sdf(V + d) - self.sdf(V - d)
+        return g / np.maximum(np.linalg.norm(g, axis=1, keepdims=True), 1e-12)
+
+
+def _fibonacci(n):
+    i = np.arange(n) + 0.5
+    phi = np.arccos(1 - 2 * i / n); th = np.pi * (1 + 5 ** 0.5) * i
+    return np.stack([np.cos(th) * np.sin(phi), np.cos(phi), np.sin(th) * np.sin(phi)], 1)
+
+
+class PeloImplicitoEsfera(PeloImplicito):
+    """Igual que PeloImplicito pero con R y la máscara sobre direcciones de Fibonacci (uniformes, sin polos): la rejilla
+    en ángulos hundía la coronilla y dentaba la orilla. Máscara: proporción ponderada de pelo contra piel descubierta
+    (piel que no tiene pelo encima) alrededor de cada dirección."""
+
+    def __init__(self, centro, pelo, piel, n_dir=40000, sigma=0.05, sigma_mask=0.035, grosor=0.004):
+        from scipy.spatial import cKDTree
+        self.c = np.asarray(centro, float); self.grosor = grosor
+        D = _fibonacci(n_dir)
+        Qh = pelo - self.c; rh = np.linalg.norm(Qh, axis=1); dh = Qh / rh[:, None]
+        Qs = piel - self.c; rs = np.linalg.norm(Qs, axis=1); ds = Qs / rs[:, None]
+        th = cKDTree(dh)
+        cubierta = np.array([len(v) > 0 for v in th.query_ball_point(ds, r=0.02)])
+        ds = ds[~cubierta]
+        R = np.zeros(n_dir); M = np.zeros(n_dir)
+        for k in range(0, n_dir, 4000):
+            q = D[k:k + 4000]
+            vh = th.query_ball_point(q, r=3 * sigma)
+            for i, v in enumerate(vh):
+                if len(v):
+                    a = np.arccos(np.clip(dh[v] @ q[i], -1, 1)); w = np.exp(-(a / sigma) ** 2)
+                    R[k + i] = (w * rh[v]).sum() / w.sum()
+        ts = cKDTree(ds)
+        for k in range(0, n_dir, 4000):
+            q = D[k:k + 4000]
+            vh = th.query_ball_point(q, r=3 * sigma_mask); vs = ts.query_ball_point(q, r=3 * sigma_mask)
+            for i in range(len(q)):
+                wh = np.exp(-(np.arccos(np.clip(dh[vh[i]] @ q[i], -1, 1)) / sigma_mask) ** 2).sum() if len(vh[i]) else 0.0
+                ws = np.exp(-(np.arccos(np.clip(ds[vs[i]] @ q[i], -1, 1)) / sigma_mask) ** 2).sum() if len(vs[i]) else 0.0
+                M[k + i] = wh / (wh + ws) if wh + ws > 0 else 0.0
+        # direcciones sin pelo cerca: radio del vecino con pelo más cercano (solo para que el campo sea continuo)
+        sin = R == 0
+        if sin.any():
+            _, j = cKDTree(D[~sin]).query(D[sin]); R[sin] = R[~sin][j]
+        self.D, self.Rd, self.Md = D, R, M
+        self.arbol = cKDTree(D)
+        self.paso_ang = 0.035
+
+    def _campos(self, P):
+        Q = P - self.c; r = np.linalg.norm(Q, axis=1); d = Q / np.maximum(r, 1e-12)[:, None]
+        dist, j = self.arbol.query(d, k=6)
+        w = 1.0 / np.maximum(dist, 1e-6) ** 2; w /= w.sum(1, keepdims=True)
+        return r, (w * self.Rd[j]).sum(1), (w * self.Md[j]).sum(1)
+
+    def sdf(self, P):
+        r, R, M = self._campos(P)
+        capa = np.abs(r - (R - self.grosor / 2)) - self.grosor / 2
+        region = (0.5 - M) * R * self.paso_ang * 2.5
+        return np.maximum(capa, region)
+
+    def malla(self, paso=0.0015, pulido=2):
+        from skimage.measure import marching_cubes
+        from .mano_geo import taubin
+        rmax = float(self.Rd.max()) + 0.01
+        lo = self.c - rmax; hi = self.c + rmax
+        n = np.ceil((hi - lo) / paso).astype(int) + 1
+        ejes = [lo[i] + paso * np.arange(n[i]) for i in range(3)]
+        F = np.full(n, 1.0, np.float32)
+        gy, gz = np.meshgrid(ejes[1], ejes[2], indexing="ij")
+        for ix in range(n[0]):
+            g = np.stack([np.full(gy.size, ejes[0][ix]), gy.ravel(), gz.ravel()], 1)
+            r = np.linalg.norm(g - self.c, axis=1)
+            cerca = (r > self.Rd.min() - 0.02) & (r < rmax)            # banda estrecha: el resto queda afuera
+            f = np.ones(len(g), np.float32)
+            if cerca.any():
+                f[cerca] = self.sdf(g[cerca])
+            F[ix] = f.reshape(n[1], n[2])
+        V, T, _, _ = marching_cubes(F, 0.0, spacing=(paso, paso, paso))
+        V = V + lo
+        vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
+        if vol < 0:
+            T = T[:, ::-1].copy()
+        if pulido:
+            V = taubin(V, T, pulido)
+        return V, T
+
+
+class PeloImplicitoRas(PeloImplicitoEsfera):
+    """V48.3 c: la orilla baja hasta la piel (sin escalón ni canto). Afuera: radio de la piel + `ras` en la orilla, que
+    sube suave hasta el radio del pelo hacia adentro (rampa en la máscara). Adentro: debajo de la piel."""
+
+    def __init__(self, centro, pelo, piel, rampa=0.25, ras=0.0008, sigma_piel=0.03, **kw):
+        from scipy.spatial import cKDTree
+        super().__init__(centro, pelo, piel, **kw)
+        Qs = piel - self.c; rs = np.linalg.norm(Qs, axis=1); ds = Qs / rs[:, None]
+        ts = cKDTree(ds); Rs = np.zeros(len(self.D))
+        for k in range(0, len(self.D), 4000):
+            q = self.D[k:k + 4000]
+            for i, v in enumerate(ts.query_ball_point(q, r=3 * sigma_piel)):
+                if len(v):
+                    w = np.exp(-(np.arccos(np.clip(ds[v] @ q[i], -1, 1)) / sigma_piel) ** 2)
+                    Rs[k + i] = (w * rs[v]).sum() / w.sum()
+        sin = Rs == 0
+        if sin.any():
+            _, j = cKDTree(self.D[~sin]).query(self.D[sin]); Rs[sin] = Rs[~sin][j]
+        self.Rs, self.rampa, self.ras = Rs, rampa, ras
+
+    def _campos2(self, P):
+        Q = P - self.c; r = np.linalg.norm(Q, axis=1); d = Q / np.maximum(r, 1e-12)[:, None]
+        dist, j = self.arbol.query(d, k=6)
+        w = 1.0 / np.maximum(dist, 1e-6) ** 2; w /= w.sum(1, keepdims=True)
+        f = lambda a: (w * a[j]).sum(1)                                           # noqa: E731
+        return r, f(self.Rd), f(self.Md), f(self.Rs)
+
+    def sdf(self, P):
+        r, R, M, Rs = self._campos2(P)
+        t = np.clip((M - 0.5) / self.rampa, 0, 1); t = t * t * (3 - 2 * t)
+        fuera = np.maximum(Rs + self.ras + (R - Rs - self.ras) * t, Rs + self.ras)
+        dentro = Rs - 0.004
+        capa = np.maximum(r - fuera, dentro - r)
+        region = (0.5 - M) * R * self.paso_ang * 2.5
+        return np.maximum(capa, region)

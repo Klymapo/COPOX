@@ -52,22 +52,45 @@ def nuca_piel(E):
     return {"operacion": "nuca: piel alisada", "movidos": v482._escribir(E, p, V, V1)}
 
 
-def pelo(E):
+TRIS_PELO = 9000
+
+
+def pelo(E, carpeta):
+    """Pelo con malla NUEVA (pelo_cascara.PeloImplicito): reemplaza la primitiva RELLENO; CONTORNO y la piel escondida
+    se meten debajo del pelo nuevo. Pesos: los del vértice más cercano del pelo viejo."""
+    import receta_adan_v36 as v36
+    import receta_adan_v41 as v41
+    from scipy.spatial import cKDTree
     from copox.medicion import pelo_cascara as pc
     P = _prims(E)
-    S = v39._leer(E, P[v482.PIEL], "POSITION").astype(float)
-    orejas = np.abs(S[:, 0]) > 0.133
-    nariz = (np.abs(S[:, 0]) < 0.03) & (S[:, 1] > 0.56) & (S[:, 1] < 0.635) & (S[:, 2] > 0.14)
-    from copox.medicion.gltf import accesor
-    R = v39._leer(E, P[v482.PELO[0]], "POSITION").astype(float)
-    C = v39._leer(E, P[v482.PELO[1]], "POSITION").astype(float)
-    T = accesor(E.j, E.b, P[v482.PELO[0]]["indices"]).reshape(-1, 3).astype(np.int64)
-    R1, C1 = pc.rehacer(R, C, S[~orejas & ~nariz], CENTRO, T=T)
-    S1, n_piel = pc.meter_piel(S, R1, CENTRO)
-    v482._escribir(E, P[v482.PIEL], S, S1)
-    return {"operacion": "pelo: cáscara nueva", "relleno": v482._escribir(E, P[v482.PELO[0]], R, R1),
-            "contorno": v482._escribir(E, P[v482.PELO[1]], C, C1), "piel_metida": n_piel,
-            "max_mm": round(float(np.linalg.norm(R1 - R, axis=1).max()) * 1000, 1)}
+    viejo = P[v482.PELO[0]]
+    R = v39._leer(E, viejo, "POSITION").astype(float)
+    J = v39._leer(E, viejo, "JOINTS_0").astype(int); W = v39._leer(E, viejo, "WEIGHTS_0").astype(float)
+    S0 = v39._leer(E, P[v482.PIEL], "POSITION").astype(float)
+    orejas = np.abs(S0[:, 0]) > 0.133
+    H = pc.PeloImplicitoEsfera(CENTRO, R, S0[~orejas])
+    V, T = H.malla()
+    n0 = len(T)
+    V, T = v36.simplificar(V, T, TRIS_PELO, carpeta)
+    vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
+    if vol < 0:
+        T = T[:, ::-1].copy()
+    N = H.normales(V)
+    _, k = cKDTree(R).query(V)
+    nueva = v41._prim_nueva(E, V, T, N, J[k].astype(np.uint16), W[k].astype(np.float32), viejo["material"],
+                            v482.PELO[0])
+    malla = next(m for m in E.j["meshes"] if viejo in m["primitives"])
+    malla["primitives"] = [q if q is not viejo else nueva for q in malla["primitives"]]
+    E.b = bytes(E.out)
+    log = {"operacion": "pelo: malla nueva", "tris_marching": int(n0), "tris": int(len(T))}
+    # debajo del pelo nuevo: la franja del nacimiento (CONTORNO) y la piel escondida
+    for pz, h in ((v482.PELO[1], 0.0015), (v482.PIEL, 0.003)):
+        q = _prims(E)[pz]
+        S = v39._leer(E, q, "POSITION").astype(float)
+        S1, n = pc.meter_piel(S, V, CENTRO, holgura=h)
+        v482._escribir(E, q, S, S1)
+        log[f"metidos_{pz[:12]}"] = n
+    return log
 
 
 def frente(E):
@@ -114,7 +137,11 @@ def main(src, dst):
     from copox.medicion import rostro_edicion as re
     from copox.medicion.compactar import compactar
     E = re.Editor(src)
-    log = [nuca_piel(E), frente(E), pelo(E)]
+    carpeta = os.path.dirname(os.path.abspath(dst))
+    log = [nuca_piel(E), frente(E), pelo(E, carpeta)]
+    for f_ in ("V.npy", "T.npy", "malla.json", "lod.json"):
+        if os.path.exists(os.path.join(carpeta, f_)):
+            os.remove(os.path.join(carpeta, f_))
     E.b = bytes(E.out)
     tmp = dst + ".tmp.glb"
     E.guardar(tmp, nota="Adán V48.3: cáscara del pelo nueva, nuca lisa, frente recta. SIN APROBAR.")

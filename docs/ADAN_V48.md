@@ -113,3 +113,17 @@ Opciones a Admin: A2 (caja de V48 a media fuerza con las facciones fijas), A3 (s
 - Intentos que no funcionaron: envolvente por dirección (inflaba la nuca 4 cm) y piso de piel (copiaba su grano).
 
 **Siguiente técnica propuesta:** pelo nuevo con malla nueva, por campo implícito y marching cubes, en lugar de mover la malla vieja.
+
+### V48.3 · iteraciones del pelo implícito (19 oct 2026) — PLATEAU, sin aprobar
+
+Técnica: malla nueva del pelo desde un campo implícito (`pelo_cascara.py`), marching cubes + Taubin, LOD a ~9.5 k tris.
+
+1. `PeloImplicito` (rejilla az/el): pelo liso, sin terraza; hundía la coronilla (polo de la rejilla) y dentaba la orilla.
+2. `PeloImplicitoEsfera` (direcciones de Fibonacci, máscara pelo vs piel descubierta): coronilla resuelta, pelo liso
+   en las cuatro vistas. **Queda:** la orilla es un canto de 4 mm con línea irregular (frente, patilla, nuca abajo).
+   GLB reproducible: SHA-256 `6cefca0d…3259`. Es la versión que se conserva.
+3. `PeloImplicitoRas` (orilla al ras de la piel con el radio radial de la piel): **descartada**. La piel tiene varias
+   capas por dirección (cabeza + cuello + interior), el promedio radial las mezcla y el pelo se rompió en placas.
+
+Tope de 3 iteraciones del método alcanzado → PLATEAU. Propuesta para la siguiente técnica: la orilla con distancia real
+a la malla de la piel (no radial): pelo = {distancia a la piel < g(máscara)} afuera de la piel, con g → 0 en la orilla.
