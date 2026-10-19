@@ -19,15 +19,15 @@ import receta_adan_v39 as v39  # noqa: E402
 
 
 def rasgos_suaves(T0):
-    """Como la hoja del torso: el pecho apenas se lee como un plano suave y la clavícula insinuada. Nada más."""
+    """Como la hoja del torso: pecho plano, clavícula insinuada, deltoides y trapecio fundidos. Nada más."""
     def borde(y, x, lado):
         a, b, c = [float(np.ravel(v)[0]) for v in T0.seccion(np.array([y]))]
         return c + lado * b * max(1 - (abs(x) / a) ** T0.p, 0) ** (1 / T0.p)
     fr = lambda y, x: borde(y, x, 1)      # noqa: E731
     R = []
-    R.append(dict(tipo="suma", forma="elipsoide", c=[0.050, 0.414, fr(0.414, 0.050) - 0.0105], r=[0.058, 0.038, 0.013], k=0.028))   # pecho
+    # sin volumen de pecho: cualquier elipsoide ahí se lee como pectoral con contorno (revisión V40)
     R.append(dict(tipo="suma", forma="capsula", a=[0.012, 0.461, fr(0.461, 0.012) - 0.003], b=[0.080, 0.465, 0.052], r1=0.0040, r2=0.0022, k=0.008))  # clavícula
-    R.append(dict(tipo="suma", forma="elipsoide", c=[0.108, 0.434, 0.016], r=[0.035, 0.038, 0.042], k=0.010))     # deltoides
+    R.append(dict(tipo="suma", forma="elipsoide", c=[0.100, 0.434, 0.016], r=[0.032, 0.036, 0.038], k=0.025))     # deltoides: se funde con el brazo
     R.append(dict(tipo="suma", forma="capsula", a=[0.035, 0.478, 0.014], b=[0.105, 0.456, 0.014], r1=0.016, k=0.018))  # trapecio
     return R
 

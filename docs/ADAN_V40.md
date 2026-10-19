@@ -17,15 +17,16 @@
 - Después de V40: piernas, cadera y short.
 
 **Resultado:**
-- `ADAN_V40.glb`; el SHA-256 está en `copox-modelos/adan/SHA256SUMS`.
+- `ADAN_V40.glb`; el SHA-256 está en `copox-modelos/adan/SHA256SUMS` (`54c5f1ea…e40d`).
+- Reproducible bit a bit: dos armados en paralelo dan el mismo SHA.
 - Receta: `GODOT_BIN=… docs/medicion/receta_adan_v40.py ADAN_V22_HABLA.glb ADAN_V40.glb` (V39 + este paso).
 
 ## Qué cambió
 
-1. **Torso suave** (`rasgos_suaves`). La misma superficie y el mismo perfil de V39, pero sólo con cuatro rasgos:
-   - Un pecho que apenas se lee como plano.
+1. **Torso suave** (`rasgos_suaves`). La misma superficie y el mismo perfil de V39, pero sólo con tres rasgos:
    - La clavícula insinuada.
-   - Deltoides y trapecio suaves.
+   - Deltoides y trapecio fundidos con el brazo y el cuello.
+   - Pecho plano. La revisión independiente leyó como pectorales marcados el volumen de pecho de la primera prueba. Se probaron tres variantes (`torso_variantes.png`: nada, sin pecho y pecho leve), y la que se parece a la referencia es sin pecho.
    - Sin abdomen, línea alba, omóplatos ni surco de la columna.
 2. **Manos de bloques** (`copox/medicion/mano_bloques.py`).
    - Superficie implícita medida en `adan-brazo-4-vistas.jpg`:
@@ -51,8 +52,19 @@
 - **Piernas, cadera y short:** piernas más juntas, cadera más angosta, dobladillo, pretina y cordón.
 - **Pies.**
 
+## Revisión independiente
+
+- Torso: FAIL en la primera prueba, corregido (pecho plano).
+- Variantes de mano: PASS. Idle abierta, PointFwd señala, Wave abierta.
+- Manos contra la hoja: FAIL. El revisor ve los dedos largos y delgados, y en Idle parecen garras; la hoja tiene dedos-bloque cortos y gruesos. Admin ya aprobó las manos ("así van"), así que no se tocaron; queda como observación.
+- Línea en el dorso de la muñeca y pliegue en el codo: se ven en primeros planos de CHXP; en Godot apenas se notan.
+
 ## Evidencia (rama `capturas`, `capturas/2026-10-18/adan_v40/`)
 
 - `manos_ref.png`: la hoja del brazo arriba y la primera mano (×1.0) abajo, con el cuello en la muñeca.
 - `manos_ref2.png`: lo mismo con la mano ×1.3.
 - `godot_manos.png` (dev, antes de `MANO_FIJA`): Idle (puños), PointFwd (señalar) y Wave (abierta), con el intercambio en Godot.
+- `hoja_v40.png`: la referencia del cuerpo arriba y V40 abajo.
+- `torso_v40.png`, `torso_variantes.png`: el torso final y las tres variantes probadas.
+- `manos_ref_v40.png`: la hoja del brazo contra las manos de V40.
+- `godot_v40.png`: Godot con V40 final (Idle abierta, PointFwd y Wave).
