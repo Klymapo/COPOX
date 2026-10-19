@@ -27,7 +27,7 @@ RESALTE_PRETINA = 0.0012      # u: la pretina sobresale un poco del short (la ho
 HOLGURA_CINT = 1.31           # medio ancho del short en la cintura ÷ el del torso (hoja de piernas)
 CADERA = (0.140, 0.092, 0.022)          # medio ancho, medio fondo y centro z en la entrepierna
 DOBLADILLO = (0.144, 0.088, 0.024)      # en el dobladillo (la pierna mide hasta x 0.1385)
-MUESCA = 0.016                          # medio ancho de la muesca de la entrepierna en el dobladillo (la pierna empieza en x 0.0375)
+MUESCA = 0.024                          # medio ancho de la muesca de la entrepierna en el dobladillo (la pierna empieza en x 0.0375)
 TRIS_SHORT = 4200
 
 
@@ -57,6 +57,19 @@ def _prim_nueva(E, V, T, N, J4, W4, mat, pieza):
             "material": mat, "extras": {"pieza": pieza}}
 
 
+def pesos_short(V, nombres, y_ent, y_cint, alto=0.045, centro=0.012):
+    """Hips arriba; bajo la entrepierna cada lado pasa a su muslo (rampa de `alto`). Cerca del centro (|x| < centro)
+    el muslo pesa menos: la muesca no cuelga entre las piernas al caminar."""
+    ih, il, ir = nombres.index("Hips"), nombres.index("LeftUpperLeg"), nombres.index("RightUpperLeg")
+    t = np.clip((y_ent + alto * 0.35 - V[:, 1]) / alto, 0, 1); t = t * t * (3 - 2 * t)
+    c = np.clip(np.abs(V[:, 0]) / centro, 0, 1); c = c * c * (3 - 2 * c)
+    w = t * (0.35 + 0.65 * c)
+    J4 = np.zeros((len(V), 4), np.uint16); W4 = np.zeros((len(V), 4), np.float32)
+    J4[:, 0] = ih; J4[:, 1] = np.where(V[:, 0] >= 0, il, ir)
+    W4[:, 0] = 1 - w; W4[:, 1] = w
+    return J4, W4
+
+
 def short(E, carpeta):
     import receta_adan_v36 as v36
     from copox.medicion import mano_geo as mg
@@ -71,7 +84,7 @@ def short(E, carpeta):
     y_ent = float(Vt[np.abs(Vt[:, 0]) < 0.01, 1].min())
     T0 = tg.Torso(v39.PERFIL, v39.EXPONENTE)
     a, b, c = [float(np.ravel(v)[0]) for v in T0.seccion(np.array([y_cint]))]
-    S = sg.Short(y_cint, y_ent, y_dob, (a * HOLGURA_CINT, b + 0.010, c), CADERA, DOBLADILLO, MUESCA,
+    S = sg.Short(y_cint + 0.0025, y_ent, y_dob - 0.0025, (a * HOLGURA_CINT, b + 0.010, c), CADERA, DOBLADILLO, MUESCA,
                  boca=(a + 0.004, b + 0.004, c), alto_boca=0.005)
     V, T = S.malla()
     n0 = len(T)
@@ -79,13 +92,14 @@ def short(E, carpeta):
     vol = float(np.einsum("ij,ij->i", V[T[:, 0]], np.cross(V[T[:, 1]], V[T[:, 2]])).sum())
     if vol < 0:
         T = T[:, ::-1].copy()
-    V, T = sg.quitar_tapas(V, T, y_cint, y_dob)
+    V, T = sg.recortar(V, T, y_dob - 0.0025, y_cint + 0.0025)     # bocas por plano exacto: dobladillo sin picos
     fuentes = [(v39._leer(E, q, "POSITION").astype(float), v39._leer(E, q, "JOINTS_0").astype(int),
                 v39._leer(E, q, "WEIGHTS_0").astype(float)) for q in viejas]
     # pretina: la malla se parte por un plano exacto y las caras de arriba van con su material
     V, T, arriba = sg.partir_plano(V, T, y_cint - PRETINA)
     N = mg.normales(V, T)
     J4, W4 = tg.transferir_pesos(V, T, fuentes, len(nombres), suavizado=6)
+    J4, W4 = pesos_short(V, nombres, y_ent, y_cint)
     m_short = _material(E, "ADAN_SHORT_AZUL", COLOR_SHORT)
     m_pret = _material(E, "ADAN_SHORT_PRETINA", COLOR_PRETINA)
     m_cord = _material(E, "ADAN_CORDON", COLOR_CORDON)

@@ -46,7 +46,7 @@ class Short:
         d = np.maximum(d, np.maximum(y - self.y_cint, self.y_dob - y))
         # muesca: cuña vertical entre las perneras, de la entrepierna (ancho 0) al dobladillo; redondeada arriba
         t = np.clip((self.y_ent - y) / (self.y_ent - self.y_dob), 0, 1)
-        w = self.muesca * t ** 0.6
+        w = self.muesca * t                                 # V recta, como la hoja
         m = np.where(y < self.y_ent, P[:, 0] - w, self.y_ent - y + 0.0 * P[:, 0])
         m = np.maximum(m, y - self.y_ent)
         return np.maximum(d, -m)
@@ -100,6 +100,16 @@ def partir_plano(V, T, y0):
     V2 = np.array(Vn); T2 = np.array(out, int)
     arriba = V2[T2].mean(1)[:, 1] > y0
     return V2, T2, arriba
+
+
+def recortar(V, T, y_dob, y_cint, margen=0.0025):
+    """Bocas limpias: corta la malla por dos planos exactos (dobladillo y cintura) y quita lo de afuera."""
+    V, T, arriba = partir_plano(V, T, y_dob + margen)
+    T = T[arriba]
+    V, T, arriba = partir_plano(V, T, y_cint - margen)
+    T = T[~arriba]
+    u = np.unique(T); mp = -np.ones(len(V), int); mp[u] = np.arange(len(u))
+    return V[u], mp[T]
 
 
 def quitar_tapas(V, T, y_cint, y_dob, tol=0.0025):

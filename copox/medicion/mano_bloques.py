@@ -122,7 +122,7 @@ class ManoBloques:
         # palma: losa con canto redondeado, se angosta hacia la muñeca
         u = np.clip(P[:, 0] / L, 0, 1); su = u * u * (3 - 2 * u)
         hw = A / 2 * (0.78 + 0.22 * su)
-        hh = G / 2 * (1.30 - 0.30 * su)                             # un poco más gruesa en la muñeca
+        hh = G / 2 * (1.75 - 0.75 * su)                          # cuña: gruesa en la muñeca (hoja del brazo)                             # un poco más gruesa en la muñeca
         ch = G / 2 - hh                                             # el extra va al lado de la palma: dorso recto
         x0 = -0.012 if self.muneca is not None else 0.0              # con muñeca, la losa entra al tubo: sin borde en el dorso
         q = np.stack([np.abs(P[:, 0] - (L + x0) / 2) - ((L - x0) / 2 - self.r * 2),
@@ -184,7 +184,7 @@ class ManoBloques:
 
 
 # --- costura con la boca de muñeca ---------------------------------------------------------------------------
-def ajustar_boca(V, base, anillo, centro, x_c, largo=0.012):
+def ajustar_boca(V, base, anillo, centro, x_c, largo=0.028):
     """Los vértices de la mano cerca del corte toman el perfil del anillo (que no es una elipse): sin escalón.
     En x_c el radio es el del anillo en ese ángulo; a `largo` después, el de la mano."""
     yc, zc = centro

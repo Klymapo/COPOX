@@ -24,12 +24,14 @@ def _superelipse(P, cx, cz, a, b, p):
 class PiernaPie:
     def __init__(self, x, z, y_arriba, pierna=(0.048, 0.050), tobillo=(0.044, 0.046), y_tobillo=0.060,
                  talon_z=-0.030, punta_z=0.152, ancho_pie=0.052, alto_talon=0.050, alto_dedos=0.022,
-                 largo_dedos=0.040, dedos=(1.45, 1.0, 0.95, 0.85), hueco=0.0025, abre=0.006, p=2.8):
+                 largo_dedos=0.040, dedos=(1.45, 1.0, 0.95, 0.85), hueco=0.0025, abre=0.006, p=2.8,
+                 abre_talon=0.005, k_tobillo=0.005):
         self.x, self.z, self.y_arriba = x, z, y_arriba
         self.pierna, self.tobillo, self.y_tobillo = np.asarray(pierna), np.asarray(tobillo), y_tobillo
         self.talon_z, self.punta_z, self.ancho_pie = talon_z, punta_z, ancho_pie
         self.alto_talon, self.alto_dedos, self.largo_dedos = alto_talon, alto_dedos, largo_dedos
         self.dedos, self.hueco, self.abre, self.p = dedos, hueco, abre, p
+        self.abre_talon, self.k_tobillo = abre_talon, k_tobillo
         self._dedos()
 
     def _dedos(self):
@@ -61,7 +63,8 @@ class PiernaPie:
         # piso; arriba el empeine es plano bajo la pierna y baja en rampa a los dedos
         h = self.alto_talon
         f = np.clip(1 - y / h, 0, 1)                                     # 0 en el tobillo, 1 en el piso
-        x_in = self.x - self.tobillo[0]
+        talon = np.clip((self.z - P[:, 2]) / 0.03, 0, 1)                 # sólo atrás: el talón se abre adentro también
+        x_in = self.x - self.tobillo[0] - self.abre_talon * f * talon
         x_out = self.x + self.tobillo[0] + (self.ancho_pie * 2 + self.abre - 2 * self.tobillo[0]) * f
         z_atras = (self.z - self.tobillo[1]) + (self.talon_z - (self.z - self.tobillo[1])) * f
         k_out = (self.ancho_pie * 2 + self.abre - 2 * self.tobillo[0]) / h
@@ -69,7 +72,8 @@ class PiernaPie:
         z_rampa = self.z + self.tobillo[1] * 0.55
         s = np.clip((P[:, 2] - z_rampa) / (self.z_dedos - z_rampa), 0, 1)
         techo = h + (self.alto_dedos * 1.15 - h) * s                     # rampa recta, como la hoja
-        planos = np.stack([x_in - P[:, 0], (P[:, 0] - x_out) / np.sqrt(1 + k_out ** 2),
+        x_out = x_out + self.abre_talon * f * talon
+        planos = np.stack([(x_in - P[:, 0]) / np.sqrt(1 + (self.abre_talon / h) ** 2), (P[:, 0] - x_out) / np.sqrt(1 + k_out ** 2),
                            (z_atras - P[:, 2]) / np.sqrt(1 + k_atr ** 2), P[:, 2] - (self.z_dedos + 0.004),
                            y - techo, -y], 1)
         r = 0.004
@@ -79,7 +83,7 @@ class PiernaPie:
         for c, h in self.cajas:
             pie = np.minimum(pie, _caja(P, c, h, 0.004))            # dedos separados: unión dura
         pie = np.maximum(pie, -y)
-        return _smin(d, pie, 0.012)                                  # pliegue suave del tobillo
+        return _smin(d, pie, self.k_tobillo)                         # tobillo: arista suave, sin anillo
 
     def malla(self, paso=0.0010, pulido=2):
         from skimage.measure import marching_cubes

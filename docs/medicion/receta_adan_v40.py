@@ -71,7 +71,7 @@ def mano(E, variante, lado, nombres, carpeta):
     largo = 0.1306 * ESCALA_MANO
     M = mb.ManoBloques(largo, mb.POSES[variante], palma_w0=-0.0035 * ESCALA_MANO)
     M.muneca = {"x0": x_ring - ENTRA - Wj[0] * s, "x1": 0.030, "c0": [yc - Wj[1], zc - Wj[2]], "r0": r0,
-                "c1": [-M.grosor * 0.10, M.w0], "r1": [M.grosor / 2 * 1.25, M.palma_ancho / 2 * 0.85]}
+                "c1": [-M.grosor * 0.35, M.w0], "r1": [M.grosor / 2 * 1.75, M.palma_ancho / 2 * 0.85]}
     V, T = M.malla()
     V = V + np.array([Wj[0] * s, Wj[1], Wj[2]])                # local → mundo (marco izquierdo)
     V, T = v36.simplificar(V, T, TRIS_MANO[variante], carpeta)
