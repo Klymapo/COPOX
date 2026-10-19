@@ -39,14 +39,16 @@ class PeloMechones:
         """base: PeloOrilla (u otra con .c, ._radio(D) vía Rd/arbol y .sdf)."""
         self.base, self.hundir, self.k_union = base, hundir, k_union
         self.cadenas = []
-        for az0, el0, az1, el1, ancho, grueso in mechones:
+        for m in mechones:
+            az0, el0, az1, el1, ancho, grueso = m[:6]
+            despega = m[6] if len(m) > 6 else 0.0          # m: la punta se separa de la cabeza (mechones que cuelgan)
             s = np.linspace(0, 1, n_bolas)
             az = az0 + (az1 - az0) * s; el = el0 + (el1 - el0) * s
             D = _dir(az, el)
             R = self._R(D)
             g = escala * grueso / 1000 * (1 - 0.7 * s)
             w = escala * ancho / 1000 * np.maximum((1 - s) ** 0.7, 0.15)
-            lift = levanta * g * np.sin(np.pi * s) - g * 0.15
+            lift = levanta * g * np.sin(np.pi * s) - g * 0.15 + despega * s ** 1.5
             C = base.c + D * (R + lift)[:, None]
             Tg = np.gradient(C, axis=0); Tg /= np.linalg.norm(Tg, axis=1, keepdims=True)
             B = np.cross(D, Tg); B /= np.linalg.norm(B, axis=1, keepdims=True)
@@ -110,3 +112,58 @@ class PeloMechones:
             e = np.zeros(3); e[i] = h
             g[:, i] = self.sdf(V + e) - self.sdf(V - e)
         return g / np.maximum(np.linalg.norm(g, axis=1, keepdims=True), 1e-12)
+
+
+class PeloCunas(PeloMechones):
+    """Mechones como cuñas continuas (19 oct 2026, pelo de Theo): la cadena de bolitas se leía como trenzas. Aquí cada
+    mechón es una cinta barrida a lo largo de su curva con sección de ROMBO (|b|/w + |n|/g ≤ 1): caras planas y una
+    arista al centro, como los mechones low-poly de la hoja. Ancho y grueso bajan hacia la punta; unión casi dura para
+    que cada mechón se lea como bloque."""
+
+    def __init__(self, base, mechones, hundir=0.0, n_seg=12, k_mechon=0.002, k_union=0.003, levanta=0.8,
+                 escala=1.0, afilar=0.7):
+        self.base, self.hundir, self.k_union, self.k_mechon = base, hundir, k_union, k_mechon
+        self.cadenas = []
+        for m in mechones:
+            az0, el0, az1, el1, ancho, grueso = m[:6]
+            despega = m[6] if len(m) > 6 else 0.0
+            s = np.linspace(0, 1, n_seg + 1)
+            az = az0 + (az1 - az0) * s; el = el0 + (el1 - el0) * s
+            D = _dir(az, el)
+            R = self._R(D)
+            g = escala * grueso / 1000 * (1 - 0.65 * s)
+            w = escala * ancho / 1000 / 2 * np.maximum((1 - s) ** afilar, 0.22)
+            lift = levanta * g * np.sin(np.pi * s) * 0.5 + despega * s ** 1.5
+            C = base.c + D * (R + lift)[:, None]
+            Tg = np.gradient(C, axis=0); Tg /= np.linalg.norm(Tg, axis=1, keepdims=True)
+            N = D - Tg * np.einsum("ij,ij->i", D, Tg)[:, None]; N /= np.linalg.norm(N, axis=1, keepdims=True)
+            B = np.cross(N, Tg)
+            self.cadenas.append((C, N, B, w, g))
+        self.rmax = max(float(max(c[3].max(), c[4].max())) for c in self.cadenas) + 0.01
+
+    def sdf_mechones(self, P):
+        d = np.full(len(P), 1.0)
+        for C, N, B, w, g in self.cadenas:
+            alcance = float(max(w.max(), g.max())) + 0.004
+            lo = C.min(0) - alcance; hi = C.max(0) + alcance
+            sel = np.where(((P >= lo) & (P <= hi)).all(1))[0]
+            if not len(sel):
+                continue
+            Q = P[sel]
+            mejor = np.full(len(Q), 1.0)
+            for i in range(len(C) - 1):
+                a, b = C[i], C[i + 1]
+                ab = b - a; L2 = float(ab @ ab)
+                t_raw = (Q - a) @ ab / L2
+                t = np.clip(t_raw, 0, 1)
+                L = Q - (a + t[:, None] * ab)
+                n_ = N[i] + (N[i + 1] - N[i]) * t[:, None]
+                b_ = B[i] + (B[i + 1] - B[i]) * t[:, None]
+                wi = w[i] + (w[i + 1] - w[i]) * t; gi = g[i] + (g[i + 1] - g[i]) * t
+                xn = np.abs(np.einsum("ij,ij->i", L, n_)); xb = np.abs(np.einsum("ij,ij->i", L, b_))
+                rombo = (xb / wi + xn / gi - 1) / np.sqrt(1 / wi ** 2 + 1 / gi ** 2)
+                fuera = np.where(t_raw < 0, -t_raw, np.where(t_raw > 1, t_raw - 1, 0)) * np.sqrt(L2)
+                dd = np.where(fuera > 0, np.sqrt(np.maximum(rombo, 0) ** 2 + fuera ** 2), rombo)
+                mejor = np.minimum(mejor, dd)
+            d[sel] = smin(d[sel], mejor, self.k_mechon)
+        return d

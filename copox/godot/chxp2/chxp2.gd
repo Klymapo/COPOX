@@ -273,6 +273,14 @@ func _correr() -> void:
 				var cs := []
 				_mallas(silueta, cs)
 				caja = caja.merge(_caja(cs)) if toma.get("encuadre_con_silueta", true) else caja
+			if toma.has("caja_fija"):                    # encuadre fijo (p. ej. la cabeza de Adán)
+				var cf: Array = toma["caja_fija"]
+				caja = AABB(Vector3(cf[0], cf[1], cf[2]), Vector3(cf[3] - cf[0], cf[4] - cf[1], cf[5] - cf[2]))
+			elif toma.has("y_rango"):                      # encuadre de una región (p. ej. la cabeza)
+				var yr: Array = toma["y_rango"]
+				var y0 := maxf(caja.position.y, float(yr[0]))
+				var y1 := minf(caja.end.y, float(yr[1]))
+				caja = AABB(Vector3(caja.position.x, y0, caja.position.z), Vector3(caja.size.x, y1 - y0, caja.size.z))
 			info["caja"] = {"pos": [caja.position.x, caja.position.y, caja.position.z],
 				"tam": [caja.size.x, caja.size.y, caja.size.z]}
 			for v in vistas:

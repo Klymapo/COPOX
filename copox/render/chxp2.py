@@ -32,7 +32,9 @@ VISTAS = {
     "personaje": [("frente", 0, 8), ("tres_cuartos", 35, 10), ("perfil", 90, 6), ("espalda", 180, 8)],
     "objeto": [("frente", 0, 15), ("tres_cuartos", 40, 25), ("perfil", 90, 15), ("espalda", 180, 15)],
     "edificio": [("frente", 0, 12), ("tres_cuartos", 40, 25), ("espalda", 180, 12), ("cenital", 0, 89)],
+    "cabeza": [("frente", 0, 6), ("perfil", -70, 8), ("espalda", 180, 8), ("tres_cuartos", 30, 8)],
 }
+CAJAS = {"cabeza": (-0.19, 0.47, -0.20, 0.19, 0.92, 0.20)}     # u del GLB (Adán): cabeza con pelo voluminoso
 LEJOS_PROF = 8.0
 
 
@@ -244,6 +246,8 @@ def render(glb, salida, silueta=None, ref=None, vistas="personaje", visible=None
     crudo = os.path.join(salida, "_crudo"); os.makedirs(crudo, exist_ok=True)
     vs = VISTAS[vistas] if isinstance(vistas, str) else vistas
     base = {"glb": os.path.abspath(glb), "visible": visible or {}, "silueta": os.path.abspath(silueta) if silueta else ""}
+    if isinstance(vistas, str) and vistas in CAJAS:
+        base["caja_fija"] = list(CAJAS[vistas])
     tomas = [dict(base, nombre=nombre, vistas=[{"nombre": n, "yaw": y, "elev": e} for n, y, e in vs], clip=clip,
                   tiempos=[t])]
     gv = [v for v in vs if v[0] == vista_gif] or vs[:1]
