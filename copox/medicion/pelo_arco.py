@@ -19,122 +19,22 @@ import numpy as np
 from PIL import Image
 
 REF = "refs/personajes/joven-rubio-4-vistas.jpg"
-CUADRANTES = {"frente": (0, 0), "perfil": (0, 1), "espalda": (1, 0), "tres_cuartos": (1, 1)}
 
 
-def _segmentar(a):
-    r, g, b = a[..., 0], a[..., 1], a[..., 2]
-    pelo = (r - b > 40) & (g - b > 22) & (r - g < 38) & (r > 120)
-    piel = (r - b > 45) & (r - g >= 38) & (r > 190)
-    fondo = (np.abs(r - g) < 14) & (np.abs(g - b) < 16) & (r > 185)
-    oscuro = (r + g + b) < 300
-    return pelo, piel, fondo, oscuro
+from . import senku_ref as sr
+
+# (la hoja, la alineación y la comparación viven ahora en senku_ref; aquí quedan nombres de compatibilidad)
+_uv = sr._uv
+esqueleto = sr.esqueleto
+mascara_modelo = sr.mascara_modelo
 
 
 def vistas_ref(ruta=REF):
-    """-> {vista: dict(cabeza=mask, piso=fila, hombro=fila|None, cx=col del cuerpo, torso_cx=col, img=rgb)}"""
-    from scipy.ndimage import binary_fill_holes, label, binary_opening, binary_closing
-    A = np.asarray(Image.open(ruta).convert("RGB")).astype(int)
-    h, w = A.shape[0] // 2, A.shape[1] // 2
-    out = {}
-    for v, (i, j) in CUADRANTES.items():
-        a = A[i * h:(i + 1) * h, j * w:(j + 1) * w]
-        a = a[6:-6, 6:-6]                                    # sin la línea divisoria
-        pelo, piel, fondo, oscuro = _segmentar(a)
-        cuerpo = ~fondo
-        cuerpo = binary_opening(cuerpo, iterations=2)
-        filas = np.nonzero(oscuro.any(1))[0]
-        piso = int(filas.max())
-        # la cabeza: componente de pelo ∪ piel que toca la fila más alta del cuerpo
-        cab = binary_opening(pelo | piel, iterations=1)
-        lab, n = label(cab)
-        top = np.nonzero(cuerpo.any(1))[0].min()
-        ids = [k for k in np.unique(lab[top:top + 40]) if k]
-        cab = np.isin(lab, ids)
-        cab = binary_fill_holes(binary_closing(cab, iterations=6))   # ojos, cejas y oreja quedan dentro
-        # hombros: banda de los brazos en T (filas con el cuerpo más ancho)
-        ancho = cuerpo.sum(1)
-        hombro = None
-        if v in ("frente", "espalda"):
-            fil = np.nonzero(ancho > 0.7 * ancho.max())[0]
-            hombro = float(fil.mean())
-            cols = np.nonzero(cuerpo[fil].any(0))[0]
-            cx = float(cols.min() + cols.max()) / 2
-        else:
-            cx = None
-        # torso: ropa oscura entre hombros y cadera (perfil): centro horizontal
-        out[v] = dict(cabeza=cab, piso=piso, hombro=hombro, cx=cx, oscuro=oscuro, img=a.astype(np.uint8))
-    return out
-
-
-def esqueleto(E_o_glb):
-    """Posiciones de reposo (espacio de malla) de las articulaciones por nombre."""
-    from .gltf import accesor, leer_glb
-    if isinstance(E_o_glb, str):
-        j, b = leer_glb(E_o_glb)
-    else:
-        j, b = E_o_glb.j, E_o_glb.b
-    sk = j["skins"][0]
-    ibm = accesor(j, b, sk["inverseBindMatrices"]).reshape(-1, 4, 4).transpose(0, 2, 1)
-    return {j["nodes"][k]["name"]: np.linalg.inv(ibm[i])[:3, 3] for i, k in enumerate(sk["joints"])}
-
-
-def _uv(P, vista):
-    """Proyección ortográfica: (u hacia la derecha de la imagen, y hacia arriba)."""
-    if vista == "frente":
-        return P[:, 0], P[:, 1]
-    if vista == "espalda":
-        return -P[:, 0], P[:, 1]
-    if vista == "perfil":                                    # cámara del lado derecho del personaje: nariz a la derecha
-        return P[:, 2], P[:, 1]
-    raise ValueError(vista)
+    return sr.cargar_hoja(ruta)
 
 
 def alinear(ref, joints, torso_z=None, consistente=True):
-    """-> {vista: (escala px/u, u0 px, piso px)}: px = u0 + u·escala ; fila = piso − y·escala."""
-    y_hombro = float((joints["LeftUpperArm"][1] + joints["RightUpperArm"][1]) / 2)
-    al = {}
-    f = ref["frente"]
-    esc = (f["piso"] - f["hombro"]) / y_hombro
-    for v in ("frente", "espalda"):
-        r = ref[v]
-        e = (r["piso"] - r["hombro"]) / y_hombro
-        al[v] = (e, r["cx"], r["piso"])
-    # perfil: escala de frente; horizontal por el torso oscuro (filas entre hombro y cadera)
-    r = ref["perfil"]
-    y_cadera = float(joints["Hips"][1])
-    f0, f1 = int(r["piso"] - y_hombro * esc), int(r["piso"] - y_cadera * esc)
-    cols = np.nonzero(r["oscuro"][f0:f1].any(0))[0]
-    zc = float(torso_z if torso_z is not None else joints["Chest"][2])
-    al["perfil"] = (esc, float(cols.min() + cols.max()) / 2 - zc * esc, r["piso"])
-    if consistente:
-        al = _consistente(ref, al)
-    return al
-
-
-def _cabeza_px(m):
-    filas = np.nonzero(m.any(1))[0]
-    cols = np.nonzero(m.any(0))[0]
-    return filas.min(), cols.min(), cols.max()
-
-
-def _consistente(ref, al):
-    """Cada vista con su propia escala, pero el MISMO objeto: la coronilla queda a la misma altura en las tres vistas y
-    la espalda tiene el mismo ancho de cabeza que el frente (la hoja no trae las vistas exactamente a la misma escala).
-    El frente manda (es la que se alinea con el esqueleto)."""
-    e, u0, piso = al["frente"]
-    top, c0, c1 = _cabeza_px(ref["frente"]["cabeza"])
-    y_top = (piso - top) / e
-    ancho = (c1 - c0) / e
-    x_c = ((c0 + c1) / 2 - u0) / e                          # centro de la cabeza en x (frente)
-    out = dict(al)
-    t, b0, b1 = _cabeza_px(ref["espalda"]["cabeza"])
-    eb = (b1 - b0) / ancho
-    out["espalda"] = (eb, (b0 + b1) / 2 + x_c * eb, t + y_top * eb)    # u = −x en espalda
-    ep, up, _ = al["perfil"]
-    t, _, _ = _cabeza_px(ref["perfil"]["cabeza"])
-    out["perfil"] = (ep, up, t + y_top * ep)
-    return out
+    return sr.alinear(ref, joints, consistente=consistente)[0]
 
 
 def casco(c, D, ref, al, r0, r1, paso=0.0015, vistas=("frente", "perfil", "espalda"), n_super=3.0):
@@ -175,43 +75,9 @@ def casco(c, D, ref, al, r0, r1, paso=0.0015, vistas=("frente", "perfil", "espal
     return Rr, R
 
 
-def mascara_modelo(V, T, vista, al, forma):
-    from ..render.raster import rasterizar
-    e, u0, piso = al[vista]
-    u, y = _uv(V, vista)
-    X = (u0 + u * e)[T]; Y = (piso - y * e)[T]
-    prof = {"frente": V[:, 2], "espalda": -V[:, 2], "perfil": -V[:, 0]}[vista][T]
-    tri, _, _ = rasterizar(X, Y, prof, forma)
-    return tri >= 0
-
-
 def comparar(V, T, ref, al, y_corte_px=None, salida=None):
-    """IoU de la cabeza (malla ya filtrada a cabeza + pelo) contra la hoja; franja alta = arriba de y_corte (pelo)."""
-    filas = {}
-    imgs = []
-    for v in ("frente", "perfil", "espalda"):
-        m_ref = ref[v]["cabeza"]
-        m_mod = mascara_modelo(V, T, v, al, m_ref.shape)
-        corte = int(y_corte_px[v]) if y_corte_px else m_ref.shape[0]
-        a, b = m_ref[:corte], m_mod[:corte]
-        filas[v] = round(float((a & b).sum() / max((a | b).sum(), 1)), 4)
-        o = np.full(m_ref.shape + (3,), 236, np.uint8)
-        o[m_ref & m_mod] = 255; o[m_mod & ~m_ref] = (215, 60, 50); o[m_ref & ~m_mod] = (50, 90, 215)
-        if y_corte_px:
-            o[corte, :] = (0, 0, 0)
-        ys, xs = np.nonzero(m_ref | m_mod)
-        if len(ys):
-            o = o[max(ys.min() - 20, 0):min(ys.max() + 20, o.shape[0]), max(xs.min() - 20, 0):min(xs.max() + 20, o.shape[1])]
-        imgs.append(Image.fromarray(o))
-    filas["media"] = round(float(np.mean([filas[v] for v in ("frente", "perfil", "espalda")])), 4)
-    if salida:
-        hmax = max(i.size[1] for i in imgs)
-        hoja = Image.new("RGB", (sum(i.size[0] for i in imgs) + 20 * len(imgs), hmax), (236, 236, 236))
-        x = 0
-        for i in imgs:
-            hoja.paste(i, (x, 0)); x += i.size[0] + 20
-        hoja.save(salida)
-    return filas
+    """Compatibilidad: IoU de la cabeza contra la hoja (usa senku_ref.comparar)."""
+    return sr.comparar(V, T, ref, al, "cabeza", salida=salida)
 
 
 def arco(H, c, ref, al, espesor, r1=0.40, minimo=0.0, maximo=0.12, el_min=-25.0):

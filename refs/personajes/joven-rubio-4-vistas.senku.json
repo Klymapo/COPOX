@@ -1,0 +1,7 @@
+{
+  "descripcion": "Theo (joven rubio): hoja 2x2 en T. Frente arriba-izq, perfil derecho arriba-der, espalda abajo-izq, 3/4 abajo-der.",
+  "disposicion": "2x2",
+  "celdas": {"frente": [0, 0], "perfil": [0, 1], "espalda": [1, 0], "tres_cuartos": [1, 1]},
+  "anclas": "personaje_T",
+  "borde": 6
+}
