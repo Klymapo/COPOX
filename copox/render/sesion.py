@@ -109,6 +109,19 @@ class Sesion:
         self.claseF = paleta.clasificar(self.rgbF * 255)
         self.dom = np.concatenate(dom)
         self.nodoF = np.array(self.nodo_de_prim)[self.prim]
+        # nodos ocultos en el archivo (KHR_node_visibility, heredado a los hijos), p. ej. variantes de mano de Adán
+        oculto = set()
+        def _bajar(k, padre_oculto):
+            n = j["nodes"][k]
+            o = padre_oculto or n.get("extensions", {}).get("KHR_node_visibility", {}).get("visible", True) is False
+            if o:
+                oculto.add(k)
+            for h in n.get("children", []):
+                _bajar(h, o)
+        for k in j["scenes"][j.get("scene", 0)]["nodes"]:
+            _bajar(k, False)
+        self.nodos_ocultos = sorted(j["nodes"][k].get("name", "") for k in oculto)
+        self.ocultoF = np.array([p.nodo in oculto for p in m.prims], bool)[self.prim]
         self._poses: dict = {}
         self._soldar = None
         self.carga_s = time.time() - t0
@@ -216,7 +229,9 @@ class Sesion:
         v = leer(vista) if isinstance(vista, str) else replace(vista)
         clip = None if v.clip == "reposo" else (v.clip if v.clip in self.m.clips else None)
         geo = self.geo(clip, v.t, tuple(sorted(v.morphs)))
-        visibles = np.ones(len(self.F), bool)
+        visibles = ~self.ocultoF                     # lo que el archivo marca oculto no se dibuja…
+        if v.mostrar:                                # …salvo que la vista lo pida por nombre de nodo
+            visibles |= np.isin(self.nodoF, v.mostrar)
         if v.ocultar:  # por nombre de nodo o de material
             visibles &= ~np.isin(self.nodoF, v.ocultar) & ~np.isin(np.array(self.mat_nombre)[self.prim], v.ocultar)
         if v.modo == "clases_tri":

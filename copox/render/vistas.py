@@ -20,6 +20,7 @@ Claves:
   tam               lado de la imagen en px (512 iterar, 1024 final)
   sombreado         suave | facetas | archivo (normales guardadas en el GLB, como Godot)
   ocultar           nombres de nodo o de material separados por coma
+  mostrar           nodos ocultos en el archivo (KHR_node_visibility) que sí se dibujan, p. ej. MANO_PUNO_L
   morph             pesos de gesto: nombre:peso,nombre:peso (p. ej. boca_abrir:1,ceja_ceno_L:0.5)
   luz               estudio (3 puntos, sin sombras) | juego (el sol del visor de Godot con sombras
                     proyectadas: lo que se ve en el juego se ve aquí, p. ej. desniveles con luz rasante)
@@ -48,6 +49,7 @@ class Vista:
     tam: int = 512
     sombreado: str = "suave"
     ocultar: tuple = field(default_factory=tuple)
+    mostrar: tuple = field(default_factory=tuple)  # nodos ocultos en el archivo que esta vista sí dibuja
     morphs: tuple = field(default_factory=tuple)   # ((nombre, peso), ...)
     luz: str = "estudio"                           # estudio | juego (sol del visor de Godot + sombras proyectadas)
 
@@ -57,6 +59,8 @@ class Vista:
              f"enc={self.enc};clip={self.clip};t={self.t:g};modo={self.modo};tam={self.tam};sombreado={self.sombreado}")
         if self.ocultar:
             s += ";ocultar=" + ",".join(self.ocultar)
+        if self.mostrar:
+            s += ";mostrar=" + ",".join(self.mostrar)
         if self.morphs:
             s += ";morph=" + ",".join(f"{n}:{w:g}" for n, w in self.morphs)
         if self.luz != "estudio":
@@ -112,6 +116,8 @@ def leer(codigo: str) -> Vista:
             v.morphs = tuple((a, float(b)) for a, _, b in (x.partition(":") for x in x.split(",") if x))
         elif k == "ocultar":
             v.ocultar = tuple(n for n in x.split(",") if n)
+        elif k == "mostrar":
+            v.mostrar = tuple(n for n in x.split(",") if n)
         elif k == "luz":
             if x not in ("estudio", "juego"):
                 raise ValueError("luz: estudio | juego")

@@ -47,7 +47,7 @@ Texto `clave=valor;…`. Puede empezar con una vista guardada:
 | `cara_frente`, `cara_34`, `cara_perfil`, `cara_espalda` | Cabeza, encuadre fijo |
 | `mano_izq`, `mano_der`, `pies` | Encuadre automático a la región |
 
-Claves: `yaw elev roll` (grados) · `dist` (`orto` o distancia en unidades) · `region` · `enc` (`auto` o `alto,cx,cy`) · `clip` y `t` (0–1; `reposo` = sin animación) · `modo` · `tam` · `sombreado` (`suave`/`facetas`) · `ocultar` (nodos separados por coma, p. ej. `CAPA_GUIA_CAPILAR`).
+Claves: `yaw elev roll` (grados) · `dist` (`orto` o distancia en unidades) · `region` · `enc` (`auto` o `alto,cx,cy`) · `clip` y `t` (0–1; `reposo` = sin animación) · `modo` · `tam` · `sombreado` (`suave`/`facetas`) · `ocultar` (nodos separados por coma, p. ej. `CAPA_GUIA_CAPILAR`) · `mostrar` (nodos que el GLB marca ocultos con `KHR_node_visibility` y que sí quieres ver, p. ej. `MANO_PUNO_L,MANO_PUNO_R`; sin esta clave, lo oculto en el archivo no se dibuja, igual que en Godot).
 
 El sello de cada captura imprime el código completo: cópialo para repetir exactamente la toma.
 
