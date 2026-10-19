@@ -1,0 +1,120 @@
+{
+  "asset": "adan_v49_vestido",
+  "glb": "/home/claude/build43/ADAN_V49_VESTIDO.glb",
+  "sha256": "3fbe679f5db3aeef270565ed903a24503b7ada3b16444a26a849cb2b3d2ac3ac",
+  "alto_u": 0.8716,
+  "caja_u": [
+    1.5046,
+    0.8716,
+    0.4262
+  ],
+  "triangulos_visibles": 140312,
+  "piezas_visibles": [
+    "ADAN_CUERPO",
+    "MANO_ABIERTA_L",
+    "MANO_ABIERTA_R",
+    "PIES_TENIS",
+    "CAPA_PELO_MECHONES",
+    "CAPA_ROPA_PRUEBA"
+  ],
+  "piezas_ocultas": [
+    "CAPA_SHORT",
+    "CAPA_GUIA_CAPILAR",
+    "MANO_PUNO_L",
+    "MANO_PUNO_R",
+    "MANO_SENALAR_L",
+    "MANO_SENALAR_R",
+    "PIES_DESCALZOS",
+    "CAPA_PELO_CORTO"
+  ],
+  "cobertura_px": {
+    "frente": {
+      "ADAN_CUERPO": 32389,
+      "MANO_ABIERTA_L": 2681,
+      "MANO_ABIERTA_R": 3125,
+      "PIES_TENIS": 7607,
+      "CAPA_PELO_MECHONES": 18816,
+      "CAPA_ROPA_PRUEBA": 43434
+    },
+    "tres_cuartos": {
+      "ADAN_CUERPO": 33260,
+      "MANO_ABIERTA_L": 5227,
+      "MANO_ABIERTA_R": 3443,
+      "PIES_TENIS": 9972,
+      "CAPA_PELO_MECHONES": 23275,
+      "CAPA_ROPA_PRUEBA": 45000
+    },
+    "perfil": {
+      "ADAN_CUERPO": 21789,
+      "MANO_ABIERTA_L": 6429,
+      "MANO_SENALAR_R": 132,
+      "PIES_TENIS": 6380,
+      "CAPA_PELO_MECHONES": 30631,
+      "CAPA_ROPA_PRUEBA": 21859
+    },
+    "espalda": {
+      "ADAN_CUERPO": 8152,
+      "MANO_ABIERTA_L": 2160,
+      "MANO_ABIERTA_R": 2034,
+      "PIES_TENIS": 5481,
+      "CAPA_PELO_MECHONES": 41826,
+      "CAPA_ROPA_PRUEBA": 41286
+    }
+  },
+  "colores_fuera_de_paleta": [
+    {
+      "material": "BOCA_INTERIOR_NEGRO",
+      "color": "#000000",
+      "cercano": "negro_calido/5",
+      "cercano_hex": "#1F1916",
+      "deltaE": 10.2
+    },
+    {
+      "material": "CEJA_BLOQUE",
+      "color": "#57351A",
+      "cercano": "marron_calido/4",
+      "cercano_hex": "#69472D",
+      "deltaE": 7.9
+    },
+    {
+      "material": "LENGUA_ALTH",
+      "color": "#C46561",
+      "cercano": "rojo_calido/3",
+      "cercano_hex": "#A8453B",
+      "deltaE": 13.5
+    },
+    {
+      "material": "GUIA_CAPILAR_RUBIO_THEO_RELLENO",
+      "color": "#DFBA86",
+      "cercano": "medidos/rubio_arena",
+      "cercano_hex": "#D2AE72",
+      "deltaE": 6.4
+    }
+  ],
+  "visibilidad_pedida": {},
+  "vistas": [
+    "frente",
+    "tres_cuartos",
+    "perfil",
+    "espalda"
+  ],
+  "clip": "Idle-loop",
+  "t": 0.0,
+  "segundos_godot": 129.3,
+  "segundos_total": 165.8,
+  "archivos": [
+    "_crudo",
+    "adan_v49_vestido_HOJA.png",
+    "adan_v49_vestido_Idle-loop.gif",
+    "adan_v49_vestido_Run-loop.gif",
+    "adan_v49_vestido_Walk-loop.gif",
+    "adan_v49_vestido_espalda.png",
+    "adan_v49_vestido_espalda_mascara.png",
+    "adan_v49_vestido_frente.png",
+    "adan_v49_vestido_frente_mascara.png",
+    "adan_v49_vestido_perfil.png",
+    "adan_v49_vestido_perfil_mascara.png",
+    "adan_v49_vestido_tres_cuartos.png",
+    "adan_v49_vestido_tres_cuartos_mascara.png"
+  ]
+}
