@@ -61,3 +61,36 @@ Escalado radial desde el centro de la cabeza hacia una caja redondeada, como la 
 **Conclusión:** los cachetes de V47 son la esquina redondeada de la cabeza, no un bulto. Aplanar exige sacar esa esquina, y hacerlo en una sola zona deja escalones. No se publica GLB.
 
 Opciones a Admin: A2 (caja de V48 a media fuerza con las facciones fijas), A3 (solo la nuca) o dejar V47.
+
+---
+
+# Adán V48.2 · sin rollo en la nuca ni visera sobre los ojos (SIN APROBAR)
+
+**Pedido de Admin (19 oct 2026):** con capturas de V47, "¿Ves los bultos en nuca y cejas que me refiero?". Martillo.
+
+**Resultado:**
+- `ADAN_V48_2.glb`, SHA-256 `ec83c0a4e23dc87be6d14d4824d6718e0dc6936e6b882357eefc4ce9414594f2`. Reproducible.
+- Receta: `docs/medicion/receta_adan_v48_2.py ADAN_V47.glb ADAN_V48_2.glb`. Parte de V47: V48 y V48.1 no se usan.
+
+**Qué cambió** (`copox/medicion/bultos_cabeza.py`):
+1. **Rollo de la nuca:**
+   - El pelo caía recto y bajo la oreja se enrollaba unos 3.5 cm hacia adentro. Ahora el plano de atrás baja recto hasta la orilla.
+   - El desplazamiento se calcula una sola vez sobre el pelo y se aplica igual al pelo y a la piel de abajo, así la piel no atraviesa el pelo.
+   - Después se alisa solo esa franja baja del pelo (Taubin, con la orilla fija).
+2. **Visera de las cejas:**
+   - La piel sobre los ojos sobresalía unos 2.5 mm. Ahora la frente baja recta desde el nacimiento del pelo (y 0.74) hasta arriba de los párpados (y 0.674); hasta 4.7 mm hacia adentro.
+   - Las cejas se mueven con la piel.
+   - La franja no toca los párpados: con la primera versión (y0 = 0.652), los ojos cerrados hacían ruido.
+
+**Sin tocar:** forma general, cachetes, ojos, boca, nariz y orejas (como V47).
+
+**Godot:** de espalda, el pelo cae liso hasta su orilla. Perfil limpio. Las 24 expresiones funcionan, con los párpados cerrados limpios.
+
+**Queda:**
+- Bajo la orilla del pelo de la nuca, la piel todavía redondea hacia el cuello.
+- Algunas motas en esa orilla, porque esta vez no se reselló.
+
+**Evidencia** (rama `capturas`, `capturas/2026-10-19/adan_v48_2/`):
+- `cabeza_v47_v48_2.png`
+- `v48_2_godot.png`
+- `godot_caras_v48_2.png`
