@@ -70,8 +70,8 @@ def mano(E, variante, lado, nombres, carpeta):
     r0 = [float(np.abs(RVl[:, 1] - yc).max()), float(np.abs(RVl[:, 2] - zc).max())]
     largo = 0.1306 * ESCALA_MANO
     M = mb.ManoBloques(largo, mb.POSES[variante], palma_w0=-0.0035 * ESCALA_MANO)
-    M.muneca = {"x0": x_ring - ENTRA - Wj[0] * s, "x1": 0.016, "c0": [yc - Wj[1], zc - Wj[2]], "r0": r0,
-                "c1": [-M.grosor * 0.075, M.w0], "r1": [M.grosor / 2 * 1.1, M.palma_ancho / 2 * 0.8]}
+    M.muneca = {"x0": x_ring - ENTRA - Wj[0] * s, "x1": 0.030, "c0": [yc - Wj[1], zc - Wj[2]], "r0": r0,
+                "c1": [-M.grosor * 0.10, M.w0], "r1": [M.grosor / 2 * 1.25, M.palma_ancho / 2 * 0.85]}
     V, T = M.malla()
     V = V + np.array([Wj[0] * s, Wj[1], Wj[2]])                # local → mundo (marco izquierdo)
     V, T = v36.simplificar(V, T, TRIS_MANO[variante], carpeta)
@@ -80,6 +80,7 @@ def mano(E, variante, lado, nombres, carpeta):
         T = T[:, ::-1].copy()
     V, T = mb.cortar(V, T, x_ring + CORTE)
     V, T, oa, base = mb.coser(V, T, RVl, (yc, zc), x_ring + CORTE)
+    V = mb.ajustar_boca(V, base, RVl, (yc, zc), x_ring + CORTE)
     N = mg.normales(V, T)
     N[base:] = RNl[oa]
     # pesos: antebrazo en la orilla → mano rígida (las manos se modelan en su pose: no hay huesos de dedos)

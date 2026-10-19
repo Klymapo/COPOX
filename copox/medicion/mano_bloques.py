@@ -20,6 +20,10 @@ from .mano_geo import _smin, taubin, normales
 
 REF_PX = {"palma_largo": 235, "palma_ancho": 238, "Middle": 205, "Index": 165, "Ring": 162, "Little": 120,
           "dedo_ancho": 55, "separacion": 5, "pulgar": 170, "mano": 440}
+# dedos-bloque (revisión V40): más cortos y gruesos, casi sin ranura entre ellos; el ancho total de los cuatro no cambia
+LARGO_DEDO = 0.86
+GRUESO_DEDO = 0.92                     # grueso / ancho del dedo (antes 0.74)
+SEPARACION_DEDO = 2                    # px de la hoja entre dedos (antes 5); el ancho absorbe la diferencia
 DEDOS = ("Index", "Middle", "Ring", "Little")
 REPARTO = (0.45, 0.30, 0.25)          # largo de cada falange (fracción del dedo)
 
@@ -53,11 +57,12 @@ class ManoBloques:
         self.k = k
         self.palma_largo = REF_PX["palma_largo"] * k
         self.palma_ancho = REF_PX["palma_ancho"] * k
-        self.dedo_ancho = REF_PX["dedo_ancho"] * k
-        self.paso = (REF_PX["dedo_ancho"] + REF_PX["separacion"]) * k
-        self.largos = {d: REF_PX[d] * k for d in DEDOS}
+        ancho_px = REF_PX["dedo_ancho"] + (REF_PX["separacion"] - SEPARACION_DEDO)
+        self.dedo_ancho = ancho_px * k
+        self.paso = (ancho_px + SEPARACION_DEDO) * k
+        self.largos = {d: REF_PX[d] * k * LARGO_DEDO for d in DEDOS}
         self.pulgar_largo = REF_PX["pulgar"] * k
-        self.dedo_grueso = self.dedo_ancho * 0.74                 # dedos más anchos que gruesos (vista 3/4)
+        self.dedo_grueso = self.dedo_ancho * GRUESO_DEDO
         self.grosor = grosor_palma or self.palma_ancho * 0.36      # losa
         self.r = radio
         self.w0 = palma_w0
@@ -117,9 +122,10 @@ class ManoBloques:
         # palma: losa con canto redondeado, se angosta hacia la muñeca
         u = np.clip(P[:, 0] / L, 0, 1); su = u * u * (3 - 2 * u)
         hw = A / 2 * (0.78 + 0.22 * su)
-        hh = G / 2 * (1.15 - 0.15 * su)                             # un poco más gruesa en la muñeca
+        hh = G / 2 * (1.30 - 0.30 * su)                             # un poco más gruesa en la muñeca
         ch = G / 2 - hh                                             # el extra va al lado de la palma: dorso recto
-        q = np.stack([np.abs(P[:, 0] - L / 2) - (L / 2 - self.r * 2),
+        x0 = -0.012 if self.muneca is not None else 0.0              # con muñeca, la losa entra al tubo: sin borde en el dorso
+        q = np.stack([np.abs(P[:, 0] - (L + x0) / 2) - ((L - x0) / 2 - self.r * 2),
                       np.abs(P[:, 1] - ch) - (hh - self.r * 2),
                       np.abs(P[:, 2] - self.w0) - (hw - self.r * 2)], 1)
         d = np.linalg.norm(np.maximum(q, 0), axis=1) + np.minimum(q.max(1), 0) - self.r * 2
@@ -147,7 +153,7 @@ class ManoBloques:
             e = np.sqrt(((P[:, 1] - cy) / ry) ** 2 + ((P[:, 2] - cz) / rz) ** 2)
             dm = (e - 1) * np.minimum(ry, rz)
             dm = np.maximum(dm, np.maximum(x0 - P[:, 0], P[:, 0] - x1))
-            d = _smin(d, dm, 0.010)
+            d = _smin(d, dm, 0.018)          # suave: sin línea en el dorso donde la losa de la palma empieza
         return d
 
     def malla(self, paso=0.0008, pulido=3):
@@ -178,6 +184,24 @@ class ManoBloques:
 
 
 # --- costura con la boca de muñeca ---------------------------------------------------------------------------
+def ajustar_boca(V, base, anillo, centro, x_c, largo=0.012):
+    """Los vértices de la mano cerca del corte toman el perfil del anillo (que no es una elipse): sin escalón.
+    En x_c el radio es el del anillo en ese ángulo; a `largo` después, el de la mano."""
+    yc, zc = centro
+    ar = np.arctan2(anillo[:, 2] - zc, anillo[:, 1] - yc); rr = np.hypot(anillo[:, 1] - yc, anillo[:, 2] - zc)
+    o = np.argsort(ar); ar, rr = ar[o], rr[o]
+    ar = np.concatenate([ar - 2 * np.pi, ar, ar + 2 * np.pi]); rr = np.tile(rr, 3)
+    V = V.copy()
+    m = np.arange(len(V)) < base
+    t = np.clip((V[:, 0] - x_c) / largo, 0, 1); t = t * t * (3 - 2 * t)
+    sel = m & (t < 1)
+    dy, dz = V[sel, 1] - yc, V[sel, 2] - zc
+    a = np.arctan2(dz, dy); r = np.hypot(dy, dz)
+    r2 = np.interp(a, ar, rr) * (1 - t[sel]) + r * t[sel]
+    V[sel, 1] = yc + np.cos(a) * r2; V[sel, 2] = zc + np.sin(a) * r2
+    return V
+
+
 def cortar(V, T, x_c):
     """Quita lo que queda en x < x_c; los triángulos que cruzan se recortan exactamente en el plano."""
     lado = V[:, 0] >= x_c
