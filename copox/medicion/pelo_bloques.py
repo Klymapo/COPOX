@@ -26,7 +26,7 @@ def radio_base(base, D):
     return (w * base.Rd[j]).sum(1)
 
 
-def mechon(base, m, escala=1.0, afilar=0.55, rng=None, punta=0.0, romo=False):
+def mechon(base, m, escala=1.0, afilar=0.55, rng=None, punta=0.0, romo=False, arco=None):
     """m = (az0, el0, az1, el1, ancho_mm, grueso_mm[, despega_m[, giro_grados]]) -> V, T (caras hacia afuera)."""
     az0, el0, az1, el1, ancho, grueso = m[:6]
     despega = m[6] if len(m) > 6 else 0.0
@@ -38,6 +38,8 @@ def mechon(base, m, escala=1.0, afilar=0.55, rng=None, punta=0.0, romo=False):
     R = radio_base(base, D)
     g = escala * grueso / 1000 * (1 - 0.55 * s)
     w = escala * ancho / 1000 / 2 * np.maximum((1 - s) ** afilar, punta)
+    if arco is not None:                         # SENKU pelo_arco: el mechón corre por el arco (su cara exterior toca el casco)
+        R = np.maximum(R, radio_base(arco, D) - 1.15 * g)
     C = base.c + D * (R + despega * s ** 1.4 + 0.15 * g)[:, None]
     Tg = np.gradient(C, axis=0)
     Tg /= np.linalg.norm(Tg, axis=1, keepdims=True)
@@ -78,13 +80,14 @@ def mechon(base, m, escala=1.0, afilar=0.55, rng=None, punta=0.0, romo=False):
     return V, T, Sv, C
 
 
-def peinado(base, mechones, escala=1.0, afilar=0.55, semilla=7, punta=0.0, romo=False, detalle=False):
+def peinado(base, mechones, escala=1.0, afilar=0.55, semilla=7, punta=0.0, romo=False, detalle=False, arco=None):
     """V, T de todos los mechones. detalle=True devuelve además, por vértice, el mechón y su parámetro s, y la curva
     central de cada mechón (para ponerle huesos: pelo_huesos)."""
     rng = np.random.default_rng(semilla)
+    n_arco = len(mechones) if arco is None else getattr(arco, "n", len(mechones))   # los de cobertura no siguen el arco
     Vs, Ts, Ids, Ss, Cs, n = [], [], [], [], [], 0
     for i, m in enumerate(mechones):
-        V, T, Sv, C = mechon(base, m, escala, afilar, rng, punta, romo)
+        V, T, Sv, C = mechon(base, m, escala, afilar, rng, punta, romo, arco if i < n_arco else None)
         Vs.append(V); Ts.append(T + n); Ids.append(np.full(len(V), i)); Ss.append(Sv); Cs.append(C); n += len(V)
     V, T = np.vstack(Vs), np.vstack(Ts)
     if detalle:

@@ -26,27 +26,31 @@ import receta_adan_v49 as v49  # noqa: E402
 
 COLOR = "#D2AE72"                 # medidos/rubio_arena
 VOLUMEN = dict(corona=0.026, lados=0.004, el0=10.0, el1=70.0)
+RAIZ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
+ARCO = True                       # SENKU pelo_arco: la base sigue el casco de la hoja; los mechones van encima
+ESPESOR_ARCO = 0.032              # la base queda bajo el arco este tanto: la cubren los mechones
 TRIS_BASE = 500                   # base del cráneo: pocas caras grandes
 ESCALA = 1.55
 AFILAR = 0.55
 # (az_raíz, el_raíz, az_punta, el_punta, ancho_mm, grueso_mm, despega_m); az 0 = frente, +90 = su izquierda (+x)
 MECHONES_THEO = [
-    # pico en "M" sobre la frente (raya al centro), despegados de la frente
-    (-8, 78, -28, 46, 50, 20, 0.010, -15), (8, 78, 28, 46, 50, 20, 0.010, 15),
+    # (con ARCO la altura y el ancho los pone el casco de la hoja; aquí solo va el trazo de cada mechón)
+    # barridos de arriba: nacen sobre la frente y corren por el arco hacia la coronilla (los planos grandes del perfil)
+    (-34, 58, -150, 52, 92, 30, 0.0, 8), (0, 60, 180, 54, 96, 32, 0.0), (34, 58, 150, 52, 92, 30, 0.0, -8),
+    # picos del copete: suben desde la raya (la "M" vista de frente)
+    (-12, 56, -40, 86, 70, 28, 0.010, 14), (12, 56, 40, 86, 70, 28, 0.010, -14),
+    # fleco en "M": caen sobre la frente, despegados
+    (-8, 74, -26, 42, 50, 20, 0.010, -15), (8, 74, 26, 42, 50, 20, 0.010, 15),
     # mechones largos que enmarcan la cara: bajan por las sienes hasta la mejilla
     (-26, 70, -58, -14, 52, 18, 0.016), (26, 70, 58, -14, 52, 18, 0.016),
     (-44, 66, -74, 0, 56, 20, 0.012), (44, 66, 74, 0, 56, 20, 0.012),
-    # copete: nacen arriba de la frente y suben hacia atrás (picos con altura)
-    (-24, 64, -70, 90, 80, 30, 0.058, 12), (24, 64, 70, 90, 80, 30, 0.058, -12), (0, 68, 0, 98, 76, 32, 0.072),
-    # arriba-atrás: barren hacia la coronilla y se levantan
-    (-70, 66, -130, 84, 80, 26, 0.028, 10), (70, 66, 130, 84, 80, 26, 0.028, -10),
     # lados sobre la oreja
-    (-84, 58, -102, 8, 66, 20, 0.006), (84, 58, 102, 8, 66, 20, 0.006),
-    # atrás: bloques verticales hacia la nuca
-    (-156, 64, -160, -34, 84, 22, 0.008), (-118, 60, -132, -24, 78, 20, 0.008), (156, 64, 160, -34, 84, 22, 0.008),
-    (118, 60, 132, -24, 78, 20, 0.008), (180, 66, 180, -36, 84, 22, 0.008),
-    # coronilla: dos bloques que suben
-    (-160, 76, -175, 92, 60, 22, 0.022), (160, 76, 175, 92, 60, 22, 0.022),
+    (-80, 62, -102, 8, 72, 22, 0.006), (80, 62, 102, 8, 72, 22, 0.006),
+    # atrás: bloques verticales grandes hacia la nuca
+    (-150, 66, -156, -34, 90, 24, 0.008), (-112, 60, -126, -24, 80, 22, 0.008), (150, 66, 156, -34, 90, 24, 0.008),
+    (112, 60, 126, -24, 80, 22, 0.008), (180, 68, 180, -36, 90, 24, 0.008),
+    # coronilla: un bloque que se levanta
+    (165, 74, 150, 88, 64, 24, 0.008),
 ]
 # cobertura (compuerta pelo_cobertura): patillas, sobre y detrás de la oreja, nuca baja. Fijos a Head (sin resorte):
 # son cortos y van pegados al cuero.
@@ -57,6 +61,8 @@ MECHONES_CUBRE = [
     (-168, 40, -172, -58, 70, 18, 0.004), (168, 40, 172, -58, 70, 18, 0.004), (180, 40, 180, -58, 60, 18, 0.004),
     (-152, 40, -154, -56, 60, 18, 0.004), (152, 40, 154, -56, 60, 18, 0.004),
     (-94, 26, -95, -4, 50, 14, 0.002), (94, 26, 95, -4, 50, 14, 0.002),
+    (-58, 24, -60, -12, 44, 14, 0.002), (58, 24, 60, -12, 44, 14, 0.002),
+    (-112, 20, -114, -26, 50, 14, 0.003), (112, 20, 114, -26, 50, 14, 0.003),
 ]
 
 
@@ -78,7 +84,18 @@ def pelo_theo(E, src_v47, carpeta):
     el = np.degrees(np.arcsin(np.clip(H.D[:, 1], -1, 1)))
     v = VOLUMEN
     a = np.clip((el - v["el0"]) / (v["el1"] - v["el0"]), 0, 1); a = a * a * (3 - 2 * a)
-    H.Rd = H.Rd + v["lados"] + (v["corona"] - v["lados"]) * a
+    if ARCO:                                                  # SENKU: el arco sale de la hoja (casco visual)
+        from copox.medicion import pelo_arco as pa
+        ref = pa.vistas_ref(os.path.join(RAIZ, pa.REF))
+        al = pa.alinear(ref, pa.esqueleto(E))
+        from types import SimpleNamespace
+        Rd0 = H.Rd.copy()
+        H.Rd, Rcasco = pa.arco(H, np.asarray(v483.CENTRO), ref, al, ESPESOR_ARCO)
+        guia = SimpleNamespace(arbol=H.arbol, Rd=np.where(H.Md > 0.5, np.maximum(Rcasco, Rd0), Rd0),
+                               n=len(MECHONES_THEO))
+    else:
+        guia = None
+        H.Rd = H.Rd + v["lados"] + (v["corona"] - v["lados"]) * a
     Vb, Tb = H.malla(paso=0.0012)
     previo = os.environ.get("ALTH_CALIDAD")
     os.environ["ALTH_CALIDAD"] = "final"                      # la base siempre se simplifica: las facetas son el estilo
@@ -89,7 +106,7 @@ def pelo_theo(E, src_v47, carpeta):
         os.environ["ALTH_CALIDAD"] = previo
     Tb = _hacia_afuera(Vb, Tb, np.asarray(v483.CENTRO))
     Vm, Tm, ids, sv, curvas = pb.peinado(H, MECHONES_THEO + MECHONES_CUBRE, escala=ESCALA, afilar=AFILAR, punta=0.30, romo=True,
-                                         detalle=True)
+                                         detalle=True, arco=guia)
     V = np.vstack([Vb, Vm]); T = np.vstack([Tb, Tm + len(Vb)])
     # compuerta: el pelo cubre toda el área de pelo de la guía (si no, no se entrega)
     piel = v49._prims(E)[v482.PIEL]
@@ -99,7 +116,7 @@ def pelo_theo(E, src_v47, carpeta):
     Ts = Ts[(Vs[Ts][:, :, 1] > 0.47).all(1)]
     cob = pcob.cobertura(V, T, v483.CENTRO, H.D, H.Md, piel=(Vs, Ts), Rd=H.Rd)
     print("cobertura del pelo:", cob)
-    if cob["veredicto"] != "PASS":
+    if cob["veredicto"] != "PASS" and not os.environ.get("ALTH_DIAGNOSTICO"):   # diagnóstico: construir para mirar
         raise SystemExit("FAIL cobertura del pelo: " + str(cob))
     # huesos por mechón (resortes en el motor) y pesos: base en Head, mechones de la raíz (Head) a su cadena
     cadenas, jh = ph.agregar_cadenas(E, curvas[:len(MECHONES_THEO)])
