@@ -101,3 +101,21 @@ class CajaCabeza:
         P1 = self.c + (P - self.c) * k[:, None]
         J = np.tile(np.eye(3), (len(P), 1, 1)) * k[:, None, None]
         return P1, J
+
+
+def mascara_local(P, cachete=True, lados=True, nuca=True, suave=2.0):
+    """V48.1 (camino A): peso por zona, con orillas anchas (`suave` multiplica los anchos de transición).
+    Solo cachetes, lados bajo el pelo y nuca. Se apaga cerca de ojos, boca y nariz, orejas y cuello."""
+    x, y, z = np.abs(P[:, 0]), P[:, 1], P[:, 2]
+    s = suave
+    sin_orejas = _ss((0.134 - x) / 0.004)
+    cuello = _ss((y - 0.492) / (0.018 * s))
+    w = np.zeros(len(P))
+    if cachete:
+        w = np.maximum(w, _ss((z - 0.04) / (0.03 * s)) * _ss((x - 0.045) / (0.02 * s)) * _ss((0.61 - y) / (0.025 * s)))
+    if lados:
+        w = np.maximum(w, _ss((x - 0.09) / (0.02 * s)) * _ss((z + 0.07) / (0.02 * s)) * _ss((0.11 - z) / (0.02 * s))
+                       * _ss((0.62 - y) / (0.03 * s)))
+    if nuca:
+        w = np.maximum(w, _ss((-0.02 - z) / (0.03 * s)) * _ss((0.60 - y) / (0.03 * s)))
+    return w * sin_orejas * cuello

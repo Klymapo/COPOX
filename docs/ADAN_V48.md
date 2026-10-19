@@ -47,3 +47,17 @@ Escalado radial desde el centro de la cabeza hacia una caja redondeada, como la 
 - `v48_godot.png` (nuca y cara en Godot)
 - `godot_caras_v48.png` (24 expresiones)
 - `godot_controlador_v48.png`
+
+---
+
+# V48 no aprobada · camino A (V48.1) descartado
+
+**V48:** Admin no la aprobó (19 oct 2026). La caja completa dejó la cabeza como ladrillo y agrandó facciones y pelo.
+
+**Camino A** (`receta_adan_v48_1.py`): partir de V47 y aplanar solo pómulos, lados y nuca con un campo local (`cabeza_caja.mascara_local`). Dos intentos:
+1. **Hacia el plano (±8 %):** cachetes inflados como bolsa y bordes marcados en las orillas de cada zona.
+2. **Solo hacia adentro:** casi sin cambio (3 mm como máximo) y un pliegue en arco detrás de la oreja.
+
+**Conclusión:** los cachetes de V47 son la esquina redondeada de la cabeza, no un bulto. Aplanar exige sacar esa esquina, y hacerlo en una sola zona deja escalones. No se publica GLB.
+
+Opciones a Admin: A2 (caja de V48 a media fuerza con las facciones fijas), A3 (solo la nuca) o dejar V47.
