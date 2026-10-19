@@ -147,4 +147,4 @@ a la malla de la piel (no radial): pelo = {distancia a la piel < g(máscara)} af
 - Taubin extra (25) en la franja de la orilla de la malla del pelo antes de simplificar: orilla más redonda.
 - Probado y descartado: que el pelo abrace la piel alisada (doble orilla en la frente) y meter la piel sin tope (hueco
   de 35 mm en la sien).
-GLB reproducible: SHA-256 `14595da2f8b5129e2442f67f678077ba22a4ec8b2c89b0f04867b56dd02bd867` (reemplaza a 63029e57…). SIN APROBAR.
+GLB reproducible: SHA-256 `14595da2f8b5129e2442f67f678077ba22a4ec8b2c89b0f04867b56dd02bd867` (reemplaza a 63029e57…). **APROBADA DE MOMENTO** por Admin (19 oct 2026, 11:14).
