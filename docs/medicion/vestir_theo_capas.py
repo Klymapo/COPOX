@@ -53,7 +53,8 @@ def _region_chaleco(P):
     t = np.clip((y - c["v_fondo"]) / (c["cuello"] - c["v_fondo"]), 0, 1)
     v_abierta = np.where((z > FRENTE_Z) & (y > c["v_fondo"]), c["v_ancho"] * t - x, -1.0)
     cuello = 0.042 - np.hypot(x, (z - 0.01) * 0.8)                    # hueco del cuello (también atrás)
-    return np.maximum.reduce([borde - y, y - c["cuello"], x - c["hombro_x"], v_abierta,
+    sisa = x - np.where(y > 0.36, c["hombro_x"], 0.135)            # sisas arriba; en la cadera el chaleco no se corta
+    return np.maximum.reduce([borde - y, y - c["cuello"], sisa, v_abierta,
                               np.where(y > 0.455, cuello, -1.0)])
 
 
