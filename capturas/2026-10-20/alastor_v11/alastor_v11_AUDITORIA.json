@@ -1,0 +1,976 @@
+{
+  "tipo": "personaje",
+  "veredicto": "PASS",
+  "revisiones": [
+    {
+      "id": "theo_protegido",
+      "veredicto": "PASS",
+      "medida": "ed2b04ecd9e22a19",
+      "umbral": "ed2b04ecd9e22a19",
+      "detalle": null,
+      "fuente": "CLAUDE.md"
+    },
+    {
+      "id": "apoyo_piso",
+      "veredicto": "PASS",
+      "medida": -0.1,
+      "umbral": "|y_min| ≤ 1.5 mm",
+      "detalle": null,
+      "fuente": "spec/CLAUDE.md: pies en el piso"
+    },
+    {
+      "id": "paleta_alth",
+      "veredicto": "PASS",
+      "medida": 0,
+      "umbral": "ΔE ≤ 6.0",
+      "detalle": [
+        "excepción de la base (no veta; color por proponer a Admin): BOCA_INTERIOR_NEGRO #000000 (ΔE 10.2 vs negro_calido/5)",
+        "excepción de la base (no veta; color por proponer a Admin): CEJA_BLOQUE #57351A (ΔE 7.9 vs marron_calido/4)",
+        "excepción de la base (no veta; color por proponer a Admin): LENGUA_ALTH #C46561 (ΔE 13.5 vs rojo_calido/3)"
+      ],
+      "fuente": "CLAUDE.md: colores solo de la paleta"
+    },
+    {
+      "id": "senku_silueta",
+      "veredicto": "N-A",
+      "medida": null,
+      "umbral": null,
+      "detalle": "sin hoja con .senku.json",
+      "fuente": "chxp3"
+    },
+    {
+      "id": "senku_regiones",
+      "veredicto": "N-A",
+      "medida": null,
+      "umbral": null,
+      "detalle": "sin hoja con .senku.json",
+      "fuente": "chxp3"
+    },
+    {
+      "id": "cobertura_pelo",
+      "veredicto": "PASS",
+      "medida": 0.9968,
+      "umbral": "≥ 0.995",
+      "detalle": null,
+      "fuente": "Admin 19 oct: cubrir siempre toda el área de pelo"
+    },
+    {
+      "id": "pelo_resortes",
+      "veredicto": "PASS",
+      "medida": 1,
+      "umbral": "pelo visible con cadenas válidas",
+      "detalle": [],
+      "fuente": "Admin 19 oct: que se mueva como pelo"
+    },
+    {
+      "id": "integridad_gltf",
+      "veredicto": "PASS",
+      "medida": 0,
+      "umbral": 0,
+      "detalle": [],
+      "fuente": "gltf-rig-guardian, copox-auditoria-3d"
+    },
+    {
+      "id": "research_brief",
+      "veredicto": "PASS",
+      "medida": [
+        "abrigo",
+        "gafas",
+        "pelo_alastor",
+        "cara_alastor",
+        "ropa_capas",
+        "zapato",
+        "pelvis"
+      ],
+      "umbral": "brief válido por tema",
+      "detalle": [],
+      "fuente": "CLAUDE.md, skill investigar-referencias"
+    },
+    {
+      "id": "capas_sin_atravesar",
+      "veredicto": "N-A",
+      "medida": 0.6429,
+      "umbral": "informativa (≤ 1% por par y pose); veta capas_visibles",
+      "detalle": [
+        "CAPA_CAMISA dentro de piel en reposo 0.0: 7.5%",
+        "CAPA_CAMISA dentro de piel en Walk-loop 0.25: 7.0%",
+        "CAPA_CAMISA dentro de piel en Walk-loop 0.75: 7.0%",
+        "CAPA_CAMISA dentro de piel en Run-loop 0.3: 10.6%",
+        "CAPA_PANTALON dentro de piel en Run-loop 0.3: 64.3%",
+        "CAPA_CAMISA dentro de piel en Sit-pose 0.5: 7.6%"
+      ],
+      "fuente": "vestuario.sin_clipping_poses_extremas, cloth.clipping_transiciones"
+    },
+    {
+      "id": "capas_visibles",
+      "veredicto": "PASS",
+      "medida": 0.005,
+      "umbral": "≤ 1% de lo visible por par y pose",
+      "detalle": null,
+      "fuente": "Admin 19 oct 2026, vestuario.sin_clipping_poses_extremas (render)"
+    },
+    {
+      "id": "hombro_cubierto",
+      "veredicto": "N-A",
+      "medida": null,
+      "umbral": null,
+      "detalle": "sin camisa + chaleco",
+      "fuente": "chxp3"
+    },
+    {
+      "id": "pesos_normalizados",
+      "veredicto": "PASS",
+      "medida": 0.0,
+      "umbral": "|Σw − 1| < 0.01",
+      "detalle": null,
+      "fuente": "vestuario.pesos_normalizados, rig.pesos_normalizados"
+    },
+    {
+      "id": "cinco_dedos",
+      "veredicto": "PASS",
+      "medida": {
+        "Left": 15,
+        "Right": 15
+      },
+      "umbral": "15 huesos de dedo por mano",
+      "detalle": null,
+      "fuente": "rig.cinco_dedos"
+    },
+    {
+      "id": "base_preservada",
+      "veredicto": "PASS",
+      "medida": {
+        "clips": 123,
+        "huesos": 148
+      },
+      "umbral": "nada de la base se pierde",
+      "detalle": [],
+      "fuente": "rig.sin_perdida_clips_targets, ra.clips_preservados"
+    },
+    {
+      "id": "areas_degeneradas",
+      "veredicto": "PASS",
+      "medida": 0.0,
+      "umbral": "< 0.5 % de triángulos (solo piezas nuevas sobre la base)",
+      "detalle": null,
+      "fuente": "aud.areas_degeneradas, saf.no_degenerados_winding"
+    },
+    {
+      "id": "normales",
+      "veredicto": "PASS",
+      "medida": 0,
+      "umbral": "≤ 2 % de caras invertidas por primitiva",
+      "detalle": [],
+      "fuente": "aud.normales, vestuario.normales_no_invertidas"
+    },
+    {
+      "id": "sin_flotantes",
+      "veredicto": "PASS",
+      "medida": 0,
+      "umbral": "0 piezas a más de 6 mm (vértice a vértice)",
+      "detalle": [],
+      "fuente": "asset.sin_flotantes"
+    },
+    {
+      "id": "triangulos_tope",
+      "veredicto": "PASS",
+      "medida": 116984,
+      "umbral": "≤ 160000 (personaje_principal)",
+      "detalle": null,
+      "fuente": "asset.triangulos"
+    }
+  ],
+  "deuda_base": [
+    {
+      "id": "areas_degeneradas",
+      "veredicto": "FAIL",
+      "medida": 0.10665,
+      "umbral": "< 0.5 % de triángulos",
+      "detalle": null,
+      "fuente": "aud.areas_degeneradas, saf.no_degenerados_winding"
+    },
+    {
+      "id": "normales",
+      "veredicto": "FAIL",
+      "medida": 3,
+      "umbral": "≤ 2 % de caras invertidas por primitiva",
+      "detalle": [
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 13.8%",
+        "ADAN_CUERPO/C7V2_brow_BAKE_R: 100.0%",
+        "ADAN_CUERPO/LENGUA_ALTH: 11.9%"
+      ],
+      "fuente": "aud.normales, vestuario.normales_no_invertidas"
+    },
+    {
+      "id": "sin_flotantes",
+      "veredicto": "FAIL",
+      "medida": 20,
+      "umbral": "0 piezas a más de 6 mm (vértice a vértice)",
+      "detalle": [
+        "ADAN_CUERPO/C7V2_brow_BAKE_L: 22.9 mm",
+        "ADAN_CUERPO/C7V2_brow_BAKE_R: 22.9 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 22.9 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 30.9 mm",
+        "ADAN_CUERPO/LINEA_PARPADO_CAFE: 24.2 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 22.9 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 30.9 mm",
+        "ADAN_CUERPO/LINEA_PARPADO_CAFE: 24.0 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 6.7 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 6.8 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 6.8 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 6.7 mm",
+        "ADAN_CUERPO/BOCA_INTERIOR_NEGRO: 10.2 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 7.4 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 15.1 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 23.3 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 18.5 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 15.1 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 23.3 mm",
+        "ADAN_CUERPO/PIEL_REFERENCIAS_THEO_ALASTOR_v04: 18.5 mm"
+      ],
+      "fuente": "asset.sin_flotantes"
+    }
+  ],
+  "pass": 15,
+  "fail": 0,
+  "na": 4,
+  "pendientes_skills": [
+    {
+      "skill": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "id": "rig.morph_topologia_estable",
+      "texto": "No alterar orden de vértices ni índices/nombres de morph targets del aprobado.",
+      "umbral": "igualdad exacta",
+      "revision": null
+    },
+    {
+      "skill": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "id": "rig.morph_consistencia",
+      "texto": "Mismo nº de targets en todas las primitivas de una malla; mesh.weights coincide.",
+      "umbral": "consistente",
+      "revision": null
+    },
+    {
+      "skill": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "id": "rig.jerarquia_retarget",
+      "texto": "Retarget: nombre, padre, rest matrix, orientación y longitud verificados hueso por hueso.",
+      "umbral": "0 diferencias no autorizadas",
+      "revision": null
+    },
+    {
+      "skill": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "id": "rig.facial_LR",
+      "texto": "Controles faciales independientes izquierda/derecha (blink, squint, cheek, brow, mirada).",
+      "umbral": "a definir (cobertura; canales propuestos, 'NO asumir presentes')",
+      "revision": null
+    },
+    {
+      "skill": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "id": "rig.mezcla_sin_sobrescritura",
+      "texto": "Combinar expresiones sin sobrescribir weights ni sumar desplazamientos excesivos.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "id": "rig.contacto_agarre",
+      "texto": "Agarre: punta de dedo en su punto de contacto.",
+      "umbral": "< 5 % (umbral preliminar de diseño)",
+      "revision": null
+    },
+    {
+      "skill": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "id": "rig.sin_penetraciones_graves",
+      "texto": "Poses extremas, gestos y manos entrelazadas sin autointersecciones importantes.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.glb_estructural",
+      "texto": "GLB estructuralmente válido: cabecera, chunks, accessors/bufferViews en rango, skins sin joints repetidos.",
+      "umbral": "NO_STRUCTURAL_ISSUES_FOUND",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.fuera_de_mascara_identico",
+      "texto": "Mismo contorno y geometría fuera del parche/máscara.",
+      "umbral": "0",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.parpados_sin_interseccion",
+      "texto": "Párpados no atraviesan el globo ocular, también con morph de cierre.",
+      "umbral": "0",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.manifold_por_pieza",
+      "texto": "Manifold auditado por pieza; aberturas intencionales y piezas separadas (ojos, pelo, accesorios) declaradas.",
+      "umbral": "0",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.topologia_limpia",
+      "texto": "Sin caras internas, T-junctions, vértices aislados, normales invertidas ni autointersecciones.",
+      "umbral": "0",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.preservar_uv_pesos_morphs",
+      "texto": "Preservar UV, pesos, materiales y morphs; pérdida de rig/morphs = rechazo.",
+      "umbral": "sin pérdidas",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.landmarks_altura_cabeza",
+      "texto": "Landmarks (ojos, nariz, mandíbula, hombros, nudillos, pelvis, rodillas, pies) normalizados por altura de cabeza Hc.",
+      "umbral": "a definir (texto: 'sin tolerancias inventadas', calibrar con Adán)",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.simetria_regional",
+      "texto": "Simetría razonable por región, respetando asimetrías aprobadas.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "/asset (comando)",
+      "id": "asset.cotas",
+      "texto": "Cada cota de spec.json (por pieza, ejes W=X, D=Y, H=Z) se cumple.",
+      "umbral": "±2 % (o 'tolerancia' por cota)",
+      "revision": null
+    },
+    {
+      "skill": "/asset (comando)",
+      "id": "asset.nombres_pieza",
+      "texto": "Nombres de pieza `<Nombre>_<parte>` coincidentes con las cotas.",
+      "umbral": "100 % coincidencia",
+      "revision": null
+    },
+    {
+      "skill": "revisar-alth + agente revisor-visual-alth",
+      "id": "rev.verificacion_ok",
+      "texto": "APROBABLE exige verificación técnica OK (reporte.json) y cero bloqueos.",
+      "umbral": "OK + 0 bloqueos",
+      "revision": null
+    },
+    {
+      "skill": "finalizar-personaje",
+      "id": "fin.evidencia_completa",
+      "texto": "La ronda entrega hoja, reporte y manifest al revisor visual.",
+      "umbral": "3/3",
+      "revision": null
+    },
+    {
+      "skill": "finalizar-personaje",
+      "id": "fin.sin_final_sin_aprobacion",
+      "texto": "No se genera 'final' ni GLB aprobado sin decisión humana.",
+      "umbral": "0 exports finales",
+      "revision": null
+    },
+    {
+      "skill": "copox-auditoria-3d",
+      "id": "aud.sha_ejes_procedencia",
+      "texto": "SHA de baseline, ejes/unidades y procedencia presentes; si falta → RESEARCH_REQUIRED.",
+      "umbral": "todos presentes",
+      "revision": null
+    },
+    {
+      "skill": "copox-auditoria-3d",
+      "id": "aud.self_intersection",
+      "texto": "Autointersecciones medidas si hay herramienta.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "copox-auditoria-3d",
+      "id": "aud.skin_animaciones",
+      "texto": "Skin y animaciones presentes e íntegras.",
+      "umbral": "sin pérdidas",
+      "revision": null
+    },
+    {
+      "skill": "copox-auditoria-3d",
+      "id": "aud.triangulos_protegidos",
+      "texto": "Triángulos protegidos intactos.",
+      "umbral": "igualdad",
+      "revision": null
+    },
+    {
+      "skill": "copox-auditoria-3d",
+      "id": "aud.preflight_gate",
+      "texto": "Métricas focales realmente medidas pasan por preflight_gate; REJECTED_EARLY detiene; DEEP_ELIGIBLE ≠ aprobado.",
+      "umbral": "umbrales de config del gate (no valores por defecto)",
+      "revision": null
+    },
+    {
+      "skill": "copox-auditoria-3d",
+      "id": "aud.poses_finalistas",
+      "texto": "Finalistas: poses Wave/Sit/Nod/HeadShake, los 29 clips si existen, import Godot, morphs/UV/pesos.",
+      "umbral": "29 clips si aplica; Godot OK",
+      "revision": null
+    },
+    {
+      "skill": "copox-geometria",
+      "id": "geo.bridge_requisitos",
+      "texto": "bridge_equal_loops solo con DOS bordes auténticos en UNA malla indexada y misma cardinalidad.",
+      "umbral": "2 / misma / igual",
+      "revision": null
+    },
+    {
+      "skill": "copox-geometria",
+      "id": "geo.no_interpolar_sin_modulo",
+      "texto": "No interpolar skin, morphs ni UV sin módulo y pruebas explícitas.",
+      "umbral": "veto",
+      "revision": null
+    },
+    {
+      "skill": "copox-geometria",
+      "id": "geo.max_tres_hermanos",
+      "texto": "Máximo tres candidatos hermanos; salida nueva por versión.",
+      "umbral": "≤ 3",
+      "revision": null
+    },
+    {
+      "skill": "copox-geometria",
+      "id": "geo.renders_4_vistas",
+      "texto": "PNG reales frente/perfil/trasera/3-4 + detalle antes de pedir aprobación.",
+      "umbral": "5/5",
+      "revision": null
+    },
+    {
+      "skill": "anatomic-cut",
+      "id": "cut.triangulos_protegidos",
+      "texto": "Triángulos protegidos (ojos, orejas, labios, regiones congeladas) intactos.",
+      "umbral": "igualdad",
+      "revision": null
+    },
+    {
+      "skill": "anatomic-cut",
+      "id": "cut.atributos_preservados",
+      "texto": "POSITION, NORMAL, TEXCOORD_0, JOINTS_0, WEIGHTS_0 presentes si estaban.",
+      "umbral": "igualdad de conjunto",
+      "revision": null
+    },
+    {
+      "skill": "anatomic-cut",
+      "id": "cut.morphs_bloquean",
+      "texto": "Morph targets, atributos custom o skin >4 influencias sin adaptador → bloquear.",
+      "umbral": "veto si presentes",
+      "revision": null
+    },
+    {
+      "skill": "anatomic-cut",
+      "id": "cut.bordes_abiertos_nuevos",
+      "texto": "Bordes abiertos nuevos se reportan; borde objetivo abierto → Surface Stitch, no superposición.",
+      "umbral": "0 para aprobar",
+      "revision": null
+    },
+    {
+      "skill": "anatomic-cut",
+      "id": "cut.candidato_hermano",
+      "texto": "Candidato hermano con hash nuevo; fuentes intactas.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "contour-extractor",
+      "id": "contour.borde_por_incidencia",
+      "texto": "Borde = arista con incidencia en exactamente 1 cara (no edges_unique_length).",
+      "umbral": "definición exacta",
+      "revision": null
+    },
+    {
+      "skill": "contour-extractor",
+      "id": "contour.seams_uv_no_agujeros",
+      "texto": "Distinguir seams por UV duplicadas de agujeros físicos.",
+      "umbral": "clasificación explícita",
+      "revision": null
+    },
+    {
+      "skill": "contour-extractor",
+      "id": "contour.gate_dos_bucles",
+      "texto": "GATE: exactamente dos bucles reales no ramificados.",
+      "umbral": "2 y sin ramas",
+      "revision": null
+    },
+    {
+      "skill": "surface-stitch",
+      "id": "ss.cardinalidad_sentido",
+      "texto": "Contornos de igual cantidad de puntos y sentido consistente (kernel igual-longitud).",
+      "umbral": "igual",
+      "revision": null
+    },
+    {
+      "skill": "surface-stitch",
+      "id": "ss.reusa_vertices",
+      "texto": "La banda usa IDs de vértices existentes; UV, pesos y normales originales intactos; sin morph interpolado.",
+      "umbral": "igualdad",
+      "revision": null
+    },
+    {
+      "skill": "surface-stitch",
+      "id": "ss.material_por_cara",
+      "texto": "Material de la banda registrado por cara.",
+      "umbral": "100 % asignado",
+      "revision": null
+    },
+    {
+      "skill": "surface-stitch",
+      "id": "ss.calidad_topologica",
+      "texto": "Conectividad, manifold, winding, distancias, degenerados y autointersecciones comprobados; si falta alguno → RESEARCH_REQUIRED.",
+      "umbral": "0",
+      "revision": null
+    },
+    {
+      "skill": "surface-stitch",
+      "id": "ss.reimportacion",
+      "texto": "Conectividad conservada tras export GLB y reimportación.",
+      "umbral": "0 (igual que en RAM)",
+      "revision": null
+    },
+    {
+      "skill": "surface-stitch",
+      "id": "ss.overlap_no_es_cierre",
+      "texto": "Un overlap visualmente limpio no es un cierre topológico.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "stitch-advancing-front",
+      "id": "saf.caras_N_mas_M",
+      "texto": "La banda consume una arista por triángulo: N+M caras.",
+      "umbral": "= N+M",
+      "revision": null
+    },
+    {
+      "skill": "stitch-advancing-front",
+      "id": "saf.gap_maximo",
+      "texto": "Máximo gap de todas las conexiones cruzadas validado.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "stitch-advancing-front",
+      "id": "saf.ratio_aristas",
+      "texto": "Ratio de aristas acotado.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "stitch-advancing-front",
+      "id": "saf.no_degenerados_winding",
+      "texto": "Área no degenerada, winding consistente, sin non-manifold ni bucles restantes.",
+      "umbral": "0",
+      "revision": null
+    },
+    {
+      "skill": "stitch-advancing-front",
+      "id": "saf.flags_promocion",
+      "texto": "No promover si self_intersections_checked, exported_glb_verified o artistic_references_approved = false.",
+      "umbral": "las 3 = true",
+      "revision": null
+    },
+    {
+      "skill": "stitch-advancing-front",
+      "id": "saf.determinismo",
+      "texto": "Mismos arrays → mismos índices de triángulo.",
+      "umbral": "igualdad",
+      "revision": null
+    },
+    {
+      "skill": "scully (Surface Sculpt)",
+      "id": "scully.presupuesto_desplazamiento",
+      "texto": "Desplazamiento máximo ≤ límite del plan; si se excede, rechazar sin recortar.",
+      "umbral": "≤ límite declarado en geometry_plan.json",
+      "revision": null
+    },
+    {
+      "skill": "scully (Surface Sculpt)",
+      "id": "scully.mascara_facciones",
+      "texto": "Vértices de ojos, boca, orejas y piezas congeladas sin desplazamiento.",
+      "umbral": "0",
+      "revision": null
+    },
+    {
+      "skill": "scully (Surface Sculpt)",
+      "id": "scully.exceso_medido",
+      "texto": "Requiere signed_excess_mm positivo medido y trazable antes de aplicar.",
+      "umbral": "> 0",
+      "revision": null
+    },
+    {
+      "skill": "scully (Surface Sculpt)",
+      "id": "scully.coordenadas",
+      "texto": "Coordenadas declaradas (glTF Y-up/m Maniquí; Z-up/mm otros).",
+      "umbral": "declarados",
+      "revision": null
+    },
+    {
+      "skill": "gltf-rig-guardian",
+      "id": "grg.atributos_materiales_morphs",
+      "texto": "UV, materiales, texturas y morph targets preservados; materiales por cara intactos.",
+      "umbral": "sin pérdidas",
+      "revision": null
+    },
+    {
+      "skill": "gltf-rig-guardian",
+      "id": "grg.godot_bones",
+      "texto": "Godot headless importa y cuenta 56 bones (personajes base 56).",
+      "umbral": "56 (según asset)",
+      "revision": null
+    },
+    {
+      "skill": "gltf-rig-guardian",
+      "id": "grg.gates",
+      "texto": "IMPORT_OK, ANIMATION_TRACKS_OK, DEFORMATION_OK, ATTRIBUTES_OK deben pasar (más VISUAL_CRITIC_OK).",
+      "umbral": "todos PASS",
+      "revision": null
+    },
+    {
+      "skill": "rig-architect",
+      "id": "ra.convenciones",
+      "texto": "Convenciones up/front/units declaradas.",
+      "umbral": "declarados",
+      "revision": null
+    },
+    {
+      "skill": "rig-architect",
+      "id": "ra.bind_pose_pesos",
+      "texto": "inverseBindMatrices, JOINTS_0 y WEIGHTS_0 normalizados; sin puntos de peso cero.",
+      "umbral": "a definir / 0",
+      "revision": null
+    },
+    {
+      "skill": "rig-architect",
+      "id": "ra.sin_mallas_partidas",
+      "texto": "Sin mallas partidas al exportar.",
+      "umbral": "igual",
+      "revision": null
+    },
+    {
+      "skill": "rig-architect",
+      "id": "ra.simetria",
+      "texto": "Tests de pesos/transformaciones/simetría.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "rig-architect",
+      "id": "ra.estres_articular",
+      "texto": "Estrés articular sin penetración ni pinzamiento en codos, rodillas, hombros, caderas, dedos.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "facial-acting",
+      "id": "facial.inventario_morphs",
+      "texto": "Inventariar los morph targets que realmente existen antes de editar.",
+      "umbral": "registrado",
+      "revision": null
+    },
+    {
+      "skill": "facial-acting",
+      "id": "facial.no_destruir_morphs",
+      "texto": "No destruir morph targets.",
+      "umbral": "sin pérdidas",
+      "revision": null
+    },
+    {
+      "skill": "facial-acting",
+      "id": "facial.clipping",
+      "texto": "Sin clipping de párpados, dientes/lengua, iris ni z-fighting en extremos (ojo izq/der, parpadeo completo, boca abierta, habla).",
+      "umbral": "0 (a definir)",
+      "revision": null
+    },
+    {
+      "skill": "facial-acting",
+      "id": "facial.orejas_fijas",
+      "texto": "Expresiones no desplazan orejas ni rompen unión craneofacial.",
+      "umbral": "0",
+      "revision": null
+    },
+    {
+      "skill": "facial-acting",
+      "id": "facial.parpadeo_completo",
+      "texto": "Parpadeo completo cierra el ojo.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "visual-critic",
+      "id": "vc.cobertura_total",
+      "texto": "Todas las referencias cubiertas; si falta vista/cámara/referencia → INCOMPLETE.",
+      "umbral": "100 %",
+      "revision": null
+    },
+    {
+      "skill": "visual-critic",
+      "id": "vc.peor_discrepancia",
+      "texto": "Gate sobre la peor referencia, no el promedio.",
+      "umbral": "a definir",
+      "revision": null
+    },
+    {
+      "skill": "visual-critic",
+      "id": "vc.matriz_anomalias",
+      "texto": "anomaly_cross_view_matrix cubre todos los IDs de referencia.",
+      "umbral": "100 %",
+      "revision": null
+    },
+    {
+      "skill": "visual-critic",
+      "id": "vc.procedencia_medicion",
+      "texto": "measurement_provenance con SHA-256, método, ejes y unidades.",
+      "umbral": "4/4",
+      "revision": null
+    },
+    {
+      "skill": "regional-cassettes",
+      "id": "reg.fuera_roi_identico",
+      "texto": "Todas las primitivas/atributos/animaciones fuera de la región, iguales.",
+      "umbral": "igualdad exacta",
+      "revision": null
+    },
+    {
+      "skill": "regional-cassettes",
+      "id": "reg.original_en_region",
+      "texto": "Si solo se añade piel, la geometría original de la región se conserva.",
+      "umbral": "igualdad",
+      "revision": null
+    },
+    {
+      "skill": "regional-cassettes",
+      "id": "reg.fallos_globales",
+      "texto": "Rechazo global si invade geometría congelada o rompe huesos/pesos, materiales, animaciones o integridad.",
+      "umbral": "0 cambios",
+      "revision": null
+    },
+    {
+      "skill": "regional-cassettes",
+      "id": "reg.no_global_approved",
+      "texto": "Reporte regional con global_model_approved=false; no llamar global_watertight a un parche con bordes laterales abiertos.",
+      "umbral": "false / coherente",
+      "revision": null
+    },
+    {
+      "skill": "regional-asset-qa",
+      "id": "rqa.global_safety",
+      "texto": "Siempre existe un auditor scope 'global_safety' (rig, materiales, vecinos, integridad, baseline).",
+      "umbral": "≥ 1",
+      "revision": null
+    },
+    {
+      "skill": "regional-asset-qa",
+      "id": "rqa.vecinos",
+      "texto": "Sin daño a vecinos, costuras entre piezas, UV, pesos ni animaciones.",
+      "umbral": "0",
+      "revision": null
+    },
+    {
+      "skill": "regional-model-auditor",
+      "id": "rma.vecino_nuevo_defecto",
+      "texto": "Defecto nuevo en un vecino afectado → BLOCKED_INTEGRATION.",
+      "umbral": "0 cambios",
+      "revision": null
+    },
+    {
+      "skill": "regional-model-auditor",
+      "id": "rma.indices_regiones_ajenas",
+      "texto": "Regiones ajenas no cambian ni pierden índices o atributos.",
+      "umbral": "igualdad",
+      "revision": null
+    },
+    {
+      "skill": "regional-model-auditor",
+      "id": "rma.registro",
+      "texto": "Registrar SHA base, SHA candidato, máscara ROI, desplazamiento local, nuevas aristas/caras.",
+      "umbral": "presentes",
+      "revision": null
+    },
+    {
+      "skill": "geometry-profiler",
+      "id": "prof.mismos_triangulos",
+      "texto": "Un candidato optimizado genera los mismos triángulos (hash determinista).",
+      "umbral": "igualdad",
+      "revision": null
+    },
+    {
+      "skill": "geometry-profiler",
+      "id": "prof.research_required",
+      "texto": "Sin contorno validado, con UV/skin no soportado, autointersección no auditada o Godot pendiente → RESEARCH_REQUIRED.",
+      "umbral": "todos resueltos",
+      "revision": null
+    }
+  ],
+  "checklist_skills": [
+    {
+      "skill": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "id": "rig.sin_colapso_articulaciones",
+      "texto": "Sin colapso de hombros, codos, rodillas, muñecas o comisuras; sin torsión severa.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "id": "rig.expresiones_compuestas",
+      "texto": "Guiño = blink unilateral + squint + cheekRaise; soplar, silbar, bizco, ojos en blanco legibles.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.membranas_U",
+      "texto": "Membranas interdigitales curvas en U, no gruesas en V; palma no cuadrada.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.cuello_no_cilindrico",
+      "texto": "Cuello orgánico continuo con mandíbula/clavícula, no cilindro incrustado.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "id": "anat.silueta_multivista",
+      "texto": "Contornos coherentes en frente, perfil, espalda y 3/4; revisión humana aprobada.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "/asset (comando)",
+      "id": "asset.reconocible",
+      "texto": "Se reconoce qué es sin leer el nombre; coincide en silueta, proporciones y colores.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "/asset (comando)",
+      "id": "asset.legible_frente_34",
+      "texto": "Detalles legibles de frente y 3/4 a 400 px.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "revisar-alth + agente revisor-visual-alth",
+      "id": "rev.identidad",
+      "texto": "Identidad/semejanza reconocible es la prioridad 1; fallo de identidad = REHACER.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "revisar-alth + agente revisor-visual-alth",
+      "id": "rev.silueta_proporciones",
+      "texto": "Silueta y proporciones correctas en las cuatro vistas; luego cara, pelo, vestuario.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "revisar-alth + agente revisor-visual-alth",
+      "id": "rev.iou_no_aprueba",
+      "texto": "VERIFICACION OK e IoU son evidencia, no aprobación artística.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "finalizar-personaje",
+      "id": "fin.brief_contrato",
+      "texto": "Theo: brief_final.md es contrato obligatorio de la ronda.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "copox-auditoria-3d",
+      "id": "aud.comparacion_artistica",
+      "texto": "Comparar contra referencia artística aprobada; promoción solo con Admin.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "copox-procedencia-3d",
+      "id": "proc.clasificacion",
+      "texto": "Cada componente (malla, textura, material, rig, animación) clasificado VERIFICADO_PROPIO / TERCERO_CONDICIONES / SIN_VERIFICAR / ORIGEN_MIXTO con SHA/URL/fecha.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "copox-procedencia-3d",
+      "id": "proc.no_independencia_por_cambio",
+      "texto": "Nunca deducir independencia por % de cambio o distancia de silueta.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "copox-procedencia-3d",
+      "id": "proc.no_desbloquea_promocion",
+      "texto": "La revisión de procedencia no sustituye QA artístico ni Godot.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "anatomic-cut",
+      "id": "cut.no_por_una_silueta",
+      "texto": "No eliminar facciones por una única silueta lateral; comparar todas las vistas/poses.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "scully (Surface Sculpt)",
+      "id": "scully.cambio_no_es_mejora",
+      "texto": "Cambio visible ≠ mejora; contrastar con todas las referencias.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "rig-architect",
+      "id": "ra.proporcion_chibi",
+      "texto": "Movimiento optimizado para la silueta estilizada ('avatar de dos cabezas').",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "facial-acting",
+      "id": "facial.identidad_sobria",
+      "texto": "Preservar identidad chibi-soft; evitar expresiones demasiado tiernas si el brief pide sobriedad.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "visual-critic",
+      "id": "vc.renders_reales",
+      "texto": "Renders reales del GLB, no imágenes generadas; no mezclar fotos y PNG generados como mismo ángulo.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "visual-critic",
+      "id": "vc.bultos_curvatura",
+      "texto": "Buscar bultos, hundimientos, huecos, asimetrías, fragmentos flotantes en múltiples proyecciones.",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "regional-cassettes",
+      "id": "reg.lamina_triangulos_nuevos",
+      "texto": "Captura que destaque solo triángulos nuevos (4 vistas).",
+      "umbral": "-",
+      "revision": null
+    },
+    {
+      "skill": "regional-asset-qa",
+      "id": "rqa.cuatro_puertas",
+      "texto": "Cuatro puertas distintas: técnica local, artística local, integración, autorización humana.",
+      "umbral": "-",
+      "revision": null
+    }
+  ]
+}
