@@ -1,5 +1,5 @@
 {
-  "nombre": "ALASTOR_V01",
+  "nombre": "ALASTOR_V02",
   "descripcion": "Alastor Kleinteil (El brillo ausente). Desde los renders originales (refs/personajes/alastor/originales/). SIN APROBAR.",
   "base": null,
   "pelo": "alastor",
@@ -31,8 +31,8 @@
     "params": {
       "camisa": {
         "hol": 0.006,
-        "hol_manga": 0.0065,
-        "manga": 0.262,
+        "hol_manga": 0.008,
+        "manga": 0.29,
         "puno": 0.012,
         "meter": 0.0025,
         "hol_cuello": 0.0055,
@@ -52,7 +52,7 @@
         "punta_y": 0.33
       },
       "pelo": {
-        "color": "#72432B"
+        "color": "#4A3220"
       }
     }
   },
@@ -60,7 +60,7 @@
     "tipo": "personaje",
     "ref": "refs/personajes/alastor/originales/alastor-tres-cuartos.jpg",
     "ref_2x2": false,
-    "brief": "abrigo,gafas,pelo_alastor,ropa_capas,zapato,pelvis",
+    "brief": "abrigo,gafas,pelo_alastor,cara_alastor,ropa_capas,zapato,pelvis",
     "gif": [
       "Walk-loop",
       "Run-loop",
@@ -69,9 +69,9 @@
   },
   "publicar": {
     "carpeta": "alastor",
-    "nombre": "ALASTOR_V01",
-    "nota": "primera versión desde los renders originales",
+    "nombre": "ALASTOR_V02",
+    "nota": "ronda integral tras REHACER del revisor: cara propia (ceño, boca recta, cejas gruesas, sin rubor), pelo en bloques romos chocolate sin flequillo, rizo en C con volumen, mangas largas, cuello y solapas, hebilla grande, gafas pegadas con varillas a la oreja",
     "estado": "SIN APROBAR",
-    "pedido": "Admin: «Martillo a Alastor» · «Básate en los renders originales»"
+    "pedido": "Admin: «B» (cara propia de Alastor) sobre la ronda propuesta"
   }
 }

@@ -18,15 +18,14 @@ V47 = os.environ.get("ALTH_ADAN_V47", "/home/claude/build43/ADAN_V47.glb")   # b
 # cae sobre la frente a su derecha; lados cortos sobre la oreja. Sin espalda en los originales: bloques a la nuca.
 # (az_raíz, el_raíz, az_punta, el_punta, ancho_mm, grueso_mm, despega[, giro]); az 0 = frente, +90 = su izquierda (+x)
 MECHONES = [
-    (-30, 66, 70, 60, 120, 32, 0.0), (-10, 74, 110, 52, 120, 32, 0.0), (-50, 66, 40, 76, 100, 30, 0.0),
-    (0, 76, 150, 70, 120, 32, 0.0),
-    (-14, 82, -34, 40, 72, 36, 0.030, -35),                       # el rizo en «C» sobre la frente (despegado)
-    (70, 60, 96, 14, 90, 30, 0.010), (-70, 60, -92, 12, 60, 20, 0.004),
-    (110, 52, 118, -8, 70, 22, 0.004), (-110, 52, -118, -8, 70, 22, 0.004),
-    (-140, 64, -146, -34, 110, 26, 0.008), (140, 64, 146, -34, 110, 26, 0.008), (180, 68, 180, -38, 116, 26, 0.008),
+    # v02 (revisor: «bloques grandes y romos, frente despejada, volumen a su izquierda»): pocos bloques anchos y altos
+    (-30, 70, 10, 92, 170, 52, 0.0), (-10, 74, 60, 86, 170, 52, 0.0),            # copete: sube desde la frente
+    (20, 70, 110, 60, 160, 50, 0.0), (60, 62, 120, 30, 150, 50, 0.014),         # su izquierda: masa que abulta
+    (-60, 66, -110, 40, 130, 42, 0.004), (0, 84, 180, 62, 170, 50, 0.0),
+    (-120, 60, -150, -30, 150, 40, 0.006), (120, 60, 150, -30, 150, 40, 0.006), (180, 66, 180, -36, 160, 40, 0.006),
 ]
-PELO = dict(color="#69472D", escala=1.75, afilar=0.15, punta=0.60,           # marron_calido/4
-            volumen=dict(corona=0.034, lados=0.004, el0=10.0, el1=70.0))
+PELO = dict(color="#4A3220", escala=1.55, afilar=0.0, punta=1.0,              # marron_calido/5 (chocolate)
+            volumen=dict(corona=0.050, lados=0.004, el0=10.0, el1=70.0))
 
 
 def pelo(E, carpeta):
@@ -36,7 +35,7 @@ def pelo(E, carpeta):
                    volumen=PELO["volumen"])
 
 
-RIZO = dict(centro=(-0.048, 0.712), radio=0.042, z=0.150, ang=(40.0, 290.0), ancho=(0.032, 0.012), grueso=0.024, n=14)
+RIZO = dict(centro=(-0.032, 0.742), radio=0.050, z=0.160, ang=(50.0, 300.0), ancho=(0.048, 0.020), grueso=0.040, n=16)
 
 
 def _barrido(C, anchos, gruesos, eje_z=np.array([0, 0, 1.0])):
@@ -66,7 +65,8 @@ def rizo(E):
     r = RIZO
     th = np.radians(np.linspace(r["ang"][0], r["ang"][1], r["n"]))
     rad = r["radio"] * np.linspace(1.0, 0.75, r["n"])
-    C = np.c_[r["centro"][0] + rad * np.cos(th), r["centro"][1] + rad * np.sin(th), r["z"] + np.linspace(0.006, -0.002, r["n"])]
+    hund = np.interp(np.arange(r["n"]), [0, r["n"] / 3, r["n"]], [-0.022, 0.004, -0.002])   # la raíz nace DENTRO del pelo
+    C = np.c_[r["centro"][0] + rad * np.cos(th), r["centro"][1] + rad * np.sin(th), r["z"] + hund]
     an = np.linspace(r["ancho"][0], r["ancho"][1], r["n"]); gr = np.linspace(r["grueso"], r["grueso"] * 0.6, r["n"])
     V, T = _barrido(C, an, gr)
     c0 = C.mean(0)
@@ -105,11 +105,11 @@ COL = {"camisa": "#FBEFE1", "corbata": "#232026", "pantalon": "#2C2320", "boton"
        "abrigo": "#3A2F2A", "solapa": "#2C2320", "cinturon": "#5F4338", "hebilla": "#9A7B3C",   # uniforme_policia,
        "gafas": "#1F1916"}                                                                       # negro_calido 3/4/5…
 TELA = {"abrigo": "lana_cerrada", "solapa": "lana_cerrada", "cinturon": "cuero", "hebilla": "cuero", "gafas": "cuero"}
-ABRIGO = dict(capa=0.0070, y_bajo=0.118, cintura=0.300, vuelo=0.030, k=0.012, manga=0.256, cuello=0.0075,
+ABRIGO = dict(capa=0.0070, y_bajo=0.118, cintura=0.300, vuelo=0.030, k=0.012, manga=0.282, cuello=0.0110,
               abertura=((0.10, 0.062), (0.22, 0.046), (0.30, 0.040), (0.40, 0.030), (0.47, 0.040)),
-              solapa_ancho=0.032, solapa_y=(0.474, 0.355), tris=8000)
-CINTURON = dict(y=0.274, alto=0.013, sobre=0.0030, hebilla=(0.018, 0.013, 0.0035))
-GAFAS = dict(ancho=0.106, alto=0.086, grueso=0.0125, fondo=0.010, radio=0.015, sobre=0.011, puente=0.012,
+              solapa_ancho=0.042, solapa_y=(0.474, 0.355), tris=8000)
+CINTURON = dict(y=0.274, alto=0.016, sobre=0.0030, hebilla=(0.028, 0.021, 0.0055))
+GAFAS = dict(ancho=0.106, alto=0.086, grueso=0.0125, fondo=0.010, radio=0.015, sobre=0.005, puente=0.012,
              varilla=0.0070, z_oreja=0.010)
 
 
@@ -144,7 +144,7 @@ def abrigo(E, carpeta):
         abierto = np.maximum(x - _w_abertura(y), 0.004 - z)                              # abierto al frente
         d = np.maximum.reduce([d, hueco, -abierto])
         # cuello del abrigo: banda alta alrededor del cuello de la camisa, abierta al frente
-        cue = np.maximum.reduce([U["t_cuello"].sdf(P) - a["cuello"], np.abs(y - 0.488) - 0.020,
+        cue = np.maximum.reduce([U["t_cuello"].sdf(P) - a["cuello"], np.abs(y - 0.492) - 0.024,
                                  -np.maximum(x - 0.030, 0.010 - z), -(U["t_cuello"].sdf(P) - 0.0015)])
         return np.minimum(d, cue)
     V, T, N = v3._malla(sdf, (-0.29, a["y_bajo"] - 0.01, -0.10), (0.29, 0.515, 0.15), a["tris"], carpeta)
@@ -160,7 +160,7 @@ def abrigo(E, carpeta):
         anch = a["solapa_ancho"] * (1 - 0.85 * (y0 - ys) / (y0 - y1))
         L = np.array([[sg * (wi + 0.001), yi, (rt.superficie_z(sdf, sg * (wi + 0.004), yi) or 0.05) + 0.0012] for wi, yi in zip(w, ys)])
         R = np.array([[sg * (wi + an), yi, (rt.superficie_z(sdf, sg * (wi + an), yi) or 0.05) + 0.0012] for wi, an, yi in zip(w, anch, ys)])
-        v, t = rc.placa(L, R, 0.0022, lambda q: np.array([0, 0.2, 1.0]) / np.hypot(0.2, 1.0))
+        v, t = rc.placa(L, R, 0.0040, lambda q: np.array([0, 0.2, 1.0]) / np.hypot(0.2, 1.0))
         Vs.append(v); Ts.append(t + o); o += len(v)
     prims.append(v2._prim(E, np.vstack(Vs), np.vstack(Ts), None, [pz["Torso_PIEL"], pz["Cuello"]], nombres, mats["solapa"],
                           "ALASTOR_SOLAPAS", tt.ESCALAS["lana_cerrada"]))
@@ -259,8 +259,11 @@ def gafas(E):
         piezas.append(_caja(np.array([sg * (xo + 0.004), yv, z]), (0.010, g["varilla"] * 1.5, g["fondo"])))
         piezas.append(_viga(np.array([sg * (xo + 0.006), yv, z - g["fondo"] / 2]),
                             np.array([sg * x_lado, yv, min(z_frente_lado, z - 0.01)]), g["varilla"]))
+        oreja = cab[(sg * cab[:, 0] > np.abs(cab[:, 0]).max() - 0.004)]
+        z_or = float(np.median(oreja[:, 2])) if len(oreja) else g["z_oreja"]
+        y_or = float(oreja[:, 1].max()) if len(oreja) else yv - 0.004
         piezas.append(_viga(np.array([sg * x_lado, yv, min(z_frente_lado, z - 0.01)]),
-                            np.array([sg * x_lado, yv - 0.004, g["z_oreja"]]), g["varilla"]))
+                            np.array([sg * x_lado, min(yv, y_or + 0.004), z_or]), g["varilla"]))
     V, T, o = [], [], 0
     for v, t in piezas:
         V.append(v); T.append(t + o); o += len(v)
@@ -279,6 +282,52 @@ def gafas(E):
             "centro": [round(float(x), 4) for x in c0]}
 
 
+CARA = dict(morphs={"ceja_ceno_L": 0.85, "ceja_ceno_R": 0.85, "parpado_enojo_L": 0.20, "parpado_enojo_R": 0.20,
+                    "comisura_abajo_L": 0.35, "comisura_abajo_R": 0.35, "boca_tensa": 0.30, "boca_estrecha": 0.25},
+            ceja_grosor=1.45, ceja_largo=1.12, rubor=False)
+
+
+def cara(E):
+    """Cara propia de Alastor (Admin: opción B; brief cara_alastor.md): hornea pesos de morph en la pose de reposo de la
+    cabeza, engrosa los bloques de ceja y quita el rubor. Los morphs siguen encima (la animación facial no se pierde)."""
+    import receta_adan_v24 as v24
+    import receta_adan_v39 as v39
+    from copox.medicion.gltf import accesor
+    j = E.j
+    malla = next(m for m in j["meshes"] if m.get("name") == "ADAN_CUERPO") if any(m.get("name") == "ADAN_CUERPO" for m in j["meshes"]) else j["meshes"][0]
+    nombres_t = malla.get("extras", {}).get("targetNames", [])
+    pesos = {nombres_t.index(k): w for k, w in CARA["morphs"].items() if k in nombres_t}
+    log = {"operacion": "cara de Alastor", "morphs": {nombres_t[i]: w for i, w in pesos.items()}, "piezas": 0}
+    for p in malla["primitives"]:
+        if not p.get("targets"):
+            continue
+        V = v39._leer(E, p, "POSITION").astype(np.float64)
+        dV = np.zeros_like(V)
+        for i, w in pesos.items():
+            t = p["targets"][i]
+            if "POSITION" in t:
+                dV += w * accesor(j, E.b, t["POSITION"]).astype(np.float64)
+        mat = j["materials"][p["material"]]["name"]
+        if mat == "CEJA_BLOQUE":                       # cejas más gruesas (alto) y un poco más largas
+            Vn = V + dV
+            c = Vn.mean(0)
+            Vn = c + (Vn - c) * np.array([CARA["ceja_largo"], CARA["ceja_grosor"], 1.0])
+            dV = Vn - V
+        if not np.abs(dV).max() > 0:
+            continue
+        acc = j["accessors"][p["attributes"]["POSITION"]]
+        Vn = (V + dV).astype(np.float32)
+        p["attributes"]["POSITION"] = E._add(Vn, "VEC3", 34962, True)
+        log["piezas"] += 1
+        if not CARA["rubor"] and "COLOR_0" in p["attributes"] and p.get("extras", {}).get("pieza") == "Cabeza_PIEL_EXPUESTA_v04":
+            C = v39._leer(E, p, "COLOR_0").astype(np.float32)
+            C[:, :3] = 1.0
+            p["attributes"]["COLOR_0"] = v24._add_raw(E, np.ascontiguousarray(C), 5126, "VEC4", 34962)
+            log["rubor"] = "fuera"
+    E.b = bytes(E.out)
+    return log
+
+
 def main(src, dst):
     """Alastor completo sobre la base congelada. Los parámetros los pone la ficha (copox.avatar)."""
     from copox.medicion import rostro_edicion as re
@@ -287,7 +336,7 @@ def main(src, dst):
     import vestir_theo_v3 as v3
     carpeta = os.path.dirname(os.path.abspath(dst))
     E = re.Editor(src)
-    log = [pelo(E, carpeta), rizo(E)]
+    log = [cara(E), pelo(E, carpeta), rizo(E)]
     v3.CHA["usar"] = False
     try:
         log.append(v3.vestir(E, carpeta))
