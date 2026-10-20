@@ -278,9 +278,9 @@ def rev_flotantes(glb, base=None, **_):
             continue
         resto = np.vstack([Q for k, (_, Q, _n) in enumerate(Ps) if k != i])
         d, _ = cKDTree(resto).query(P[:: max(1, len(P) // 2000)])
-        if d.min() > 0.003:
+        if d.min() > 0.006:          # entre VÉRTICES: las piezas low-poly tienen vértices a ~3–5 mm aunque se toquen
             sueltas.append(f"{nom}: {d.min() * 1000:.1f} mm")
-    return _r("sin_flotantes", "FAIL" if sueltas else "PASS", len(sueltas), "0 piezas a más de 3 mm", sueltas,
+    return _r("sin_flotantes", "FAIL" if sueltas else "PASS", len(sueltas), "0 piezas a más de 6 mm (vértice a vértice)", sueltas,
               fuente="asset.sin_flotantes")
 
 
@@ -309,6 +309,113 @@ def rev_brief(brief=None, **_):
               ["RESEARCH_REQUIRED: " + t for t in faltan], fuente="CLAUDE.md, skill investigar-referencias")
 
 
+def _dentro_por_paridad(Q, V, T, d=np.array([0.31, 0.94, 0.13])):
+    """Punto dentro de una malla cerrada: número impar de cruces de un rayo."""
+    d = d / np.linalg.norm(d)
+    A, B, C = V[T[:, 0]], V[T[:, 1]], V[T[:, 2]]
+    e1, e2 = B - A, C - A
+    p = np.cross(d, e2); det = (p * e1).sum(1)
+    ok = np.abs(det) > 1e-14
+    inv = np.where(ok, 1 / np.where(ok, det, 1), 0)
+    q1 = np.cross(e1, d)
+    out = np.zeros(len(Q), bool)
+    for k in range(0, len(Q), 64):
+        s_ = Q[k:k + 64, None, :] - A[None]
+        u = (s_ * p[None]).sum(2) * inv
+        q = np.cross(s_, e1[None])
+        v = (q * d).sum(2) * inv
+        t = (q * e2[None]).sum(2) * inv
+        n = (ok & (u >= 0) & (v >= 0) & (u + v <= 1) & (t > 1e-7)).sum(1)
+        out[k:k + 64] = n % 2 == 1
+    return out
+
+
+def _cerrada(T, V=None):
+    if V is not None:                                  # mallas facetadas: soldar por posición
+        _, inv = np.unique(np.round(V, 6), axis=0, return_inverse=True)
+        T = inv.ravel()[T]
+    e = np.sort(np.vstack([T[:, [0, 1]], T[:, [1, 2]], T[:, [2, 0]]]), 1)
+    _, c = np.unique(e, axis=0, return_counts=True)
+    return bool((c == 2).all())
+
+
+POSES = ((None, 0.0), ("Walk-loop", 0.25), ("Walk-loop", 0.75), ("Run-loop", 0.3), ("Sit-pose", 0.5))
+PARES = (("piel", "CAPA_CAMISA"), ("CAPA_CAMISA", "CAPA_CHALECO"), ("piel", "CAPA_PANTALON"),
+         ("PIES_ZAPATO", "CAPA_PANTALON"))
+
+
+def _grupos(M):
+    g = {}
+    for i, p in enumerate(M.prims):
+        nd = M.j["nodes"][p.nodo]
+        if not nd.get("extensions", {}).get("KHR_node_visibility", {}).get("visible", True):
+            continue
+        nombre = nd.get("name", "")
+        clave = "piel" if "PIEL" in p.material.get("name", "").upper() and nombre == "ADAN_CUERPO" else nombre
+        g.setdefault(clave, []).append(i)
+    return g
+
+
+def rev_capas(glb, umbral=0.01, tol=0.0015, **_):
+    """Ropa por capas (skills vestuario.sin_clipping_poses_extremas, cloth.clipping_transiciones): en reposo, Walk,
+    Run y Sit la capa de afuera no queda dentro de la de abajo. Por cada vértice de afuera cerca (< 1 cm) de la de
+    abajo: distancia con signo sobre la normal de la de abajo; penetra si < −tol. FAIL si > 1 % en algún par/pose."""
+    from scipy.spatial import cKDTree
+    from copox.medicion.gltf import Modelo
+    M = Modelo(glb)
+    g = _grupos(M)
+    pares = [(a, b) for a, b in PARES if a in g and b in g]
+    if not pares:
+        return _r("capas_sin_atravesar", "N-A", detalle="sin prendas por capas")
+    peor, detalle = 0.0, []
+    for clip, fr in POSES:
+        if clip and clip not in M.clips and clip.replace("-loop", "") not in M.clips:
+            continue
+        pos = M.posar(clip, fr) if clip else M.posar(None, 0.0)
+        for a, b in pares:
+            Va = np.vstack([pos[i] for i in g[a]])
+            Ta = np.vstack([M.prims[i].indices + sum(len(pos[k]) for k in g[a][:n]) for n, i in enumerate(g[a])])
+            fn = np.cross(Va[Ta[:, 1]] - Va[Ta[:, 0]], Va[Ta[:, 2]] - Va[Ta[:, 0]])
+            Na = np.zeros_like(Va)
+            for c in range(3):
+                np.add.at(Na, Ta[:, c], fn)
+            Na /= np.maximum(np.linalg.norm(Na, axis=1, keepdims=True), 1e-12)
+            Vb = np.vstack([pos[i] for i in g[b]])
+            Tb = np.vstack([M.prims[i].indices + sum(len(pos[k]) for k in g[b][:n]) for n, i in enumerate(g[b])])
+            fb = np.cross(Vb[Tb[:, 1]] - Vb[Tb[:, 0]], Vb[Tb[:, 2]] - Vb[Tb[:, 0]])
+            Nb = np.zeros_like(Vb)
+            for c in range(3):
+                np.add.at(Nb, Tb[:, c], fb)
+            Nb /= np.maximum(np.linalg.norm(Nb, axis=1, keepdims=True), 1e-12)
+            sel = np.ones(len(Vb), bool)
+            if b == "CAPA_PANTALON" and a == "PIES_ZAPATO":
+                sel &= Vb[:, 1] < 0.12
+            d, j = cKDTree(Va).query(Vb, distance_upper_bound=0.01)
+            # solo la cara de AFUERA de la prenda (las paredes de los cortes van hacia adentro, ocultas, a propósito)
+            cerca = np.isfinite(d) & sel
+            cerca[cerca] &= np.einsum("ij,ij->i", Nb[cerca], Na[j[cerca]]) > 0.5
+            if not cerca.any():
+                continue
+            s_ = np.einsum("ij,ij->i", Vb[cerca] - Va[j[cerca]], Na[j[cerca]])
+            sosp = s_ < -tol
+            # si la capa de abajo es cerrada (zapato), se confirma con paridad de rayo: la normal del vértice más
+            # cercano engaña junto a las aristas
+            if sosp.any() and all(_cerrada(M.prims[i].indices, M.prims[i].pos) for i in g[a]):
+                Qs = Vb[cerca][sosp]
+                conf = np.zeros(len(Qs), bool)
+                o = 0
+                for i in g[a]:
+                    conf |= _dentro_por_paridad(Qs, pos[i], M.prims[i].indices)
+                sosp[np.nonzero(sosp)[0][~conf]] = False
+            f = float(sosp.mean())
+            if f > peor:
+                peor = f
+            if f > umbral:
+                detalle.append(f"{b} dentro de {a} en {clip or 'reposo'} {fr}: {f:.1%}")
+    return _r("capas_sin_atravesar", "FAIL" if detalle else "PASS", round(peor, 4), f"≤ {umbral:.0%} por par y pose",
+              detalle[:10], fuente="vestuario.sin_clipping_poses_extremas, cloth.clipping_transiciones")
+
+
 def deuda_base(base):
     """Lo que la base ya trae mal (no veta al asset; se reporta para arreglarlo en el cuerpo)."""
     if not base or not os.path.exists(base):
@@ -325,6 +432,7 @@ REVISIONES = {
     "pelo_resortes": (rev_resortes, ("personaje", "pelo")),
     "integridad_gltf": (rev_integridad, TIPOS),
     "research_brief": (rev_brief, TIPOS),
+    "capas_sin_atravesar": (rev_capas, ("personaje", "ropa")),
     "pesos_normalizados": (rev_pesos, ("personaje", "pelo", "ropa", "calzado", "animacion")),
     "cinco_dedos": (rev_dedos, ("personaje", "animacion")),
     "base_preservada": (rev_preservado, ("personaje", "pelo", "ropa", "calzado", "animacion")),

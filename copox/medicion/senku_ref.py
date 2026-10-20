@@ -146,14 +146,23 @@ def malla_visible(glb, ocultar=(), y_min=None, y_max=None):
     return np.vstack(Vs), np.vstack(Ts)
 
 
+ANGULOS = {"frente": (0.0, 0.0), "perfil": (90.0, 0.0), "espalda": (180.0, 0.0)}   # (giro, elevación) en grados
+
+
+def _uvd(P, giro, elev):
+    """Ortográfica con cámara girada `giro` alrededor de y (0 = frente, 90 = lado derecho del personaje) y elevada
+    `elev` (mira hacia abajo). -> u (derecha), v (arriba), profundidad (hacia la cámara)."""
+    a, e = np.radians(giro), np.radians(elev)
+    u = P[:, 0] * np.cos(a) + P[:, 2] * np.sin(a)
+    prof = -P[:, 0] * np.sin(a) + P[:, 2] * np.cos(a)
+    v = P[:, 1] * np.cos(e) - prof * np.sin(e)
+    prof2 = prof * np.cos(e) + P[:, 1] * np.sin(e)
+    return u, v, prof2
+
+
 def _uv(P, vista):
-    if vista == "frente":
-        return P[:, 0], P[:, 1]
-    if vista == "espalda":
-        return -P[:, 0], P[:, 1]
-    if vista == "perfil":                                    # lado derecho del personaje: la nariz mira a la derecha
-        return P[:, 2], P[:, 1]
-    raise ValueError(vista)
+    u, v, _ = _uvd(P, *ANGULOS[vista])
+    return u, v
 
 
 # ── alineación ──────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -223,13 +232,55 @@ def _cols(m, f0, f1):
     return float(cols.min()), float(cols.max())
 
 
+def calibrar_tres_cuartos(glb, hoja, al, giros=range(-60, -19, 5), elevs=(12, 20, 28, 36, 44), escalas=(0.9, 1.0, 1.1),
+                          ocultar=()):
+    """La celda de 3/4 no trae ángulo: se busca (giro, elevación) y posición que mejor calcan el CUERPO del modelo
+    (sin cabeza ni pelo: lo que se va a medir no se usa para alinear) contra el cuerpo de la hoja. Escala = frente.
+    Guarda el ángulo en ANGULOS y la alineación en `al`. -> dict con el resultado."""
+    from scipy.ndimage import binary_dilation
+    if "tres_cuartos" not in hoja or "frente" not in al:
+        return None
+    r = hoja["tres_cuartos"]
+    ref = r["objeto"] & ~binary_dilation(r["cabeza"], iterations=6)
+    J = esqueleto(glb)
+    y_cuello = float(J["Neck"][1]) if "Neck" in J else 0.47
+    V, T = malla_visible(glb, ocultar, y_max=y_cuello)
+    e0 = al["frente"][0]
+    H, W = ref.shape
+    F_ref = np.fft.rfft2(ref.astype(np.float32))
+    mejor = None
+    for g in giros:
+      for el in elevs:
+        for fe in escalas:
+            e = e0 * fe
+            ANGULOS["tres_cuartos"] = (float(g), float(el))
+            u, v, _ = _uvd(V, g, el)
+            u0 = W / 2 - (u.min() + u.max()) / 2 * e
+            piso = H / 2 + (v.min() + v.max()) / 2 * e
+            m = mascara_modelo(V, T, "tres_cuartos", {"tres_cuartos": (e, u0, piso)}, ref.shape)
+            # mejor desplazamiento por correlación (FFT): máximo solapamiento
+            corr = np.fft.irfft2(F_ref * np.conj(np.fft.rfft2(m.astype(np.float32))), s=ref.shape)
+            dy, dx = np.unravel_index(np.argmax(corr), corr.shape)
+            dy = dy - H if dy > H // 2 else dy
+            dx = dx - W if dx > W // 2 else dx
+            inter = corr.max()
+            iou = inter / (ref.sum() + m.sum() - inter)
+            if mejor is None or iou > mejor[0]:
+                mejor = (float(iou), float(g), float(el), u0 + dx, piso + dy, e)
+    iou, g, el, u0, piso, e = mejor
+    ANGULOS["tres_cuartos"] = (g, el)
+    al["tres_cuartos"] = (e, u0, piso)
+    return {"giro": g, "elevacion": el, "escala_rel": round(e / e0, 3), "iou_cuerpo": round(iou, 4),
+            "aviso": "la celda de 3/4 tiene perspectiva fuerte; la ortográfica solo la aproxima"}
+
+
 # ── comparación ─────────────────────────────────────────────────────────────────────────────────────────────────────
 def mascara_modelo(V, T, vista, al, forma):
     from ..render.raster import rasterizar
-    e, u0, piso = al[vista]
-    u, y = _uv(V, vista)
+    e, u0, piso = al[vista][:3]
+    u, y, prof = _uvd(V, *ANGULOS[vista])
     X = (u0 + u * e)[T]; Y = (piso - y * e)[T]
-    prof = {"frente": V[:, 2], "espalda": -V[:, 2], "perfil": -V[:, 0]}[vista][T]
+    prof = prof[T]
     tri, _, _ = rasterizar(X, Y, prof, forma)
     return tri >= 0
 
@@ -237,20 +288,20 @@ def mascara_modelo(V, T, vista, al, forma):
 def comparar(V, T, hoja, al, clave="objeto", franjas=None, salida=None):
     """IoU por vista (clave = 'objeto' o 'cabeza'); franjas = {nombre: (y_min_u, y_max_u)} en unidades del modelo."""
     res, imgs = {}, []
-    for v in VISTAS_ORTO:
+    for v in VISTAS_ORTO + (("tres_cuartos",) if "tres_cuartos" in al else ()):
         if v not in al:
             res[v] = "N-A"
             continue
         m_ref = hoja[v][clave]
         m_mod = mascara_modelo(V, T, v, al, m_ref.shape)
         fila = {"iou": _iou(m_ref, m_mod)}
-        e, u0, piso = al[v]
+        e, u0, piso = al[v][:3]
         for nombre, (y0, y1) in (franjas or {}).items():
             a = int(max(piso - y1 * e, 0)); b = int(min(piso - y0 * e, m_ref.shape[0]))
             fila[nombre] = _iou(m_ref[a:b], m_mod[a:b])
         res[v] = fila
         imgs.append(_overlay(m_ref, m_mod))
-    vals = [res[v]["iou"] for v in VISTAS_ORTO if isinstance(res[v], dict)]
+    vals = [res[v]["iou"] for v in res if isinstance(res[v], dict)]
     res["media"] = round(float(np.mean(vals)), 4) if vals else "N-A"
     if salida and imgs:
         hmax = max(i.size[1] for i in imgs)

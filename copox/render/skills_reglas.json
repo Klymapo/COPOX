@@ -101,7 +101,8 @@
           ],
           "metrica": "distancia firmada mínima prenda→cuerpo/proxy en poses extremas y clips (vértices dentro del cuerpo)",
           "umbral": "a definir (texto: márgenes 'pequeños pero positivos')",
-          "fuente": "\"Resolver clipping en el espacio de las poses extremas, no solo en T-pose\" (doc §3e); \"deformaciones extremas sin clipping\" (§7)"
+          "fuente": "\"Resolver clipping en el espacio de las poses extremas, no solo en T-pose\" (doc §3e); \"deformaciones extremas sin clipping\" (§7)",
+          "revision": "capas_sin_atravesar"
         },
         {
           "id": "vestuario.sin_interseccion_inicial",
@@ -113,7 +114,8 @@
           ],
           "metrica": "nº de vértices de prenda dentro del cuerpo en rest pose",
           "umbral": "0",
-          "fuente": "\"Evitar comenzar con intersecciones\" (doc §13.4)"
+          "fuente": "\"Evitar comenzar con intersecciones\" (doc §13.4)",
+          "revision": "capas_sin_atravesar"
         },
         {
           "id": "vestuario.proxy_colision_separado",
@@ -2575,7 +2577,8 @@
           ],
           "metrica": "penetración/intersección por frame en walk/run/sit/stand/turn/jump",
           "umbral": "a definir",
-          "fuente": "(paso 5, 7)"
+          "fuente": "(paso 5, 7)",
+          "revision": "capas_sin_atravesar"
         },
         {
           "id": "cloth.contactos",

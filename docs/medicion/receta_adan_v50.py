@@ -26,13 +26,13 @@ import receta_adan_v49 as v49  # noqa: E402
 
 PELVIS = dict(
     y_top=0.292, y_troc=0.214, y_pubis=0.196, y_bot=0.184,       # alturas (u del GLB)
-    ancho_top=0.080, ancho_troc=0.108, ancho_bot=0.014,           # medio ancho
+    ancho_top=0.086, ancho_troc=0.122, ancho_bot=0.014,           # medio ancho
     fondo_top=0.058, fondo_troc=0.060, fondo_bot=0.030,           # medio fondo
     zc=0.020, inclinacion=12.0, n=2.6,                             # centro z, grados hacia adelante, superelipse
-    asis=(0.068, 0.258), surco_prof=0.0028, surco_ancho=0.0075,    # línea inguinal
+    asis=(0.084, 0.272), surco_prof=0.0042, surco_ancho=0.0085,    # línea inguinal
     gluteo=dict(x=0.040, y=0.218, z=-0.024, r=(0.044, 0.040, 0.022), pliegue_y=0.188, pliegue_prof=0.0018),
-    k_cuerpo=0.020, k_gluteo=0.012, arriba=0.318, abajo=0.168, hundir=0.0022, costura=0.202, costura_torso=0.300)
-MUSLO = dict(x=0.078, z=0.024, rx=0.047, rz=0.048, n=3.0, y0=0.10, y1=0.25)   # medido en la pierna de V49 (y 0.15–0.17)
+    k_cuerpo=0.020, k_gluteo=0.012, arriba=0.318, abajo=0.150, hundir=0.0022, costura=0.172, costura_torso=0.300, k_union=0.010)
+MUSLO = dict(x=0.078, z=0.024, rx=0.047, rz=0.048, n=3.0, y0=0.10, y1=0.30)   # medido en la pierna de V49 (y 0.15–0.17)
 TRIS = dict(pelvis=3600)
 
 
@@ -99,32 +99,45 @@ class PelvisAnatomica:
             k = (qx ** m["n"] + qz ** m["n"]) ** (1 / m["n"])
             e = (k - 1) * min(m["rx"], m["rz"])
             e = np.maximum(e, np.maximum(P[:, 1] - m["y1"], m["y0"] - P[:, 1]))
+            # por fuera el muslo se angosta hacia la cintura (contorno continuo, sin aleta sobre la cadera)
+            xo = np.interp(P[:, 1], [0.195, 0.29], [m["x"] + m["rx"], 0.098])
+            e = np.maximum(e, s * P[:, 0] - xo)
             d = e if d is None else np.minimum(d, e)
         return d
 
-    def sdf(self, P):
+    def linea_v(self, x):
+        """Altura de la línea inguinal por |x| (ref. de Admin, refs/infografias/cadera-ejemplo-admin.jpg): del pubis al
+        centro sube en diagonal hasta la espina ilíaca y, por fuera, sigue hasta la cintura (contorno continuo)."""
         c = PELVIS
-        d = self.cubeta(P)
+        ax, ay = c["asis"]
+        x = np.abs(x)
+        y_in = c["y_pubis"] + (ay - c["y_pubis"]) * np.clip(x / ax, 0, 1)
+        return np.where(x <= ax, y_in, ay + (x - ax) * 2.5)
+
+    def sdf(self, P):
+        """Torso que baja + muslos que suben, con la frontera en la V inguinal (al frente) y en el pliegue del glúteo
+        (atrás). Sin cubeta que abulte: la pelvis es donde se encuentran; la unión suave pequeña deja el surco."""
+        c = PELVIS
+        x, y, z = P[:, 0], P[:, 1], P[:, 2]
+        frente = _ss((z - (c["zc"] - 0.005)) / 0.03)                      # 1 al frente, 0 atrás
+        lv = self.linea_v(x)
+        g = c["gluteo"]
+        frontera = frente * lv + (1 - frente) * g["pliegue_y"]
+        # torso: su corte se extruye hacia abajo y se cierra bajo la frontera
+        Pt = P.copy(); Pt[:, 1] = np.maximum(Pt[:, 1], c["costura_torso"] - 0.004)
+        dt = np.maximum(self.piezas[0].sdf(Pt), frontera - 0.002 - y)
+        # muslos: prismas que suben hasta la frontera
+        dm = np.maximum(self.muslos(P), y - frontera - 0.002)
+        d = self.ra.smin(dt, dm, c["k_union"])
+        # cubeta solo como relleno interior (no asoma): evita huecos donde el campo del torso no llega
+        d = np.minimum(d, self.cubeta(P) + 0.012)
         dg, pliegue = self.gluteos(P)
         d = self.ra.smin(d, dg, c["k_gluteo"])
-        # torso: su campo real; muslos: prisma superelíptico analítico (el campo por muestras de la pierna tiene ruido en
-        # la tapa superior y dejaba un borde dentado en la cadera)
-        # torso extruido hacia abajo desde la costura (su tapa inferior redondeada hacía un escalón en la cintura)
-        Pt = P.copy(); Pt[:, 1] = np.maximum(Pt[:, 1], c["costura_torso"] - 0.004)
-        dt = self.piezas[0].sdf(Pt) + 0.05 * _ss((c["y_top"] - 0.020 - P[:, 1]) / 0.030)   # la columna se retira abajo
-        d = self.ra.smin(d, dt, c["k_cuerpo"])
-        d = self.ra.smin(d, self.muslos(P), c["k_cuerpo"])
-        # separación central de los glúteos (muy suave) y surcos
-        sep = 0.0018 * np.exp(-(P[:, 0] / 0.006) ** 2) * _ss((-(P[:, 2]) - 0.01) / 0.02) * \
-            _ss((P[:, 1] - 0.19) / 0.01) * _ss((0.245 - P[:, 1]) / 0.01)
-        # costura con la pierna: debajo de `costura` la pelvis se mete en el muslo (lo que se ve es la pierna); arriba la
-        # pierna se corta (cortar_piernas) y lo que se ve es la pelvis: sin tapa de pierna asomando ni z-fighting
-        baja = _ss((c["costura"] - 0.003 - P[:, 1]) / 0.008)
-        sube = _ss((P[:, 1] - c["costura_torso"] - 0.003) / 0.006)  # sobre la costura se mete en el torso
-        # (la unión suave infla hasta k/4 = 5 mm: arriba hay que meterla más que eso para que no asome el corte)
+        sep = 0.0018 * np.exp(-(x / 0.006) ** 2) * _ss((-z - 0.01) / 0.02) * _ss((y - 0.19) / 0.01) * _ss((0.245 - y) / 0.01)
+        baja = _ss((c["costura"] - 0.003 - y) / 0.008)
+        sube = _ss((y - c["costura_torso"] - 0.003) / 0.006)
         d = d + self.surco_inguinal(P) + pliegue + sep + c["hundir"] * baja + 0.004 * sube
-        return np.maximum(d, np.maximum(P[:, 1] - c["arriba"], c["abajo"] - P[:, 1]))
-
+        return np.maximum(d, np.maximum(y - c["arriba"], c["abajo"] - y))
 
 def cortar_piernas(E, S):
     """Quita de piernas y torso los triángulos que la pelvis ya cubre (tapa superior del muslo, tapa inferior del
