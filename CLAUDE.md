@@ -74,6 +74,15 @@ Para el bucle histórico siguen vigentes los topes por tipo (3/4/5/8). Para COPO
 - renders de iteración no se versionan; evidencia completa puede vivir temporalmente como artifact de Actions.
 - release final de un asset sigue siendo una acción separada de una promoción interna COPOX.
 
+## Herramientas ruta AAA (20 oct 2026)
+
+Plan y decisiones: `docs/RUTA_AAA.md` (§10 = inventario). Resumen:
+- Prendas y mechones nuevos: `copox/medicion/tallador.py` (secciones con bisel, normales ponderadas, UV) en lugar de SDF; pesos con `copox/medicion/pesos_robustos.py`.
+- CHXP saca `<nombre>_TPOSE.png` siempre (personaje/ropa/pelo), `--cerca` para primeros planos y la compuerta informativa `nitidez_aristas`.
+- Cine: `copox/cine/` + workflow `ALTH · Cine` (Blender Cycles CPU en Actions; el MP4 queda en la rama `capturas`, `cine/<fecha>/`).
+- Animación: `copox/movimiento/{cara_arkit,labios,bvh}.py` + workflow privado `ALTH · Animación` en `copox-modelos` (entradas en `entradas/`, resultados en la rama `resultados-animacion`). IK nativo en Godot: `IKNativoALTH`.
+- En esta sesión PyPI puede estar bloqueado: Blender se instala en Actions (`tools/blender_ci.sh`), no aquí.
+
 ## Referencias
 
 - `refs/personajes/`: referencias de personajes.

@@ -65,6 +65,10 @@ Este archivo junta lo que se aprendió en el camino, para no repetirlo. La histo
 | Una métrica en verde con el modelo mal | El IoU no ve huecos ni cajas (la manzana «caja», v0.3 r1 con 99 %) | Evaluar por región + revisión visual | Ninguna métrica sola aprueba |
 | Mangas «remangadas» del abrigo de Alastor (V03–V04) | La caja de mallado del abrigo terminaba en x = ±0.29: cortaba la manga y dejaba ver el puño blanco | Caja a ±0.345 (V05) | La caja de `_malla` debe contener la prenda completa; medir x máx. del resultado contra el parámetro |
 | Picos en el bajo trasero del abrigo de Alastor (V04–V06) | El abrigo es un sólido: el corte del bajo dejaba una tapa horizontal entre las piernas, pesada a LowerLeg, que se estiraba al posar | Quitar la tapa (material doubleSided) + alisar pesos de la falda sobre la malla **soldada por posición** (V11) | Una prenda abierta no lleva tapa; alisar pesos siempre después de soldar duplicados (sin soldar se rompe, V09) |
+| `pip install bpy` falla en la sesión (20 oct) | El proxy de la sesión rechaza `pypi.org` | Blender en Actions (`tools/blender_ci.sh`) | No depender de PyPI en la sesión; probar con Actions |
+| No se pueden leer logs ni artifacts de Actions desde la sesión | Ambos se sirven desde blob storage, bloqueado por el proxy | Errores como anotaciones `::error::` (API de check-runs) y resultados a una rama git | Todo workflow nuevo reporta por anotaciones y guarda su resultado en una rama |
+| TwoBoneIK3D no mueve el brazo en T-pose | Extremidad recta: sin plano de flexión | Nodo polo (rodilla +Z, codo −Z) | Todo IK de dos huesos lleva polo |
+| `ensure_blender.sh` falla en Actions | `bpy==5.2.2`/`4.5.14` no existen en PyPI | `blender_ci.sh` instala bpy sin versión fija (salió 5.0.1, Python 3.11) | No fijar versiones que no se han visto en PyPI |
 | La corrección de hombros rompe 6 clips | Cambio global de pesos | Descartada | Regresión de todos los clips antes de aceptar |
 
 ## C. Técnicas que funcionaron

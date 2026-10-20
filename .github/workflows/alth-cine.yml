@@ -21,6 +21,10 @@ on:
         description: "además, hornear oclusión del GLB de la escena (.npz)"
         type: boolean
         default: false
+      guardar:
+        description: "guardar el MP4 en la rama capturas (cine/<fecha>/) para verlo desde el chat"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -85,6 +89,8 @@ jobs:
   ensamblar:
     needs: [plan, render]
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -103,6 +109,15 @@ jobs:
             _cine/*.mp4
             _cine/parte_*.json
           retention-days: 7
+      - name: Guardar en la rama capturas
+        if: inputs.guardar
+        run: |
+          D="cine/$(date -u +%F)"; N="${{ needs.plan.outputs.nombre }}"
+          git fetch -q origin capturas && git worktree add -q _cap origin/capturas
+          mkdir -p "_cap/$D" && cp "_cine/$N.mp4" "_cap/$D/" && cp _cine/cuadros/$(ls _cine/cuadros | grep png | head -1) "_cap/$D/${N}_primer_cuadro.png"
+          cd _cap && git add "$D" && git -c user.name="alth-cine" -c user.email="actions@github.com" \
+            commit -qm "Cine $N (${{ github.run_id }})" && git push -q origin HEAD:capturas
+          echo "::notice::MP4 en la rama capturas: $D/$N.mp4"
 
   hornear:
     if: inputs.hornear_ao

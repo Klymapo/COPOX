@@ -195,6 +195,8 @@ Las lecciones están en `docs/LECCIONES.md`. Si un dato no aparece en las fuente
 
 ## 4. Registro de esta bitácora
 
+- 20 oct 2026: Alastor V07–V11 (V11 publicado SIN APROBAR: cejas sobre el aro, ceño 0.35, rizo redondeado y más arriba, abrigo sin tapa interior y pesos alisados). Lámina T-pose de Theo y Alastor contra referencias → diagnóstico: el SDF hace formas blandas. Ruta AAA (`docs/RUTA_AAA.md`) aprobada por Admin; decisiones: Blender para cine, todo en Actions, Kaggle fuera, sin pruebas piloto. Herramientas hechas: tallador, pesos robustos, CHXP T-pose/primeros planos/nitidez de aristas, cine (render + AO), cara (MediaPipe), labios (Rhubarb), mocap BVH con corrector chibi, IK nativo Godot y workflow privado de animación.
+
 - 19 oct 2026 (noche, 2): pendientes cerrados: helpers → `glb_util.py` (mismo SHA en V50_1 y Theo V4_1), `capas_visibles` (veta; la geométrica queda informativa), `senku_regiones`, `senku_ficha` (referencia → borrador de ficha) y COMPARATIVA + revisor visual. Theo V4_1 con CHXP completo: FAIL 17/2 (capas_visibles: la camisa asoma por el pantalón al caminar/sentarse y por la sisa del chaleco; hombro_cubierto 85 %).
 
 - 19 oct 2026 (noche): decisiones de Admin aplicadas (THEO_ROSTRO_V14, convención Y-arriba en CLAUDE.md, sin copox/state); PR #54 fusionado a main (fast-forward, mismos tests que main); pipeline de avatares: `copox.entorno`, `copox.publicar`, CHXP `--rapido`, catálogo, `copox.avatar` + ficha `personajes/theo.json` (mismo SHA que V4_1) y skills publicar-version, crear-avatar, vestir-personaje, peinar-personaje.
