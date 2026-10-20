@@ -64,6 +64,7 @@ Este archivo junta lo que se aprendió en el camino, para no repetirlo. La histo
 | Más de 20 rondas G2 en PLATEAU | Parchar mallas heredadas sin piel debajo | Generar la pieza desde cero (Adán) | No parchar mallas ajenas |
 | Una métrica en verde con el modelo mal | El IoU no ve huecos ni cajas (la manzana «caja», v0.3 r1 con 99 %) | Evaluar por región + revisión visual | Ninguna métrica sola aprueba |
 | Mangas «remangadas» del abrigo de Alastor (V03–V04) | La caja de mallado del abrigo terminaba en x = ±0.29: cortaba la manga y dejaba ver el puño blanco | Caja a ±0.345 (V05) | La caja de `_malla` debe contener la prenda completa; medir x máx. del resultado contra el parámetro |
+| Picos en el bajo trasero del abrigo de Alastor (V04–V06) | El abrigo es un sólido: el corte del bajo dejaba una tapa horizontal entre las piernas, pesada a LowerLeg, que se estiraba al posar | Quitar la tapa (material doubleSided) + alisar pesos de la falda sobre la malla **soldada por posición** (V11) | Una prenda abierta no lleva tapa; alisar pesos siempre después de soldar duplicados (sin soldar se rompe, V09) |
 | La corrección de hombros rompe 6 clips | Cambio global de pesos | Descartada | Regresión de todos los clips antes de aceptar |
 
 ## C. Técnicas que funcionaron
