@@ -83,3 +83,7 @@ Para el bucle histórico siguen vigentes los topes por tipo (3/4/5/8). Para COPO
 ## Protección vigente de Theo
 
 `assets/joven_rubio/theo_alpha.glb` tiene SHA-256 `ed2b04ecd9e22a19794591b873c19c2b30323a9ae836f7dd820134bd0113580b`. No se reemplaza al fusionar código, importar documentación ni auditar. La política M5 mantiene promoción automática deshabilitada. Antes de cada técnica geométrica nueva se exige un research brief válido; sin él, `RESEARCH_REQUIRED`. Las campañas de manos generan exactamente tres hermanos por generación y publican también los rechazos con evidencia; el score no sustituye revisión visual. La aprobación final del modelo sigue siendo separada de una fusión de repositorios.
+
+## Cuerpo base congelado (19 oct 2026)
+
+`copox-modelos/adan/ADAN_BASE_CONGELADA.glb` (= ADAN_V50_1, SHA-256 `0422ae54636b3d40c235c4d3b412163027ea67b1f2e3521a09008a5e20164f43`) es la base de todo personaje nuevo. No se edita ni se reemplaza; un cambio al cuerpo es una versión nueva que Admin aprueba y congela. Historia y lecciones: `docs/BITACORA_MAESTRA.md` y `docs/LECCIONES.md`. Antes de construir: `export GODOT_BIN=/home/claude/godot/Godot_v4.7.2-stable_linux.x86_64` (sin él la malla sale densa sin aviso).
