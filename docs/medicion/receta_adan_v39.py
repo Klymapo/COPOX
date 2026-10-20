@@ -85,13 +85,10 @@ def _prim(E, pieza):
     return next(p for p in E.j["meshes"][0]["primitives"] if p.get("extras", {}).get("pieza") == pieza)
 
 
-def _prims(E, pieza):
-    return [p for m in E.j["meshes"] for p in m["primitives"] if p.get("extras", {}).get("pieza") == pieza]
+from copox.medicion.glb_util import prims_de_pieza as _prims  # noqa: E402,F401  (movido a la librería)
 
 
-def _leer(E, p, attr):
-    from copox.medicion.gltf import accesor
-    return accesor(E.j, E.b, p["attributes"][attr])
+from copox.medicion.glb_util import leer as _leer  # noqa: E402,F401  (movido a la librería)
 
 
 def esqueleto(src, dst):

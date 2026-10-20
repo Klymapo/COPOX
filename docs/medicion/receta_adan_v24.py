@@ -517,16 +517,7 @@ def boca(E):
 
 
 # --- escritura en el GLB ------------------------------------------------------
-def _add_raw(E, arr, ctype, typ, target=None):
-    arr = np.ascontiguousarray(arr)
-    while len(E.out) % 4:
-        E.out.append(0)
-    v = {"buffer": 0, "byteOffset": len(E.out), "byteLength": arr.nbytes}
-    if target:
-        v["target"] = target
-    E.out.extend(arr.tobytes()); E.j["bufferViews"].append(v)
-    E.j["accessors"].append({"bufferView": len(E.j["bufferViews"]) - 1, "componentType": ctype, "count": len(arr), "type": typ})
-    return len(E.j["accessors"]) - 1
+from copox.medicion.glb_util import add_raw as _add_raw  # noqa: E402,F401  (movido a la librería)
 
 
 def _malla_rostro(E):

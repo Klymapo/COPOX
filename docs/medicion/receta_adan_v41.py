@@ -31,46 +31,16 @@ MUESCA = 0.024                          # medio ancho de la muesca de la entrepi
 TRIS_SHORT = 4200
 
 
-def _lineal(hexa):
-    c = np.array([int(hexa[i:i + 2], 16) for i in (1, 3, 5)]) / 255.0
-    return [float(x) for x in np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)] + [1.0]
+from copox.medicion.glb_util import lineal as _lineal  # noqa: E402,F401  (movido a la librería)
 
 
-def _material(E, nombre, hexa):
-    """La tela es de dos caras: al caminar se ve el interior del short por la muesca y las perneras."""
-    j = E.j
-    for i, m in enumerate(j["materials"]):
-        if m["name"] == nombre:
-            m["pbrMetallicRoughness"]["baseColorFactor"] = _lineal(hexa)
-            m["doubleSided"] = True
-            return i
-    j["materials"].append({"name": nombre, "pbrMetallicRoughness": {"baseColorFactor": _lineal(hexa),
-                                                                    "metallicFactor": 0, "roughnessFactor": 0.9},
-                           "doubleSided": True})
-    return len(j["materials"]) - 1
+from copox.medicion.glb_util import material as _material  # noqa: E402,F401  (movido a la librería)
 
 
-def _prim_nueva(E, V, T, N, J4, W4, mat, pieza):
-    import receta_adan_v24 as v24
-    return {"attributes": {"POSITION": E._add(V.astype(np.float32), "VEC3", 34962, True),
-                           "NORMAL": E._add(N.astype(np.float32), "VEC3", 34962),
-                           "JOINTS_0": v24._add_raw(E, np.ascontiguousarray(J4, np.uint16), 5123, "VEC4", 34962),
-                           "WEIGHTS_0": v24._add_raw(E, np.ascontiguousarray(W4, np.float32), 5126, "VEC4", 34962)},
-            "indices": v24._add_raw(E, np.ascontiguousarray(T.ravel(), np.uint32), 5125, "SCALAR", 34963),
-            "material": mat, "extras": {"pieza": pieza}}
+from copox.medicion.glb_util import prim_nueva as _prim_nueva  # noqa: E402,F401  (movido a la librería)
 
 
-def pesos_short(V, nombres, y_ent, y_cint, alto=0.060, centro=0.016, maximo=0.92):
-    """Hips arriba; bajo la entrepierna cada lado pasa a su muslo (rampa de `alto`). Cerca del centro (|x| < centro)
-    el muslo pesa menos: la muesca no cuelga entre las piernas al caminar."""
-    ih, il, ir = nombres.index("Hips"), nombres.index("LeftUpperLeg"), nombres.index("RightUpperLeg")
-    t = np.clip((y_ent + alto * 0.35 - V[:, 1]) / alto, 0, 1); t = t * t * (3 - 2 * t)
-    c = np.clip(np.abs(V[:, 0]) / centro, 0, 1); c = c * c * (3 - 2 * c)
-    w = t * maximo * (0.3 + 0.7 * c)                              # la tela sigue al muslo, sin pegarse del todo
-    J4 = np.zeros((len(V), 4), np.uint16); W4 = np.zeros((len(V), 4), np.float32)
-    J4[:, 0] = ih; J4[:, 1] = np.where(V[:, 0] >= 0, il, ir)
-    W4[:, 0] = 1 - w; W4[:, 1] = w
-    return J4, W4
+from copox.medicion.glb_util import pesos_short  # noqa: E402,F401  (movido a la librería)
 
 
 def short(E, carpeta):

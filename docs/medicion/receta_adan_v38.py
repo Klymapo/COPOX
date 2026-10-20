@@ -55,13 +55,7 @@ TRIS_MANO = 3000            # por mano (V36: 2600; ahora incluye la muñeca)
 ANGOSTA_MUNECA = 0.72       # la palma se angosta más hacia la muñeca (referencia: muñeca 53 mm, palma 62)
 
 
-def _skin(E):
-    from copox.medicion.gltf import accesor
-    j = E.j; sk = j["skins"][0]
-    ibm = accesor(j, E.b, sk["inverseBindMatrices"]).reshape(-1, 4, 4).transpose(0, 2, 1)
-    nombres = [j["nodes"][k]["name"] for k in sk["joints"]]
-    H = {n: np.linalg.inv(ibm[i])[:3, 3] for i, n in enumerate(nombres)}
-    return nombres, H
+from copox.medicion.glb_util import skin as _skin  # noqa: E402,F401  (movido a la librería)
 
 
 def _prim(E, pieza):

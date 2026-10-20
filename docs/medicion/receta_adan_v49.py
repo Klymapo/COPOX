@@ -39,8 +39,7 @@ CORTE = dict(lados_y=0.605, nuca_y=0.524, frente_az=45.0, volumen=0.0025, lados=
 TRIS = dict(pelvis=3000, cuero=4000, tenis=2500, pelo_corto=9000, mechones=5000)
 
 
-def _prims(E):
-    return {p.get("extras", {}).get("pieza"): p for m in E.j["meshes"] for p in m["primitives"]}
+from copox.medicion.glb_util import prims_por_pieza as _prims  # noqa: E402,F401  (movido a la librería)
 
 
 def _ss(t):
@@ -48,19 +47,10 @@ def _ss(t):
     return t * t * (3 - 2 * t)
 
 
-def _pieza(E, n):
-    from copox.medicion import ropa_ajustada as ra
-    from copox.medicion.gltf import accesor
-    q = _prims(E)[n]
-    return ra.Pieza(v39._leer(E, q, "POSITION"), v39._leer(E, q, "NORMAL"), accesor(E.j, E.b, q["indices"]).reshape(-1, 3),
-                    J=v39._leer(E, q, "JOINTS_0"), W=v39._leer(E, q, "WEIGHTS_0"))
+from copox.medicion.glb_util import pieza as _pieza  # noqa: E402,F401  (movido a la librería)
 
 
-def _orientar(V, T, N):
-    fn = np.cross(V[T[:, 1]] - V[T[:, 0]], V[T[:, 2]] - V[T[:, 0]])
-    al_reves = np.einsum("ij,ij->i", fn, N[T].mean(1)) < 0
-    T = T.copy(); T[al_reves] = T[al_reves][:, ::-1]
-    return T
+from copox.medicion.glb_util import orientar as _orientar  # noqa: E402,F401  (movido a la librería)
 
 
 def _al_cuerpo(E, prim):
@@ -75,24 +65,10 @@ def _al_cuerpo(E, prim):
     E.b = bytes(E.out)
 
 
-def _nodo(E, nombre, prims, junto_a="CAPA_SHORT", visible=True):
-    E.j["meshes"].append({"name": nombre, "primitives": prims})
-    E.j["nodes"].append({"name": nombre, "mesh": len(E.j["meshes"]) - 1, "skin": 0})
-    k = len(E.j["nodes"]) - 1
-    padre = next(n for n in E.j["nodes"] if any(E.j["nodes"][c].get("name") == junto_a for c in n.get("children", [])))
-    padre["children"].append(k)
-    if not visible:
-        E.j["nodes"][k]["extensions"] = {"KHR_node_visibility": {"visible": False}}
-        usados = E.j.setdefault("extensionsUsed", [])
-        if "KHR_node_visibility" not in usados:
-            usados.append("KHR_node_visibility")
-    E.b = bytes(E.out)
+from copox.medicion.glb_util import nodo as _nodo  # noqa: E402,F401  (movido a la librería)
 
 
-def _limpiar(carpeta):
-    for f_ in ("V.npy", "T.npy", "malla.json", "lod.json"):
-        if os.path.exists(os.path.join(carpeta, f_)):
-            os.remove(os.path.join(carpeta, f_))
+from copox.medicion.glb_util import limpiar as _limpiar  # noqa: E402,F401  (movido a la librería)
 
 
 # 1 ── pelvis ───────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -143,12 +119,7 @@ def pelvis(E, carpeta):
     return {"operacion": "pelvis", "tris_marching": int(n0), "tris": int(len(T))}
 
 
-def _normales_sdf(sdf, V, h=0.0004):
-    g = np.zeros_like(V)
-    for i in range(3):
-        e = np.zeros(3); e[i] = h
-        g[:, i] = sdf(V + e) - sdf(V - e)
-    return g / np.maximum(np.linalg.norm(g, axis=1, keepdims=True), 1e-12)
+from copox.medicion.glb_util import normales_sdf as _normales_sdf  # noqa: E402,F401  (movido a la librería)
 
 
 # 2 ── cuero cabelludo ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -319,12 +290,7 @@ MECHONES_ALTH = [
 FACETAS = False
 
 
-def _facetado(V, T):
-    """Sombreado plano (como las facetas de la hoja de Theo): un vértice por esquina con la normal de su cara."""
-    P = V[T].reshape(-1, 3)
-    fn = np.cross(V[T[:, 1]] - V[T[:, 0]], V[T[:, 2]] - V[T[:, 0]])
-    fn /= np.maximum(np.linalg.norm(fn, axis=1, keepdims=True), 1e-12)
-    return P, np.arange(len(P)).reshape(-1, 3), np.repeat(fn, 3, axis=0)
+from copox.medicion.glb_util import facetado as _facetado  # noqa: E402,F401  (movido a la librería)
 
 
 def pelo_mechones(E, src_v47, carpeta):

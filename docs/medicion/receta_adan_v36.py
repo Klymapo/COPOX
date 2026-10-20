@@ -91,32 +91,7 @@ def diseno(E):
                      radio_palma=RADIO_PALMA * e, angosta_pulgar=ANGOSTA_PULGAR, **extra), nombres
 
 
-def simplificar(V, T, meta, carpeta):
-    """meshoptimizer vía Godot (ImporterMesh.generate_lods): se elige el LOD más cercano a `meta` triángulos.
-    En ALTH_CALIDAD=borrador no se simplifica (iteración rápida; la malla sale más pesada)."""
-    from copox.medicion.malla_rapida import simplificar_activo
-    if not simplificar_activo():
-        return V, T
-    if not GODOT or not os.path.exists(GODOT):     # en calidad final NUNCA se entrega malla densa en silencio
-        raise _entorno.EntornoIncompleto("simplificar(): no hay Godot (GODOT_BIN). Corre `python -m copox.entorno`.")
-    np.save(os.path.join(carpeta, "V.npy"), V.astype(np.float32)); np.save(os.path.join(carpeta, "T.npy"), T.astype(np.int32))
-    with open(os.path.join(carpeta, "malla.json"), "w") as f:
-        json.dump({"V": V.astype(float).round(7).tolist(), "T": T.astype(int).tolist(), "meta": int(meta)}, f)
-    gd = os.path.join(os.path.dirname(__file__), "..", "..", "copox", "godot", "herramientas", "simplificar.gd")
-    proy = os.path.join(os.path.dirname(__file__), "..", "..", "copox", "godot")
-    r = subprocess.run(["xvfb-run", "-a", GODOT, "--headless", "--path", proy, "--script", gd, "--",
-                        os.path.join(carpeta, "malla.json"), os.path.join(carpeta, "lod.json")],
-                       capture_output=True, text=True, timeout=600)
-    out = os.path.join(carpeta, "lod.json")
-    if not os.path.exists(out):
-        raise RuntimeError("Godot no simplificó: " + r.stdout[-500:] + r.stderr[-500:])
-    d = json.load(open(out))
-    V2 = np.array(d["V"], float); T2 = np.array(d["T"], np.int64).reshape(-1, 3)
-    usados = np.unique(T2)
-    mapa = -np.ones(len(V2), np.int64); mapa[usados] = np.arange(len(usados))
-    # Godot guarda los triángulos en sentido horario visto de frente; la malla de entrada iba antihorario
-    T3 = mapa[T2]
-    return V2[usados], T3
+from copox.medicion.glb_util import simplificar  # noqa: E402,F401  (movido a la librería)
 
 
 def mano_nueva(E, carpeta):
