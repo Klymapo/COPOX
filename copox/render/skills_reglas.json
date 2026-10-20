@@ -1,0 +1,3126 @@
+{
+  "generado": "2026-10-19",
+  "descripcion": "Inventario de skills ALTH-META/COPOX convertidas en reglas para gates CHXP. Solo reglas presentes en las fuentes; 'a definir' = la fuente no fija número.",
+  "fuentes_revisadas": {
+    "drive": "Drive SKILLS (1xPDsHWVpVqv0yNRBL8_-lt_WWPkhAvAQ): 3 Google Docs + 3 zips (vestuario-cabello, rig-motion-design, anatomia-estilizada)",
+    "github": "Klymapo/COPOX, 68 ramas remotas; .claude/{skills,agents,commands} y .codex/skills (copias .claude/.codex idénticas)",
+    "repo_actual": "/home/claude/alth-meta (propuesta/pruebas-movimiento): finalizar-personaje, revisar-alth, /asset, revisor-visual-alth"
+  },
+  "totales": {
+    "skills": 25,
+    "reglas": 188,
+    "medibles": 155,
+    "checklist": 33
+  },
+  "skills": [
+    {
+      "id": "alth-meta-vestuario-cabello",
+      "nombre": "alth-meta-vestuario-cabello (VESTUARIO Y CABELLO)",
+      "fuentes": [
+        {
+          "tipo": "drive_doc",
+          "titulo": "COPOX - SKILL VESTUARIO Y CABELLO - ADAN",
+          "id": "1xSfPGebjSx1AfS9fT1JXdxMrDu1EnF9mHD2sbSGer6c",
+          "version": "v0.1-v0.3 research (R1-R3)"
+        },
+        {
+          "tipo": "drive_zip",
+          "titulo": "alth-meta-vestuario-cabello.zip",
+          "id": "1BZXLAHeL_734rAUjm-brqwRgl5xjL3ed",
+          "version": "1.0.0-beta",
+          "local": "/home/claude/skills_drive/alth-meta-vestuario-cabello (SKILL.md, references/*, scripts/cloth_plan.py)"
+        }
+      ],
+      "proposito": "Planear ropa, cabello estilizado y física secundaria exportable a GLB como módulos separados, sin tocar el personaje base aprobado.",
+      "reglas": [
+        {
+          "id": "vestuario.base_inmutable",
+          "texto": "El GLB base (Adán v04) no se modifica: prenda/peinado se construye como módulo hijo separado.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "ropa",
+            "pelo",
+            "calzado"
+          ],
+          "metrica": "SHA-256 del GLB base == aprobado; POSITION/índices de la malla base idénticos byte a byte en el candidato",
+          "umbral": "igualdad exacta (SHA a1936eb9...2ac14)",
+          "fuente": "\"No tocar Adán aprobado: fabricar vestuario como asset hijo/accesorio separado\" (doc §6)",
+          "revision": "theo_protegido"
+        },
+        {
+          "id": "vestuario.rig_base_preservado",
+          "texto": "Preservar 56 huesos / 18 morphs / 112 clips del base salvo aprobación de ampliación.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "pelo",
+            "calzado",
+            "personaje"
+          ],
+          "metrica": "conteo joints de skin, targets por malla, nº animaciones vs base",
+          "umbral": "joints=56, morphs cuerpo=18 (Face=16), clips=112; sin pérdidas",
+          "fuente": "\"Preservar 56 huesos / 18 morphs / 112 clips del Adán de referencia salvo aprobación explícita\" (doc §6)",
+          "revision": "base_preservada"
+        },
+        {
+          "id": "vestuario.paleta",
+          "texto": "Colores de prendas/pelo solo de la paleta ALTH (spec/alth_spec.json).",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "pelo",
+            "calzado"
+          ],
+          "metrica": "baseColor de cada material ∈ spec.paleta",
+          "umbral": "100 % de materiales en paleta",
+          "fuente": "\"Mantener paleta y medidas de spec/alth_spec.json\" (doc §1)",
+          "revision": "paleta_alth"
+        },
+        {
+          "id": "vestuario.material_mate",
+          "texto": "Material mate PBR simple, roughness alta, normales suaves.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "pelo",
+            "calzado"
+          ],
+          "metrica": "roughnessFactor de cada material de prenda",
+          "umbral": "a definir (texto: 'roughness alta')",
+          "fuente": "\"usar material mate PBR simple, roughness alta, normales suaves\" (doc §3d)"
+        },
+        {
+          "id": "vestuario.sin_clipping_poses_extremas",
+          "texto": "Sin penetración prenda-cuerpo en poses extremas, no solo en T-pose.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "calzado",
+            "animacion"
+          ],
+          "metrica": "distancia firmada mínima prenda→cuerpo/proxy en poses extremas y clips (vértices dentro del cuerpo)",
+          "umbral": "a definir (texto: márgenes 'pequeños pero positivos')",
+          "fuente": "\"Resolver clipping en el espacio de las poses extremas, no solo en T-pose\" (doc §3e); \"deformaciones extremas sin clipping\" (§7)"
+        },
+        {
+          "id": "vestuario.sin_interseccion_inicial",
+          "texto": "La prenda no empieza intersectando el cuerpo/proxies en pose de reposo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "calzado"
+          ],
+          "metrica": "nº de vértices de prenda dentro del cuerpo en rest pose",
+          "umbral": "0",
+          "fuente": "\"Evitar comenzar con intersecciones\" (doc §13.4)"
+        },
+        {
+          "id": "vestuario.proxy_colision_separado",
+          "texto": "Proxy de colisión distinto de la malla render, de bajo poligonaje.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "pelo"
+          ],
+          "metrica": "existe malla/nodo proxy separado; tris(proxy) < tris(render)",
+          "umbral": "a definir",
+          "fuente": "\"Proxy de colisión distinto de malla render ... bajo número de polígonos\" (doc §13.4)"
+        },
+        {
+          "id": "vestuario.pesos_normalizados",
+          "texto": "Pesos transferidos a la prenda normalizados por vértice.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "pelo",
+            "calzado"
+          ],
+          "metrica": "|Σ WEIGHTS_0 − 1| por vértice",
+          "umbral": "a definir (tolerancia numérica)",
+          "fuente": "\"transferencia espacial de pesos ... y NORMALIZAR por vértice\" (doc §13.2)",
+          "revision": "pesos_normalizados"
+        },
+        {
+          "id": "vestuario.solo_datos_gltf",
+          "texto": "Exportar solo datos glTF: meshes, bones, morphs, clips TRS/weights, PBR; nada que dependa de Cloth vivo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "pelo",
+            "animacion"
+          ],
+          "metrica": "rutas de canal ∈ {translation, rotation, scale, weights}; sin extensiones no estándar requeridas",
+          "umbral": "100 %",
+          "fuente": "\"Exportar solo datos soportados por glTF (meshes, bones, morphs, clips, PBR)\" (doc §7.6)"
+        },
+        {
+          "id": "vestuario.normales_no_invertidas",
+          "texto": "Sin normales invertidas en la prenda.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "pelo",
+            "calzado"
+          ],
+          "metrica": "fracción de caras con winding/normal inconsistente",
+          "umbral": "0",
+          "fuente": "\"ausencia de inversión de normales\" (doc §13 VALIDACIONES FUTURAS)",
+          "revision": "normales"
+        },
+        {
+          "id": "vestuario.cierre_manifold",
+          "texto": "Malla manifold donde se espera cierre; bordes libres solo en aperturas (cuello, sisa, puños, dobladillo).",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "calzado"
+          ],
+          "metrica": "aristas non-manifold; bucles de borde fuera de aperturas declaradas",
+          "umbral": "0 / 0",
+          "fuente": "\"malla no manifold donde se espera cierre\"; aperturas \"cuello, sisa, cintura, puños, dobladillos\" (doc §13, §3a)"
+        },
+        {
+          "id": "vestuario.triangulos_no_alargados",
+          "texto": "Evitar triángulos alargados (falda/paneles).",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa"
+          ],
+          "metrica": "aspect ratio máximo por triángulo",
+          "umbral": "a definir",
+          "fuente": "\"evitar triángulos alargados y solapes iniciales\" (doc §12 Falda)"
+        },
+        {
+          "id": "vestuario.entrepierna_sin_polo",
+          "texto": "Pantalón: no concentrar todas las costuras en un único vértice de entrepierna.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa"
+          ],
+          "metrica": "valencia máxima de vértice en región entrepierna",
+          "umbral": "a definir",
+          "fuente": "\"evitar un único vértice concentrando todas las costuras en la entrepierna\" (doc §12)"
+        },
+        {
+          "id": "vestuario.silueta_4_vistas",
+          "texto": "Silueta de la prenda fiel a la referencia en frente, lateral, espalda y 3/4.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "pelo",
+            "calzado"
+          ],
+          "metrica": "IoU de máscara por vista vs referencia",
+          "umbral": "a definir",
+          "fuente": "\"silhouette 4 vistas\" (doc §7.7); \"Validar silueta en cuatro vistas\" (zip SKILL.md)"
+        },
+        {
+          "id": "vestuario.presupuesto",
+          "texto": "Respetar presupuesto de triángulos y de huesos secundarios.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "pelo"
+          ],
+          "metrica": "tris y nº huesos añadidos",
+          "umbral": "a definir (zip: 'presupuesto quedan por medir')",
+          "fuente": "\"presupuesto de triángulos/rig\" (doc §7.7)"
+        },
+        {
+          "id": "vestuario.capa_sentada_sin_atravesar",
+          "texto": "Capa al sentarse se despliega sobre el asiento sin atravesarlo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "animacion"
+          ],
+          "metrica": "penetración tela↔asiento/respaldo/muslos por frame del clip Sit",
+          "umbral": "a definir",
+          "fuente": "\"la tela debe desplegarse sobre asiento y conservar pliegues sin atravesarlo\" (doc §4)"
+        },
+        {
+          "id": "cabello.raices_ancladas",
+          "texto": "Raíces de mechones soldadas/ocultas en la guía capilar; raíces estables al moverse.",
+          "tipo": "medible",
+          "aplica_a": [
+            "pelo"
+          ],
+          "metrica": "distancia raíz→cuero cabelludo; desplazamiento de raíz durante clips",
+          "umbral": "a definir",
+          "fuente": "\"raíces soldadas/ocultas en guía capilar\" (doc §5); \"estabilidad de raíces\" (R3)"
+        },
+        {
+          "id": "cabello.segmentos_por_mechon",
+          "texto": "Mechones Theo: 1–3 segmentos deformables; rizos Alastor: 1–2 huesos secundarios por grupo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "pelo"
+          ],
+          "metrica": "longitud de cadena de huesos secundarios por mechón/grupo",
+          "umbral": "Theo 1–3; Alastor 1–2 (orientativo, 'NO validadas')",
+          "fuente": "\"1–3 segmentos deformables por mechón\" (doc §5); \"1-2 huesos secundarios por grupo, cifras orientativas NO validadas\" (R3)"
+        },
+        {
+          "id": "cabello.sin_atravesar_cara",
+          "texto": "En sacudida/viento el pelo no atraviesa cara, ojos, orejas ni hombros.",
+          "tipo": "medible",
+          "aplica_a": [
+            "pelo",
+            "animacion"
+          ],
+          "metrica": "nº de intersecciones pelo↔cara/ojos/orejas/hombros por frame",
+          "umbral": "0",
+          "fuente": "\"comprobar que no atraviese cara, ojos, hombros\" (doc §5)"
+        },
+        {
+          "id": "cabello.sin_bolas_sueltas",
+          "texto": "Rizos como masas continuas: sin esferas/bolitas sueltas.",
+          "tipo": "medible",
+          "aplica_a": [
+            "pelo"
+          ],
+          "metrica": "componentes conexos flotantes (no unidos a la masa ni al cráneo)",
+          "umbral": "0",
+          "fuente": "\"evitar partículas finas y malla de esferas sueltas\" (doc §5); \"evitar bolitas separadas\" (R3)"
+        },
+        {
+          "id": "cabello.sin_escalado_esqueleto",
+          "texto": "Cadenas de pelo sin escalado de esqueleto (SpringBone).",
+          "tipo": "medible",
+          "aplica_a": [
+            "pelo"
+          ],
+          "metrica": "escala de huesos secundarios en rest y canales scale",
+          "umbral": "1.0",
+          "fuente": "\"evitar escalado del esqueleto\" (R3, SpringBoneSimulator3D)"
+        },
+        {
+          "id": "vestuario.estilo_chibi_soft",
+          "texto": "Lectura chibi-soft: masas amplias, bloques de color, sin realismo fotográfico ni hebras.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "ropa",
+            "pelo",
+            "calzado"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "\"NO imponer realismo fotográfico ni simular miles de hebras\" (doc §1)"
+        },
+        {
+          "id": "vestuario.no_aumentar_volumen",
+          "texto": "No aumentar el volumen corporal del personaje sin autorización.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "ropa"
+          ],
+          "metrica": "revisión visual (apoyo: bbox de cuerpo base sin cambio)",
+          "umbral": "-",
+          "fuente": "\"No aumentar volumen corporal sin autorización\" (doc §3d)"
+        },
+        {
+          "id": "vestuario.densidad_flexion",
+          "texto": "Densidad de malla suficiente en axila, codo, rodilla, falda y capa.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "ropa"
+          ],
+          "metrica": "revisión de topología",
+          "umbral": "-",
+          "fuente": "\"densidad suficiente donde doblan (axila, codo, rodilla, falda, capa)\" (doc §3b)"
+        },
+        {
+          "id": "vestuario.no_validado_sin_evidencia",
+          "texto": "Sin pruebas reales el estado es NO VALIDADO / NO PROBADO.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "ropa",
+            "pelo"
+          ],
+          "metrica": "estado del reporte",
+          "umbral": "-",
+          "fuente": "\"Si no hay evidencia, estado NO VALIDADO\" (doc §7.7)"
+        }
+      ],
+      "n_medibles": 21,
+      "n_checklist": 4
+    },
+    {
+      "id": "alth-meta-rig-motion-design",
+      "nombre": "alth-meta-rig-motion-design (MOVIMIENTO Y RIG)",
+      "fuentes": [
+        {
+          "tipo": "drive_doc",
+          "titulo": "COPOX - SKILL MOVIMIENTO Y RIG - ADAN",
+          "id": "1U8TDY8MUjuUmYyclAfhDUK7MX16hEUdq6P3wq2eBX84",
+          "version": "v1.0-research (R1-R4)"
+        },
+        {
+          "tipo": "drive_zip",
+          "titulo": "alth-meta-rig-motion-design.zip",
+          "id": "1LfUvcJ1ClRfjtgQ88ane9uY8rZdFh4tW",
+          "version": "1.0.0-beta",
+          "local": "scratchpad/skills_zip/x_rig (SKILL.md, references/*, scripts/rig_coverage.py)"
+        }
+      ],
+      "proposito": "Diseñar y auditar rig corporal, manos de cinco dedos, rostro L/R y locomoción exportables a GLB sin alterar el original.",
+      "reglas": [
+        {
+          "id": "rig.sha_base",
+          "texto": "Verificar SHA del GLB aprobado antes de cualquier mutación; el original nunca se reescribe.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "SHA-256",
+          "umbral": "== a1936eb9...2ac14 (Adán)",
+          "fuente": "\"Pedir/encontrar GLB aprobado real y verificar SHA antes de cualquier mutación\" (zip paso 1)",
+          "revision": "theo_protegido"
+        },
+        {
+          "id": "rig.sin_perdida_clips_targets",
+          "texto": "0 pérdida de clips o morph targets respecto del base.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "nº clips y nombres; nº targets por malla y nombres",
+          "umbral": "0 pérdidas (base: 112 clips; 18 cuerpo; 16 Face)",
+          "fuente": "\"QA propuesto, NO medido: 0 pérdida de clips o targets\" (doc R4)",
+          "revision": "base_preservada"
+        },
+        {
+          "id": "rig.matrices_finitas",
+          "texto": "Matrices (nodos, inverseBindMatrices) finitas.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "NaN/Inf en matrices y TRS",
+          "umbral": "0",
+          "fuente": "\"matrices finitas\" (doc R4 QA; §3 Capa 5)",
+          "revision": "integridad_gltf"
+        },
+        {
+          "id": "rig.pesos_normalizados",
+          "texto": "Pesos de piel normalizados y sin vértices sin influencia.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "ropa"
+          ],
+          "metrica": "|Σw−1| por vértice; vértices con Σw=0",
+          "umbral": "a definir / 0",
+          "fuente": "\"pesos normalizados y sin vértices sin influencia\" (doc §2C)",
+          "revision": "pesos_normalizados"
+        },
+        {
+          "id": "rig.cinco_dedos",
+          "texto": "Cinco dedos independientes por mano, cada uno con 3 segmentos (pulgar CMC/MCP/IP; resto MCP/PIP/DIP).",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "joints de dedo por mano (nombres + jerarquía)",
+          "umbral": "15 por mano (30 total; auditoría Adán)",
+          "fuente": "\"CINCO dedos independientes por mano\" (doc R4); \"estructura de 30 joints de dedos\" (zip auditoria-adan-real.md)",
+          "revision": "cinco_dedos"
+        },
+        {
+          "id": "rig.morph_topologia_estable",
+          "texto": "No alterar orden de vértices ni índices/nombres de morph targets del aprobado.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "nº vértices por primitiva, nº/orden/nombres de targets vs base",
+          "umbral": "igualdad exacta",
+          "fuente": "\"No alterar orden de vértices ni targets del modelo aprobado\" (doc R3)"
+        },
+        {
+          "id": "rig.morph_consistencia",
+          "texto": "Mismo nº de targets en todas las primitivas de una malla; mesh.weights coincide.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "targets por primitiva; len(mesh.weights)",
+          "umbral": "consistente",
+          "fuente": "glb_audit.py: \"cuenta inconsistente de morph targets\" / \"weights no coincide con targets\" (zip anatomía, citado por skill rig)"
+        },
+        {
+          "id": "rig.canales_exportables",
+          "texto": "Animación exportada solo como TRS y morph weights horneados (sin IK/drivers vivos).",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "rutas de canal ∈ {translation, rotation, scale, weights}",
+          "umbral": "100 %",
+          "fuente": "\"Exportar solo TRS y morphs horneados\" (doc R2)"
+        },
+        {
+          "id": "rig.jerarquia_retarget",
+          "texto": "Retarget: nombre, padre, rest matrix, orientación y longitud verificados hueso por hueso.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "diff nombre/padre/rest por joint vs perfil/base",
+          "umbral": "0 diferencias no autorizadas",
+          "fuente": "\"Retargeting exige verificar nombre, padre, rest matrix, orientación local y longitud relativa\" (doc R4)"
+        },
+        {
+          "id": "rig.facial_LR",
+          "texto": "Controles faciales independientes izquierda/derecha (blink, squint, cheek, brow, mirada).",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "pares _L/_R (o Left/Right) en morphs/huesos faciales",
+          "umbral": "a definir (cobertura; canales propuestos, 'NO asumir presentes')",
+          "fuente": "\"facial independiente izquierda/derecha\" (doc §3 criterio)"
+        },
+        {
+          "id": "rig.mezcla_sin_sobrescritura",
+          "texto": "Combinar expresiones sin sobrescribir weights ni sumar desplazamientos excesivos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion",
+            "personaje"
+          ],
+          "metrica": "clips que escriben los mismos índices de weights; desplazamiento máx. combinado por región",
+          "umbral": "a definir",
+          "fuente": "\"mezcla simultánea sin sobrescritura de weights\" (zip P3); \"límites por región\" (doc R3)"
+        },
+        {
+          "id": "rig.foot_sliding",
+          "texto": "Pie de apoyo sin deslizar.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "desplazamiento del pie en fase de apoyo / longitud del pie",
+          "umbral": "< 2 % (propuesto, sujeto a calibración)",
+          "fuente": "\"desplazamiento de pie en apoyo inferior al 2% de longitud del pie\" (doc R4 QA)"
+        },
+        {
+          "id": "rig.contacto_agarre",
+          "texto": "Agarre: punta de dedo en su punto de contacto.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion",
+            "personaje"
+          ],
+          "metrica": "distancia punta→contacto / ancho de palma",
+          "umbral": "< 5 % (umbral preliminar de diseño)",
+          "fuente": "\"distancia punta-contacto inferior al 5 % del ancho de palma\" (doc R3/R4)"
+        },
+        {
+          "id": "rig.sin_penetraciones_graves",
+          "texto": "Poses extremas, gestos y manos entrelazadas sin autointersecciones importantes.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion",
+            "personaje"
+          ],
+          "metrica": "pares de triángulos intersectados en poses/frames",
+          "umbral": "a definir",
+          "fuente": "\"poses extremas sin autointersecciones importantes\" (doc §3)"
+        },
+        {
+          "id": "rig.continuidad_velocidad",
+          "texto": "Sin discontinuidades de velocidad ni teleport del centro de masa entre fases/transiciones.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "salto de velocidad angular/lineal entre frames y en bordes de transición",
+          "umbral": "a definir",
+          "fuente": "\"Evitar deslizamiento de pies, discontinuidades de velocidad\" (doc R3); \"no teleportar el centro de masa\" (R4)"
+        },
+        {
+          "id": "rig.root_motion_declarado",
+          "texto": "Root motion vs in-place decidido explícitamente por clip.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "canal translation del root presente/ausente == declaración del manifest",
+          "umbral": "coincidencia",
+          "fuente": "\"decidir root motion vs in-place explícitamente\" (zip paso 6)"
+        },
+        {
+          "id": "rig.sin_colapso_articulaciones",
+          "texto": "Sin colapso de hombros, codos, rodillas, muñecas o comisuras; sin torsión severa.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "revisión visual de poses (posible métrica: pérdida de volumen local)",
+          "umbral": "-",
+          "fuente": "\"sin colapso de hombros, codos, rodillas, muñecas o comisuras\" (doc §3)"
+        },
+        {
+          "id": "rig.expresiones_compuestas",
+          "texto": "Guiño = blink unilateral + squint + cheekRaise; soplar, silbar, bizco, ojos en blanco legibles.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "hoja de expresiones",
+          "umbral": "-",
+          "fuente": "\"Guiño = blink unilateral + squint + cheekRaise del mismo lado\" (doc R4)"
+        }
+      ],
+      "n_medibles": 16,
+      "n_checklist": 2
+    },
+    {
+      "id": "alth-anatomia-estilizada",
+      "nombre": "alth-anatomia-estilizada (ANATOMIA 3D)",
+      "fuentes": [
+        {
+          "tipo": "drive_doc",
+          "titulo": "COPOX - SKILL ANATOMIA 3D - ADAN",
+          "id": "14vYO8z793e9CVYF6y6DQW9BcqIAMsM6WN9EGZzml_iY",
+          "version": "v1.0-research (R1-R4)"
+        },
+        {
+          "tipo": "drive_zip",
+          "titulo": "alth-anatomia-estilizada.zip",
+          "id": "1aQ8I5gWngRQh9KCSZfjpEXkpxZKJC8PT",
+          "version": "1.0.0-beta",
+          "local": "scratchpad/skills_zip/x_anat (SKILL.md, references/*, scripts/glb_audit.py)"
+        }
+      ],
+      "proposito": "Diagnosticar y planear correcciones anatómicas locales (manos, pies, rostro, párpados, orejas, cuello) sin sustituir el GLB aprobado.",
+      "reglas": [
+        {
+          "id": "anat.glb_estructural",
+          "texto": "GLB estructuralmente válido: cabecera, chunks, accessors/bufferViews en rango, skins sin joints repetidos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "glb_audit.py → structural_status",
+          "umbral": "NO_STRUCTURAL_ISSUES_FOUND",
+          "fuente": "scripts/glb_audit.py (zip)"
+        },
+        {
+          "id": "anat.sha_base",
+          "texto": "Sin ID/hash inequívoco no se muta; original nunca se sobrescribe.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "SHA-256 vs esperado",
+          "umbral": "igualdad",
+          "fuente": "\"Identificar baseline exacta. Sin ID/hash inequívoco no mutar\" (doc skill v0.1)",
+          "revision": "theo_protegido"
+        },
+        {
+          "id": "anat.fuera_de_mascara_identico",
+          "texto": "Mismo contorno y geometría fuera del parche/máscara.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "desplazamiento máx. de vértices fuera de la máscara",
+          "umbral": "0",
+          "fuente": "\"Aceptación: mismo contorno fuera del parche\"; \"Rechazar cambios fuera de máscara\" (doc)"
+        },
+        {
+          "id": "anat.cinco_dedos_separados",
+          "texto": "Cinco dedos separados por mano (y pie); dedos fusionados = rechazo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "nº de dedos separables geométricamente por mano/pie (componentes al cortar a nivel MCP)",
+          "umbral": "5",
+          "fuente": "\"cinco dedos separados, pulgar correcto\"; RECHAZO: \"dedos fusionados\" (doc)",
+          "revision": "cinco_dedos"
+        },
+        {
+          "id": "anat.parpados_sin_interseccion",
+          "texto": "Párpados no atraviesan el globo ocular, también con morph de cierre.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "intersecciones párpado↔globo en rest y con blink=1",
+          "umbral": "0",
+          "fuente": "\"párpados sin intersección\"; \"mirar también cierre + morph\" (doc/zip)"
+        },
+        {
+          "id": "anat.ojos_no_flotantes",
+          "texto": "Sin ojos flotantes ni huecos faciales.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "hueco globo↔cuenca; componentes flotantes en cabeza",
+          "umbral": "a definir",
+          "fuente": "\"Evitar ojos flotantes, huecos faciales\" (doc §3)",
+          "revision": "sin_flotantes"
+        },
+        {
+          "id": "anat.manifold_por_pieza",
+          "texto": "Manifold auditado por pieza; aberturas intencionales y piezas separadas (ojos, pelo, accesorios) declaradas.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "aristas non-manifold y bordes abiertos no declarados por pieza",
+          "umbral": "0",
+          "fuente": "\"Auditar manifold por pieza y distinguir ojos/accesorios separados intencionalmente\" (doc R4)"
+        },
+        {
+          "id": "anat.topologia_limpia",
+          "texto": "Sin caras internas, T-junctions, vértices aislados, normales invertidas ni autointersecciones.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "conteo de cada defecto",
+          "umbral": "0",
+          "fuente": "\"Evitar poles en pliegues, T-junctions, caras internas, auto-intersecciones y normales invertidas\" (doc §3)"
+        },
+        {
+          "id": "anat.preservar_uv_pesos_morphs",
+          "texto": "Preservar UV, pesos, materiales y morphs; pérdida de rig/morphs = rechazo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "presencia y conteo de TEXCOORD_0, JOINTS_0/WEIGHTS_0, targets vs base",
+          "umbral": "sin pérdidas",
+          "fuente": "RECHAZO: \"pérdida de rig/morphs\" (doc)"
+        },
+        {
+          "id": "anat.paleta",
+          "texto": "Paleta sin cambios.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "baseColor de materiales vs base/spec",
+          "umbral": "igualdad",
+          "fuente": "RECHAZO: \"paleta cambiada\" (doc)",
+          "revision": "paleta_alth"
+        },
+        {
+          "id": "anat.landmarks_altura_cabeza",
+          "texto": "Landmarks (ojos, nariz, mandíbula, hombros, nudillos, pelvis, rodillas, pies) normalizados por altura de cabeza Hc.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "posición relativa landmark / Hc (mentón-coronilla sin pelo)",
+          "umbral": "a definir (texto: 'sin tolerancias inventadas', calibrar con Adán)",
+          "fuente": "\"medir desde GLB base cabeza Hc ... No imponer proporciones de adulto ni tolerancias arbitrarias\" (doc R2)"
+        },
+        {
+          "id": "anat.simetria_regional",
+          "texto": "Simetría razonable por región, respetando asimetrías aprobadas.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "distancia espejo X por región",
+          "umbral": "a definir",
+          "fuente": "\"simetría razonable\" (doc v0.1); \"Simetría regional, respetando asimetrías aprobadas\" (R4)"
+        },
+        {
+          "id": "anat.membranas_U",
+          "texto": "Membranas interdigitales curvas en U, no gruesas en V; palma no cuadrada.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "revisión visual (posible métrica: perfil del valle interdigital)",
+          "umbral": "-",
+          "fuente": "\"concavidad interdigital en U ... evitar membrana triangular en V, palma cuadrada\" (doc R2)"
+        },
+        {
+          "id": "anat.cuello_no_cilindrico",
+          "texto": "Cuello orgánico continuo con mandíbula/clavícula, no cilindro incrustado.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "RECHAZO: \"cuello cilíndrico\" (doc)"
+        },
+        {
+          "id": "anat.silueta_multivista",
+          "texto": "Contornos coherentes en frente, perfil, espalda y 3/4; revisión humana aprobada.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "\"contornos coherentes multivista; revisión visual humana aprobada\" (doc)"
+        }
+      ],
+      "n_medibles": 12,
+      "n_checklist": 3
+    },
+    {
+      "id": "asset",
+      "nombre": "/asset (comando)",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/commands/asset.md",
+          "ramas": [
+            "assets/theo-v10",
+            "avatares-chibi",
+            "bucle/joven_rubio-11",
+            "bucle/joven_rubio-4",
+            "bucle/joven_rubio-7",
+            "bucle/joven_rubio-8",
+            "bucle/joven_rubio_v1-1",
+            "bucle/joven_rubio_v1-2",
+            "bucle/joven_rubio_v1-3",
+            "chsp-x-coherencia",
+            "claude/alth-meta-joven-rubio-dwlocz",
+            "claude/awesome-fermi-hju7t3",
+            "claude/bold-wozniak-2jr4zf",
+            "claude/bucle-cualquier-ia",
+            "claude/eager-carson-elu6q6",
+            "claude/ecstatic-sagan-p2cjvm",
+            "claude/ropa-pelo-modular",
+            "claude/sam3d-proporciones-modeling-hbjhka",
+            "consolidation/stylized-anatomy-2026-10-12",
+            "copox-finger-remodel-phase4",
+            "copox-finger-valley-carve",
+            "copox-m5-technique-cycles",
+            "copox-model-maturity-phase2",
+            "copox-model-maturity-phase3",
+            "copox-theo-alpha-seed",
+            "diagnostico-theo-28sep",
+            "etapa0-auditoria",
+            "evidencia/maniqui-v03-r3-png",
+            "experimentos/comparativa-elio-v026-g2c5",
+            "experimentos/g2c10-g2c22-respaldo-argos-20261015",
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "experimentos/maniqui-v03-reparacion-facial",
+            "experimentos/maniqui-v04-nuca-patillas",
+            "experimentos/transferencia-rig-g2c22-elio-v026",
+            "experimentos/voxel-glb-codespaces",
+            "main",
+            "progreso",
+            "propuesta-cabeza-canonica",
+            "propuesta-copox-loop-engine",
+            "propuesta-copox-loop-engine-check",
+            "propuesta-kaggle",
+            "propuesta-maniqui-hibrido",
+            "propuesta-reconocimiento",
+            "propuesta-taller-ux-flujo",
+            "propuesta-theo-ronda-unica",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/motor-medicion-v2",
+            "propuesta/pruebas-movimiento",
+            "propuesta/skills-3d-critica-completa",
+            "sam3d-proporciones-theo",
+            "senku",
+            "teacher3d-local-integration"
+          ],
+          "n_ramas": 64
+        },
+        {
+          "tipo": "repo",
+          "ruta": "/home/claude/alth-meta/.claude/commands/asset.md",
+          "nota": "versión 9978310 (60 ramas); variante d71b3aa en 4 ramas claude/* sin alturas_ancla"
+        }
+      ],
+      "proposito": "Crear un asset ALTH-META completo (spec, build, renders, verificación, GLB) con ciclo de vueltas topado.",
+      "reglas": [
+        {
+          "id": "asset.cotas",
+          "texto": "Cada cota de spec.json (por pieza, ejes W=X, D=Y, H=Z) se cumple.",
+          "tipo": "medible",
+          "aplica_a": [
+            "objeto",
+            "edificio",
+            "personaje",
+            "ropa",
+            "calzado"
+          ],
+          "metrica": "|medida_bbox − mm_spec| / mm_spec por pieza y eje",
+          "umbral": "±2 % (o 'tolerancia' por cota)",
+          "fuente": "\"tolerancia ±2 %, o \\\"tolerancia\\\" por cota\" (asset.md §3)"
+        },
+        {
+          "id": "asset.triangulos",
+          "texto": "Triángulos dentro del tope por tipo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto",
+            "edificio"
+          ],
+          "metrica": "nº triángulos totales",
+          "umbral": "spec.geometria.tris_max: personaje 6000, objeto_mano 500, mueble 1500 (calcomanía ≤530)",
+          "fuente": "\"Verificación OK (cotas, triángulos, paleta, flotantes, apoyo)\" (asset.md §6) + spec",
+          "revision": "triangulos_tope"
+        },
+        {
+          "id": "asset.paleta",
+          "texto": "Colores solo de spec.paleta; color nuevo se propone, no se usa.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "baseColor ∈ spec.paleta",
+          "umbral": "100 %",
+          "fuente": "\"Colores: solo de la paleta\" (asset.md §3)",
+          "revision": "paleta_alth"
+        },
+        {
+          "id": "asset.sin_flotantes",
+          "texto": "Sin piezas flotantes salvo 'permitir_flotantes' declarado.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "componentes sin contacto con el resto/suelo",
+          "umbral": "0 (excepto lista permitir_flotantes)",
+          "fuente": "\"permitir_flotantes: solo si una pieza flota a propósito\" (asset.md §3)",
+          "revision": "sin_flotantes"
+        },
+        {
+          "id": "asset.apoyo_suelo",
+          "texto": "Apoyo en el suelo (Z=0 en Blender; Y=0 en GLB Y-up).",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "mín. coordenada vertical del asset",
+          "umbral": "= 0 (tolerancia a definir)",
+          "fuente": "\"Verificación OK (... apoyo)\" (asset.md §6); CLAUDE.md: pies en Z=0",
+          "revision": "apoyo_piso"
+        },
+        {
+          "id": "asset.nombres_pieza",
+          "texto": "Nombres de pieza `<Nombre>_<parte>` coincidentes con las cotas.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "regex de nombres de nodo vs piezas de cotas",
+          "umbral": "100 % coincidencia",
+          "fuente": "\"Nombres de pieza <Nombre>_<parte> (coinciden con cotas)\" (asset.md §4)"
+        },
+        {
+          "id": "asset.alturas_ancla",
+          "texto": "Muebles/objetos anclados al cuerpo a altura de ancla del maniquí.",
+          "tipo": "medible",
+          "aplica_a": [
+            "objeto",
+            "edificio"
+          ],
+          "metrica": "altura de la superficie funcional (mm)",
+          "umbral": "asiento=rodilla 21; escritorio=cadera 33; barra=cintura 38.8 (tolerancia a definir)",
+          "fuente": "\"asiento = rodilla 21, escritorio = cadera 33, barra = cintura 38.8\" (asset.md §4)"
+        },
+        {
+          "id": "asset.reconocible",
+          "texto": "Se reconoce qué es sin leer el nombre; coincide en silueta, proporciones y colores.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "\"se reconoce qué es sin leer el nombre\" (asset.md §6)"
+        },
+        {
+          "id": "asset.legible_frente_34",
+          "texto": "Detalles legibles de frente y 3/4 a 400 px.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "\"No gastes vueltas en detalles que no se ven en 400 px\" (asset.md §5)"
+        }
+      ],
+      "n_medibles": 7,
+      "n_checklist": 2
+    },
+    {
+      "id": "revisar-alth",
+      "nombre": "revisar-alth + agente revisor-visual-alth",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".codex/skills/revisar-alth/SKILL.md",
+          "ramas": [
+            "assets/theo-v10",
+            "avatares-chibi",
+            "claude/sam3d-proporciones-modeling-hbjhka",
+            "consolidation/stylized-anatomy-2026-10-12",
+            "copox-finger-remodel-phase4",
+            "copox-finger-valley-carve",
+            "copox-m5-technique-cycles",
+            "copox-model-maturity-phase2",
+            "copox-model-maturity-phase3",
+            "copox-theo-alpha-seed",
+            "diagnostico-theo-28sep",
+            "etapa0-auditoria",
+            "evidencia/maniqui-v03-r3-png",
+            "experimentos/comparativa-elio-v026-g2c5",
+            "experimentos/g2c10-g2c22-respaldo-argos-20261015",
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "experimentos/maniqui-v03-reparacion-facial",
+            "experimentos/maniqui-v04-nuca-patillas",
+            "experimentos/transferencia-rig-g2c22-elio-v026",
+            "experimentos/voxel-glb-codespaces",
+            "main",
+            "propuesta-cabeza-canonica",
+            "propuesta-copox-loop-engine",
+            "propuesta-copox-loop-engine-check",
+            "propuesta-kaggle",
+            "propuesta-maniqui-hibrido",
+            "propuesta-reconocimiento",
+            "propuesta-theo-ronda-unica",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/motor-medicion-v2",
+            "propuesta/pruebas-movimiento",
+            "propuesta/skills-3d-critica-completa",
+            "sam3d-proporciones-theo",
+            "senku",
+            "teacher3d-local-integration"
+          ],
+          "n_ramas": 47
+        },
+        {
+          "tipo": "github",
+          "ruta": ".claude/agents/revisor-visual-alth.md",
+          "ramas": [
+            "assets/theo-v10",
+            "avatares-chibi",
+            "claude/sam3d-proporciones-modeling-hbjhka",
+            "consolidation/stylized-anatomy-2026-10-12",
+            "copox-finger-remodel-phase4",
+            "copox-finger-valley-carve",
+            "copox-m5-technique-cycles",
+            "copox-model-maturity-phase2",
+            "copox-model-maturity-phase3",
+            "copox-theo-alpha-seed",
+            "diagnostico-theo-28sep",
+            "etapa0-auditoria",
+            "evidencia/maniqui-v03-r3-png",
+            "experimentos/comparativa-elio-v026-g2c5",
+            "experimentos/g2c10-g2c22-respaldo-argos-20261015",
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "experimentos/maniqui-v03-reparacion-facial",
+            "experimentos/maniqui-v04-nuca-patillas",
+            "experimentos/transferencia-rig-g2c22-elio-v026",
+            "experimentos/voxel-glb-codespaces",
+            "main",
+            "propuesta-cabeza-canonica",
+            "propuesta-copox-loop-engine",
+            "propuesta-copox-loop-engine-check",
+            "propuesta-kaggle",
+            "propuesta-maniqui-hibrido",
+            "propuesta-reconocimiento",
+            "propuesta-theo-ronda-unica",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/motor-medicion-v2",
+            "propuesta/pruebas-movimiento",
+            "propuesta/skills-3d-critica-completa",
+            "sam3d-proporciones-theo",
+            "senku",
+            "teacher3d-local-integration"
+          ],
+          "n_ramas": 47
+        },
+        {
+          "tipo": "repo",
+          "ruta": "/home/claude/alth-meta/.codex/skills/revisar-alth/SKILL.md y .claude/agents/revisor-visual-alth.md",
+          "nota": "mismo contenido; deduplicados"
+        }
+      ],
+      "proposito": "Revisión de solo lectura de una hoja de 4 vistas con veredicto APROBABLE / UNA_CORRECCIÓN / REHACER.",
+      "reglas": [
+        {
+          "id": "rev.verificacion_ok",
+          "texto": "APROBABLE exige verificación técnica OK (reporte.json) y cero bloqueos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "estado de reporte.json (cotas, tris, paleta, flotantes, apoyo)",
+          "umbral": "OK + 0 bloqueos",
+          "fuente": "\"Usa APROBABLE sólo cuando no queden bloqueos visibles y la verificación sea OK\" (agente)"
+        },
+        {
+          "id": "rev.hoja_4_vistas",
+          "texto": "Existe lectura de frente, lateral, espalda y 3/4.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "presencia de las 4 vistas en la hoja",
+          "umbral": "4/4",
+          "fuente": "\"LECTURA POR VISTA: Frente, Lateral, Espalda, 3/4\" (agente)",
+          "revision": "senku"
+        },
+        {
+          "id": "rev.identidad",
+          "texto": "Identidad/semejanza reconocible es la prioridad 1; fallo de identidad = REHACER.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "\"Usa REHACER cuando falle la identidad\" (agente)"
+        },
+        {
+          "id": "rev.silueta_proporciones",
+          "texto": "Silueta y proporciones correctas en las cuatro vistas; luego cara, pelo, vestuario.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje",
+            "pelo",
+            "ropa"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "\"silueta y proporciones en las cuatro vistas; cara, pelo y vestuario\" (agente)"
+        },
+        {
+          "id": "rev.iou_no_aprueba",
+          "texto": "VERIFICACION OK e IoU son evidencia, no aprobación artística.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "-",
+          "umbral": "-",
+          "fuente": "\"VERIFICACION OK e IoU son evidencia, no aprobación artística\" (agente)"
+        }
+      ],
+      "n_medibles": 2,
+      "n_checklist": 3
+    },
+    {
+      "id": "finalizar-personaje",
+      "nombre": "finalizar-personaje",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/finalizar-personaje/SKILL.md (= .codex)",
+          "ramas": [
+            "assets/theo-v10",
+            "avatares-chibi",
+            "claude/sam3d-proporciones-modeling-hbjhka",
+            "consolidation/stylized-anatomy-2026-10-12",
+            "copox-finger-remodel-phase4",
+            "copox-finger-valley-carve",
+            "copox-m5-technique-cycles",
+            "copox-model-maturity-phase2",
+            "copox-model-maturity-phase3",
+            "copox-theo-alpha-seed",
+            "diagnostico-theo-28sep",
+            "etapa0-auditoria",
+            "evidencia/maniqui-v03-r3-png",
+            "experimentos/comparativa-elio-v026-g2c5",
+            "experimentos/g2c10-g2c22-respaldo-argos-20261015",
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "experimentos/maniqui-v03-reparacion-facial",
+            "experimentos/maniqui-v04-nuca-patillas",
+            "experimentos/transferencia-rig-g2c22-elio-v026",
+            "experimentos/voxel-glb-codespaces",
+            "main",
+            "propuesta-cabeza-canonica",
+            "propuesta-copox-loop-engine",
+            "propuesta-copox-loop-engine-check",
+            "propuesta-kaggle",
+            "propuesta-maniqui-hibrido",
+            "propuesta-reconocimiento",
+            "propuesta-theo-ronda-unica",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/motor-medicion-v2",
+            "propuesta/pruebas-movimiento",
+            "propuesta/skills-3d-critica-completa",
+            "sam3d-proporciones-theo",
+            "senku",
+            "teacher3d-local-integration"
+          ],
+          "n_ramas": 47
+        },
+        {
+          "tipo": "repo",
+          "ruta": "/home/claude/alth-meta/.claude/skills/finalizar-personaje/SKILL.md"
+        }
+      ],
+      "proposito": "Cerrar un personaje con una ronda integral, pruebas deterministas, evidencia y parada para aprobación humana.",
+      "reglas": [
+        {
+          "id": "fin.evidencia_completa",
+          "texto": "La ronda entrega hoja, reporte y manifest al revisor visual.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "existencia de hoja.png, reporte.json, manifest",
+          "umbral": "3/3",
+          "fuente": "\"Entregar hoja, reporte, manifest y cambios al revisor visual\" (paso 6)"
+        },
+        {
+          "id": "fin.sin_final_sin_aprobacion",
+          "texto": "No se genera 'final' ni GLB aprobado sin decisión humana.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "ausencia de export final/GLB en la ronda candidata",
+          "umbral": "0 exports finales",
+          "fuente": "\"No generar final, GLB ni commit aprobado por cuenta propia\" (paso 7)"
+        },
+        {
+          "id": "fin.brief_contrato",
+          "texto": "Theo: brief_final.md es contrato obligatorio de la ronda.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "revisión contra brief",
+          "umbral": "-",
+          "fuente": "\"tratarlo como contrato obligatorio de la ronda\""
+        }
+      ],
+      "n_medibles": 2,
+      "n_checklist": 1
+    },
+    {
+      "id": "copox-auditoria-3d",
+      "nombre": "copox-auditoria-3d",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/copox-auditoria-3d/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 15
+        }
+      ],
+      "proposito": "Auditoría por niveles de costo de GLB COPOX: filtro barato, preflight gate, 4 vistas y pruebas profundas solo en finalistas.",
+      "reglas": [
+        {
+          "id": "aud.sha_ejes_procedencia",
+          "texto": "SHA de baseline, ejes/unidades y procedencia presentes; si falta → RESEARCH_REQUIRED.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "campos sha256, ejes, unidades, procedencia en manifest/reference config",
+          "umbral": "todos presentes",
+          "fuente": "\"Validar SHA de baseline, ejes/unidades y procedencia ... RESEARCH_REQUIRED\" (paso 2)"
+        },
+        {
+          "id": "aud.esquema_indices",
+          "texto": "Esquema glTF válido e índices en rango.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "validación de esquema; max(index) < nº vértices",
+          "umbral": "0 errores",
+          "fuente": "\"esquemas glTF, mallas, índices\" (paso 3)",
+          "revision": "integridad_gltf"
+        },
+        {
+          "id": "aud.nan",
+          "texto": "Sin NaN en atributos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "NaN/Inf en POSITION/NORMAL/UV/WEIGHTS",
+          "umbral": "0",
+          "fuente": "\"NaN\" (paso 3)",
+          "revision": "integridad_gltf"
+        },
+        {
+          "id": "aud.areas_degeneradas",
+          "texto": "Sin triángulos de área nula.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "triángulos con área ≤ ε",
+          "umbral": "0 (ε a definir)",
+          "fuente": "\"áreas\" (paso 3)",
+          "revision": "areas_degeneradas"
+        },
+        {
+          "id": "aud.normales",
+          "texto": "Normales válidas/consistentes.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "normales no unitarias o invertidas",
+          "umbral": "0",
+          "fuente": "\"normales\" (paso 3)",
+          "revision": "normales"
+        },
+        {
+          "id": "aud.self_intersection",
+          "texto": "Autointersecciones medidas si hay herramienta.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "pares de triángulos intersectados",
+          "umbral": "a definir",
+          "fuente": "\"self-intersection si disponible\" (paso 3)"
+        },
+        {
+          "id": "aud.skin_animaciones",
+          "texto": "Skin y animaciones presentes e íntegras.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "skins/joints/animaciones vs baseline",
+          "umbral": "sin pérdidas",
+          "fuente": "\"comprobar skin/animaciones\" (paso 3)"
+        },
+        {
+          "id": "aud.triangulos_protegidos",
+          "texto": "Triángulos protegidos intactos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "hash de caras protegidas antes/después",
+          "umbral": "igualdad",
+          "fuente": "\"triangulos protegidos\" (paso 3)"
+        },
+        {
+          "id": "aud.preflight_gate",
+          "texto": "Métricas focales realmente medidas pasan por preflight_gate; REJECTED_EARLY detiene; DEEP_ELIGIBLE ≠ aprobado.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "copox/geometry/preflight_gate.py (seam_connected, target_improvement_pp...)",
+          "umbral": "umbrales de config del gate (no valores por defecto)",
+          "fuente": "\"No inventar seam_connected, target_improvement_pp ni usar un valor fijo por defecto\" (paso 4-5)"
+        },
+        {
+          "id": "aud.cuatro_vistas_iou",
+          "texto": "4 vistas + acercamiento con cámaras idénticas; IoU global como control de regresión.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "IoU por vista candidato vs referencia/baseline (cámara idéntica)",
+          "umbral": "a definir",
+          "fuente": "\"IoU global es control de regresión, no criterio artístico único\" (paso 6)",
+          "revision": "senku"
+        },
+        {
+          "id": "aud.poses_finalistas",
+          "texto": "Finalistas: poses Wave/Sit/Nod/HeadShake, los 29 clips si existen, import Godot, morphs/UV/pesos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "clips presentes y reproducibles; import Godot OK",
+          "umbral": "29 clips si aplica; Godot OK",
+          "fuente": "\"validar poses Wave/Sit/Nod/HeadShake, los 29 clips si existen, importación Godot\" (paso 7)"
+        },
+        {
+          "id": "aud.comparacion_artistica",
+          "texto": "Comparar contra referencia artística aprobada; promoción solo con Admin.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(paso 6, 8)"
+        }
+      ],
+      "n_medibles": 11,
+      "n_checklist": 1
+    },
+    {
+      "id": "copox-geometria",
+      "nombre": "copox-geometria",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/copox-geometria/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 15
+        }
+      ],
+      "proposito": "Construir/reparar superficies por ajuste elipsoidal, bucles de borde y puentes de contorno, sin IA generativa.",
+      "reglas": [
+        {
+          "id": "geo.bridge_requisitos",
+          "texto": "bridge_equal_loops solo con DOS bordes auténticos en UNA malla indexada y misma cardinalidad.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "nº bucles, misma primitiva, |loopA| == |loopB|",
+          "umbral": "2 / misma / igual",
+          "fuente": "\"requiere DOS bordes auténticos en UNA malla indexada y con igual conteo de vértices\" (paso 5)"
+        },
+        {
+          "id": "geo.no_interpolar_sin_modulo",
+          "texto": "No interpolar skin, morphs ni UV sin módulo y pruebas explícitas.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "si cambia nº de vértices y hay morphs/skin sin adaptador → FAIL",
+          "umbral": "veto",
+          "fuente": "\"No interpolar skin, morphs ni UV sin un módulo y pruebas explícitas\" (paso 6)"
+        },
+        {
+          "id": "geo.max_tres_hermanos",
+          "texto": "Máximo tres candidatos hermanos; salida nueva por versión.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "nº candidatos por generación; sha nuevo por candidato",
+          "umbral": "≤ 3",
+          "fuente": "\"Tres candidatos hermanos como máximo\" (paso 7)"
+        },
+        {
+          "id": "geo.renders_4_vistas",
+          "texto": "PNG reales frente/perfil/trasera/3-4 + detalle antes de pedir aprobación.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "presencia de los 5 renders",
+          "umbral": "5/5",
+          "fuente": "\"Mostrar PNG reales frente/perfil/trasera/3-4, detalle y comparación\" (paso 8)"
+        }
+      ],
+      "n_medibles": 4,
+      "n_checklist": 0
+    },
+    {
+      "id": "copox-procedencia-3d",
+      "nombre": "copox-procedencia-3d",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/copox-procedencia-3d/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 15
+        }
+      ],
+      "proposito": "Revisar origen, licencias y trazabilidad de GLB, texturas y referencias antes de afirmar independencia comercial.",
+      "reglas": [
+        {
+          "id": "proc.clasificacion",
+          "texto": "Cada componente (malla, textura, material, rig, animación) clasificado VERIFICADO_PROPIO / TERCERO_CONDICIONES / SIN_VERIFICAR / ORIGEN_MIXTO con SHA/URL/fecha.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "manifest de procedencia (verificable por código solo como presencia de campos)",
+          "umbral": "-",
+          "fuente": "(pasos 2-3)"
+        },
+        {
+          "id": "proc.no_independencia_por_cambio",
+          "texto": "Nunca deducir independencia por % de cambio o distancia de silueta.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "-",
+          "umbral": "-",
+          "fuente": "(paso 3)"
+        },
+        {
+          "id": "proc.no_desbloquea_promocion",
+          "texto": "La revisión de procedencia no sustituye QA artístico ni Godot.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "-",
+          "umbral": "-",
+          "fuente": "(paso 8)"
+        }
+      ],
+      "n_medibles": 0,
+      "n_checklist": 3
+    },
+    {
+      "id": "anatomic-cut",
+      "nombre": "anatomic-cut",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/anatomic-cut/SKILL.md (= .codex; versión e7506de más completa)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 15
+        }
+      ],
+      "proposito": "Recortar geometría defectuosa por regiones anatómicas sin perder facciones, normales, UV ni pesos.",
+      "reglas": [
+        {
+          "id": "cut.triangulos_protegidos",
+          "texto": "Triángulos protegidos (ojos, orejas, labios, regiones congeladas) intactos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "hash/igualdad de caras protegidas antes/después",
+          "umbral": "igualdad",
+          "fuente": "\"Clasificar triángulos protected_faces ANTES de operar\" (paso 2)"
+        },
+        {
+          "id": "cut.atributos_preservados",
+          "texto": "POSITION, NORMAL, TEXCOORD_0, JOINTS_0, WEIGHTS_0 presentes si estaban.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "set de atributos candidato ⊇ fuente",
+          "umbral": "igualdad de conjunto",
+          "fuente": "(paso 3)"
+        },
+        {
+          "id": "cut.morphs_bloquean",
+          "texto": "Morph targets, atributos custom o skin >4 influencias sin adaptador → bloquear.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "presencia de targets / JOINTS_1 / atributos _CUSTOM en región cortada",
+          "umbral": "veto si presentes",
+          "fuente": "\"no están cubiertos: bloquear\" (paso 4)"
+        },
+        {
+          "id": "cut.bordes_abiertos_nuevos",
+          "texto": "Bordes abiertos nuevos se reportan; borde objetivo abierto → Surface Stitch, no superposición.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "nuevas aristas de incidencia 1",
+          "umbral": "0 para aprobar",
+          "fuente": "\"Si aparece un borde objetivo abierto, enviarlo a Surface Stitch\" (paso 6)"
+        },
+        {
+          "id": "cut.candidato_hermano",
+          "texto": "Candidato hermano con hash nuevo; fuentes intactas.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "sha candidato ≠ sha fuente; fuente sin cambios",
+          "umbral": "-",
+          "fuente": "(paso 6)"
+        },
+        {
+          "id": "cut.no_por_una_silueta",
+          "texto": "No eliminar facciones por una única silueta lateral; comparar todas las vistas/poses.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(Enlace con Visual Critic)"
+        }
+      ],
+      "n_medibles": 5,
+      "n_checklist": 1
+    },
+    {
+      "id": "contour-extractor",
+      "nombre": "contour-extractor",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/contour-extractor/SKILL.md (= .codex; versión a6046da más completa)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "propuesta/g2c-advancing-front-skills"
+          ],
+          "n_ramas": 10
+        }
+      ],
+      "proposito": "Extraer y validar bucles topológicos de borde reales antes de coser, cortar o hacer loft.",
+      "reglas": [
+        {
+          "id": "contour.borde_por_incidencia",
+          "texto": "Borde = arista con incidencia en exactamente 1 cara (no edges_unique_length).",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "conteo de incidencia arista→caras",
+          "umbral": "definición exacta",
+          "fuente": "\"extraer aristas con incidencia en exactamente 1 cara\" (paso 2)"
+        },
+        {
+          "id": "contour.seams_uv_no_agujeros",
+          "texto": "Distinguir seams por UV duplicadas de agujeros físicos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "bucles de borde tras soldar por posición (diagnóstico) vs topología indexada",
+          "umbral": "clasificación explícita",
+          "fuente": "(paso 3)"
+        },
+        {
+          "id": "contour.gate_dos_bucles",
+          "texto": "GATE: exactamente dos bucles reales no ramificados.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "nº bucles; grado de vértices de borde == 2",
+          "umbral": "2 y sin ramas",
+          "fuente": "\"GATE: exactamente dos bucles reales no ramificados\" (paso 6)"
+        },
+        {
+          "id": "contour.sin_lentes_alastor",
+          "texto": "Alastor: sin primitiva/pieza 'Lentes' (montura, cristales, puente, patillas).",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "nodos/primitivas con pieza/nombre Lentes",
+          "umbral": "0",
+          "fuente": "\"El objetivo de la cabeza es SIN montura, cristales, puente ni patillas\" (G2-C2)"
+        },
+        {
+          "id": "contour.residuo_lentes",
+          "texto": "Rastros de patillas/montura fusionados con la cara revisados en todas las vistas.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(G2-C2)"
+        }
+      ],
+      "n_medibles": 4,
+      "n_checklist": 1
+    },
+    {
+      "id": "surface-stitch",
+      "nombre": "surface-stitch",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/surface-stitch/SKILL.md (= .codex; versión 356f53d más completa)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 15
+        }
+      ],
+      "proposito": "Unir dos superficies con bordes abiertos compatibles en una sola topología conservando atributos.",
+      "reglas": [
+        {
+          "id": "ss.cardinalidad_sentido",
+          "texto": "Contornos de igual cantidad de puntos y sentido consistente (kernel igual-longitud).",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "|loopA|==|loopB|; winding",
+          "umbral": "igual",
+          "fuente": "(paso 2)"
+        },
+        {
+          "id": "ss.reusa_vertices",
+          "texto": "La banda usa IDs de vértices existentes; UV, pesos y normales originales intactos; sin morph interpolado.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "nº vértices sin cambio; arrays de atributos idénticos",
+          "umbral": "igualdad",
+          "fuente": "(paso 4)"
+        },
+        {
+          "id": "ss.material_por_cara",
+          "texto": "Material de la banda registrado por cara.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "material id por cara nueva",
+          "umbral": "100 % asignado",
+          "fuente": "(paso 4)"
+        },
+        {
+          "id": "ss.calidad_topologica",
+          "texto": "Conectividad, manifold, winding, distancias, degenerados y autointersecciones comprobados; si falta alguno → RESEARCH_REQUIRED.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "non-manifold, winding inconsistente, degenerados, intersecciones",
+          "umbral": "0",
+          "fuente": "(paso 5)"
+        },
+        {
+          "id": "ss.reimportacion",
+          "texto": "Conectividad conservada tras export GLB y reimportación.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "bucles de borde en la unión tras reimport",
+          "umbral": "0 (igual que en RAM)",
+          "fuente": "\"Se requiere un exportador glTF/GLB validado, prueba de reimportación\" (paso 6)"
+        },
+        {
+          "id": "ss.overlap_no_es_cierre",
+          "texto": "Un overlap visualmente limpio no es un cierre topológico.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "conectividad por índices, no proximidad",
+          "umbral": "-",
+          "fuente": "(Enlace con Visual Critic)"
+        }
+      ],
+      "n_medibles": 6,
+      "n_checklist": 0
+    },
+    {
+      "id": "stitch-advancing-front",
+      "nombre": "stitch-advancing-front",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/stitch-advancing-front/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "propuesta/g2c-advancing-front-skills"
+          ],
+          "n_ramas": 10
+        }
+      ],
+      "proposito": "Triangulación de frente de avance entre dos bucles reales de longitud diferente, con validación y rechazo de exportaciones inseguras.",
+      "reglas": [
+        {
+          "id": "saf.caras_N_mas_M",
+          "texto": "La banda consume una arista por triángulo: N+M caras.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "nº caras banda",
+          "umbral": "= N+M",
+          "fuente": "\"greedy consume exactamente una arista de un anillo por triángulo (N+M caras)\""
+        },
+        {
+          "id": "saf.gap_maximo",
+          "texto": "Máximo gap de todas las conexiones cruzadas validado.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "longitud máx. de arista cruzada",
+          "umbral": "a definir",
+          "fuente": "\"valida máximo gap de TODAS las conexiones cruzadas\""
+        },
+        {
+          "id": "saf.ratio_aristas",
+          "texto": "Ratio de aristas acotado.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "ratio arista máx/mín por triángulo",
+          "umbral": "a definir",
+          "fuente": "\"ratio de aristas\""
+        },
+        {
+          "id": "saf.no_degenerados_winding",
+          "texto": "Área no degenerada, winding consistente, sin non-manifold ni bucles restantes.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "conteos",
+          "umbral": "0",
+          "fuente": "\"área no degenerada, winding, nonmanifold y ausencia de bucles restantes\""
+        },
+        {
+          "id": "saf.flags_promocion",
+          "texto": "No promover si self_intersections_checked, exported_glb_verified o artistic_references_approved = false.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "flags del reporte",
+          "umbral": "las 3 = true",
+          "fuente": "\"No promover variantes mientras self_intersections_checked=false ...\""
+        },
+        {
+          "id": "saf.determinismo",
+          "texto": "Mismos arrays → mismos índices de triángulo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "hash de índices en dos corridas",
+          "umbral": "igualdad",
+          "fuente": "(Determinismo)"
+        }
+      ],
+      "n_medibles": 6,
+      "n_checklist": 0
+    },
+    {
+      "id": "scully",
+      "nombre": "scully (Surface Sculpt)",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/scully/SKILL.md (= .codex; versión 0e4559f más completa)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/cassette-geometria-guiada",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 15
+        }
+      ],
+      "proposito": "Esculpir matemáticamente regiones sanas (aplanar frente, redondear nuca) con ROI, falloff y presupuesto de desplazamiento.",
+      "reglas": [
+        {
+          "id": "scully.presupuesto_desplazamiento",
+          "texto": "Desplazamiento máximo ≤ límite del plan; si se excede, rechazar sin recortar.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "desplazamiento máx. medido (mm)",
+          "umbral": "≤ límite declarado en geometry_plan.json",
+          "fuente": "\"Si el presupuesto se excede, rechazar sin recortar silenciosamente\" (paso 4)"
+        },
+        {
+          "id": "scully.mascara_facciones",
+          "texto": "Vértices de ojos, boca, orejas y piezas congeladas sin desplazamiento.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "desplazamiento en máscara congelada",
+          "umbral": "0",
+          "fuente": "(paso 3)"
+        },
+        {
+          "id": "scully.exceso_medido",
+          "texto": "Requiere signed_excess_mm positivo medido y trazable antes de aplicar.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "signed_excess_mm",
+          "umbral": "> 0",
+          "fuente": "\"medición positiva signed_excess_mm\" (Enlace)"
+        },
+        {
+          "id": "scully.coordenadas",
+          "texto": "Coordenadas declaradas (glTF Y-up/m Maniquí; Z-up/mm otros).",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "ejes/unidades en manifest",
+          "umbral": "declarados",
+          "fuente": "(paso 2)"
+        },
+        {
+          "id": "scully.cambio_no_es_mejora",
+          "texto": "Cambio visible ≠ mejora; contrastar con todas las referencias.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje",
+            "objeto"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(paso 6)"
+        }
+      ],
+      "n_medibles": 4,
+      "n_checklist": 1
+    },
+    {
+      "id": "gltf-rig-guardian",
+      "nombre": "gltf-rig-guardian",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/gltf-rig-guardian/SKILL.md (= .codex; versión 0446cf0 más completa)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "propuesta/g2c-advancing-front-skills"
+          ],
+          "n_ramas": 10
+        }
+      ],
+      "proposito": "Auditar preservación de glTF: skeleton, atributos, materiales, UV, morphs y canales animados; gates de import Godot.",
+      "reglas": [
+        {
+          "id": "grg.joints_ibm_nombres",
+          "texto": "Preservar joints, inverseBindMatrices, nombres y pistas de animación válidas.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "diff vs fuente",
+          "umbral": "sin pérdidas",
+          "fuente": "(Invariante 2)",
+          "revision": "integridad_gltf"
+        },
+        {
+          "id": "grg.joints_weights_finitos",
+          "texto": "JOINTS_0 y WEIGHTS_0 juntos y finitos; pesos normalizados.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "ropa",
+            "pelo"
+          ],
+          "metrica": "presencia conjunta; NaN/Inf; |Σw−1|",
+          "umbral": "juntos / 0 / a definir",
+          "fuente": "\"JOINTS_0/WEIGHTS_0 juntos y finitos\" (Invariante 2)",
+          "revision": "integridad_gltf"
+        },
+        {
+          "id": "grg.atributos_materiales_morphs",
+          "texto": "UV, materiales, texturas y morph targets preservados; materiales por cara intactos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "diff fuente/candidato",
+          "umbral": "sin pérdidas",
+          "fuente": "(Invariantes 2, 5)"
+        },
+        {
+          "id": "grg.claves_variables",
+          "texto": "Un clip definido no prueba movimiento: contar claves variables por clip.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "canales con valores no constantes por clip",
+          "umbral": "> 0 por clip declarado",
+          "fuente": "\"La definición de 29 clips no prueba 29 movimientos\" (Invariante 3)"
+        },
+        {
+          "id": "grg.canales_malla_vacia",
+          "texto": "Canales faciales sobre malla vacía = NO FUNCIONALES.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "canales weights cuyo mesh no tiene vértices/targets",
+          "umbral": "0 (o marcados NO FUNCIONAL)",
+          "fuente": "\"Los 15 canales faciales heredados sobre malla vacía deben marcarse NO FUNCIONALES\"",
+          "revision": "integridad_gltf"
+        },
+        {
+          "id": "grg.accesores_vacios",
+          "texto": "Sin accessors/primitivas vacías (sanear en copia).",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "accessors count=0; primitivas sin POSITION",
+          "umbral": "0",
+          "fuente": "(Invariante 6)",
+          "revision": "integridad_gltf"
+        },
+        {
+          "id": "grg.godot_bones",
+          "texto": "Godot headless importa y cuenta 56 bones (personajes base 56).",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "bones en Skeleton3D importado",
+          "umbral": "56 (según asset)",
+          "fuente": "\"contar 56 bones\" (Invariante 7)"
+        },
+        {
+          "id": "grg.gates",
+          "texto": "IMPORT_OK, ANIMATION_TRACKS_OK, DEFORMATION_OK, ATTRIBUTES_OK deben pasar (más VISUAL_CRITIC_OK).",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "estado de cada gate",
+          "umbral": "todos PASS",
+          "fuente": "(Invariante 8)"
+        },
+        {
+          "id": "grg.sin_lentes_alastor",
+          "texto": "Candidato de Alastor sin primitiva 'Lentes'; ACCESSORY_REMOVED ≠ ALL_EYEWEAR_RESIDUE_GONE.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "primitivas con nombre/pieza Lentes",
+          "umbral": "0",
+          "fuente": "(G2-C2 Eyewear Guardian)"
+        }
+      ],
+      "n_medibles": 9,
+      "n_checklist": 0
+    },
+    {
+      "id": "rig-architect",
+      "nombre": "rig-architect",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/rig-architect/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 14
+        }
+      ],
+      "proposito": "Diseñar y validar esqueletos, bind poses, pesos y límites articulares preservando animaciones.",
+      "reglas": [
+        {
+          "id": "ra.convenciones",
+          "texto": "Convenciones up/front/units declaradas.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "campos en manifest",
+          "umbral": "declarados",
+          "fuente": "(paso 2)"
+        },
+        {
+          "id": "ra.bind_pose_pesos",
+          "texto": "inverseBindMatrices, JOINTS_0 y WEIGHTS_0 normalizados; sin puntos de peso cero.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "ropa"
+          ],
+          "metrica": "|Σw−1|; vértices Σw=0",
+          "umbral": "a definir / 0",
+          "fuente": "\"Evitar puntos de peso cero\" (paso 4)"
+        },
+        {
+          "id": "ra.sin_cambios_joint",
+          "texto": "Sin cambios de joint no autorizados.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "diff nombres/padres/rest vs base",
+          "umbral": "0",
+          "fuente": "(paso 4)",
+          "revision": "base_preservada"
+        },
+        {
+          "id": "ra.sin_mallas_partidas",
+          "texto": "Sin mallas partidas al exportar.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "componentes conexos antes/después de export",
+          "umbral": "igual",
+          "fuente": "(paso 4)"
+        },
+        {
+          "id": "ra.simetria",
+          "texto": "Tests de pesos/transformaciones/simetría.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "diferencia espejo L/R en rest de joints",
+          "umbral": "a definir",
+          "fuente": "(paso 7)"
+        },
+        {
+          "id": "ra.estres_articular",
+          "texto": "Estrés articular sin penetración ni pinzamiento en codos, rodillas, hombros, caderas, dedos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "autointersecciones en poses de estrés",
+          "umbral": "a definir",
+          "fuente": "(paso 5, 7)"
+        },
+        {
+          "id": "ra.clips_preservados",
+          "texto": "Clips existentes preservados salvo reemplazo aprobado.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "nº y nombres de clips vs base",
+          "umbral": "sin pérdidas",
+          "fuente": "(paso 7)",
+          "revision": "base_preservada"
+        },
+        {
+          "id": "ra.proporcion_chibi",
+          "texto": "Movimiento optimizado para la silueta estilizada ('avatar de dos cabezas').",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(paso 5)"
+        }
+      ],
+      "n_medibles": 7,
+      "n_checklist": 1
+    },
+    {
+      "id": "motion-lab",
+      "nombre": "motion-lab",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/motion-lab/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 14
+        }
+      ],
+      "proposito": "Crear y corregir animaciones con biomecánica, contactos, trayectoria y timing contra referencias de vídeo/pose.",
+      "reglas": [
+        {
+          "id": "motion.pies_plantados",
+          "texto": "Pies plantados durante apoyo (sin foot sliding).",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "desplazamiento horizontal del pie en apoyo",
+          "umbral": "a definir (ver rig.foot_sliding: <2 % longitud pie)",
+          "fuente": "(paso 4)"
+        },
+        {
+          "id": "motion.suelo",
+          "texto": "Sin penetración del suelo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "mín. altura de pies por frame",
+          "umbral": "≥ 0 (tolerancia a definir)",
+          "fuente": "\"suelo, colisiones\" (paso 4)",
+          "revision": "apoyo_piso"
+        },
+        {
+          "id": "motion.joint_limits",
+          "texto": "Reportar violaciones de límites articulares.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "rotaciones fuera de límites del rig",
+          "umbral": "0",
+          "fuente": "(paso 4)"
+        },
+        {
+          "id": "motion.penetraciones",
+          "texto": "Reportar penetraciones (manos-objetos, cuerpo).",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "intersecciones por frame",
+          "umbral": "0 (a definir)",
+          "fuente": "(paso 4)"
+        },
+        {
+          "id": "motion.loops_continuidad",
+          "texto": "Loops y transiciones continuas; rotaciones SLERP.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "diferencia pose primer/último frame en loops; saltos entre frames",
+          "umbral": "a definir",
+          "fuente": "(paso 4-5)"
+        },
+        {
+          "id": "motion.clips_heredados",
+          "texto": "Mantener los 29 clips heredados del Maniquí sin sobrescribir; nuevos clips versionados.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "nº y nombres de clips",
+          "umbral": "≥ 29 heredados intactos",
+          "fuente": "(paso 5)",
+          "revision": "base_preservada"
+        },
+        {
+          "id": "motion.hoja_temporal",
+          "texto": "Contact sheet multivista en inicio, transición, mitad, final y eventos por referencia.",
+          "tipo": "medible",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "presencia de frames clave renderizados",
+          "umbral": "5 por referencia",
+          "fuente": "(paso 6)"
+        },
+        {
+          "id": "motion.no_sinusoide",
+          "texto": "No caminata por rotación sinusoidal; fases de apoyo/balanceo, pelvis, contrapeso de brazos.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "animacion"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(paso 2)"
+        }
+      ],
+      "n_medibles": 7,
+      "n_checklist": 1
+    },
+    {
+      "id": "facial-acting",
+      "nombre": "facial-acting",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/facial-acting/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 14
+        }
+      ],
+      "proposito": "Gestualidad facial (parpadeo, mirada, mandíbula, labios, visemas) validada contra todas las referencias faciales.",
+      "reglas": [
+        {
+          "id": "facial.inventario_morphs",
+          "texto": "Inventariar los morph targets que realmente existen antes de editar.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "lista de targets por malla",
+          "umbral": "registrado",
+          "fuente": "(paso 2)"
+        },
+        {
+          "id": "facial.no_destruir_morphs",
+          "texto": "No destruir morph targets.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "nº/nombres de targets vs base",
+          "umbral": "sin pérdidas",
+          "fuente": "(paso 7)"
+        },
+        {
+          "id": "facial.clipping",
+          "texto": "Sin clipping de párpados, dientes/lengua, iris ni z-fighting en extremos (ojo izq/der, parpadeo completo, boca abierta, habla).",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "animacion"
+          ],
+          "metrica": "intersecciones en poses extremas de morphs",
+          "umbral": "0 (a definir)",
+          "fuente": "(paso 5)"
+        },
+        {
+          "id": "facial.orejas_fijas",
+          "texto": "Expresiones no desplazan orejas ni rompen unión craneofacial.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "desplazamiento de vértices de oreja en cada target",
+          "umbral": "0",
+          "fuente": "(paso 3)"
+        },
+        {
+          "id": "facial.parpadeo_completo",
+          "texto": "Parpadeo completo cierra el ojo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "apertura palpebral con blink=1",
+          "umbral": "a definir",
+          "fuente": "(paso 5)"
+        },
+        {
+          "id": "facial.identidad_sobria",
+          "texto": "Preservar identidad chibi-soft; evitar expresiones demasiado tiernas si el brief pide sobriedad.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(paso 4)"
+        }
+      ],
+      "n_medibles": 5,
+      "n_checklist": 1
+    },
+    {
+      "id": "cloth-dynamics",
+      "nombre": "cloth-dynamics",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/cloth-dynamics/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 14
+        }
+      ],
+      "proposito": "Movimiento de tela (gabardinas, faldones) con colisiones al caminar/sentarse y comparación contra referencias.",
+      "reglas": [
+        {
+          "id": "cloth.clipping_transiciones",
+          "texto": "Estabilidad y clipping medidos durante transiciones, no solo en poses finales.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "animacion"
+          ],
+          "metrica": "penetración/intersección por frame en walk/run/sit/stand/turn/jump",
+          "umbral": "a definir",
+          "fuente": "(paso 5, 7)"
+        },
+        {
+          "id": "cloth.contactos",
+          "texto": "Contacto con asientos, rodillas, manos y gabardina sin atravesar.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "animacion"
+          ],
+          "metrica": "penetración con colliders",
+          "umbral": "0 (a definir)",
+          "fuente": "(paso 5)"
+        },
+        {
+          "id": "cloth.autointerseccion_faldones",
+          "texto": "Sin autointersección de faldones.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa"
+          ],
+          "metrica": "autointersecciones de la prenda",
+          "umbral": "0",
+          "fuente": "(paso 4)"
+        },
+        {
+          "id": "cloth.rig_base_intacto",
+          "texto": "No modificar el rig base sin aprobación.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa",
+            "personaje"
+          ],
+          "metrica": "diff joints base",
+          "umbral": "0",
+          "fuente": "(paso 7)",
+          "revision": "base_preservada"
+        },
+        {
+          "id": "cloth.godot_import",
+          "texto": "Prueba de importación y física en Godot con evidencia.",
+          "tipo": "medible",
+          "aplica_a": [
+            "ropa"
+          ],
+          "metrica": "import Godot OK",
+          "umbral": "OK",
+          "fuente": "(paso 7)"
+        },
+        {
+          "id": "cloth.zonas_conservadas",
+          "texto": "Conservar dobladillos, botones, mangas y bolsillos.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "ropa"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(paso 2)"
+        },
+        {
+          "id": "cloth.metodo_declarado",
+          "texto": "Declarar si es huesos/springbones/cloth; no afirmar física real si se mueve por huesos.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "ropa"
+          ],
+          "metrica": "-",
+          "umbral": "-",
+          "fuente": "(paso 3)"
+        }
+      ],
+      "n_medibles": 5,
+      "n_checklist": 2
+    },
+    {
+      "id": "visual-critic",
+      "nombre": "visual-critic",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/visual-critic/SKILL.md (= .codex; versión be20d55 más completa)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 14
+        }
+      ],
+      "proposito": "Comparación cruzada obligatoria contra TODAS las referencias/vistas/poses, sin promedios que oculten discrepancias.",
+      "reglas": [
+        {
+          "id": "vc.cobertura_total",
+          "texto": "Todas las referencias cubiertas; si falta vista/cámara/referencia → INCOMPLETE.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "cobertura report.json (referencias con par comparativo / total)",
+          "umbral": "100 %",
+          "fuente": "\"Si faltan vistas ... emitir INCOMPLETE\""
+        },
+        {
+          "id": "vc.vistas_personaje",
+          "texto": "Personajes: frente, 3/4, perfil y espalda renderizados.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje",
+            "pelo",
+            "ropa"
+          ],
+          "metrica": "vistas presentes",
+          "umbral": "4/4",
+          "fuente": "(Contrato)",
+          "revision": "senku"
+        },
+        {
+          "id": "vc.iou_chamfer_por_par",
+          "texto": "IoU y Chamfer por pareja solo con máscara binaria y cámara alineada.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "IoU / Chamfer por referencia",
+          "umbral": "a definir",
+          "fuente": "\"con máscaras binarias y cámaras exactas, IoU y Chamfer por pareja\"",
+          "revision": "senku"
+        },
+        {
+          "id": "vc.peor_discrepancia",
+          "texto": "Gate sobre la peor referencia, no el promedio.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "min(IoU) por referencia; nº ISSUE",
+          "umbral": "a definir",
+          "fuente": "\"No concluir sólo con IoU ni promedios. Informar peor discrepancia\""
+        },
+        {
+          "id": "vc.matriz_anomalias",
+          "texto": "anomaly_cross_view_matrix cubre todos los IDs de referencia.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "IDs cubiertos / total",
+          "umbral": "100 %",
+          "fuente": "(Enlace ejecutable)"
+        },
+        {
+          "id": "vc.procedencia_medicion",
+          "texto": "measurement_provenance con SHA-256, método, ejes y unidades.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "campos presentes",
+          "umbral": "4/4",
+          "fuente": "(Enlace ejecutable)"
+        },
+        {
+          "id": "vc.renders_reales",
+          "texto": "Renders reales del GLB, no imágenes generadas; no mezclar fotos y PNG generados como mismo ángulo.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "-",
+          "umbral": "-",
+          "fuente": "(Regla de procedencia)"
+        },
+        {
+          "id": "vc.bultos_curvatura",
+          "texto": "Buscar bultos, hundimientos, huecos, asimetrías, fragmentos flotantes en múltiples proyecciones.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "revisión visual (apoyo: curvatura/normales)",
+          "umbral": "-",
+          "fuente": "(Diagnóstico 3)"
+        },
+        {
+          "id": "vc.sin_residuo_lentes",
+          "texto": "Alastor: sin montura/cristales/puente/patillas en frontal, 3/4, perfiles y espalda.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(G2-C2)"
+        }
+      ],
+      "n_medibles": 6,
+      "n_checklist": 3
+    },
+    {
+      "id": "regional-cassettes",
+      "nombre": "regional-cassettes",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/regional-cassettes/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado"
+          ],
+          "n_ramas": 8
+        }
+      ],
+      "proposito": "Evaluar y versionar por región (nuca, ojos, manos, ropa...) sin vetos globales por fallos ajenos ni daños a datos compartidos.",
+      "reglas": [
+        {
+          "id": "reg.fuera_roi_identico",
+          "texto": "Todas las primitivas/atributos/animaciones fuera de la región, iguales.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "igualdad de arrays por primitiva fuera de ROI (snapshot previo)",
+          "umbral": "igualdad exacta",
+          "fuente": "\"comprobar igualdad de todas las primitivas/atributos/animaciones fuera de alcance\" (paso 4)"
+        },
+        {
+          "id": "reg.original_en_region",
+          "texto": "Si solo se añade piel, la geometría original de la región se conserva.",
+          "tipo": "medible",
+          "aplica_a": [
+            "personaje"
+          ],
+          "metrica": "vértices originales de ROI sin cambio",
+          "umbral": "igualdad",
+          "fuente": "(paso 4)"
+        },
+        {
+          "id": "reg.fallos_globales",
+          "texto": "Rechazo global si invade geometría congelada o rompe huesos/pesos, materiales, animaciones o integridad.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "diff de congeladas, skins, materiales, animaciones",
+          "umbral": "0 cambios",
+          "fuente": "(Fallos realmente globales)"
+        },
+        {
+          "id": "reg.no_global_approved",
+          "texto": "Reporte regional con global_model_approved=false; no llamar global_watertight a un parche con bordes laterales abiertos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "campos del reporte; bordes abiertos",
+          "umbral": "false / coherente",
+          "fuente": "(Contrato de evidencia)"
+        },
+        {
+          "id": "reg.lamina_triangulos_nuevos",
+          "texto": "Captura que destaque solo triángulos nuevos (4 vistas).",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "-",
+          "umbral": "-",
+          "fuente": "(paso 5)"
+        }
+      ],
+      "n_medibles": 4,
+      "n_checklist": 1
+    },
+    {
+      "id": "regional-asset-qa",
+      "nombre": "regional-asset-qa",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/regional-asset-qa/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/maniqui-g2c2-contorno-facial"
+          ],
+          "n_ramas": 1
+        }
+      ],
+      "proposito": "Orquestar QA por regiones independientes con auditor de seguridad global obligatorio.",
+      "reglas": [
+        {
+          "id": "rqa.global_safety",
+          "texto": "Siempre existe un auditor scope 'global_safety' (rig, materiales, vecinos, integridad, baseline).",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "auditores del cassette con scope global_safety",
+          "umbral": "≥ 1",
+          "fuente": "(paso 1)"
+        },
+        {
+          "id": "rqa.vecinos",
+          "texto": "Sin daño a vecinos, costuras entre piezas, UV, pesos ni animaciones.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "diff fuera de región",
+          "umbral": "0",
+          "fuente": "(paso 3)"
+        },
+        {
+          "id": "rqa.cuatro_puertas",
+          "texto": "Cuatro puertas distintas: técnica local, artística local, integración, autorización humana.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "-",
+          "umbral": "-",
+          "fuente": "(paso 7)"
+        }
+      ],
+      "n_medibles": 2,
+      "n_checklist": 1
+    },
+    {
+      "id": "regional-model-auditor",
+      "nombre": "regional-model-auditor",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/regional-model-auditor/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/maniqui-g2c2-contorno-facial"
+          ],
+          "n_ramas": 1
+        }
+      ],
+      "proposito": "RegionVerdict por ROI; defecto nuevo en vecino → BLOCKED_INTEGRATION del candidato responsable.",
+      "reglas": [
+        {
+          "id": "rma.vecino_nuevo_defecto",
+          "texto": "Defecto nuevo en un vecino afectado → BLOCKED_INTEGRATION.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "diff de regiones vecinas antes/después",
+          "umbral": "0 cambios",
+          "fuente": "(paso 7)"
+        },
+        {
+          "id": "rma.indices_regiones_ajenas",
+          "texto": "Regiones ajenas no cambian ni pierden índices o atributos.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "igualdad de índices/atributos fuera de ROI",
+          "umbral": "igualdad",
+          "fuente": "(paso 3)"
+        },
+        {
+          "id": "rma.registro",
+          "texto": "Registrar SHA base, SHA candidato, máscara ROI, desplazamiento local, nuevas aristas/caras.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "campos del reporte",
+          "umbral": "presentes",
+          "fuente": "(paso 4)"
+        }
+      ],
+      "n_medibles": 3,
+      "n_checklist": 0
+    },
+    {
+      "id": "geometry-profiler",
+      "nombre": "geometry-profiler",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/geometry-profiler/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "propuesta/g2c-advancing-front-skills"
+          ],
+          "n_ramas": 10
+        }
+      ],
+      "proposito": "Perfilado determinista del motor geométrico; optimización nunca equivale a aprobación.",
+      "reglas": [
+        {
+          "id": "prof.mismos_triangulos",
+          "texto": "Un candidato optimizado genera los mismos triángulos (hash determinista).",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "hash de triángulos",
+          "umbral": "igualdad",
+          "fuente": "(Instrumentación)"
+        },
+        {
+          "id": "prof.research_required",
+          "texto": "Sin contorno validado, con UV/skin no soportado, autointersección no auditada o Godot pendiente → RESEARCH_REQUIRED.",
+          "tipo": "medible",
+          "aplica_a": [
+            "todos"
+          ],
+          "metrica": "flags de gates previos",
+          "umbral": "todos resueltos",
+          "fuente": "(Fallos que impiden promoción)"
+        }
+      ],
+      "n_medibles": 2,
+      "n_checklist": 0
+    },
+    {
+      "id": "scene-director",
+      "nombre": "scene-director",
+      "fuentes": [
+        {
+          "tipo": "github",
+          "ruta": ".claude/skills/scene-director/SKILL.md (= .codex)",
+          "ramas": [
+            "experimentos/g2c2-nuca-evaluacion-regional",
+            "experimentos/g2c3-nuca-superficie-visible",
+            "experimentos/g2c3-v3-rapado-detras-oreja-izquierda",
+            "experimentos/g2c4-limpieza-craneofacial",
+            "experimentos/g2c5-relleno-regional-candidatos",
+            "experimentos/g2c7-likeness-rasgos-alastor",
+            "experimentos/g2c8-color-auditoria-huecos",
+            "experimentos/g2c9-rostro-huecos-suavizado",
+            "experimentos/maniqui-g2-anatomic-contour",
+            "experimentos/maniqui-g2b-piel-craneofacial",
+            "experimentos/maniqui-g2c2-contorno-facial",
+            "experimentos/maniqui-r3-visual-critico",
+            "propuesta/g2c-advancing-front-skills",
+            "propuesta/skills-3d-critica-completa"
+          ],
+          "n_ramas": 14
+        }
+      ],
+      "proposito": "Escenas Godot: iluminación, cámaras, composición, props y navegación contrastadas con referencias de encuadre.",
+      "reglas": [
+        {
+          "id": "scene.flotantes_suelo",
+          "texto": "Sin objetos flotantes; contacto con suelo.",
+          "tipo": "medible",
+          "aplica_a": [
+            "edificio",
+            "objeto"
+          ],
+          "metrica": "gap objeto↔suelo/soporte",
+          "umbral": "0 (a definir)",
+          "fuente": "(paso 6)",
+          "revision": "apoyo_piso"
+        },
+        {
+          "id": "scene.z_fighting",
+          "texto": "Sin z-fighting.",
+          "tipo": "medible",
+          "aplica_a": [
+            "edificio",
+            "objeto"
+          ],
+          "metrica": "caras coplanares solapadas",
+          "umbral": "0",
+          "fuente": "(paso 6)"
+        },
+        {
+          "id": "scene.escala",
+          "texto": "Escala de puertas y props coherente con personajes.",
+          "tipo": "medible",
+          "aplica_a": [
+            "edificio",
+            "objeto"
+          ],
+          "metrica": "alturas vs spec/arquetipos",
+          "umbral": "a definir",
+          "fuente": "(paso 3, 6)"
+        },
+        {
+          "id": "scene.camaras_reproducibles",
+          "texto": "Cámaras con posición, orientación, FOV/ortográfica, distancia y aspect ratio registrados.",
+          "tipo": "medible",
+          "aplica_a": [
+            "edificio"
+          ],
+          "metrica": "campos de cámara",
+          "umbral": "presentes",
+          "fuente": "(paso 4)"
+        },
+        {
+          "id": "scene.fps_medidos",
+          "texto": "No inventar fps ni estabilidad sin medir.",
+          "tipo": "medible",
+          "aplica_a": [
+            "edificio"
+          ],
+          "metrica": "fps medido en Godot headless",
+          "umbral": "a definir",
+          "fuente": "(paso 7)"
+        },
+        {
+          "id": "scene.iluminacion_lectura",
+          "texto": "Iluminación, sombras, oclusión y lectura del gameplay correctas.",
+          "tipo": "checklist",
+          "aplica_a": [
+            "edificio"
+          ],
+          "metrica": "revisión visual",
+          "umbral": "-",
+          "fuente": "(paso 4, 6)"
+        }
+      ],
+      "n_medibles": 5,
+      "n_checklist": 1
+    }
+  ]
+}

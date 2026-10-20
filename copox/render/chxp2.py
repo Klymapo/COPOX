@@ -240,7 +240,7 @@ def sha(ruta):
 
 def render(glb, salida, silueta=None, ref=None, vistas="personaje", visible=None, clip="Idle-loop", t=0.0,
            gifs=(), cuadros_gif=16, tam=1024, tam_gif=512, vista_gif="tres_cuartos", nombre=None, ref_2x2=False,
-           resortes=True):
+           resortes=True, version="V2"):
     """Una llamada = un proceso de Godot para todas las vistas y todos los GIF de este asset."""
     from PIL import Image
     nombre = nombre or os.path.splitext(os.path.basename(glb))[0].lower()
@@ -293,7 +293,7 @@ def render(glb, salida, silueta=None, ref=None, vistas="personaje", visible=None
     refimg = Image.open(ref).convert("RGB") if ref else None
     sub = f"SHA {reporte['sha256'][:12]}… · alto {reporte['alto_u']} u · {reporte['triangulos_visibles']} tris · " \
           f"fuera de paleta: {len(fuera)}"
-    hoja = hoja_vertical(paneles, f"CHXP V2 · {nombre}", sub, ref=refimg,
+    hoja = hoja_vertical(paneles, f"CHXP {version} · {nombre}", sub, ref=refimg,
                          paleta=[(n, h) for n, h in usados[:16]], hoja2x2=ref_2x2)
     hoja.save(os.path.join(salida, f"{nombre}_HOJA.png"))
     # GIF

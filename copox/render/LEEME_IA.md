@@ -140,3 +140,23 @@ Láminas: `ref` = referencia | modelo | superposición | diferencia (rojo = solo
   y corre Godot con `--fixed-fps 60` (GIF deterministas); `--sin-resortes` para comparar contra rígido.
   Valores medidos (rigidez 4, arrastre 0.6, gravedad 0.1): puntas en Idle ~7 mm, Run mediana 18 mm / p95 46 mm.
   Mechones de cobertura (patillas, nuca) van fijos a Head.
+
+## CHXP V3 · ver y medir (19 oct 2026) — usar SIEMPRE la versión más actual
+
+```
+python -m copox.render.chxp3 MODELO.glb --tipo personaje --salida DIR \
+    --ref refs/personajes/joven-rubio-4-vistas.jpg --ref-2x2 [--gif Idle-loop,Run-loop]
+```
+Hace el render de CHXP V2 y además audita (código de salida 0 PASS, 1 FAIL, 2 N-A):
+`theo_protegido`, `apoyo_piso`, `paleta_alth`, `senku_objeto` / `senku_cabeza` (SENKU contra la hoja),
+`cobertura_pelo`, `pelo_resortes`, y las reglas de las skills (`copox/render/skills_reglas.json`): las medibles
+implementadas vetan; las demás salen como pendientes o checklist visual en `<nombre>_AUDITORIA.json`.
+La HOJA lleva al pie la franja con cada revisión. Regla COPOX: 100 % de las aplicables en PASS; un FAIL veta.
+
+## SENKU · silueta contra referencia (`copox/medicion/senku_ref.py`)
+
+- Cada hoja lleva al lado `<imagen>.senku.json`: disposición (1, 2x2, 1xN), qué vista va en cada celda y anclas
+  (`personaje_T`: piso + hombros; `personaje_pie`: piso + altura total, escala supuesta; `objeto`: piso + `cota_u`).
+- Vistas consistentes entre sí (misma parte más alta; espalda con el mismo ancho que el frente). Sin vista → N-A.
+- `sr.auditar(glb, hoja, "cabeza"|"objeto")` → IoU por vista y franja + imagen roja (sobra) / azul (falta).
+- Para hojas nuevas: crear el `.senku.json`; sin él SENKU asume una sola vista de frente y avisa.
