@@ -1,5 +1,5 @@
 {
-  "nombre": "ALASTOR_V06",
+  "nombre": "ALASTOR_V11",
   "descripcion": "Alastor Kleinteil (El brillo ausente). Desde los renders originales (refs/personajes/alastor/originales/). SIN APROBAR.",
   "base": null,
   "pelo": "alastor",
@@ -69,8 +69,8 @@
   },
   "publicar": {
     "carpeta": "alastor",
-    "nombre": "ALASTOR_V06",
-    "nota": "rizo con aristas redondeadas (sección de 8 lados), ceño más suave, bajo trasero del abrigo recto (pesos de la falda a la pelvis en el centro)",
+    "nombre": "ALASTOR_V11",
+    "nota": "rizo redondeado y más arriba (ya no tapa la ceja); cejas pegadas sobre el aro de los lentes con ceño suave (0.35); bajo del abrigo sin tapa interior y con pesos alisados (sin picos entre las piernas)",
     "estado": "SIN APROBAR",
     "pedido": "Admin 20 oct: «Redondea un poco el rizo… Que no frunza tanto el ceño. Termina los pendientes»"
   }

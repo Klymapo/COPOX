@@ -35,7 +35,7 @@ def pelo(E, carpeta):
                    volumen=PELO["volumen"])
 
 
-RIZO = dict(centro=(-0.040, 0.730), radio=0.046, z=0.190, ang=(75.0, 315.0), ancho=(0.044, 0.024), grueso=0.036, n=18)
+RIZO = dict(centro=(-0.040, 0.758), radio=0.040, z=0.190, ang=(75.0, 315.0), ancho=(0.044, 0.024), grueso=0.036, n=18)
 
 
 def _barrido(C, anchos, gruesos, eje_z=np.array([0, 0, 1.0]), lados=8, n_super=2.6):
@@ -301,6 +301,7 @@ def abrigo(E, carpeta):
                                  -np.maximum(x - 0.030, 0.010 - z), -(U["t_cuello"].sdf(P) - 0.0015)])
         return np.minimum(d, cue)
     V, T, N = v3._malla(sdf, (-0.345, a["y_bajo"] - 0.01, -0.10), (0.345, 0.515, 0.15), a["tris"], carpeta)
+    V, T, N = _sin_tapa(V, T, N, a["y_bajo"])
     prims = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"], pz["BrazoL"], pz["BrazoR"], pz["Pelvis_PIEL"],
                                    pz["PiernaL_PIEL"], pz["PiernaR_PIEL"]], nombres, mats["abrigo"], "ALASTOR_ABRIGO",
                      tt.ESCALAS["lana_cerrada"])]
@@ -340,6 +341,19 @@ def abrigo(E, carpeta):
     return {"operacion": "abrigo + cinturón", "abrigo": int(len(T)), "cinturon": int(len(Tc))}
 
 
+def _sin_tapa(V, T, N, y_bajo):
+    """V07 (revisor V06, B1): el abrigo es un sólido y el corte del bajo dejaba una TAPA horizontal (≈235 tris) que
+    cruzaba entre las piernas con pesos de LowerLeg; al moverse las piernas la tapa se estiraba y salía en picos por
+    detrás. La tapa se quita (el material es doubleSided: desde abajo se ve el forro, como en una prenda real)."""
+    c = V[T].mean(1)
+    fn = np.cross(V[T[:, 1]] - V[T[:, 0]], V[T[:, 2]] - V[T[:, 0]])
+    fn /= np.linalg.norm(fn, axis=1, keepdims=True) + 1e-12
+    T = T[~((c[:, 1] < y_bajo + 0.0015) & (fn[:, 1] < -0.9))]
+    usados = np.unique(T)
+    nuevo = -np.ones(len(V), int); nuevo[usados] = np.arange(len(usados))
+    return V[usados], nuevo[T], (N[usados] if N is not None else None)
+
+
 def _suavizar_falda(E, prim, nombres, ancho=0.06, y_falda=0.26):
     """Revisor (V04–V05): el borde de atrás del abrigo, entre las piernas, salía en picos: cada vértice tomaba el muslo
     izquierdo o el derecho según la piel más cercana. En la falda, cerca del centro, el peso de los muslos pasa a Hips
@@ -350,6 +364,7 @@ def _suavizar_falda(E, prim, nombres, ancho=0.06, y_falda=0.26):
     V = v39._leer(E, prim, "POSITION").astype(float)
     J = v39._leer(E, prim, "JOINTS_0").astype(int); W = v39._leer(E, prim, "WEIGHTS_0").astype(float)
     ih = nombres.index("Hips")
+    # (probado en V07: pasar LowerLeg → UpperLeg infla la falda como globo; descartado)
     piernas = {nombres.index(n) for n in nombres if any(k in n for k in ("UpperLeg", "LowerLeg"))}
     t = np.clip(np.abs(V[:, 0]) / ancho, 0, 1); t = t * t * (3 - 2 * t)
     a = (1 - t) * np.clip((y_falda - V[:, 1]) / 0.04, 0, 1)          # 1 en el centro de la falda, 0 a los lados
@@ -363,6 +378,28 @@ def _suavizar_falda(E, prim, nombres, ancho=0.06, y_falda=0.26):
         k = np.argmin(W[sin], 1)
         J[np.nonzero(sin)[0], k] = ih; W[np.nonzero(sin)[0], k] += mover[sin]
     W /= np.maximum(W.sum(1, keepdims=True), 1e-9)
+    # V08 (revisor V07: el bajo seguía en sierra): los pesos vecinos saltaban de muslo a cadera. Se alisan con
+    # promedios de vecinos (Laplaciano, 12 pasadas) en la falda; se quedan los 4 mayores.
+    from copox.medicion.gltf import accesor
+    T = accesor(E.j, E.b, prim["indices"]).astype(int).reshape(-1, 3) if "indices" in prim else None
+    if T is not None:
+        # la malla trae vértices duplicados (costuras de normales): se suelda por posición antes de alisar
+        _, gid = np.unique(np.round(V, 5), axis=0, return_inverse=True); gid = gid.ravel(); ng = int(gid.max()) + 1
+        nj = int(J.max()) + 1
+        D = np.zeros((ng, nj)); np.add.at(D, (np.repeat(gid, 4), J.ravel()), W.ravel())
+        D /= np.maximum(D.sum(1, keepdims=True), 1e-9)
+        Tg = gid[T]
+        e = np.vstack([Tg[:, [0, 1]], Tg[:, [1, 2]], Tg[:, [2, 0]]]); e = np.vstack([e, e[:, ::-1]])
+        e = np.unique(e[e[:, 0] != e[:, 1]], axis=0)
+        grado = np.bincount(e[:, 0], minlength=ng).astype(float)
+        yg = np.zeros(ng); yg[gid] = V[:, 1]
+        zona = np.clip((y_falda - yg) / 0.04, 0, 1)[:, None]
+        for _ in range(12):
+            S = np.zeros_like(D); np.add.at(S, e[:, 0], D[e[:, 1]])
+            D = D + zona * 0.6 * (S / np.maximum(grado, 1)[:, None] - D)
+        Jg = np.argsort(-D, 1)[:, :4]
+        Wg = np.take_along_axis(D, Jg, 1); Wg /= np.maximum(Wg.sum(1, keepdims=True), 1e-9)
+        J, W = Jg[gid], Wg[gid]
     prim["attributes"]["JOINTS_0"] = v24._add_raw(E, np.ascontiguousarray(J, np.uint16), 5123, "VEC4", 34962)
     prim["attributes"]["WEIGHTS_0"] = v24._add_raw(E, np.ascontiguousarray(W, np.float32), 5126, "VEC4", 34962)
     E.b = bytes(E.out)
@@ -470,9 +507,10 @@ def gafas(E):
             "centro": [round(float(x), 4) for x in c0]}
 
 
-CARA = dict(morphs={"ceja_ceno_L": 0.50, "ceja_ceno_R": 0.50,          # v03: sin parpado_enojo (tapaba el iris)
+CARA = dict(morphs={"ceja_ceno_L": 0.35, "ceja_ceno_R": 0.35,          # v11: 0.50 → 0.35, inclinación suave al centro (Admin: «que no frunza tanto»)          # v03: sin parpado_enojo (tapaba el iris)
                     "comisura_abajo_L": 1.0, "comisura_abajo_R": 1.0, "boca_tensa": 0.70, "boca_estrecha": 0.30},
-            ceja_grosor=1.45, ceja_largo=1.12, rubor=False)
+            ceja_grosor=1.20, ceja_largo=1.12, rubor=False,
+            ceja_sobre=0.676)   # v11: borde bajo de la ceja pegado (detrás) al aro sobre el aro de los lentes (0.686)
 
 
 def cara(E):
@@ -500,6 +538,9 @@ def cara(E):
             Vn = V + dV
             c = Vn.mean(0)
             Vn = c + (Vn - c) * np.array([CARA["ceja_largo"], CARA["ceja_grosor"], 1.0])
+            sube = max(0.0, CARA["ceja_sobre"] - float(Vn[:, 1].min()))
+            Vn[:, 1] += sube; Vn[:, 2] -= 0.15 * sube           # la frente se va hacia atrás ≈0.15 por unidad de alto
+            log.setdefault("ceja_sube", []).append(round(sube, 4))
             dV = Vn - V
         if not np.abs(dV).max() > 0:
             continue
