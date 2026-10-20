@@ -80,6 +80,7 @@ jobs:
           alth-python -m copox.cine.render_blender "${{ inputs.escena }}" --salida _cine \
             --desde ${{ matrix.tramo[0] }} --hasta ${{ matrix.tramo[1] }} $M 2>&1 | tee _render.log \
             || { tail -n 12 _render.log | while read -r l; do echo "::error::${l:0:200}"; done; exit 1; }
+          grep "^cine: mallas" _render.log | while read -r l; do echo "::notice::${l:0:300}"; done
       - uses: actions/upload-artifact@v4
         with:
           name: cuadros-${{ matrix.tramo[0] }}

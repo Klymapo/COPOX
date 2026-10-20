@@ -100,16 +100,21 @@ def preparar(e, glb):
                 a = next((x for n, x in acts.items() if n.startswith(clip) and o.data.name in n), None)
                 if a is not None:
                     k.animation_data_create(); k.animation_data.action = a
-    # alto del personaje (para cámara relativa y piso)
+    # caja REAL del personaje en el primer cuadro (mallas evaluadas: con piel y pose), para encuadre y piso
     sc.frame_set(e["cuadros"][0])
     dg = bpy.context.evaluated_depsgraph_get()
-    zs, xs, ys = [], [], []
+    lo, hi = [1e9] * 3, [-1e9] * 3
     for o in mallas:
-        for c in o.bound_box:
-            w = o.matrix_world @ Vector(c)
-            xs.append(w.x); ys.append(w.y); zs.append(w.z)
-    caja = (min(xs), min(ys), min(zs), max(xs), max(ys), max(zs)) if zs else (-0.5, -0.5, 0, 0.5, 0.5, 1)
+        ev = o.evaluated_get(dg)
+        me = ev.to_mesh()
+        M = o.matrix_world
+        for v in me.vertices:
+            w = M @ v.co
+            lo = [min(a, b) for a, b in zip(lo, w)]; hi = [max(a, b) for a, b in zip(hi, w)]
+        ev.to_mesh_clear()
+    caja = (*lo, *hi) if mallas else (-0.5, -0.5, 0, 0.5, 0.5, 1)
     alto = max(caja[5] - caja[2], 1e-6)
+    print(f"cine: mallas visibles {len(mallas)}, alto {alto:.3f}, caja {[round(x, 3) for x in caja]}", flush=True)
     # render
     sc.render.engine = "CYCLES"
     sc.cycles.device = "CPU"
@@ -128,7 +133,7 @@ def preparar(e, glb):
     w.use_nodes = True
     bg = w.node_tree.nodes.get("Background")
     bg.inputs[0].default_value = (*_hex(e["fondo"]), 1.0)
-    bg.inputs[1].default_value = 0.6
+    bg.inputs[1].default_value = float(e.get("cielo", 0.35))
     # piso
     if e.get("piso"):
         me = bpy.data.meshes.new("ALTH_PISO")
@@ -147,9 +152,10 @@ def preparar(e, glb):
         o.location = (cx + pos[0] * alto, cy + pos[1] * alto, pos[2] * alto)
         dirv = Vector((cx, cy, alto * 0.5)) - o.location
         o.rotation_euler = dirv.to_track_quat("-Z", "Y").to_euler()
-    luz("ALTH_KEY", (-1.6, -1.8, 2.2), 900, (1.0, 0.96, 0.9), 1.5)
-    luz("ALTH_FILL", (1.9, -1.2, 1.2), 300, (0.9, 0.95, 1.0), 2.0)
-    luz("ALTH_RIM", (0.6, 2.0, 1.8), 500, (1.0, 1.0, 1.0), 1.0)
+    k = float(e.get("luz_intensidad", 1.0))
+    luz("ALTH_KEY", (-1.6, -1.8, 2.2), 110 * k, (1.0, 0.96, 0.9), 1.5)
+    luz("ALTH_FILL", (1.9, -1.2, 1.2), 35 * k, (0.9, 0.95, 1.0), 2.0)
+    luz("ALTH_RIM", (0.6, 2.0, 1.8), 60 * k, (1.0, 1.0, 1.0), 1.0)
     # cámara
     cd = bpy.data.cameras.new("ALTH_CAM")
     cam = bpy.data.objects.new("ALTH_CAM", cd); sc.collection.objects.link(cam); sc.camera = cam
@@ -164,6 +170,13 @@ def poner_camara(e, ctx, f):
     if e.get("camara_relativa"):
         a = ctx["alto"]; cx, cy, z0 = ctx["centro"]
         P = Vector(_gl2bl(pos)) * a + Vector((cx, cy, z0)); M = Vector(_gl2bl(mira)) * a + Vector((cx, cy, z0))
+        enc = e.get("encuadre", 0.8)
+        if enc:                                   # distancia para que el alto ocupe `enc` del cuadro (vertical)
+            rx, ry = e["resolucion"]
+            sensor_v = 36.0 * min(1.0, ry / rx)
+            vfov = 2 * math.atan(sensor_v / (2 * float(lente)))
+            dist = (a / float(enc) / 2) / math.tan(vfov / 2)
+            P = M + (P - M).normalized() * dist
     else:
         P, M = Vector(_gl2bl(pos)), Vector(_gl2bl(mira))
     cam = ctx["cam"]
