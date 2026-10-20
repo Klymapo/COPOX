@@ -256,7 +256,8 @@
       "uniforme_policia": "#232026",
       "corgi_naranja": "#EE964C",
       "corgi_crema": "#F5D8C1",
-      "taza_cafe": "#CD8959"
+      "taza_cafe": "#CD8959",
+      "rubio_miel": "#DFBA86"
     },
     "fondo_revision": "#E3E2E9"
   },
@@ -273,11 +274,13 @@
     "chaflan_mm": 0.4,
     "chaflan_segmentos": 1,
     "tris_max": {
-      "personaje": 6000,
+      "personaje": 160000,
       "objeto_mano": 500,
-      "mueble": 1500
+      "mueble": 1500,
+      "personaje_principal": 160000,
+      "ciudadano": 60000
     },
-    "tris_max_nota": "objetos con calcomanía pueden subir hasta 530 en su spec",
+    "tris_max_nota": "objetos con calcomanía pueden subir hasta 530 en su spec · 19 oct 2026 (Admin): personaje principal 160000 y ciudadano 60000; Godot genera LOD al importar para la distancia.",
     "chaflan_por_tamano": [
       {
         "desde_mm": 30,
@@ -340,7 +343,8 @@
     "verde_oliva": "de la referencia objeto-02 (verde etiqueta #7E8B5A, oliva oscura #495432)",
     "crema_etiqueta": "#EADCC4 · de la referencia objeto-02 (crema etiqueta); banda crema de la lata de aceitunas",
     "carton_kraft": "#B08A62 · cartón de funda (vaso_cafe); reemplaza a taza_cafe para cartón",
-    "rubio_arena": "#D2AE72 · pelo rubio arena, menos saturado que cabello_rubio; propuesto y aprobado para el prototipo de alth/pelo.py (joven_rubio)"
+    "rubio_arena": "#D2AE72 · pelo rubio arena, menos saturado que cabello_rubio; propuesto y aprobado para el prototipo de alth/pelo.py (joven_rubio)",
+    "rubio_miel": "19 oct 2026 (Admin aprueba la propuesta): entre rubio_arena y cabello_rubio; pelo corto y mechones de Adán V49."
   },
   "escala_alpha": {
     "s0": 0.05316,

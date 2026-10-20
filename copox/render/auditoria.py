@@ -284,15 +284,16 @@ def rev_flotantes(glb, base=None, **_):
               fuente="asset.sin_flotantes")
 
 
-def rev_triangulos(glb, tipo, reporte, **_):
-    """asset.triangulos (spec): se MIDE y se reporta; el veto queda suspendido hasta que Admin decida (los cuerpos
-    aprobados de Adán ya superan el tope de 6000 de la spec)."""
-    tope = {"personaje": 6000, "objeto": 1500}.get(tipo)
-    n = reporte.get("triangulos_visibles")
+def rev_triangulos(glb, tipo, reporte, clase=None, **_):
+    """asset.triangulos: tope de la spec (geometria.tris_max). Personaje: principal 160000 / ciudadano 60000 (Admin,
+    19 oct 2026). Se cuentan los triángulos visibles."""
+    tm = json.load(open(os.path.join(RAIZ, "spec", "alth_spec.json")))["geometria"]["tris_max"]
+    clave = clase or {"personaje": "personaje_principal", "objeto": "mueble", "ropa": "personaje_principal",
+                      "pelo": "personaje_principal", "calzado": "personaje_principal"}.get(tipo)
+    tope, n = tm.get(clave), reporte.get("triangulos_visibles")
     if tope is None or n is None:
         return _r("triangulos_tope", "N-A")
-    return _r("triangulos_tope", "N-A", n, f"≤ {tope} (spec)",
-              "VETO SUSPENDIDO: contradicción entre la spec y Adán aprobado; decisión de Admin", fuente="asset.triangulos")
+    return _r("triangulos_tope", "PASS" if n <= tope else "FAIL", n, f"≤ {tope} ({clave})", fuente="asset.triangulos")
 
 def deuda_base(base):
     """Lo que la base ya trae mal (no veta al asset; se reporta para arreglarlo en el cuerpo)."""
@@ -315,7 +316,7 @@ REVISIONES = {
     "areas_degeneradas": (rev_degenerados, TIPOS),
     "normales": (rev_normales, TIPOS),
     "sin_flotantes": (rev_flotantes, ("personaje", "objeto", "edificio")),
-    "triangulos_tope": (rev_triangulos, ("personaje", "objeto")),
+    "triangulos_tope": (rev_triangulos, ("personaje", "objeto", "pelo", "ropa", "calzado")),
 }
 
 
