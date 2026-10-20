@@ -17,7 +17,8 @@ Fecha: 2026-10-19 · Brief válido: sí · Skill: investigar-referencias
 - Abierto al frente: se ven camisa blanca, corbata negra, cinturón café con hebilla dorada y pantalón oscuro con vuelta ancha.
 - Solapas anchas en V desde el cuello hasta el pecho (≈ a la altura de la axila), de un tono apenas más oscuro.
 - Faldones en A hasta media espinilla, más anchos abajo; atrás cerrado y liso.
-- Mangas rectas y anchas que terminan antes de la muñeca: asoma el puño blanco de la camisa (~1 cm de la hoja).
+- Mangas rectas que CUBREN la muñeca (Admin, 20 oct 2026: «alarga las mangas, parece que están remangadas»), con puño
+  de sastre del color del abrigo; la camisa queda adentro (a lo más una línea mínima).
 - Detalles (bolsillos con cartera inclinados, botones pequeños, presillas de manga): secundarios.
 
 ## Medidas (real → ALTH)

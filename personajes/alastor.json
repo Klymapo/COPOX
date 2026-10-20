@@ -1,5 +1,5 @@
 {
-  "nombre": "ALASTOR_V04",
+  "nombre": "ALASTOR_V05",
   "descripcion": "Alastor Kleinteil (El brillo ausente). Desde los renders originales (refs/personajes/alastor/originales/). SIN APROBAR.",
   "base": null,
   "pelo": "alastor",
@@ -32,7 +32,7 @@
       "camisa": {
         "hol": 0.006,
         "hol_manga": 0.008,
-        "manga": 0.306,
+        "manga": 0.3,
         "puno": 0.01,
         "meter": 0.0025,
         "hol_cuello": 0.0055,
@@ -52,7 +52,7 @@
         "punta_y": 0.33
       },
       "abrigo": {
-        "manga": 0.3
+        "manga": 0.318
       }
     }
   },
@@ -69,9 +69,9 @@
   },
   "publicar": {
     "carpeta": "alastor",
-    "nombre": "ALASTOR_V04",
-    "nota": "corrección de cabeza (cada masa de pelo con pocas caras grandes, copete más alto y barrido, relleno sin huecos, rizo grueso unido al copete, varillas del grosor del marco hasta la oreja, boca recta) + mangas del abrigo hasta la muñeca",
+    "nombre": "ALASTOR_V05",
+    "nota": "mangas del abrigo rectas hasta cubrir la muñeca con puño de sastre del color del abrigo (la camisa queda adentro), boca recta",
     "estado": "SIN APROBAR",
-    "pedido": "Admin 20 oct: Martillo a la corrección + «alarga las mangas de su abrigo, parece que están remangadas»"
+    "pedido": "Admin 20 oct: «alarga las mangas de su abrigo, parece que están remangadas» (V04 no lo resolvió)"
   }
 }

@@ -248,7 +248,7 @@ COL = {"camisa": "#FBEFE1", "corbata": "#232026", "pantalon": "#2C2320", "boton"
        "abrigo": "#3A2F2A", "solapa": "#1F1916", "cinturon": "#5F4338", "hebilla": "#9A7B3C",   # uniforme_policia,
        "gafas": "#1F1916"}                                                                       # negro_calido 3/4/5…
 TELA = {"abrigo": "lana_cerrada", "solapa": "lana_cerrada", "cinturon": "cuero", "hebilla": "cuero", "gafas": "cuero"}
-ABRIGO = dict(capa=0.0070, y_bajo=0.118, cintura=0.300, vuelo=0.030, k=0.012, manga=0.300, cuello=0.0110,
+ABRIGO = dict(capa=0.0070, y_bajo=0.118, cintura=0.300, vuelo=0.030, k=0.012, manga=0.318, cuello=0.0110,
               abertura=((0.10, 0.062), (0.22, 0.046), (0.30, 0.040), (0.40, 0.030), (0.47, 0.040)),
               solapa_ancho=0.042, solapa_y=(0.474, 0.355), tris=8000)
 CINTURON = dict(y=0.274, alto=0.016, sobre=0.0030, hebilla=(0.028, 0.021, 0.0055))
@@ -274,6 +274,8 @@ def abrigo(E, carpeta):
     mats = {k: tt.material_textura(E, f"ALASTOR_{k.upper()}", COL[k], TELA[k]) for k in ("abrigo", "solapa", "cinturon", "hebilla")}
     t_ab = U["t_cam"].inflado(a["capa"])
     mangas = [m.inflado(a["capa"]) for m in U["mangas"]]
+    for m in mangas:                                        # v05 (Admin: «parecen remangadas»): la manga del abrigo
+        m.t1 = a["manga"] + 0.01                            # sigue recta más allá de la camisa y cubre la muñeca
     pel_v = np.vstack([v3._pts(E, "Pelvis_PIEL"), v3._pts(E, "PiernaL_PIEL", y1=0.30), v3._pts(E, "PiernaR_PIEL", y1=0.30),
                        v3._pts(E, "Torso_PIEL", y1=a["cintura"] + 0.01)])
     hf = lambda ts: 0.012 + a["vuelo"] * np.clip((a["cintura"] - ts) / (a["cintura"] - a["y_bajo"]), 0, 1)   # noqa: E731
@@ -283,6 +285,9 @@ def abrigo(E, carpeta):
     def sdf(P):
         x, y, z = np.abs(P[:, 0]), P[:, 1], P[:, 2]
         d = np.maximum.reduce([cuerpo(P), a["y_bajo"] - y, y - 0.492, x - a["manga"]])
+        # puño de sastre: banda del color del abrigo 3 mm más gruesa cerca del final de la manga
+        for m in mangas:
+            d = np.minimum(d, np.maximum.reduce([m.sdf(P) - 0.003, x - (a["manga"] - 0.004), (a["manga"] - 0.020) - x]))
         hueco = np.where(y > 0.455, 0.040 - np.hypot(x, (z - 0.012) * 0.85), -1.0)        # cuello
         abierto = np.maximum(x - _w_abertura(y), 0.004 - z)                              # abierto al frente
         d = np.maximum.reduce([d, hueco, -abierto])
@@ -290,7 +295,7 @@ def abrigo(E, carpeta):
         cue = np.maximum.reduce([U["t_cuello"].sdf(P) - a["cuello"], np.abs(y - 0.492) - 0.024,
                                  -np.maximum(x - 0.030, 0.010 - z), -(U["t_cuello"].sdf(P) - 0.0015)])
         return np.minimum(d, cue)
-    V, T, N = v3._malla(sdf, (-0.29, a["y_bajo"] - 0.01, -0.10), (0.29, 0.515, 0.15), a["tris"], carpeta)
+    V, T, N = v3._malla(sdf, (-0.345, a["y_bajo"] - 0.01, -0.10), (0.345, 0.515, 0.15), a["tris"], carpeta)
     prims = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"], pz["BrazoL"], pz["BrazoR"], pz["Pelvis_PIEL"],
                                    pz["PiernaL_PIEL"], pz["PiernaR_PIEL"]], nombres, mats["abrigo"], "ALASTOR_ABRIGO",
                      tt.ESCALAS["lana_cerrada"])]
@@ -432,7 +437,7 @@ def gafas(E):
 
 
 CARA = dict(morphs={"ceja_ceno_L": 0.85, "ceja_ceno_R": 0.85,          # v03: sin parpado_enojo (tapaba el iris)
-                    "comisura_abajo_L": 0.85, "comisura_abajo_R": 0.85, "boca_tensa": 0.55, "boca_estrecha": 0.30},
+                    "comisura_abajo_L": 1.0, "comisura_abajo_R": 1.0, "boca_tensa": 0.70, "boca_estrecha": 0.30},
             ceja_grosor=1.45, ceja_largo=1.12, rubor=False)
 
 
