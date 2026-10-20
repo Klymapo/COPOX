@@ -52,10 +52,13 @@ def rev_apoyo(glb, **_):
 
 
 def rev_paleta(reporte, **_):
-    malos = [c for c in reporte.get("colores_fuera_de_paleta", [])
-             if c["material"] not in EXCEPCIONES_PALETA and c["deltaE"] > UMBRALES["paleta_de"]]
-    return _r("paleta_alth", "FAIL" if malos else "PASS", len(malos), f"ΔE ≤ {UMBRALES['paleta_de']}",
-              [f"{c['material']} {c['color']} (ΔE {c['deltaE']} vs {c['cercano']})" for c in malos],
+    fuera = [c for c in reporte.get("colores_fuera_de_paleta", []) if c["deltaE"] > UMBRALES["paleta_de"]]
+    malos = [c for c in fuera if c["material"] not in EXCEPCIONES_PALETA]
+    # revisor visual (20 oct): las excepciones de la base no vetan, pero ya no se esconden — salen en el detalle
+    det = [f"{c['material']} {c['color']} (ΔE {c['deltaE']} vs {c['cercano']})" for c in malos]
+    det += [f"excepción de la base (no veta; color por proponer a Admin): {c['material']} {c['color']} "
+            f"(ΔE {c['deltaE']} vs {c['cercano']})" for c in fuera if c["material"] in EXCEPCIONES_PALETA]
+    return _r("paleta_alth", "FAIL" if malos else "PASS", len(malos), f"ΔE ≤ {UMBRALES['paleta_de']}", det or None,
               fuente="CLAUDE.md: colores solo de la paleta")
 
 
@@ -126,8 +129,11 @@ def rev_cobertura_pelo(glb, **_):
     G = np.vstack(guia)
     c = G.mean(0) * [0, 1, 1] + [0, -0.02, 0]
     D = G - c; R = np.linalg.norm(D, axis=1); D /= R[:, None]
-    k = np.random.default_rng(0).choice(len(D), min(2500, len(D)), replace=False)
-    D, R = D[k], R[k]
+    # revisor visual (20 oct): con 2 500 rayos se escapaban huecos chicos entre masas → todas las direcciones de la
+    # guía + 2 copias con desvío (~1.5°): ~3× más densidad
+    rng = np.random.default_rng(0)
+    extra = [D + rng.normal(0, 0.026, D.shape) for _ in range(2)]
+    D = np.vstack([D] + extra); D /= np.linalg.norm(D, axis=1, keepdims=True); R = np.tile(R, 3)
     Tp = np.vstack(pelo)
     Vp, Tp_ = Tp.reshape(-1, 3), np.arange(len(Tp) * 3).reshape(-1, 3)
     th = _choca(c, D, Vp, Tp_, distancia=True)
@@ -147,7 +153,8 @@ def rev_resortes(glb, **_):
     j, _b = leer_glb(glb)
     nombres_j = {j["nodes"][k]["name"] for s in j.get("skins", []) for k in s["joints"]}
     pelo = [n for n in j["nodes"] if "PELO" in n.get("name", "").upper() and "mesh" in n
-            and n.get("extensions", {}).get("KHR_node_visibility", {}).get("visible", True)]
+            and n.get("extensions", {}).get("KHR_node_visibility", {}).get("visible", True)
+            and not n.get("extras", {}).get("relleno")]          # relleno fijo del cráneo bajo las masas: sin resortes
     if not pelo:
         return _r("pelo_resortes", "N-A", detalle="sin pelo visible")
     faltan = []

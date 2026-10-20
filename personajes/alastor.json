@@ -1,5 +1,5 @@
 {
-  "nombre": "ALASTOR_V03",
+  "nombre": "ALASTOR_V04",
   "descripcion": "Alastor Kleinteil (El brillo ausente). Desde los renders originales (refs/personajes/alastor/originales/). SIN APROBAR.",
   "base": null,
   "pelo": "alastor",
@@ -32,8 +32,8 @@
       "camisa": {
         "hol": 0.006,
         "hol_manga": 0.008,
-        "manga": 0.29,
-        "puno": 0.012,
+        "manga": 0.306,
+        "puno": 0.01,
         "meter": 0.0025,
         "hol_cuello": 0.0055,
         "cuello_banda": [
@@ -50,6 +50,9 @@
       },
       "corbata_forma": {
         "punta_y": 0.33
+      },
+      "abrigo": {
+        "manga": 0.3
       }
     }
   },
@@ -66,9 +69,9 @@
   },
   "publicar": {
     "carpeta": "alastor",
-    "nombre": "ALASTOR_V03",
-    "nota": "pelo por masas esculpidas (brief pelo_alastor rev. 2) con rizo en C que nace del copete y frente despejada; boca recta sin párpado de enojo; gafas más gruesas y sin sombra; hebilla rectangular; solapas más oscuras",
+    "nombre": "ALASTOR_V04",
+    "nota": "corrección de cabeza (cada masa de pelo con pocas caras grandes, copete más alto y barrido, relleno sin huecos, rizo grueso unido al copete, varillas del grosor del marco hasta la oreja, boca recta) + mangas del abrigo hasta la muñeca",
     "estado": "SIN APROBAR",
-    "pedido": "Admin 20 oct: brief aprobado, gafas sin sombra, pelo chocolate #4A3220, hasta el final"
+    "pedido": "Admin 20 oct: Martillo a la corrección + «alarga las mangas de su abrigo, parece que están remangadas»"
   }
 }

@@ -36,8 +36,8 @@ PELO = {
     "theo": {"CAPA_PELO_THEO": True, "CAPA_PELO_CORTO": False, "CAPA_PELO_MECHONES": False, "CAPA_GUIA_CAPILAR": False},
     "corto": {"CAPA_PELO_THEO": False, "CAPA_PELO_CORTO": True, "CAPA_PELO_MECHONES": False, "CAPA_GUIA_CAPILAR": False},
     "mechones": {"CAPA_PELO_THEO": False, "CAPA_PELO_CORTO": False, "CAPA_PELO_MECHONES": True, "CAPA_GUIA_CAPILAR": False},
-    "alastor": {"CAPA_PELO_THEO": False, "CAPA_PELO_CORTO": False, "CAPA_PELO_MECHONES": False, "CAPA_GUIA_CAPILAR": False,
-                "CAPA_PELO_ALASTOR": True},     # lo construye la receta alastor (pelo de los originales)
+    "alastor": {"CAPA_PELO_THEO": False, "CAPA_PELO_CORTO": True, "CAPA_PELO_MECHONES": False, "CAPA_GUIA_CAPILAR": False,
+                "CAPA_PELO_ALASTOR": True},     # el casquete corto (recoloreado) rellena el cráneo bajo las masas     # lo construye la receta alastor (pelo de los originales)
     "rapado": {"CAPA_PELO_THEO": False, "CAPA_PELO_CORTO": False, "CAPA_PELO_MECHONES": False, "CAPA_GUIA_CAPILAR": False},
 }
 
