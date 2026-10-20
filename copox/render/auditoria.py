@@ -416,6 +416,79 @@ def rev_capas(glb, umbral=0.01, tol=0.0015, **_):
               detalle[:10], fuente="vestuario.sin_clipping_poses_extremas, cloth.clipping_transiciones")
 
 
+def _nodo_mundo(j, nombre):
+    ns = j["nodes"]
+    padre = {c: i for i, n in enumerate(ns) for c in n.get("children", [])}
+
+    def mat(n):
+        if "matrix" in n:
+            return np.array(n["matrix"], float).reshape(4, 4).T
+        t = np.array(n.get("translation", [0, 0, 0]), float); x, y, z, w = n.get("rotation", [0, 0, 0, 1])
+        s = np.array(n.get("scale", [1, 1, 1]), float)
+        R = np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+                      [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+                      [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]])
+        m = np.eye(4); m[:3, :3] = R * s; m[:3, 3] = t
+        return m
+    i = next((k for k, n in enumerate(ns) if n.get("name") == nombre), None)
+    if i is None:
+        return None
+    m = mat(ns[i])
+    while i in padre:
+        i = padre[i]; m = mat(ns[i]) @ m
+    return m[:3, 3]
+
+
+def rev_hombro(glb, umbral=0.97, **_):
+    """Admin (19 oct 2026): "sigo viendo los hombros blancos". La cara de afuera de la camisa ARRIBA del hombro
+    (entre el cuello y la esquina del hombro = articulación del brazo, sobre la línea de la axila) debe quedar cubierta
+    por el chaleco: el rayo que sale por su normal choca con el chaleco antes de 12 mm. Reposo. N-A si no hay chaleco y camisa."""
+    from copox.medicion.gltf import Modelo
+    M = Modelo(glb)
+    g = _grupos(M)
+    if "CAPA_CAMISA" not in g or "CAPA_CHALECO" not in g:
+        return _r("hombro_cubierto", "N-A", detalle="sin camisa + chaleco")
+    pos = M.posar(None, 0.0)
+    art = [_nodo_mundo(M.j, n) for n in ("LeftUpperArm", "RightUpperArm")]
+    if any(a is None for a in art):
+        return _r("hombro_cubierto", "N-A", detalle="rig sin UpperArm")
+    hx, hy = float(np.mean([abs(a[0]) for a in art])), float(np.mean([a[1] for a in art]))
+    Vc = np.vstack([pos[i] for i in g["CAPA_CAMISA"]])
+    Tc = np.vstack([M.prims[i].indices + sum(len(pos[k]) for k in g["CAPA_CAMISA"][:n])
+                    for n, i in enumerate(g["CAPA_CAMISA"])])
+    fn = np.cross(Vc[Tc[:, 1]] - Vc[Tc[:, 0]], Vc[Tc[:, 2]] - Vc[Tc[:, 0]])
+    Nc = np.zeros_like(Vc)
+    for c in range(3):
+        np.add.at(Nc, Tc[:, c], fn)
+    Nc /= np.maximum(np.linalg.norm(Nc, axis=1, keepdims=True), 1e-12)
+    x = np.abs(Vc[:, 0])
+    sel = (x > 0.050) & (x < hx - 0.004) & (Vc[:, 1] > hy - 0.005) & (Nc[:, 1] > 0.3)
+    if not sel.any():
+        return _r("hombro_cubierto", "N-A", detalle="sin cara de hombro en la camisa")
+    Vv = np.vstack([pos[i] for i in g["CAPA_CHALECO"]])
+    Tv = np.vstack([M.prims[i].indices + sum(len(pos[k]) for k in g["CAPA_CHALECO"][:n])
+                    for n, i in enumerate(g["CAPA_CHALECO"])])
+    # rayo desde la camisa hacia afuera (su normal): ¿choca con el chaleco antes de 12 mm?
+    Q, D = Vc[sel] + Nc[sel] * 1e-5, Nc[sel]
+    A, B, C = Vv[Tv[:, 0]], Vv[Tv[:, 1]], Vv[Tv[:, 2]]
+    e1, e2 = B - A, C - A
+    ok = np.zeros(len(Q), bool)
+    for k in range(0, len(Q), 32):
+        q, dd = Q[k:k + 32, None, :], D[k:k + 32, None, :]
+        p_ = np.cross(dd, e2[None]); det = (p_ * e1[None]).sum(2)
+        inv = np.where(np.abs(det) > 1e-14, 1 / np.where(np.abs(det) > 1e-14, det, 1), 0)
+        s_ = q - A[None]
+        u = (s_ * p_).sum(2) * inv
+        qq = np.cross(s_, e1[None])
+        v = (qq * dd).sum(2) * inv
+        t = (qq * e2[None]).sum(2) * inv
+        ok[k:k + 32] = ((inv != 0) & (u >= 0) & (v >= 0) & (u + v <= 1) & (t > 0) & (t < 0.012)).any(1)
+    f = float(ok.mean())
+    return _r("hombro_cubierto", "PASS" if f >= umbral else "FAIL", round(f, 4), f"≥ {umbral:.0%} de la camisa del hombro",
+              None if f >= umbral else [f"{int((~ok).sum())} vértices de camisa sin chaleco encima (x<{hx:.3f}, y>{hy - 0.005:.3f})"],
+              fuente="Admin 19 oct 2026, vestuario.capas")
+
+
 def deuda_base(base):
     """Lo que la base ya trae mal (no veta al asset; se reporta para arreglarlo en el cuerpo)."""
     if not base or not os.path.exists(base):
@@ -433,6 +506,7 @@ REVISIONES = {
     "integridad_gltf": (rev_integridad, TIPOS),
     "research_brief": (rev_brief, TIPOS),
     "capas_sin_atravesar": (rev_capas, ("personaje", "ropa")),
+    "hombro_cubierto": (rev_hombro, ("personaje", "ropa")),
     "pesos_normalizados": (rev_pesos, ("personaje", "pelo", "ropa", "calzado", "animacion")),
     "cinco_dedos": (rev_dedos, ("personaje", "animacion")),
     "base_preservada": (rev_preservado, ("personaje", "pelo", "ropa", "calzado", "animacion")),

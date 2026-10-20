@@ -55,9 +55,13 @@ def _region_chaleco(P):
     cuello = 0.042 - np.hypot(x, (z - 0.01) * 0.8)                    # hueco del cuello (también atrás)
     # sisa curva alrededor de la raíz del brazo (Admin: "los hombros se ven blancos"): arriba el chaleco cubre el
     # hombro hasta donde empieza la manga; la abertura es una elipse en (y, z) para |x| > 0.098
-    sisa_elipse = 1 - np.hypot((y - 0.428) / 0.040, (z - 0.014) / 0.052)
-    sisa = np.maximum(np.where(x > 0.098, sisa_elipse * 0.03, -1.0), x - 0.136)
-    return np.maximum.reduce([borde - y, y - c["cuello"], sisa, v_abierta,
+    # Admin (19 oct, 2.ª): "sigo viendo los hombros blancos" → el tirante llega a la ESQUINA del hombro (x de la
+    # articulación del brazo, medida en el rig: sisa_x) y la sisa sólo se abre ABAJO, en la axila (elipse bajo el brazo)
+    sx = c.get("sisa_x", 0.136)
+    ay, az = c.get("axila", (0.400, 0.014))
+    axila = 1 - np.hypot((y - ay) / 0.030, (z - az) / 0.046)
+    sisa = np.maximum(np.where(x > sx - 0.020, axila * 0.03, -1.0), x - sx)
+    return np.maximum.reduce([borde - y, y - c.get("tope", c["cuello"]), sisa, v_abierta,
                               np.where(y > 0.455, cuello, -1.0)])
 
 

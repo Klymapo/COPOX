@@ -37,6 +37,26 @@ def _pts(E, n, y0=-1, y1=9, x0=None, x1=None):
     return V[s]
 
 
+def _articulacion(E, nombre):
+    """Posición en el mundo (pose de reposo) de un nodo del rig."""
+    ns = E.j["nodes"]
+    padre = {c: i for i, n in enumerate(ns) for c in n.get("children", [])}
+
+    def mat(n):
+        t = np.array(n.get("translation", [0, 0, 0]), float); x, y, z, w = n.get("rotation", [0, 0, 0, 1])
+        s = np.array(n.get("scale", [1, 1, 1]), float)
+        R = np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+                      [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+                      [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]])
+        m = np.eye(4); m[:3, :3] = R * s; m[:3, 3] = t
+        return m
+    i = next(k for k, n in enumerate(ns) if n.get("name") == nombre)
+    m = mat(ns[i])
+    while i in padre:
+        i = padre[i]; m = mat(ns[i]) @ m
+    return m[:3, 3]
+
+
 def _malla(f, lo, hi, n_tris, carpeta, paso=0.0011):
     import receta_adan_v36 as v36
     from copox.medicion import ropa_ajustada as ra
@@ -131,14 +151,20 @@ def vestir(E, carpeta):
     # ── chaleco: el tubo de la camisa con una capa más, cortado; va sobre camisa y pretina ─────────────────────────
     ch = CHA
     t_cha = t_cam.inflado(ch["capa"])
+    # esquina del hombro y axila medidas en el rig (sirve igual para Alastor): T-pose, brazo a lo largo de x
+    hx, hy, hz = _articulacion(E, "LeftUpperArm")
+    v2.CHALECO.update(sisa_x=abs(hx) - 0.005, axila=(hy - 0.030, hz), tope=0.506)                     # el tubo del torso termina en 0.500: el chaleco lo cubre entero
+    log["hombro"] = dict(sisa_x=round(abs(hx), 4), axila_y=round(hy - 0.030, 4))
 
     def chaleco(P):
         # sobre TODA la camisa (también el abultado del hombro donde entra la manga); la sisa corta la manga
         base = np.minimum(cuerpo_cam(P) - ch["capa"], cuerpo_pan(P) - 0.0018 - ch["capa"])
-        return np.maximum(base, v2._region_chaleco(P))
-    V, T, N = _malla(chaleco, (-0.15, 0.21, -0.09), (0.15, 0.49, 0.14), TRIS["chaleco"], carpeta)
+        # hasta el cuello: sube sobre la camisa; sólo deja libre la banda del cuello de la camisa
+        collar = np.where(P[:, 1] > 0.460, 0.0025 - t_cuello.sdf(P), -1.0)
+        return np.maximum.reduce([base, v2._region_chaleco(P), collar])
+    V, T, N = _malla(chaleco, (-0.16, 0.21, -0.09), (0.16, 0.512, 0.14), TRIS["chaleco"], carpeta)
     from copox.medicion import mano_geo as mg  # noqa: F401
-    prims_ch = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"], pz["BrazoL"], pz["BrazoR"]], nombres, mats["chaleco"], "THEO_CHALECO",
+    prims_ch = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"]], nombres, mats["chaleco"], "THEO_CHALECO",
                          tt.ESCALAS["lana_cerrada"])]
     Vb, Tb, o = [], [], 0
     for yb in ch["botones"]:
