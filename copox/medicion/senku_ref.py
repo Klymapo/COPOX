@@ -43,8 +43,12 @@ def _celdas(A, c):
     filas, cols = {"1": (1, 1), "2x2": (2, 2), "1x2": (1, 2), "1x3": (1, 3), "1x4": (1, 4)}[d]
     h, w = A.shape[0] // filas, A.shape[1] // cols
     b = int(c["borde"])
+    bt = int(c.get("borde_arriba", b))                 # hojas con rótulo arriba de cada celda
     for v, (i, j) in c["celdas"].items():
-        yield v, A[i * h + b:(i + 1) * h - b, j * w + b:(j + 1) * w - b]
+        celda = A[i * h + bt:(i + 1) * h - b, j * w + b:(j + 1) * w - b]
+        if v in c.get("espejo", ()):                   # p. ej. perfil IZQUIERDO: se refleja para compararlo como derecho
+            celda = celda[:, ::-1]
+        yield v, celda
 
 
 def _fondo(a):
@@ -89,11 +93,15 @@ def cargar_hoja(ruta_img):
         sat = a.max(2) - a.min(2)
         sombra = (sat < 14) & (a.mean(2) > 120)
         obj &= ~sombra
+        if c.get("rellenar"):                          # camisa clara casi del color del fondo: huecos dentro del cuerpo
+            obj = binary_fill_holes(obj)
         filas = np.nonzero(obj.any(1))[0]
         piso, techo = int(filas.max()), int(filas.min())
         oscuro = obj & ((a.sum(2)) < 300)
         pelo, piel = _clases(a, c)
         cab = binary_opening((pelo | piel) & obj, iterations=1)
+        if c.get("cabeza_cierre"):                     # lentes/accesorios oscuros parten la cara del pelo: se cierran
+            cab = binary_closing(cab, iterations=int(c["cabeza_cierre"])) & obj
         lab2, _ = label(cab)
         ids = [k for k in np.unique(lab2[techo:techo + 40]) if k]
         cab = binary_fill_holes(binary_closing(np.isin(lab2, ids), iterations=6))

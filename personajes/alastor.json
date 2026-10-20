@@ -1,0 +1,77 @@
+{
+  "nombre": "ALASTOR_V01",
+  "descripcion": "Alastor Kleinteil (El brillo ausente). Desde los renders originales (refs/personajes/alastor/originales/). SIN APROBAR.",
+  "base": null,
+  "pelo": "alastor",
+  "calzado": "zapato",
+  "manos": "abierta",
+  "visible": {
+    "CAPA_SHORT": false,
+    "CAPA_CHALECO": false
+  },
+  "ropa": {
+    "conjunto": "abrigo_detective",
+    "colores": {
+      "camisa": "#FBEFE1",
+      "corbata": "#232026",
+      "pantalon": "#2C2320",
+      "boton": "#2C2320",
+      "abrigo": "#3A2F2A",
+      "solapa": "#2C2320",
+      "cinturon": "#5F4338",
+      "hebilla": "#9A7B3C",
+      "gafas": "#1F1916"
+    },
+    "telas": {
+      "camisa": "tafetan_suave",
+      "corbata": "saten",
+      "pantalon": "sarga",
+      "boton": "cuero"
+    },
+    "params": {
+      "camisa": {
+        "hol": 0.006,
+        "hol_manga": 0.0065,
+        "manga": 0.262,
+        "puno": 0.012,
+        "meter": 0.0025,
+        "hol_cuello": 0.0055,
+        "cuello_banda": [
+          0.47,
+          0.503
+        ]
+      },
+      "pantalon": {
+        "hol_pelvis": 0.0088,
+        "hol_pierna": 0.0066,
+        "hem": 0.05,
+        "vuelta": 0.026,
+        "k": 0.022
+      },
+      "corbata_forma": {
+        "punta_y": 0.33
+      },
+      "pelo": {
+        "color": "#72432B"
+      }
+    }
+  },
+  "chxp": {
+    "tipo": "personaje",
+    "ref": "refs/personajes/alastor/originales/alastor-tres-cuartos.jpg",
+    "ref_2x2": false,
+    "brief": "abrigo,gafas,pelo_alastor,ropa_capas,zapato,pelvis",
+    "gif": [
+      "Walk-loop",
+      "Run-loop",
+      "Sit-pose"
+    ]
+  },
+  "publicar": {
+    "carpeta": "alastor",
+    "nombre": "ALASTOR_V01",
+    "nota": "primera versión desde los renders originales",
+    "estado": "SIN APROBAR",
+    "pedido": "Admin: «Martillo a Alastor» · «Básate en los renders originales»"
+  }
+}

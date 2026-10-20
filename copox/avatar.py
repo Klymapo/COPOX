@@ -21,12 +21,16 @@ from .medicion import catalogo
 RAIZ = entorno.RAIZ
 
 
-def _modulos(receta):
+def _modulos(receta, modulos=None):
     sys.path.insert(0, os.path.join(RAIZ, "docs", "medicion"))
     sys.path.insert(0, RAIZ)
+    if modulos:
+        m = {k: importlib.import_module(v) for k, v in modulos.items()}
+        m["_receta"] = importlib.import_module(receta)
+        return m
     v3 = importlib.import_module(receta)
     v2 = getattr(v3, "v2", None)
-    return {"v3": v3, "v2": v2}
+    return {"v3": v3, "v2": v2, "_receta": v3}
 
 
 def _visibilidad(f):
@@ -66,7 +70,7 @@ def construir(f, dst):
         compactar(tmp, dst)
         os.remove(tmp)
         return [{"operacion": "solo visibilidad"}]
-    m = _modulos(ropa["receta"])
+    m = _modulos(ropa["receta"], ropa.get("modulos"))
     respaldo = {}
     try:
         for grupo, params in f["ropa"].get("params", {}).items():
@@ -76,15 +80,19 @@ def construir(f, dst):
             d.update({k: tuple(v) if isinstance(v, list) else v for k, v in params.items()})
         for clave in ("colores", "telas"):
             if f["ropa"].get(clave):
-                mod, var = ropa[clave]
-                d = getattr(m[mod], var)
-                respaldo.setdefault((mod, var), copy.deepcopy(d))
-                d.update(f["ropa"][clave])
+                destinos = ropa[clave] if isinstance(ropa[clave], list) else [ropa[clave]]
+                for mod, var in destinos:
+                    d = getattr(m[mod], var)
+                    respaldo.setdefault((mod, var), copy.deepcopy(d))
+                    if len(destinos) == 1:
+                        d.update(f["ropa"][clave])
+                    else:                              # varios destinos: cada uno toma sólo las claves que ya tiene
+                        d.update({k: v for k, v in f["ropa"][clave].items() if k in d})
         mod, var = ropa["visible"]
         d = getattr(m[mod], var)
         respaldo.setdefault((mod, var), copy.deepcopy(d))
         d.update(vis)
-        return m["v3"].main(base, dst)
+        return m["_receta"].main(base, dst)
     finally:
         for (mod, var), d in respaldo.items():          # el catálogo queda como estaba para el siguiente personaje
             getattr(m[mod], var).clear(); getattr(m[mod], var).update(d)

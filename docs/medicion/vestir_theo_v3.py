@@ -26,6 +26,7 @@ CHA = dict(capa=0.0042, borde_lado=0.246, borde_punta=0.226, hombro_x=0.112, cue
 PAN = dict(cintura=0.280, pretina=0.014, hem=0.056, vuelta=0.016, hol_pelvis=0.0088, hol_pierna=0.0066,
            recto_desde=0.150, k=0.022)
 TRIS = dict(camisa=7000, chaleco=5000, pantalon=7000)
+ULTIMO = {}                                   # internos de la última prenda (para capas de otras recetas)
 CORB = dict(grosor=0.0030, arista=0.0012, separa=0.0025, nudo=(0.012, 0.0095, 0.0072))
 
 
@@ -169,26 +170,31 @@ def vestir(E, carpeta):
     v2.CHALECO.update(sisa_x=abs(hx) - 0.005, axila=(hy - 0.030, hz), tope=0.506)                     # el tubo del torso termina en 0.500: el chaleco lo cubre entero
     log["hombro"] = dict(sisa_x=round(abs(hx), 4), axila_y=round(hy - 0.030, 4))
 
-    def chaleco(P):
-        # sobre TODA la camisa (también el abultado del hombro donde entra la manga); la sisa corta la manga
-        base = np.minimum(cuerpo_cam(P) - ch["capa"], cuerpo_pan(P) - 0.0018 - ch["capa"])
-        # hasta el cuello: sube sobre la camisa; sólo deja libre la banda del cuello de la camisa
-        collar = np.where(P[:, 1] > 0.460, 0.0025 - t_cuello.sdf(P), -1.0)
-        return np.maximum.reduce([base, v2._region_chaleco(P), collar])
-    V, T, N = _malla(chaleco, (-0.16, 0.21, -0.09), (0.16, 0.512, 0.14), TRIS["chaleco"], carpeta)
-    from copox.medicion import mano_geo as mg  # noqa: F401
-    prims_ch = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"]], nombres, mats["chaleco"], "THEO_CHALECO",
-                         tt.ESCALAS["lana_cerrada"])]
-    Vb, Tb, o = [], [], 0
-    for yb in ch["botones"]:
-        z0 = rt.superficie_z(chaleco, 0.0, yb)
-        v, t = rc.disco(np.array([0.0, yb, z0 - 0.0004]), np.array([0, 0, 1.0]), 0.0042, 0.0016)
-        Vb.append(v); Tb.append(t + o); o += len(v)
-    Vb, Tb = np.vstack(Vb), np.vstack(Tb)
-    prims_ch.append(v2._prim(E, Vb, Tb, None, [pz["Torso_PIEL"]], nombres, mats["boton"], "THEO_BOTONES",
-                             tt.ESCALAS["cuero"]))
-    nodos["CAPA_CHALECO"] = prims_ch
-    log["chaleco"] = int(len(T))
+    if CHA.get("usar", True):
+        def chaleco(P):
+            # sobre TODA la camisa (también el abultado del hombro donde entra la manga); la sisa corta la manga
+            base = np.minimum(cuerpo_cam(P) - ch["capa"], cuerpo_pan(P) - 0.0018 - ch["capa"])
+            # hasta el cuello: sube sobre la camisa; sólo deja libre la banda del cuello de la camisa
+            collar = np.where(P[:, 1] > 0.460, 0.0025 - t_cuello.sdf(P), -1.0)
+            return np.maximum.reduce([base, v2._region_chaleco(P), collar])
+        V, T, N = _malla(chaleco, (-0.16, 0.21, -0.09), (0.16, 0.512, 0.14), TRIS["chaleco"], carpeta)
+        from copox.medicion import mano_geo as mg  # noqa: F401
+        prims_ch = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"]], nombres, mats["chaleco"], "THEO_CHALECO",
+                             tt.ESCALAS["lana_cerrada"])]
+        Vb, Tb, o = [], [], 0
+        for yb in ch["botones"]:
+            z0 = rt.superficie_z(chaleco, 0.0, yb)
+            v, t = rc.disco(np.array([0.0, yb, z0 - 0.0004]), np.array([0, 0, 1.0]), 0.0042, 0.0016)
+            Vb.append(v); Tb.append(t + o); o += len(v)
+        Vb, Tb = np.vstack(Vb), np.vstack(Tb)
+        prims_ch.append(v2._prim(E, Vb, Tb, None, [pz["Torso_PIEL"]], nombres, mats["boton"], "THEO_BOTONES",
+                                 tt.ESCALAS["cuero"]))
+        nodos["CAPA_CHALECO"] = prims_ch
+        log["chaleco"] = int(len(T))
+
+    else:                                          # sin chaleco (p. ej. Alastor: abrigo encima, en otra receta)
+        def chaleco(P):
+            return np.ones(len(P))
 
     # ── puntas del cuello y corbata (entre camisa y chaleco) ───────────────────────────────────────────────────────
     def z_sobre(xv, yv):
@@ -238,6 +244,8 @@ def vestir(E, carpeta):
     Vt = np.vstack([Vh, Vn]); Tt = np.vstack([Th, Tn + len(Vh)])
     nodos["CAPA_CORBATA"] = [v2._prim(E, Vt, Tt, None, [pz["Torso_PIEL"], pz["Cuello"]], nombres, mats["corbata"],
                                       "THEO_CORBATA", tt.ESCALAS["saten"])]
+    ULTIMO.update(cuerpo_cam=cuerpo_cam, cuerpo_pan=cuerpo_pan, t_cam=t_cam, mangas=mangas, camisa=camisa_total,
+                  t_cuello=t_cuello, zap=zap, piernas=piernas, t_pel=t_pel, piezas=pz, nombres=nombres, mats=mats)
     for nombre, prims in nodos.items():
         v49._nodo(E, nombre, prims)
     v49._limpiar(carpeta)

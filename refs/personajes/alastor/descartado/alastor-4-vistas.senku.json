@@ -1,0 +1,44 @@
+{
+  "descripcion": "Alastor Kleinteil (Detective v3), hoja 2x2 en T. Frente arriba-izq, perfil IZQUIERDO arriba-der (se refleja), espalda abajo-izq, 3/4 abajo-der. Fuente: Drive Gaston, Alastor_v3_4_vistas.png (1azbnOTAImohJrZokZRPgNOSLrovHqiPA).",
+  "disposicion": "2x2",
+  "celdas": {
+    "frente": [
+      0,
+      0
+    ],
+    "perfil": [
+      0,
+      1
+    ],
+    "espalda": [
+      1,
+      0
+    ],
+    "tres_cuartos": [
+      1,
+      1
+    ]
+  },
+  "espejo": [
+    "perfil"
+  ],
+  "anclas": "personaje_T",
+  "borde": 18,
+  "borde_arriba": 60,
+  "muestras": {
+    "pelo": [
+      "#663D2D",
+      "#714736",
+      "#5C3728",
+      "#623A29"
+    ],
+    "piel": [
+      "#EAAC85",
+      "#E0A47F",
+      "#D18B6B"
+    ]
+  },
+  "tolerancia": 24,
+  "rellenar": true,
+  "cabeza_cierre": 14
+}
