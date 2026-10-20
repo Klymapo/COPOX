@@ -22,9 +22,12 @@ import receta_adan_v49 as v49  # noqa: E402
 PRESETS = {
     # zapato de la hoja de Theo: suela gruesa y plana (≈1/4 del alto), sobresale un poco, tacón en bloque,
     # punta cuadrada de esquinas suaves, boca baja
-    "ZAPATO": dict(holgura_x=0.008, holgura_z=0.010, suela=0.013, sobresale=0.0045, arco=0.0035, arco_z=(0.30, 0.62),
-                   collar=0.068, punta_alto=0.036, sobre_pie=0.017, n=5.0, redondeo=0.006, vira=0.0015,
-                   punta_cuadrada=0.6, panel=None, facetas=True,
+    # V50.1 (Admin, 19 oct): 10 % más chico, empeine retocado, suela que se vea (sobresale + surco) y tacón distinto
+    # (bloque más alto con hueco de arco visible de perfil). Todo en el mismo negro: se distingue por forma.
+    "ZAPATO": dict(holgura_x=0.008, holgura_z=0.010, suela=0.010, sobresale=0.0038, arco=0.0050, arco_z=(0.27, 0.52),
+                   collar=0.064, punta_alto=0.030, sobre_pie=0.017, n=5.0, redondeo=0.0055, vira=0.0030,
+                   punta_cuadrada=0.6, panel=None, facetas=True, escala=0.90, tacon=0.0040, surco=0.0022,
+                   empeine=dict(alto=0.064, meseta=(0.36, 0.70), meseta_caida=0.010, punta=0.030),
                    colores=("#292929", "#1F1916"), nodo="PIES_ZAPATO", tris=1800),
     "TENIS": dict(holgura_x=0.008, holgura_z=0.010, suela=0.013, sobresale=0.0025, arco=0.0, arco_z=(0.3, 0.6),
                   collar=0.058, punta_alto=0.032, sobre_pie=0.007, n=3.0, redondeo=0.014, vira=0.0,
@@ -46,11 +49,29 @@ class Calzado:
         self.a = (hi[0] - lo[0]) / 2 + p["holgura_x"]
         self.b = (hi[2] - lo[2]) / 2 + p["holgura_z"]
         self.z0, self.z1 = self.cz - self.b, self.cz + self.b               # talón, punta (+z = adelante)
+        e = p.get("escala", 1.0)
+        if e != 1.0:                                   # más chico desde el talón; nunca más angosto que el tobillo
+            tob = pie[pie[:, 1] > 0.035]
+            ancho_tob = float(np.abs(tob[:, 0] - self.cx).max()) + 0.004 if len(tob) else 0.0
+            atras_tob = float(tob[:, 2].min()) - 0.004 if len(tob) else self.z0
+            self.a = max(self.a * e, ancho_tob)
+            self.z0 = min(self.z0, atras_tob)
+            self.z1 = self.z0 + (self.z1 - self.z0) * e
+            self.cz = (self.z0 + self.z1) / 2; self.b = (self.z1 - self.z0) / 2
         zs = np.linspace(self.z0, self.z1, 40)
-        h = np.array([pie[np.abs(pie[:, 2] - z) < 0.012, 1].max() if (np.abs(pie[:, 2] - z) < 0.012).any() else 0
-                      for z in zs]) + p["sobre_pie"]
-        h = np.clip(h, p["punta_alto"], p["collar"])
-        h = np.convolve(np.r_[h[:5], h, h[-5:]], np.ones(11) / 11, mode="valid")
+        if p.get("empeine"):                           # perfil de empeine diseñado (no copia el pie)
+            em = p["empeine"]
+            t = (zs - self.z0) / (self.z1 - self.z0)
+            m0, m1 = em["meseta"]
+            h = np.where(t < m0, em["alto"],
+                         em["alto"] - em["meseta_caida"] * _ss((t - m0) / (m1 - m0)))
+            nariz = _ss((t - m1) / (1 - m1)) ** 0.8          # la punta baja redondeada
+            h = h - (h - em["punta"]) * nariz
+        else:
+            h = np.array([pie[np.abs(pie[:, 2] - z) < 0.012, 1].max() if (np.abs(pie[:, 2] - z) < 0.012).any() else 0
+                          for z in zs]) + p["sobre_pie"]
+            h = np.clip(h, p["punta_alto"], p["collar"])
+            h = np.convolve(np.r_[h[:5], h, h[-5:]], np.ones(11) / 11, mode="valid")
         self.zs, self.h = zs, h
 
     def _huella(self, P, extra=0.0):
@@ -64,15 +85,26 @@ class Calzado:
         return (k - 1) * min(a, b)
 
     def suela(self, P):
-        from copox.medicion.ropa_ajustada import smin
+        """Planta: losa que sobresale; en el arco no toca el piso. El tacón es pieza aparte (tacon())."""
         p = self.p
         d = self._huella(P, p["sobresale"])
         d = np.maximum(d, np.maximum(P[:, 1] - p["suela"], -P[:, 1]))
-        # arco: entre talón y planta la suela no toca el piso (el tacón queda como bloque)
         t = (P[:, 2] - self.z0) / (self.z1 - self.z0)
-        en_arco = _ss((t - p["arco_z"][0]) / 0.05) * _ss((p["arco_z"][1] - t) / 0.05)
+        en_arco = _ss((t - p["arco_z"][0]) / 0.03) * _ss((p["arco_z"][1] - t) / 0.03)
         d = np.maximum(d, (p["arco"] * en_arco) - P[:, 1])
+        if p.get("tacon"):                                                  # detrás del arco manda el tacón
+            d = np.maximum(d, p["arco_z"][0] * (self.z1 - self.z0) - (P[:, 2] - self.z0))
         return d
+
+    def tacon(self, P):
+        """Bloque de tacón: más alto que la planta, termina recto donde empieza el arco (se ve de perfil)."""
+        p = self.p
+        if not p.get("tacon"):
+            return np.full(len(P), 1.0)
+        d = self._huella(P, p["sobresale"] * 0.6)
+        alto = p["suela"] + p["tacon"]
+        frente = self.z0 + p["arco_z"][0] * (self.z1 - self.z0)
+        return np.maximum.reduce([d, P[:, 1] - alto, -P[:, 1], P[:, 2] - frente])
 
     def corte(self, P):
         from copox.medicion.ropa_ajustada import smin
@@ -85,10 +117,14 @@ class Calzado:
             t = (P[:, 2] - self.z0) / (self.z1 - self.z0)
             dentro = np.maximum(np.abs(P[:, 0] - self.cx) - ancho * self.a, np.maximum(t0 - t, t - t1) * (self.z1 - self.z0))
             d = np.maximum(d, -(P[:, 1] - (top - prof)) * (dentro < 0) - 1.0 * (dentro >= 0))
-        return np.maximum(d, (p["suela"] - 0.002) - P[:, 1])                # arranca sobre la suela
+        base = p["suela"] + (p["tacon"] if p.get("tacon") else 0) * _ss(
+            (self.z0 + p["arco_z"][0] * (self.z1 - self.z0) - P[:, 2]) / 0.004)   # sobre el tacón arranca más arriba
+        if p.get("surco"):                                                  # surco entre suela y corte: se lee la suela
+            d = d + p["surco"] * np.exp(-((P[:, 1] - (base + 0.0015)) / 0.0015) ** 2)
+        return np.maximum(d, (base - 0.002) - P[:, 1])                      # arranca sobre la suela / tacón
 
     def sdf(self, P):
-        return np.minimum(self.suela(P), self.corte(P))
+        return np.minimum.reduce([self.suela(P), self.tacon(P), self.corte(P)])
 
 
 def calzado(E, carpeta, preset="ZAPATO", visible=True):
@@ -111,7 +147,10 @@ def calzado(E, carpeta, preset="ZAPATO", visible=True):
         S = Calzado(Vp, p)
         lo = np.array([S.cx - S.a - 0.012, -0.004, S.z0 - 0.012])
         hi = np.array([S.cx + S.a + 0.012, p["collar"] + 0.01, S.z1 + 0.012])
-        for parte, campo, mat in (("SUELA", S.suela, m_suela), ("CORTE", S.corte, m_corte)):
+        partes_c = [("SUELA", S.suela, m_suela), ("CORTE", S.corte, m_corte)]
+        if p.get("tacon"):
+            partes_c.append(("TACON", S.tacon, m_suela))
+        for parte, campo, mat in partes_c:
             V, T = sg.malla_sdf(campo, lo, hi, paso=0.0009, pulido=6)
             V, T = ra.solo_mayor(V, T)
             V, T = v36.simplificar(V, T, p["tris"] // 2, carpeta)

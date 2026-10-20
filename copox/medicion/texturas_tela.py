@@ -18,8 +18,8 @@ import numpy as np
 
 MEDIA = 0.92
 TAM = 128
-ESCALAS = {"tafetan": 90.0, "sarga": 70.0, "lana_cerrada": 110.0, "saten": 45.0, "cuero": 60.0, "lona": 80.0}
-RUGOSIDAD = {"tafetan": 0.9, "sarga": 0.9, "lana_cerrada": 0.95, "saten": 0.55, "cuero": 0.6, "lona": 0.92}
+ESCALAS = {"tafetan_suave": 35.0, "tafetan": 90.0, "sarga": 70.0, "lana_cerrada": 110.0, "saten": 45.0, "cuero": 60.0, "lona": 80.0}
+RUGOSIDAD = {"tafetan_suave": 0.9, "tafetan": 0.9, "sarga": 0.9, "lana_cerrada": 0.95, "saten": 0.55, "cuero": 0.6, "lona": 0.92}
 
 
 def _norm(a, amp=0.08, media=MEDIA):
@@ -36,6 +36,10 @@ def patron(tela, n=TAM, semilla=0, media=MEDIA):
     y, x = np.mgrid[0:n, 0:n]
     ruido = rng.normal(0, 1, (n, n))
     from scipy.ndimage import gaussian_filter
+    if tela == "tafetan_suave":                  # camisa (Admin: "se ven píxeles"): trama grande, borrosa y muy tenue
+        k = 8
+        a = gaussian_filter(((x // k + y // k) % 2) * 1.0, 2.0, mode="wrap") + 0.4 * gaussian_filter(ruido, 3, mode="wrap")
+        return nrm(a, 0.022)
     if tela == "tafetan":                        # trama 1×1: urdimbre y trama se alternan
         k = 4
         a = ((x // k + y // k) % 2) * 1.0 + 0.35 * gaussian_filter(ruido, 0.8, mode="wrap")

@@ -19,7 +19,7 @@ import receta_adan_v40 as v40  # noqa: E402
 import receta_adan_v49 as v49  # noqa: E402
 
 COL = {"camisa": "#FBEFE1", "chaleco": "#302E2D", "corbata": "#41598D", "pantalon": "#4A5770", "boton": "#2C2320"}
-TELA = {"camisa": "tafetan", "chaleco": "lana_cerrada", "corbata": "saten", "pantalon": "sarga", "boton": "cuero"}
+TELA = {"camisa": "tafetan_suave", "chaleco": "lana_cerrada", "corbata": "saten", "pantalon": "sarga", "boton": "cuero"}
 CAMISA = dict(holgura=0.0035, cierre=0.006, borde=0.215, cuello_y=(0.474, 0.497), cuello_extra=0.0025, manga=0.272,
               puno=0.016, puno_extra=0.003)
 CHALECO = dict(holgura=0.0042, borde_lado=0.246, borde_punta=0.226, hombro_x=0.110, cuello=0.476, v_fondo=0.372,
@@ -53,7 +53,10 @@ def _region_chaleco(P):
     t = np.clip((y - c["v_fondo"]) / (c["cuello"] - c["v_fondo"]), 0, 1)
     v_abierta = np.where((z > FRENTE_Z) & (y > c["v_fondo"]), c["v_ancho"] * t - x, -1.0)
     cuello = 0.042 - np.hypot(x, (z - 0.01) * 0.8)                    # hueco del cuello (también atrás)
-    sisa = x - np.where(y > 0.36, c["hombro_x"], 0.135)            # sisas arriba; en la cadera el chaleco no se corta
+    # sisa curva alrededor de la raíz del brazo (Admin: "los hombros se ven blancos"): arriba el chaleco cubre el
+    # hombro hasta donde empieza la manga; la abertura es una elipse en (y, z) para |x| > 0.098
+    sisa_elipse = 1 - np.hypot((y - 0.428) / 0.040, (z - 0.014) / 0.052)
+    sisa = np.maximum(np.where(x > 0.098, sisa_elipse * 0.03, -1.0), x - 0.136)
     return np.maximum.reduce([borde - y, y - c["cuello"], sisa, v_abierta,
                               np.where(y > 0.455, cuello, -1.0)])
 

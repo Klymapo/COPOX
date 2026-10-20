@@ -19,13 +19,14 @@ import receta_adan_v40 as v40  # noqa: E402
 import receta_adan_v49 as v49  # noqa: E402
 import vestir_theo_capas as v2  # noqa: E402
 
-CAM = dict(borde=0.215, cuello=0.474, manga=0.272, puno=0.016, hol=0.0040, hol_manga=0.0058, codo=0.206,
+CAM = dict(borde=0.215, cuello=0.474, manga=0.272, puno=0.016, hol=0.0060, hol_manga=0.0065, codo=0.206,
            hol_codo=0.0040, k=0.012, cuello_banda=(0.470, 0.497), hol_cuello=0.0040)
 CHA = dict(capa=0.0042, borde_lado=0.246, borde_punta=0.226, hombro_x=0.112, cuello=0.476, v_fondo=0.372,
            v_ancho=0.040, botones=(0.357, 0.322, 0.287, 0.252))
-PAN = dict(cintura=0.280, pretina=0.014, hem=0.070, vuelta=0.016, hol_pelvis=0.0068, hol_pierna=0.0050,
-           recto_desde=0.150, k=0.014)
+PAN = dict(cintura=0.280, pretina=0.014, hem=0.056, vuelta=0.016, hol_pelvis=0.0088, hol_pierna=0.0066,
+           recto_desde=0.150, k=0.022)
 TRIS = dict(camisa=7000, chaleco=5000, pantalon=7000)
+CORB = dict(grosor=0.0030, arista=0.0012, separa=0.0025, nudo=(0.012, 0.0095, 0.0072))
 
 
 def _pts(E, n, y0=-1, y1=9, x0=None, x1=None):
@@ -88,7 +89,7 @@ def vestir(E, carpeta):
         return np.minimum(camisa(P), t_cuello.sdf(P))
     V, T, N = _malla(camisa_total, (-0.30, c["borde"] - 0.01, -0.09), (0.30, 0.505, 0.14), TRIS["camisa"], carpeta)
     nodos["CAPA_CAMISA"] = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"], pz["BrazoL"], pz["BrazoR"]], nombres,
-                                     mats["camisa"], "THEO_CAMISA", tt.ESCALAS["tafetan"])]
+                                     mats["camisa"], "THEO_CAMISA", tt.ESCALAS["tafetan_suave"])]
     log["camisa"] = int(len(T))
 
     # ── pantalón: pelvis + piernas rectas, pretina, vuelta; termina sobre el zapato ───────────────────────────────
@@ -137,7 +138,7 @@ def vestir(E, carpeta):
         return np.maximum(base, v2._region_chaleco(P))
     V, T, N = _malla(chaleco, (-0.15, 0.21, -0.09), (0.15, 0.49, 0.14), TRIS["chaleco"], carpeta)
     from copox.medicion import mano_geo as mg  # noqa: F401
-    prims_ch = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"]], nombres, mats["chaleco"], "THEO_CHALECO",
+    prims_ch = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"], pz["BrazoL"], pz["BrazoR"]], nombres, mats["chaleco"], "THEO_CHALECO",
                          tt.ESCALAS["lana_cerrada"])]
     Vb, Tb, o = [], [], 0
     for yb in ch["botones"]:
@@ -163,7 +164,7 @@ def vestir(E, carpeta):
         Vc.append(v); Tc.append(tq + o); o += len(v)
     Vc, Tc = np.vstack(Vc), np.vstack(Tc)
     nodos["CAPA_CAMISA"].append(v2._prim(E, Vc, Tc, None, [pz["Torso_PIEL"], pz["Cuello"]], nombres, mats["camisa"],
-                                         "THEO_CUELLO_PUNTAS", tt.ESCALAS["tafetan"]))
+                                         "THEO_CUELLO_PUNTAS", tt.ESCALAS["tafetan_suave"]))
     k = v2.CORBATA
     ys = np.linspace(k["nudo_y"] - 0.010, k["punta_y"], 16)
     zc = np.array([rt.superficie_z(camisa_total, 0.0, v) for v in ys]) + k["sobre"]
@@ -171,9 +172,30 @@ def vestir(E, carpeta):
     t = (k["nudo_y"] - ys) / (k["nudo_y"] - k["punta_y"])
     w = k["ancho_nudo"] + (k["ancho"] - k["ancho_nudo"]) * v2._ss(t / 0.4)
     w = np.where(t > 0.92, w * (1 - (t - 0.92) / 0.08 * 0.98), w)
-    Vh, Th = rc.placa(np.c_[-w, ys, zc], np.c_[w, ys, zc], k["grosor"], lambda q: np.array([0, 0, 1.0]))
-    zn = rt.superficie_z(camisa_total, 0.0, k["nudo_y"]) + 0.0045
-    Vn, Tn = rc.caja_redondeada(np.array([0, k["nudo_y"], zn]), np.eye(3), np.array([0.0105, 0.0085, 0.0055]))
+    # hoja con volumen (Admin: "la corbata se ve pintada"): sección hexagonal con arista al centro y bordes biselados,
+    # separada del pecho (cuelga) — no una lámina pegada
+    zc = zc + CORB["separa"] * v2._ss((ys[0] - ys) / 0.02)
+    sec = np.array([[-1.0, 0.0], [-0.72, 0.85], [0.0, 1.0 + CORB["arista"] / CORB["grosor"]], [0.72, 0.85], [1.0, 0.0],
+                    [0.0, -0.25]])
+    anillos = [np.c_[sec[:, 0] * w[i], np.full(len(sec), ys[i]), zc[i] + sec[:, 1] * CORB["grosor"]] for i in range(len(ys))]
+    Vh = np.vstack(anillos)
+    nk = len(sec)
+    Th = []
+    for i in range(len(ys) - 1):
+        a0, b0 = i * nk, (i + 1) * nk
+        for e in range(nk):
+            f = (e + 1) % nk
+            Th += [(a0 + e, b0 + e, b0 + f), (a0 + e, b0 + f, a0 + f)]
+    for e in range(1, nk - 1):
+        Th += [(0, e, e + 1), (len(Vh) - nk, len(Vh) - nk + e + 1, len(Vh) - nk + e)]
+    Th = np.array(Th)
+    cen = np.c_[np.zeros(len(ys)), ys, zc + 0.3 * CORB["grosor"]]
+    ref = np.repeat(cen, nk, axis=0)
+    fn = np.cross(Vh[Th[:, 1]] - Vh[Th[:, 0]], Vh[Th[:, 2]] - Vh[Th[:, 0]])
+    malo = np.einsum("ij,ij->i", fn, Vh[Th].mean(1) - ref[Th].mean(1)) < 0
+    Th[malo] = Th[malo][:, ::-1]
+    zn = rt.superficie_z(camisa_total, 0.0, k["nudo_y"]) + CORB["nudo"][2] * 0.75
+    Vn, Tn = rc.caja_redondeada(np.array([0, k["nudo_y"], zn]), np.eye(3), np.array(CORB["nudo"]))
     Vt = np.vstack([Vh, Vn]); Tt = np.vstack([Th, Tn + len(Vh)])
     nodos["CAPA_CORBATA"] = [v2._prim(E, Vt, Tt, None, [pz["Torso_PIEL"], pz["Cuello"]], nombres, mats["corbata"],
                                       "THEO_CORBATA", tt.ESCALAS["saten"])]
