@@ -73,12 +73,16 @@ def preparar(e, glb):
                 return True
             o = o.parent
         return False
+    nodos_malla = {n.get("name") for n in _json_glb(glb).get("nodes", []) if "mesh" in n}
     mallas = []
     for o in sc.objects:
-        if oculto(o):
+        ayudante = any(c.name.startswith("glTF_not_exported") for c in o.users_collection)
+        if oculto(o) or ayudante:                       # ayudante: formas de hueso que crea el importador
             o.hide_render = True; o.hide_viewport = True
-        elif o.type == "MESH":
+        elif o.type == "MESH" and o.name.split(".")[0] in nodos_malla:
             mallas.append(o)
+        elif o.type == "MESH":
+            o.hide_render = True
     # clip
     if e.get("clip"):
         clip = e["clip"]
