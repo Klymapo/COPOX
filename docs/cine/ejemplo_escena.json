@@ -1,0 +1,49 @@
+{
+  "nombre": "humo_theo_alpha_orbita",
+  "glb": "assets/joven_rubio/theo_alpha.glb",
+  "clip": null,
+  "cuadros": [
+    1,
+    8
+  ],
+  "fps": 12,
+  "resolucion": [
+    640,
+    360
+  ],
+  "muestras": 16,
+  "camara": [
+    {
+      "cuadro": 1,
+      "pos": [
+        1.3,
+        0.75,
+        1.8
+      ],
+      "mira": [
+        0,
+        0.5,
+        0
+      ],
+      "lente": 50
+    },
+    {
+      "cuadro": 8,
+      "pos": [
+        -1.3,
+        0.75,
+        1.8
+      ],
+      "mira": [
+        0,
+        0.5,
+        0
+      ],
+      "lente": 50
+    }
+  ],
+  "luz": "estudio_alth",
+  "fondo": "#E3E2E9",
+  "piso": true,
+  "camara_relativa": true
+}

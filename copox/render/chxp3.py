@@ -8,7 +8,9 @@ Escribe <nombre>_AUDITORIA.json, agrega el veredicto al REPORTE y una franja con
 Uso:
   python -m copox.render.chxp3 GLB --tipo personaje|pelo|ropa|calzado|objeto|edificio --salida DIR
          [--ref imagen.jpg [--ref-2x2]] [--hoja hoja_senku.jpg] [--vistas personaje|cabeza|objeto|edificio] [--gif Idle-loop,Run-loop]
-         [--visible nodo=0,...] [--ocultar NODO,...] [--rapido]
+         [--visible nodo=0,...] [--ocultar NODO,...] [--rapido] [--sin-tpose] [--cerca]
+  (20 oct) personaje/ropa/pelo sacan además <nombre>_TPOSE.png (reposo del esqueleto, 4 vistas, contra la referencia)
+  y la compuerta informativa nitidez_aristas (copox/render/aristas.py).
 Código de salida: 0 PASS, 1 FAIL, 2 N-A (nada aplicable).
 """
 from __future__ import annotations
@@ -49,7 +51,30 @@ def _franja(ruta_hoja, aud):
     out.save(ruta_hoja)
 
 
+def tpose(glb, salida, nombre, ref=None, tam=1024, ref_2x2=False, cerca=False):
+    """Lámina oficial T-pose contra referencia (Admin 20 oct): pose de reposo del esqueleto (sin clip), 4 vistas.
+    Con cerca=True agrega primeros planos de cabeza. Sale <nombre>_TPOSE.png (y <nombre>_CERCA.png)."""
+    import shutil
+    out = {}
+    d = os.path.join(salida, "_tpose")
+    chxp2.render(glb, d, ref=ref, clip="reposo", nombre=nombre + "_tpose", tam=tam, ref_2x2=ref_2x2, resortes=False,
+                 version="V3 T-pose")
+    h = os.path.join(d, f"{nombre}_tpose_HOJA.png")
+    if os.path.exists(h):
+        out["lamina"] = shutil.copy2(h, os.path.join(salida, f"{nombre}_TPOSE.png"))
+    if cerca:
+        d2 = os.path.join(salida, "_cerca")
+        chxp2.render(glb, d2, ref=ref, vistas="cabeza", nombre=nombre + "_cerca", tam=tam, ref_2x2=ref_2x2,
+                     version="V3 primeros planos")
+        h2 = os.path.join(d2, f"{nombre}_cerca_HOJA.png")
+        if os.path.exists(h2):
+            out["cerca"] = shutil.copy2(h2, os.path.join(salida, f"{nombre}_CERCA.png"))
+    return out
+
+
 def render(glb, salida, tipo, ref=None, ocultar=(), hoja=None, base=None, brief=None, **kw):
+    hacer_tpose = kw.pop("tpose", tipo in ("personaje", "ropa", "pelo"))
+    cerca = kw.pop("cerca", False)
     rep = chxp2.render(glb, salida, ref=ref, version="V3", **kw)
     nombre = kw.get("nombre") or os.path.splitext(os.path.basename(glb))[0].lower()
     aud = auditoria.auditar(glb, tipo, rep, ref=hoja or ref, ocultar=ocultar, salida=salida, base=base, brief=brief)
@@ -59,6 +84,12 @@ def render(glb, salida, tipo, ref=None, ocultar=(), hoja=None, base=None, brief=
     with open(os.path.join(salida, f"{nombre}_REPORTE.json"), "w") as f:
         json.dump(rep, f, indent=2, ensure_ascii=False, default=str)
     _franja(os.path.join(salida, f"{nombre}_HOJA.png"), aud)
+    if hacer_tpose:
+        try:
+            rep["tpose"] = tpose(glb, salida, nombre, ref=ref, tam=kw.get("tam", 1024), ref_2x2=kw.get("ref_2x2", False),
+                                 cerca=cerca)
+        except Exception as e:                        # la lámina ayuda a revisar; no tumba la auditoría
+            rep["tpose_error"] = str(e)
     r_ref = hoja or ref
     if r_ref and os.path.exists(os.path.splitext(r_ref)[0] + ".senku.json") and tipo in ("personaje", "ropa"):
         from . import comparativa                     # entrada del revisor visual (agente revisor-visual-alth)
@@ -86,6 +117,8 @@ def main():
     ap.add_argument("--tam", type=int, default=1024)
     ap.add_argument("--sin-resortes", action="store_true")
     ap.add_argument("--rapido", action="store_true", help="iteración: 512 px, sin GIFs (las compuertas son las mismas)")
+    ap.add_argument("--sin-tpose", action="store_true", help="no generar la lámina T-pose contra referencia")
+    ap.add_argument("--cerca", action="store_true", help="agrega primeros planos de cabeza (<nombre>_CERCA.png)")
     a = ap.parse_args()
     from copox import entorno
     entorno.preparar()
@@ -94,7 +127,8 @@ def main():
     vis = {kv.split("=")[0]: kv.split("=")[1] not in ("0", "no", "false") for kv in a.visible.split(",") if "=" in kv}
     rep, aud = render(a.glb, a.salida, a.tipo, ref=a.ref, hoja=a.hoja, base=a.base, brief=a.brief, ocultar=tuple(x for x in a.ocultar.split(",") if x),
                       vistas=a.vistas, visible=vis, gifs=[g for g in a.gif.split(",") if g], tam=a.tam,
-                      ref_2x2=a.ref_2x2, resortes=not a.sin_resortes)
+                      ref_2x2=a.ref_2x2, resortes=not a.sin_resortes, cerca=a.cerca,
+                      **({"tpose": False} if a.sin_tpose else {}))
     print(json.dumps({"asset": rep["asset"], "veredicto": aud["veredicto"], "pass": aud["pass"], "fail": aud["fail"],
                       "na": aud["na"], "fallas": [f["id"] for f in aud["revisiones"] if f["veredicto"] == "FAIL"]},
                      ensure_ascii=False))

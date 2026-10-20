@@ -592,6 +592,24 @@ def rev_hombro(glb, umbral=0.97, **_):
               fuente="Admin 19 oct 2026, vestuario.capas")
 
 
+def rev_aristas(ref=None, salida=None, reporte=None, **_):
+    """Nitidez de aristas (ruta AAA §4.4): densidad de bordes de sombreado dentro de la silueta, render ÷ referencia.
+    INFORMATIVA (no veta) hasta calibrarla con veredictos de Admin; ALASTOR_V11 (SDF) da ≈ 0.58–0.68."""
+    if not (ref and salida and reporte and os.path.exists(ref)):
+        return _r("nitidez_aristas", "N-A", None, "informativa: requiere --ref", fuente="docs/RUTA_AAA.md §4.4")
+    from . import aristas
+    crudo = os.path.join(salida, "_crudo")
+    med = {}
+    for v in ("frente", "tres_cuartos"):
+        c = os.path.join(crudo, f"{reporte.get('asset')}_{v}_t000_color.png")
+        m = os.path.join(crudo, f"{reporte.get('asset')}_{v}_t000_mascara.png")
+        if os.path.exists(c) and os.path.exists(m):
+            med[v] = aristas.comparar(c, m, ref)["razon"]
+    if not med:
+        return _r("nitidez_aristas", "N-A", None, "informativa: sin vistas", fuente="docs/RUTA_AAA.md §4.4")
+    return _r("nitidez_aristas", "N-A", med, "informativa (render ÷ ref; deseable ≥ 0.85)", fuente="docs/RUTA_AAA.md §4.4")
+
+
 def deuda_base(base):
     """Lo que la base ya trae mal (no veta al asset; se reporta para arreglarlo en el cuerpo)."""
     if not base or not os.path.exists(base):
@@ -619,6 +637,7 @@ REVISIONES = {
     "normales": (rev_normales, TIPOS),
     "sin_flotantes": (rev_flotantes, ("personaje", "objeto", "edificio")),
     "triangulos_tope": (rev_triangulos, ("personaje", "objeto", "pelo", "ropa", "calzado")),
+    "nitidez_aristas": (rev_aristas, ("personaje", "pelo", "ropa")),
 }
 
 

@@ -1,0 +1,130 @@
+name: ALTH · Cine (Blender Cycles CPU)
+
+# Cinemáticas en la nube (Admin 20 oct 2026: «todo en la nube», render final en Blender, Actions está bien).
+# Reparte los cuadros de una escena (copox/cine/escena.py) en N jobs paralelos, cada uno corre Blender sin interfaz
+# (tools/ensure_blender.sh → alth-python) y el último arma el MP4. Los GLB de copox-modelos (privado) se leen con
+# el secreto MODELOS_TOKEN (token de sólo lectura de Klymapo/copox-modelos); sin él sólo sirven GLB del repo.
+# Nunca se suben los GLB como artifact: sólo cuadros PNG y el MP4 (retención corta).
+
+on:
+  workflow_dispatch:
+    inputs:
+      escena:
+        description: "JSON de la escena (ruta en el repo)"
+        required: true
+        default: "docs/cine/ejemplo_escena.json"
+      partes:
+        description: "jobs paralelos (cuadros repartidos)"
+        required: true
+        default: "4"
+      hornear_ao:
+        description: "además, hornear oclusión del GLB de la escena (.npz)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      tramos: ${{ steps.p.outputs.tramos }}
+      fps: ${{ steps.p.outputs.fps }}
+      nombre: ${{ steps.p.outputs.nombre }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from copox.cine import escena as esc
+          e = esc.cargar("${{ inputs.escena }}")
+          print("tramos=" + json.dumps(esc.partes(e, int("${{ inputs.partes }}"))))
+          print("fps=" + str(e["fps"]))
+          print("nombre=" + e["nombre"])
+          PY
+
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: true
+      matrix:
+        tramo: ${{ fromJSON(needs.plan.outputs.tramos) }}
+    env:
+      MODELOS_TOKEN: ${{ secrets.MODELOS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: copox-modelos (si hay token)
+        if: env.MODELOS_TOKEN != ''
+        uses: actions/checkout@v4
+        with:
+          repository: Klymapo/copox-modelos
+          token: ${{ secrets.MODELOS_TOKEN }}
+          path: _modelos
+          lfs: true
+      - name: Librerías de Blender
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 libsm6 libgl1 libegl1
+      - name: Blender (bpy)
+        run: bash tools/ensure_blender.sh --strict
+      - name: Render cuadros ${{ matrix.tramo[0] }}–${{ matrix.tramo[1] }}
+        run: |
+          M=""; [ -d _modelos ] && M="--modelos _modelos"
+          alth-python -m copox.cine.render_blender "${{ inputs.escena }}" --salida _cine \
+            --desde ${{ matrix.tramo[0] }} --hasta ${{ matrix.tramo[1] }} $M
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cuadros-${{ matrix.tramo[0] }}
+          path: _cine/
+          retention-days: 3
+
+  ensamblar:
+    needs: [plan, render]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cuadros-*
+          path: _cine
+          merge-multiple: true
+      - name: MP4
+        run: |
+          sudo apt-get install -y -qq ffmpeg >/dev/null 2>&1 || true
+          python3 -m copox.cine.ensamblar _cine/cuadros "_cine/${{ needs.plan.outputs.nombre }}.mp4" --fps ${{ needs.plan.outputs.fps }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cine-${{ needs.plan.outputs.nombre }}
+          path: |
+            _cine/*.mp4
+            _cine/parte_*.json
+          retention-days: 7
+
+  hornear:
+    if: inputs.hornear_ao
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      MODELOS_TOKEN: ${{ secrets.MODELOS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: copox-modelos (si hay token)
+        if: env.MODELOS_TOKEN != ''
+        uses: actions/checkout@v4
+        with:
+          repository: Klymapo/copox-modelos
+          token: ${{ secrets.MODELOS_TOKEN }}
+          path: _modelos
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 libsm6 libgl1 libegl1
+      - run: bash tools/ensure_blender.sh --strict
+      - name: AO por vértice
+        run: |
+          GLB=$(python3 -c "from copox.cine import escena as e; x=e.cargar('${{ inputs.escena }}'); print(e.resolver_glb(x, '.', '_modelos'))")
+          alth-python -m copox.cine.hornear_ao "$GLB" _ao.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ao-npz
+          path: _ao.npz
+          retention-days: 7
