@@ -1,0 +1,28 @@
+{
+  "nombre": "THEO_VESTIDO_V4_1",
+  "descripcion": "Theo Lunette (El brillo ausente). Variante B elegida por Admin el 19 oct 2026, sin aprobación final.",
+  "base": null,
+  "pelo": "theo",
+  "calzado": "zapato",
+  "manos": "abierta",
+  "visible": {"CAPA_SHORT": false},
+  "ropa": {
+    "conjunto": "traje_chaleco",
+    "colores": {"camisa": "#FBEFE1", "chaleco": "#302E2D", "corbata": "#41598D", "pantalon": "#4A5770", "boton": "#2C2320"},
+    "telas": {"camisa": "tafetan_suave", "chaleco": "lana_cerrada", "corbata": "saten", "pantalon": "sarga", "boton": "cuero"},
+    "params": {
+      "camisa": {"hol": 0.0060, "hol_manga": 0.0065},
+      "pantalon": {"hol_pelvis": 0.0088, "hol_pierna": 0.0066, "hem": 0.056, "k": 0.022},
+      "chaleco": {"capa": 0.0042}
+    }
+  },
+  "chxp": {
+    "tipo": "personaje",
+    "ref": "refs/personajes/joven-rubio-4-vistas.jpg",
+    "ref_2x2": true,
+    "brief": "ropa_capas,zapato,pelvis",
+    "gif": ["Walk-loop", "Run-loop", "Sit-pose"]
+  },
+  "publicar": {"carpeta": "theo", "nombre": "THEO_VESTIDO_V4_1", "nota": "Theo desde ficha", "estado": "SIN APROBAR"},
+  "sha_esperado": "74fc624078827b36a7660a32c2f260374892890d5f6512ed13266c3850c5efdb"
+}

@@ -8,7 +8,7 @@ Escribe <nombre>_AUDITORIA.json, agrega el veredicto al REPORTE y una franja con
 Uso:
   python -m copox.render.chxp3 GLB --tipo personaje|pelo|ropa|calzado|objeto|edificio --salida DIR
          [--ref imagen.jpg [--ref-2x2]] [--hoja hoja_senku.jpg] [--vistas personaje|cabeza|objeto|edificio] [--gif Idle-loop,Run-loop]
-         [--visible nodo=0,...] [--ocultar NODO,...]
+         [--visible nodo=0,...] [--ocultar NODO,...] [--rapido]
 Código de salida: 0 PASS, 1 FAIL, 2 N-A (nada aplicable).
 """
 from __future__ import annotations
@@ -78,7 +78,12 @@ def main():
     ap.add_argument("--gif", default="")
     ap.add_argument("--tam", type=int, default=1024)
     ap.add_argument("--sin-resortes", action="store_true")
+    ap.add_argument("--rapido", action="store_true", help="iteración: 512 px, sin GIFs (las compuertas son las mismas)")
     a = ap.parse_args()
+    from copox import entorno
+    entorno.preparar()
+    if a.rapido:
+        a.tam, a.gif = 512, ""
     vis = {kv.split("=")[0]: kv.split("=")[1] not in ("0", "no", "false") for kv in a.visible.split(",") if "=" in kv}
     rep, aud = render(a.glb, a.salida, a.tipo, ref=a.ref, hoja=a.hoja, base=a.base, brief=a.brief, ocultar=tuple(x for x in a.ocultar.split(",") if x),
                       vistas=a.vistas, visible=vis, gifs=[g for g in a.gif.split(",") if g], tam=a.tam,

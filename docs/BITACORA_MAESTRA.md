@@ -195,4 +195,6 @@ Las lecciones están en `docs/LECCIONES.md`. Si un dato no aparece en las fuente
 
 ## 4. Registro de esta bitácora
 
+- 19 oct 2026 (noche): decisiones de Admin aplicadas (THEO_ROSTRO_V14, convención Y-arriba en CLAUDE.md, sin copox/state); PR #54 fusionado a main (fast-forward, mismos tests que main); pipeline de avatares: `copox.entorno`, `copox.publicar`, CHXP `--rapido`, catálogo, `copox.avatar` + ficha `personajes/theo.json` (mismo SHA que V4_1) y skills publicar-version, crear-avatar, vestir-personaje, peinar-personaje.
+
 - 19 oct 2026: creación (Elio). Fuentes cotejadas: commits de todas las ramas, `copox-modelos` y la Memoria maestra.

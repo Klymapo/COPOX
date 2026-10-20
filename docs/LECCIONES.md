@@ -99,7 +99,13 @@ Este archivo junta lo que se aprendió en el camino, para no repetirlo. La histo
 - KHR_node_visibility para piezas intercambiables.
 - Locomoción por IK en código.
 
-## D. Pasos repetitivos (candidatos a skill)
+## D. Pasos repetitivos → skills (hechas el 19 oct 2026)
+
+Hechas: `publicar-version` (`python -m copox.publicar`), chequeo de entorno (`python -m copox.entorno`; `simplificar()` ya falla si no hay Godot), CHXP `--rapido` (~35 s contra 2.5 min), `crear-avatar` (`python -m copox.avatar ficha.json`), `vestir-personaje` y `peinar-personaje` (catálogo `copox/medicion/catalogo.py`). Prueba: `personajes/theo.json` reproduce THEO_VESTIDO_V4_1 con el mismo SHA (`74fc6240…`).
+
+Pendientes: SENKU que proponga la ficha desde la referencia, comparación por región, prueba de capas sobre lo visible, revisor visual automático y mover los helpers compartidos de las recetas a `copox/medicion`.
+
+Tabla original:
 
 | Paso | Cuántas veces se ha repetido | Skill propuesta |
 |---|---|---|

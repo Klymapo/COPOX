@@ -5,6 +5,8 @@ description: Finaliza un personaje ALTH-META ya iniciado con una ronda integral,
 
 # Finalizar personaje ALTH-META
 
+> **Actualizado 19 oct 2026:** el flujo vigente es `crear-avatar` (ficha JSON + base congelada + CHXP V3) y `publicar-version`. Los pasos de abajo (`tools/bucle.py`) son el flujo histórico y sólo aplican a assets viejos sin ficha.
+
 1. Leer `CLAUDE.md` y `docs/agentes/finalizar_personaje.md` completos.
 2. Identificar el asset, su mejor rama verificada, sus referencias y su `brief_final.md`. No inventar un asset duplicado si el alias ya existe.
 3. Confirmar que el trabajo ocurre en una rama de propuesta o `bucle/*`, nunca directamente en `main` antes de la aprobación.

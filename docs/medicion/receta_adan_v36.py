@@ -36,7 +36,8 @@ RADIO_PALMA = 0.012
 ANGOSTA_PULGAR = 0.45       # en la muñeca, el lado del pulgar mide 45 % (diagonal hacia el índice)
 K_MEMBRANA = 0.0065
 TRIS_META = 2600            # por mano, después de simplificar
-GODOT = os.environ.get("GODOT_BIN", "")      # sin Godot no se simplifica (malla densa)
+from copox import entorno as _entorno  # noqa: E402
+GODOT = _entorno.godot()                      # GODOT_BIN o la ruta conocida (antes: vacío → malla densa sin aviso)
 
 
 def _piezas(E):
@@ -94,8 +95,10 @@ def simplificar(V, T, meta, carpeta):
     """meshoptimizer vía Godot (ImporterMesh.generate_lods): se elige el LOD más cercano a `meta` triángulos.
     En ALTH_CALIDAD=borrador no se simplifica (iteración rápida; la malla sale más pesada)."""
     from copox.medicion.malla_rapida import simplificar_activo
-    if not simplificar_activo() or not GODOT or not os.path.exists(GODOT):
+    if not simplificar_activo():
         return V, T
+    if not GODOT or not os.path.exists(GODOT):     # en calidad final NUNCA se entrega malla densa en silencio
+        raise _entorno.EntornoIncompleto("simplificar(): no hay Godot (GODOT_BIN). Corre `python -m copox.entorno`.")
     np.save(os.path.join(carpeta, "V.npy"), V.astype(np.float32)); np.save(os.path.join(carpeta, "T.npy"), T.astype(np.int32))
     with open(os.path.join(carpeta, "malla.json"), "w") as f:
         json.dump({"V": V.astype(float).round(7).tolist(), "T": T.astype(int).tolist(), "meta": int(meta)}, f)
