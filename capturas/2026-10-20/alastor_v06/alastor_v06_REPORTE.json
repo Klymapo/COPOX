@@ -1,0 +1,140 @@
+{
+  "asset": "alastor_v06",
+  "glb": "/home/claude/build43/al_v06/ALASTOR_V06.glb",
+  "sha256": "a7b6e4ed1683f09e05d8698267a239724a74686f70573bab84a8d9d65bfe1dc2",
+  "alto_u": 0.9109,
+  "caja_u": [
+    0.8868,
+    0.9109,
+    0.3994
+  ],
+  "triangulos_visibles": 117219,
+  "piezas_visibles": [
+    "ADAN_CUERPO",
+    "MANO_ABIERTA_L",
+    "MANO_ABIERTA_R",
+    "CAPA_PELO_CORTO",
+    "PIES_ZAPATO",
+    "CAPA_PELO_ALASTOR",
+    "CAPA_CAMISA",
+    "CAPA_PANTALON",
+    "CAPA_CORBATA",
+    "CAPA_ABRIGO",
+    "CAPA_CINTURON",
+    "ACC_GAFAS"
+  ],
+  "piezas_ocultas": [
+    "CAPA_SHORT",
+    "CAPA_GUIA_CAPILAR",
+    "MANO_PUNO_L",
+    "MANO_PUNO_R",
+    "MANO_SENALAR_L",
+    "MANO_SENALAR_R",
+    "PIES_DESCALZOS",
+    "CAPA_PELO_MECHONES",
+    "CAPA_PELO_THEO",
+    "PIES_TENIS"
+  ],
+  "cobertura_px": {
+    "frente": {
+      "ADAN_CUERPO": 43452,
+      "MANO_ABIERTA_L": 2863,
+      "MANO_ABIERTA_R": 2892,
+      "PIES_ZAPATO": 12252,
+      "CAPA_PELO_ALASTOR": 34449,
+      "CAPA_CAMISA": 6987,
+      "CAPA_PANTALON": 15027,
+      "CAPA_CORBATA": 3266,
+      "CAPA_ABRIGO": 80388,
+      "CAPA_CINTURON": 1180,
+      "ACC_GAFAS": 7546
+    },
+    "tres_cuartos": {
+      "ADAN_CUERPO": 42044,
+      "MANO_ABIERTA_L": 6118,
+      "MANO_ABIERTA_R": 3231,
+      "PIES_ZAPATO": 15054,
+      "CAPA_PELO_ALASTOR": 38525,
+      "CAPA_CAMISA": 4735,
+      "CAPA_PANTALON": 12726,
+      "CAPA_CORBATA": 2601,
+      "CAPA_ABRIGO": 79487,
+      "CAPA_CINTURON": 918,
+      "ACC_GAFAS": 7961
+    },
+    "perfil": {
+      "ADAN_CUERPO": 28009,
+      "MANO_ABIERTA_L": 7343,
+      "PIES_ZAPATO": 9160,
+      "CAPA_PELO_ALASTOR": 42714,
+      "CAPA_CAMISA": 75,
+      "CAPA_PANTALON": 3925,
+      "CAPA_ABRIGO": 50201,
+      "ACC_GAFAS": 2049
+    },
+    "espalda": {
+      "ADAN_CUERPO": 11573,
+      "MANO_ABIERTA_L": 1588,
+      "MANO_ABIERTA_R": 1507,
+      "PIES_ZAPATO": 8295,
+      "CAPA_PELO_ALASTOR": 64351,
+      "CAPA_PANTALON": 9431,
+      "CAPA_ABRIGO": 96920
+    }
+  },
+  "colores_fuera_de_paleta": [
+    {
+      "material": "BOCA_INTERIOR_NEGRO",
+      "color": "#000000",
+      "cercano": "negro_calido/5",
+      "cercano_hex": "#1F1916",
+      "deltaE": 10.2
+    },
+    {
+      "material": "CEJA_BLOQUE",
+      "color": "#57351A",
+      "cercano": "marron_calido/4",
+      "cercano_hex": "#69472D",
+      "deltaE": 7.9
+    },
+    {
+      "material": "LENGUA_ALTH",
+      "color": "#C46561",
+      "cercano": "rojo_calido/3",
+      "cercano_hex": "#A8453B",
+      "deltaE": 13.5
+    }
+  ],
+  "visibilidad_pedida": {},
+  "vistas": [
+    "frente",
+    "tres_cuartos",
+    "perfil",
+    "espalda"
+  ],
+  "clip": "Idle-loop",
+  "t": 0.0,
+  "segundos_godot": 170.0,
+  "segundos_total": 209.9,
+  "archivos": [
+    "_crudo",
+    "alastor_v06_HOJA.png",
+    "alastor_v06_Run-loop.gif",
+    "alastor_v06_Sit-pose.gif",
+    "alastor_v06_Walk-loop.gif",
+    "alastor_v06_espalda.png",
+    "alastor_v06_espalda_mascara.png",
+    "alastor_v06_frente.png",
+    "alastor_v06_frente_mascara.png",
+    "alastor_v06_perfil.png",
+    "alastor_v06_perfil_mascara.png",
+    "alastor_v06_tres_cuartos.png",
+    "alastor_v06_tres_cuartos_mascara.png"
+  ],
+  "auditoria": {
+    "veredicto": "PASS",
+    "pass": 15,
+    "fail": 0,
+    "na": 4
+  }
+}
