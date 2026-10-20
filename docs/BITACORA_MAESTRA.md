@@ -104,7 +104,7 @@ Las lecciones están en `docs/LECCIONES.md`. Si un dato no aparece en las fuente
   - Medición v2, que después se llamó **SENKU** (unidad ED, cámara imitada).
   - **CHXP v1** (render NumPy).
   - Adán V05–V21 y Theo V01–V14: rostro, ojos, cejas en bloque y nariz cúbica.
-  - Hitos: **ADÁN ALPHA = V21** (`bf6ec140…`) y Theo Alpha nuevo = V14 (`6dcf8acd…`).
+  - Hitos: **ADÁN ALPHA = V21** (`bf6ec140…`) y Theo V14 (`6dcf8acd…`), entonces llamado «Theo Alpha»; desde el 19 oct se llama **THEO_ROSTRO_V14**.
   - **Decisión:** mandan las referencias renderizadas; el PDF de 95 mm queda como histórico.
   - **Adán V22 HABLA:** 8 visemas, Talk/Blink y shader de mirada. Es el inicio de la cadena de recetas.
   - Drive ordenado: carpetas EXPERIMENTOS G2 y SKILLS creadas, 80 carpetas renombradas a MAYÚSCULAS.
@@ -179,10 +179,10 @@ Las lecciones están en `docs/LECCIONES.md`. Si un dato no aparece en las fuente
 
 ## 3. Contradicciones detectadas (sin resolver; las decide Admin)
 
-1. **Dos «Theo Alpha»:** el protegido `ed2b04ec…` (SAM3D, 30 sep) y Theo V14 `6dcf8acd…` (17 oct) llevan el mismo nombre.
-2. **Escala:** CLAUDE.md dice 0.0559 y mm con Z hacia arriba; el spec v2 dice s0 = 0.05316. Los GLB actuales están en metros con Y hacia arriba. El PDF de 95 mm es histórico desde el 17 oct.
+1. ~~Dos «Theo Alpha»~~ **Resuelto (19 oct):** el protegido `ed2b04ec…` conserva el nombre; la V14 `6dcf8acd…` pasa a THEO_ROSTRO_V14.
+2. ~~Escala~~ **Resuelto (19 oct):** CLAUDE.md documenta la convención vigente (metros, Y arriba, frente +Z, Adán como medida base); mm/Z-arriba, 0.0559 y el PDF de 95 mm quedan como históricos.
 3. **Topes de triángulos:** el reporte del 13 oct dice 6k/40k; el spec del 19 oct dice 160k/60k (este último es el vigente).
-4. **Ramas `copox/state/*`:** CLAUDE.md y COPOX_LOOP_ENGINE las citan, pero no existen.
+4. ~~Ramas `copox/state/*`~~ **Resuelto (19 oct):** se quita la mención de CLAUDE.md; el estado vive en `copox-modelos`.
 5. **PR #34** (maniquí v0.3, PLATEAU) se fusionó a `main`, en contra de la regla de no fusionar sin aprobación.
 6. **Alastor Delta:** «aprobado como base» según las Notas para Argos; «solo referencia» según el plan v2.
 7. **Theo:** el 18 oct se escribió «quedó como prueba y ya no se usa», pero el 19 oct se trabajó en él.

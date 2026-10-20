@@ -16,7 +16,7 @@ COPOX (`copox/`) es la capa genérica para loops auditados y multi-dominio. ALTH
 
 Flujo:
 
-`seed/main → state branch → baseline → sibling candidates → execute → capture → audit → learn → unanimous promote → state branch → report`
+`seed/main → baseline (copox-modelos) → sibling candidates → execute → capture → audit → learn → unanimous promote → copox-modelos (ULTIMA.txt + SHA256SUMS) → report`
 
 Reglas no negociables:
 
@@ -25,7 +25,7 @@ Reglas no negociables:
 - Rechazados nunca son padres de la siguiente versión.
 - Candidatos de un torneo son hermanos desde la misma baseline.
 - Reporte sólo después de unanimidad y sólo si existen capturas.
-- Promoción interna actualiza `copox/state/<cassette-id>`; no equivale a release en `main`.
+- Promoción interna actualiza `copox-modelos` (`ULTIMA.txt`, `SHA256SUMS`); no equivale a aprobación de Admin ni a release en `main`.
 - Inner loop determinista y sin APIs de IA por defecto. IA/ChatGPT = dirección/escalamiento ante plateau o cambio de técnica.
 - Una campaña se enfoca en el mismatch principal o dos estrechamente acoplados; auditores regionales fuera del foco son N-A, pero RegressionGuard/Anatomy siguen activos.
 - Un mismo cassette es secuencial; cassettes distintos pueden correr en paralelo.
@@ -35,10 +35,11 @@ Ver `docs/COPOX_LOOP_ENGINE.md` y `docs/COPOX_VALIDATION_2026-09-30.md`.
 
 ## Convenciones ALTH
 
-- 1 unidad de Blender = 1 mm. Pies en Z=0, frente hacia −Y, centrado en X=0.
+- **Convención vigente (desde 19 oct 2026):** GLB glTF en unidades glTF (metros nominales), **Y hacia arriba**, pies en Y=0, **frente hacia +Z**, centrado en X=0. La medida base es Adán (`ADAN_BASE_CONGELADA.glb`, alto ≈ 0.929 u); las proporciones salen de las referencias renderizadas medidas con SENKU.
+- Histórico (no usar para personajes nuevos): 1 unidad de Blender = 1 mm, Z hacia arriba, frente −Y, factor `0.0559 × k` y el PDF de 95 mm. Siguen sirviendo sólo para los objetos ALTH antiguos hechos con `alth/`.
 - Usa la librería `alth/` antes de construir geometría a mano.
 - Colores solo de `spec/alth_spec.json` → `paleta`. Un color nuevo se propone antes de usarlo.
-- Medidas de objetos: `mm_alth = mm_real × 0.0559 × k` con el `k` de su categoría.
+- Medidas de objetos antiguos (`alth/`, histórico): `mm_alth = mm_real × 0.0559 × k` con el `k` de su categoría.
 - Sombreado plano con variación por cara según estándar. Ojos, cejas y boca se mantienen compatibles con animación según el asset.
 
 ## Verificación automática ALTH
@@ -68,7 +69,7 @@ Para el bucle histórico siguen vigentes los topes por tipo (3/4/5/8). Para COPO
 ## Git / estado / release
 
 - `main`: fuente de verdad de código, seeds, specs y releases.
-- `copox/state/<cassette-id>`: historial mínimo de baselines internas promovidas (`baseline.json` + `state.json`).
+- `Klymapo/copox-modelos` (privado): GLB, `ULTIMA.txt`, `SHA256SUMS` y la base congelada. Es el estado de los modelos (las ramas `copox/state/*` nunca existieron; se retiró la mención el 19 oct 2026).
 - ramas `propuesta-*`: herramientas nuevas; no fusionarlas hasta pasar pruebas reales y aprobación del usuario.
 - renders de iteración no se versionan; evidencia completa puede vivir temporalmente como artifact de Actions.
 - release final de un asset sigue siendo una acción separada de una promoción interna COPOX.
@@ -78,11 +79,11 @@ Para el bucle histórico siguen vigentes los topes por tipo (3/4/5/8). Para COPO
 - `refs/personajes/`: referencias de personajes.
 - `refs/escenas/`: escala relativa/contexto.
 - `refs/infografias/`: comparativas antiguas; no usar medidas antiguas si la spec las reemplaza.
-- `docs/ALTH_META_Modelado.pdf`: cotas originales del cuerpo base cuando aplique.
+- `docs/ALTH_META_Modelado.pdf`: histórico desde el 17 oct 2026; mandan las referencias renderizadas.
 
 ## Protección vigente de Theo
 
-`assets/joven_rubio/theo_alpha.glb` tiene SHA-256 `ed2b04ecd9e22a19794591b873c19c2b30323a9ae836f7dd820134bd0113580b`. No se reemplaza al fusionar código, importar documentación ni auditar. La política M5 mantiene promoción automática deshabilitada. Antes de cada técnica geométrica nueva se exige un research brief válido; sin él, `RESEARCH_REQUIRED`. Las campañas de manos generan exactamente tres hermanos por generación y publican también los rechazos con evidencia; el score no sustituye revisión visual. La aprobación final del modelo sigue siendo separada de una fusión de repositorios.
+`assets/joven_rubio/theo_alpha.glb` (el único «Theo Alpha»; la Theo V14 del 17 oct se llama THEO_ROSTRO_V14) tiene SHA-256 `ed2b04ecd9e22a19794591b873c19c2b30323a9ae836f7dd820134bd0113580b`. No se reemplaza al fusionar código, importar documentación ni auditar. La política M5 mantiene promoción automática deshabilitada. Antes de cada técnica geométrica nueva se exige un research brief válido; sin él, `RESEARCH_REQUIRED`. Las campañas de manos generan exactamente tres hermanos por generación y publican también los rechazos con evidencia; el score no sustituye revisión visual. La aprobación final del modelo sigue siendo separada de una fusión de repositorios.
 
 ## Cuerpo base congelado (19 oct 2026)
 

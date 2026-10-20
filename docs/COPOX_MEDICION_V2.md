@@ -1,5 +1,7 @@
 # COPOX · Motor de medición v2
 
+> **Renombrado (19 oct 2026, decisión de Admin):** la Theo V14 (`6dcf8acd…`) se llamaba «Theo Alpha»; ahora es **THEO_ROSTRO_V14**, para no confundirla con el Theo Alpha protegido (`assets/joven_rubio/theo_alpha.glb`, `ed2b04ec…`). El archivo y su SHA no cambian.
+
 17 oct 2026 · Elio (Claude) · Propuesta, sin fusionar.
 
 ## Para qué
@@ -214,7 +216,7 @@ Salida:
 
 ## ADÁN ALPHA (17 oct 2026)
 
-- Admin nombra **Adán Alpha** a la versión Adán V21 (sha `bf6ec140…`); Theo Alpha = Theo V14 (sha `6dcf8acd…`).
+- Admin nombra **Adán Alpha** a la versión Adán V21 (sha `bf6ec140…`); THEO_ROSTRO_V14 (antes «Theo Alpha») = Theo V14 (sha `6dcf8acd…`).
 - Documentación completa y cadena de reconstrucción: `docs/ADAN_ALPHA.md`. Reconstrucción V10 → Alpha verificada bit a bit (`docs/medicion/construir_adan_alpha.sh`).
 - Se agregan al repo las recetas que faltaban (hallazgo de la auditoría): `receta_adan_v05_limpieza.py`, `receta_adan_v06_neutro.py` y `glb.py`.
 

@@ -1,13 +1,15 @@
 # ADÁN ALPHA
 
+> **Renombrado (19 oct 2026, decisión de Admin):** la Theo V14 (`6dcf8acd…`) se llamaba «Theo Alpha»; ahora es **THEO_ROSTRO_V14**, para no confundirla con el Theo Alpha protegido (`assets/joven_rubio/theo_alpha.glb`, `ed2b04ec…`). El archivo y su SHA no cambian.
+
 17 oct 2026 · Elio (Claude) · nombre dado por Admin. **Fuente de medidas definitiva: las referencias renderizadas; el PDF `ALTH_META_Modelado.pdf` queda solo como histórico.**
 
-**Adán Alpha** es la base universal de personajes ALTH-META aprobada como hito: el cuerpo de Adán con el rostro y la cabeza en canon ALTH (sin rasgos de un personaje). Su derivado de identidad es **Theo Alpha**. El pelo con mechones queda para después (decisión de Admin: «el pelo al final»).
+**Adán Alpha** es la base universal de personajes ALTH-META aprobada como hito: el cuerpo de Adán con el rostro y la cabeza en canon ALTH (sin rasgos de un personaje). Su derivado de identidad es **THEO_ROSTRO_V14**. El pelo con mechones queda para después (decisión de Admin: «el pelo al final»).
 
 | Archivo | Equivale a | SHA-256 | Tamaño |
 |---|---|---|---|
 | `ADAN_ALPHA.glb` | Adán V21 | `bf6ec14004b6390fc485136436ab89673e765955aad5da918ecac87bbb44cfc1` | 8.6 MB |
-| `THEO_ALPHA.glb` | Theo V14 | `6dcf8acdd6ee85f2a09ba063b76b0b1257975b580695632c44735c8f7c0a309e` | 8.6 MB |
+| `THEO_ALPHA.glb` (= THEO_ROSTRO_V14) | Theo V14 | `6dcf8acdd6ee85f2a09ba063b76b0b1257975b580695632c44735c8f7c0a309e` | 8.6 MB |
 
 Los GLB **no se suben a este repo** (es público). Tampoco al Drive automáticamente: el respaldo lo hace Admin. El maestro V04 (`a1936eb9…`) nunca se modificó.
 
@@ -62,7 +64,7 @@ Todo es reproducible con las recetas de `docs/medicion/`. La parte V10 → Alpha
 | 15 | V20 | `receta_theo_v13.py --solo-estilo` | Cabeza lisa (superficie ajustada, grado 12) |
 | 16 | V21 = **Alpha** | `receta_theo_v14.py --solo-estilo` | Parpadeo correcto con la placa nueva |
 
-**Theo Alpha** sale de la misma cadena sin `--solo-estilo`, partiendo de Theo V03:
+**THEO_ROSTRO_V14** sale de la misma cadena sin `--solo-estilo`, partiendo de Theo V03:
 - Theo V01–V03 (`receta_theo_v01..03.py`) es el rostro de Theo sobre Adán V08–V10.
 - Después vienen los mismos pasos 5–16. Los rasgos propios de Theo son mandíbula, sonrisa de lado y cara baja.
 
@@ -78,11 +80,11 @@ Todo es reproducible con las recetas de `docs/medicion/`. La parte V10 → Alpha
   - Gestos (`morph=`), láminas contra referencia y A/B, sello con código de vista.
 - **Visor Godot** (`copox/godot/`): Godot 4.7.2 oficial con Xvfb y llvmpipe. Muestra el modelo como lo verá el juego.
 
-## Medidas de Theo Alpha
+## Medidas de THEO_ROSTRO_V14
 
 1.0 = idéntico a la referencia.
 
-| Medida | Theo V03 | Theo Alpha |
+| Medida | Theo V03 | THEO_ROSTRO_V14 |
 |---|---|---|
 | Rasgos (ojos, cejas, boca) vs R_15/R_1/R_0/acercamiento | 0.365 | 0.466 |
 | Esclerótica | 0.089 | 0.288 |
