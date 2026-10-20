@@ -93,11 +93,21 @@ def vestir(E, carpeta):
         mangas.append(rt.Tubo(bv, 0, 0.09, c["manga"], 0, n=24, suavizar=2, lado=lado, holgura_fn=hf))
     cuerpo_cam = rt.union([t_cam.sdf, mangas[0].sdf, mangas[1].sdf], c["k"])
 
+    if c.get("bajo_chaleco", 0.0):                 # la región del chaleco (sisa medida del rig) ya se necesita aquí
+        _hx, _hy, _hz = _articulacion(E, "LeftUpperArm")
+        v2.CHALECO.update(sisa_x=abs(_hx) - 0.005, axila=(_hy - 0.030, _hz), tope=0.506)
+
     def camisa(P):
         x, y = np.abs(P[:, 0]), P[:, 1]
         # arriba la camisa sube por los hombros hasta el cuello (no un corte horizontal que deja piel en el hombro)
         hueco = np.where(y > 0.455, 0.036 - np.hypot(x, (P[:, 2] - 0.012) * 0.85), -1.0)
-        d = np.maximum.reduce([cuerpo_cam(P), c["borde"] - y, y - 0.490, hueco])   # bajo la banda del cuello
+        # metida: bajo la cintura la camisa se ciñe `meter` (más lejos del pantalón, que no se asome al moverse)
+        metida = c.get("meter", 0.0) * v2._ss((PAN["cintura"] - 0.005 - y) / 0.012)
+        # bajo el chaleco la camisa no se ve: se ciñe `bajo_chaleco` para que al mover el brazo no lo atraviese por la sisa
+        bajo = 0.0
+        if c.get("bajo_chaleco", 0.0) and "sisa_x" in v2.CHALECO:
+            bajo = c["bajo_chaleco"] * v2._ss(-v2._region_chaleco(P) / 0.006)
+        d = np.maximum.reduce([cuerpo_cam(P) + metida + bajo, c["borde"] - y, y - 0.490, hueco])   # bajo la banda del cuello
         d = np.maximum(d, x - c["manga"])
         for m in mangas:                                          # puño arremangado: banda más gruesa
             d = np.minimum(d, np.maximum.reduce([m.sdf(P) - 0.003, x - c["manga"], c["manga"] - c["puno"] - x]))
@@ -108,7 +118,10 @@ def vestir(E, carpeta):
     def camisa_total(P):
         return np.minimum(camisa(P), t_cuello.sdf(P))
     V, T, N = _malla(camisa_total, (-0.30, c["borde"] - 0.01, -0.09), (0.30, 0.505, 0.14), TRIS["camisa"], carpeta)
-    nodos["CAPA_CAMISA"] = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"], pz["BrazoL"], pz["BrazoR"]], nombres,
+    # la parte metida en el pantalón se mueve con la PELVIS (como el pantalón): sin esto la camisa se asomaba por la
+    # pretina al caminar o sentarse (capas_visibles, 19 oct)
+    nodos["CAPA_CAMISA"] = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"], pz["BrazoL"], pz["BrazoR"]]
+                                     + ([pz["Pelvis_PIEL"]] if CAM.get("pelvis_pesos", True) else []), nombres,
                                      mats["camisa"], "THEO_CAMISA", tt.ESCALAS["tafetan_suave"])]
     log["camisa"] = int(len(T))
 
@@ -231,11 +244,32 @@ def vestir(E, carpeta):
     return log
 
 
+def ocultar_tobillo(E):
+    """Revisor visual (19 oct): se veía piel en el talón, entre el dobladillo y el zapato. La pierna bajo el dobladillo
+    queda siempre tapada por la vuelta y el zapato: fuera esos triángulos (sólo en el derivado vestido)."""
+    import receta_adan_v24 as v24
+    import receta_adan_v39 as v39
+    from copox.medicion.gltf import accesor
+    y_max = PAN["hem"] + PAN.get("tobillo_extra", 0.012)
+    log = {"operacion": "tobillo bajo el dobladillo", "y_max": y_max}
+    for n in ("PiernaL_PIEL", "PiernaR_PIEL"):
+        q = v49._prims(E).get(n)
+        if q is None:
+            continue
+        V = v39._leer(E, q, "POSITION").astype(float)
+        T = accesor(E.j, E.b, q["indices"]).reshape(-1, 3)
+        quedan = ~(V[T][:, :, 1] < y_max).all(1)
+        q["indices"] = v24._add_raw(E, np.ascontiguousarray(T[quedan].ravel(), np.uint32), 5125, "SCALAR", 34963)
+        E.b = bytes(E.out)
+        log[n] = int((~quedan).sum())
+    return log
+
+
 def main(src, dst):
     from copox.medicion import rostro_edicion as re
     from copox.medicion.compactar import compactar
     E = re.Editor(src)
-    log = [vestir(E, os.path.dirname(os.path.abspath(dst))), v2.ocultar_piel(E), v2.elegir(E)]
+    log = [vestir(E, os.path.dirname(os.path.abspath(dst))), v2.ocultar_piel(E), ocultar_tobillo(E), v2.elegir(E)]
     tmp = dst + ".tmp.glb"
     E.guardar(tmp, nota="Theo vestido v3 (volúmenes limpios como el short) sobre Adán V50. theo_alpha.glb no se toca.")
     compactar(tmp, dst)

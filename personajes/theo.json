@@ -1,19 +1,46 @@
 {
-  "nombre": "THEO_VESTIDO_V4_1",
-  "descripcion": "Theo Lunette (El brillo ausente). Variante B elegida por Admin el 19 oct 2026, sin aprobación final.",
+  "nombre": "THEO_VESTIDO_V4_2",
+  "descripcion": "Theo Lunette. V4_2 = variante B (V4_1) + corrección del revisor visual: camisa metida que se mueve con la pelvis, dobladillo ancho que tapa el talón. SIN APROBAR.",
   "base": null,
   "pelo": "theo",
   "calzado": "zapato",
   "manos": "abierta",
-  "visible": {"CAPA_SHORT": false},
+  "visible": {
+    "CAPA_SHORT": false
+  },
   "ropa": {
     "conjunto": "traje_chaleco",
-    "colores": {"camisa": "#FBEFE1", "chaleco": "#302E2D", "corbata": "#41598D", "pantalon": "#4A5770", "boton": "#2C2320"},
-    "telas": {"camisa": "tafetan_suave", "chaleco": "lana_cerrada", "corbata": "saten", "pantalon": "sarga", "boton": "cuero"},
+    "colores": {
+      "camisa": "#FBEFE1",
+      "chaleco": "#302E2D",
+      "corbata": "#41598D",
+      "pantalon": "#4A5770",
+      "boton": "#2C2320"
+    },
+    "telas": {
+      "camisa": "tafetan_suave",
+      "chaleco": "lana_cerrada",
+      "corbata": "saten",
+      "pantalon": "sarga",
+      "boton": "cuero"
+    },
     "params": {
-      "camisa": {"hol": 0.0060, "hol_manga": 0.0065},
-      "pantalon": {"hol_pelvis": 0.0088, "hol_pierna": 0.0066, "hem": 0.056, "k": 0.022},
-      "chaleco": {"capa": 0.0042}
+      "camisa": {
+        "hol": 0.006,
+        "hol_manga": 0.0065,
+        "meter": 0.0025,
+        "bajo_chaleco": 0.002
+      },
+      "pantalon": {
+        "hol_pelvis": 0.0088,
+        "hol_pierna": 0.0066,
+        "hem": 0.05,
+        "k": 0.022,
+        "vuelta": 0.026
+      },
+      "chaleco": {
+        "capa": 0.0042
+      }
     }
   },
   "chxp": {
@@ -21,8 +48,17 @@
     "ref": "refs/personajes/joven-rubio-4-vistas.jpg",
     "ref_2x2": true,
     "brief": "ropa_capas,zapato,pelvis",
-    "gif": ["Walk-loop", "Run-loop", "Sit-pose"]
+    "gif": [
+      "Walk-loop",
+      "Run-loop",
+      "Sit-pose"
+    ]
   },
-  "publicar": {"carpeta": "theo", "nombre": "THEO_VESTIDO_V4_1", "nota": "Theo desde ficha", "estado": "SIN APROBAR"},
-  "sha_esperado": "74fc624078827b36a7660a32c2f260374892890d5f6512ed13266c3850c5efdb"
+  "publicar": {
+    "carpeta": "theo",
+    "nombre": "THEO_VESTIDO_V4_2",
+    "nota": "corrección del revisor visual: camisa metida (pesos de pelvis, 2.5 mm más ceñida bajo la cintura) y 2 mm más ceñida bajo el chaleco, dobladillo ancho (26 mm), bastilla a 50 mm, sin piel en el talón",
+    "estado": "SIN APROBAR",
+    "pedido": "Admin: «Corrección» (bloqueos B2–B4 del revisor visual)"
+  }
 }
