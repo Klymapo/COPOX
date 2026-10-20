@@ -1,0 +1,138 @@
+{
+  "asset": "theo_vestido_v4_1",
+  "glb": "/home/claude/build43/THEO_VESTIDO_V4_1.glb",
+  "sha256": "b7d0024cc1673ac028b6103fcffaa20c3815123eefd7808d33a0e72b2797fb09",
+  "alto_u": 0.9294,
+  "caja_u": [
+    0.8868,
+    0.9294,
+    0.4158
+  ],
+  "triangulos_visibles": 108375,
+  "piezas_visibles": [
+    "ADAN_CUERPO",
+    "MANO_ABIERTA_L",
+    "MANO_ABIERTA_R",
+    "CAPA_PELO_THEO",
+    "PIES_ZAPATO",
+    "CAPA_CAMISA",
+    "CAPA_PANTALON",
+    "CAPA_CHALECO",
+    "CAPA_CORBATA"
+  ],
+  "piezas_ocultas": [
+    "CAPA_SHORT",
+    "CAPA_GUIA_CAPILAR",
+    "MANO_PUNO_L",
+    "MANO_PUNO_R",
+    "MANO_SENALAR_L",
+    "MANO_SENALAR_R",
+    "PIES_DESCALZOS",
+    "CAPA_PELO_CORTO",
+    "CAPA_PELO_MECHONES",
+    "PIES_TENIS"
+  ],
+  "cobertura_px": {
+    "frente": {
+      "ADAN_CUERPO": 52817,
+      "MANO_ABIERTA_L": 4804,
+      "MANO_ABIERTA_R": 4836,
+      "CAPA_PELO_THEO": 59602,
+      "PIES_ZAPATO": 12110,
+      "CAPA_CAMISA": 16678,
+      "CAPA_PANTALON": 29075,
+      "CAPA_CHALECO": 43892,
+      "CAPA_CORBATA": 1570
+    },
+    "tres_cuartos": {
+      "ADAN_CUERPO": 47278,
+      "MANO_ABIERTA_L": 8542,
+      "MANO_ABIERTA_R": 5272,
+      "CAPA_PELO_THEO": 75000,
+      "PIES_ZAPATO": 15059,
+      "CAPA_CAMISA": 15663,
+      "CAPA_PANTALON": 28832,
+      "CAPA_CHALECO": 40001,
+      "CAPA_CORBATA": 1212
+    },
+    "perfil": {
+      "ADAN_CUERPO": 24729,
+      "MANO_ABIERTA_L": 9740,
+      "CAPA_PELO_THEO": 78629,
+      "PIES_ZAPATO": 8954,
+      "CAPA_CAMISA": 11296,
+      "CAPA_PANTALON": 11370,
+      "CAPA_CHALECO": 19945,
+      "CAPA_CORBATA": 21
+    },
+    "espalda": {
+      "ADAN_CUERPO": 5611,
+      "MANO_ABIERTA_L": 3179,
+      "MANO_ABIERTA_R": 3074,
+      "CAPA_PELO_THEO": 104109,
+      "PIES_ZAPATO": 8606,
+      "CAPA_CAMISA": 15324,
+      "CAPA_PANTALON": 27572,
+      "CAPA_CHALECO": 43516
+    }
+  },
+  "colores_fuera_de_paleta": [
+    {
+      "material": "BOCA_INTERIOR_NEGRO",
+      "color": "#000000",
+      "cercano": "negro_calido/5",
+      "cercano_hex": "#1F1916",
+      "deltaE": 10.2
+    },
+    {
+      "material": "CEJA_BLOQUE",
+      "color": "#57351A",
+      "cercano": "marron_calido/4",
+      "cercano_hex": "#69472D",
+      "deltaE": 7.9
+    },
+    {
+      "material": "LENGUA_ALTH",
+      "color": "#C46561",
+      "cercano": "rojo_calido/3",
+      "cercano_hex": "#A8453B",
+      "deltaE": 13.5
+    }
+  ],
+  "visibilidad_pedida": {},
+  "vistas": [
+    "frente",
+    "tres_cuartos",
+    "perfil",
+    "espalda"
+  ],
+  "clip": "Idle-loop",
+  "t": 0.0,
+  "segundos_godot": 111.5,
+  "segundos_total": 139.4,
+  "archivos": [
+    "_crudo",
+    "senku_cabeza.png",
+    "senku_objeto.png",
+    "theo_vestido_v4_1_AUDITORIA.json",
+    "theo_vestido_v4_1_HOJA.png",
+    "theo_vestido_v4_1_REPORTE.json",
+    "theo_vestido_v4_1_Run-loop.gif",
+    "theo_vestido_v4_1_Sit-pose.gif",
+    "theo_vestido_v4_1_Walk-loop.gif",
+    "theo_vestido_v4_1_espalda.png",
+    "theo_vestido_v4_1_espalda_mascara.png",
+    "theo_vestido_v4_1_frente.png",
+    "theo_vestido_v4_1_frente_mascara.png",
+    "theo_vestido_v4_1_perfil.png",
+    "theo_vestido_v4_1_perfil_mascara.png",
+    "theo_vestido_v4_1_tres_cuartos.png",
+    "theo_vestido_v4_1_tres_cuartos_mascara.png"
+  ],
+  "auditoria": {
+    "veredicto": "FAIL",
+    "pass": 16,
+    "fail": 2,
+    "na": 0
+  }
+}
