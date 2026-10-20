@@ -35,7 +35,12 @@ def hornear(glb, salida, muestras=64, distancia=0.05, ocultos_extra=None):
     sc.world = sc.world or bpy.data.worlds.new("w")
     sc.world.light_settings.distance = float(distancia)
     datos = {}
-    mallas = [o for o in sc.objects if o.type == "MESH" and not o.hide_render]
+    from copox.cine.render_blender import _json_glb
+    jg = _json_glb(glb)
+    nombres = {n.get("name") for n in jg.get("nodes", []) if "mesh" in n} | {m.get("name") for m in jg.get("meshes", [])}
+    mallas = [o for o in sc.objects if o.type == "MESH" and not o.hide_render and len(o.data.polygons)
+              and not any(c.name.startswith("glTF_not_exported") for c in o.users_collection)
+              and (o.name.split(".")[0] in nombres or o.data.name.split(".")[0] in nombres)]
     for o in mallas:
         me = o.data
         if not me.materials:
@@ -44,7 +49,11 @@ def hornear(glb, salida, muestras=64, distancia=0.05, ocultos_extra=None):
         me.color_attributes.active_color = attr
         bpy.ops.object.select_all(action="DESELECT")
         o.select_set(True); bpy.context.view_layer.objects.active = o
-        bpy.ops.object.bake(type="AO", target="VERTEX_COLORS")
+        try:
+            bpy.ops.object.bake(type="AO", target="VERTEX_COLORS")
+        except RuntimeError as err:                         # una pieza rara no tumba el horneado del resto
+            print(f"ao: {o.name} sin hornear ({err})", flush=True)
+            continue
         ao = np.array([attr.data[i].color[0] for i in range(len(me.vertices))], np.float32)
         P = np.array([o.matrix_world @ v.co for v in me.vertices], np.float32)
         P = np.stack([P[:, 0], P[:, 2], -P[:, 1]], 1)       # Blender (Z arriba) → glTF (Y arriba)
