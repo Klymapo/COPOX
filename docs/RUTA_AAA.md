@@ -269,14 +269,14 @@ Cada fase pasa por CHXP, el revisor visual y tu aprobación. Nada se congela sin
 | Pesos robustos | `copox/medicion/pesos_robustos.py` | Punto más cercano en superficie + baricéntricas, confiables por distancia/ángulo, relleno con Q = −L + L M⁻¹ L (cotangente), soldado de costuras, top-4 | `tests/test_pesos_robustos.py`; escala real: abrigo de Alastor (2.7 k vértices) en 0.1 s |
 | CHXP T-pose | `copox/render/chxp3.py` (`tpose`, `--cerca`, `--sin-tpose`) | `<nombre>_TPOSE.png` (reposo del esqueleto, 4 vistas contra la referencia) en todo personaje/ropa/pelo; `<nombre>_CERCA.png` primeros planos | ALASTOR_V11 (lámina sin publicar) |
 | Nitidez de aristas | `copox/render/aristas.py` + compuerta `nitidez_aristas` (informativa) | Densidad de bordes de sombreado dentro de la silueta, render ÷ referencia | ALASTOR_V11: frente 0.69, 3/4 0.60 (V06: 0.56) |
-| Cine | `copox/cine/` + `.github/workflows/alth-cine.yml` | Escena JSON (cámara por cuadros clave, relativa al alto), Blender Cycles CPU repartido en jobs, MP4; AO por vértice → `.npz` → `aplicar_ao` (COLOR_0 de un GLB nuevo) | Humo con `theo_alpha.glb` en Actions |
+| Cine | `copox/cine/` + `.github/workflows/alth-cine.yml` | Escena JSON (cámara por cuadros clave, relativa al alto), Blender Cycles CPU repartido en jobs, MP4; AO por vértice → `.npz` → `aplicar_ao` (COLOR_0 de un GLB nuevo) | Actions: `assets/alastor_delta/alastor_delta.glb`, clip Wave, 24 cuadros en 3 jobs → MP4 en la rama `capturas` (`cine/2026-10-20/`); AO horneado OK (Blender 5.0.1) |
 | Instalador de Blender en CI | `tools/blender_ci.sh` | `ensure_blender.sh` y, si falla, bpy sin versión fija; errores como anotaciones | Actions |
 | Cara desde video | `copox/movimiento/cara_arkit.py` | MediaPipe (52 ARKit) → morphs ALTH con calibración neutral, One Euro, espejo; mirada como curva; lista de ARKit que faltan en la cara | `tests/test_animacion_alth.py` |
 | Labios | `copox/movimiento/labios.py` | Rhubarb fonético (español) → vis_A…vis_FV con coarticulación | pruebas sintéticas |
 | Mocap | `copox/movimiento/bvh.py` | BVH (CMU/Mixamo) → rig de Adán por rotaciones de mundo, giro de frente automático, raíz escalada a la pierna chibi, manos fuera de la cabeza, pies sobre el piso | BVH sintético `tests/fixtures/mini_tpose.bvh` |
 | Clips en GLB | `copox/movimiento/clip_gltf.py` | Escribe clips de huesos y de morphs | — |
 | IK nativo | `copox/godot/movimiento/ik_nativo.gd` (`IKNativoALTH`) | TwoBoneIK3D (piernas, brazos, con polos), LookAtModifier3D (cabeza), pies sobre el piso | Godot 4.7.2 headless: mano a 2 cm del objetivo |
-| Animación privada | `copox-modelos/.github/workflows/alth-animacion.yml` + `entradas/` | Cara/labios/mocap en Actions privado → GLB nuevo como artifact privado | Humo con el BVH sintético |
+| Animación privada | `copox-modelos/.github/workflows/alth-animacion.yml` + `entradas/` | Cara/labios/mocap en Actions privado → GLB nuevo como artifact privado | Actions privado: BVH sintético → GLB con clip en la rama `resultados-animacion` |
 
 Lo que NO se hizo (por decisión de Admin): ninguna prenda o personaje nuevo con el tallador ni con pesos robustos; ninguna cara con blendshapes ARKit nuevos. Son los siguientes pasos cuando Admin dé «Martillo».
 
