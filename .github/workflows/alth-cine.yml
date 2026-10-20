@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   plan:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       tramos: ${{ steps.p.outputs.tramos }}
       fps: ${{ steps.p.outputs.fps }}
@@ -47,7 +47,7 @@ jobs:
 
   render:
     needs: plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 340
     strategy:
       fail-fast: true
@@ -66,14 +66,16 @@ jobs:
           path: _modelos
           lfs: true
       - name: Librerías de Blender
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 libsm6 libgl1 libegl1
+        run: sudo apt-get update -qq && (sudo apt-get install -y -qq --no-install-recommends libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 libsm6 libgl1 libegl1 || echo "::warning::apt incompleto")
       - name: Blender (bpy)
-        run: bash tools/ensure_blender.sh --strict
+        run: bash tools/blender_ci.sh
       - name: Render cuadros ${{ matrix.tramo[0] }}–${{ matrix.tramo[1] }}
         run: |
           M=""; [ -d _modelos ] && M="--modelos _modelos"
+          set -o pipefail
           alth-python -m copox.cine.render_blender "${{ inputs.escena }}" --salida _cine \
-            --desde ${{ matrix.tramo[0] }} --hasta ${{ matrix.tramo[1] }} $M
+            --desde ${{ matrix.tramo[0] }} --hasta ${{ matrix.tramo[1] }} $M 2>&1 | tee _render.log \
+            || { tail -n 12 _render.log | while read -r l; do echo "::error::${l:0:200}"; done; exit 1; }
       - uses: actions/upload-artifact@v4
         with:
           name: cuadros-${{ matrix.tramo[0] }}
@@ -82,7 +84,7 @@ jobs:
 
   ensamblar:
     needs: [plan, render]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -104,7 +106,7 @@ jobs:
 
   hornear:
     if: inputs.hornear_ao
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     env:
       MODELOS_TOKEN: ${{ secrets.MODELOS_TOKEN }}
@@ -117,12 +119,14 @@ jobs:
           repository: Klymapo/copox-modelos
           token: ${{ secrets.MODELOS_TOKEN }}
           path: _modelos
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 libsm6 libgl1 libegl1
-      - run: bash tools/ensure_blender.sh --strict
+      - run: sudo apt-get update -qq && (sudo apt-get install -y -qq --no-install-recommends libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 libsm6 libgl1 libegl1 || echo "::warning::apt incompleto")
+      - run: bash tools/blender_ci.sh
       - name: AO por vértice
         run: |
           GLB=$(python3 -c "from copox.cine import escena as e; x=e.cargar('${{ inputs.escena }}'); print(e.resolver_glb(x, '.', '_modelos'))")
-          alth-python -m copox.cine.hornear_ao "$GLB" _ao.npz
+          set -o pipefail
+          alth-python -m copox.cine.hornear_ao "$GLB" _ao.npz 2>&1 | tee _ao.log \
+            || { tail -n 12 _ao.log | while read -r l; do echo "::error::${l:0:200}"; done; exit 1; }
       - uses: actions/upload-artifact@v4
         with:
           name: ao-npz
