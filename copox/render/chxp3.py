@@ -49,10 +49,10 @@ def _franja(ruta_hoja, aud):
     out.save(ruta_hoja)
 
 
-def render(glb, salida, tipo, ref=None, ocultar=(), hoja=None, base=None, **kw):
+def render(glb, salida, tipo, ref=None, ocultar=(), hoja=None, base=None, brief=None, **kw):
     rep = chxp2.render(glb, salida, ref=ref, version="V3", **kw)
     nombre = kw.get("nombre") or os.path.splitext(os.path.basename(glb))[0].lower()
-    aud = auditoria.auditar(glb, tipo, rep, ref=hoja or ref, ocultar=ocultar, salida=salida, base=base)
+    aud = auditoria.auditar(glb, tipo, rep, ref=hoja or ref, ocultar=ocultar, salida=salida, base=base, brief=brief)
     with open(os.path.join(salida, f"{nombre}_AUDITORIA.json"), "w") as f:
         json.dump(aud, f, indent=2, ensure_ascii=False, default=str)
     rep["auditoria"] = {"veredicto": aud["veredicto"], "pass": aud["pass"], "fail": aud["fail"], "na": aud["na"]}
@@ -70,6 +70,7 @@ def main():
     ap.add_argument("--ref")
     ap.add_argument("--ref-2x2", action="store_true")
     ap.add_argument("--base", help="GLB del que deriva (para revisar que no se pierdan clips, huesos ni morphs)")
+    ap.add_argument("--brief", help="temas de docs/investigacion separados por coma (técnica nueva)")
     ap.add_argument("--hoja", help="hoja para SENKU (con .senku.json); por defecto --ref")
     ap.add_argument("--vistas", default="personaje", choices=list(chxp2.VISTAS))
     ap.add_argument("--visible", default="")
@@ -79,7 +80,7 @@ def main():
     ap.add_argument("--sin-resortes", action="store_true")
     a = ap.parse_args()
     vis = {kv.split("=")[0]: kv.split("=")[1] not in ("0", "no", "false") for kv in a.visible.split(",") if "=" in kv}
-    rep, aud = render(a.glb, a.salida, a.tipo, ref=a.ref, hoja=a.hoja, base=a.base, ocultar=tuple(x for x in a.ocultar.split(",") if x),
+    rep, aud = render(a.glb, a.salida, a.tipo, ref=a.ref, hoja=a.hoja, base=a.base, brief=a.brief, ocultar=tuple(x for x in a.ocultar.split(",") if x),
                       vistas=a.vistas, visible=vis, gifs=[g for g in a.gif.split(",") if g], tam=a.tam,
                       ref_2x2=a.ref_2x2, resortes=not a.sin_resortes)
     print(json.dumps({"asset": rep["asset"], "veredicto": aud["veredicto"], "pass": aud["pass"], "fail": aud["fail"],

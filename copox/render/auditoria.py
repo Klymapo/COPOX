@@ -295,6 +295,20 @@ def rev_triangulos(glb, tipo, reporte, clase=None, **_):
         return _r("triangulos_tope", "N-A")
     return _r("triangulos_tope", "PASS" if n <= tope else "FAIL", n, f"≤ {tope} ({clave})", fuente="asset.triangulos")
 
+def rev_brief(brief=None, **_):
+    """CLAUDE.md: técnica geométrica nueva sin research brief → RESEARCH_REQUIRED (skill investigar-referencias)."""
+    if not brief:
+        return _r("research_brief", "N-A", detalle="sin tema declarado (--brief)")
+    temas = [t for t in str(brief).split(",") if t]
+    faltan = []
+    for t in temas:
+        p = os.path.join(RAIZ, "docs", "investigacion", f"{t}.md")
+        if not os.path.exists(p) or "Brief válido: sí" not in open(p).read():
+            faltan.append(t)
+    return _r("research_brief", "FAIL" if faltan else "PASS", temas, "brief válido por tema",
+              ["RESEARCH_REQUIRED: " + t for t in faltan], fuente="CLAUDE.md, skill investigar-referencias")
+
+
 def deuda_base(base):
     """Lo que la base ya trae mal (no veta al asset; se reporta para arreglarlo en el cuerpo)."""
     if not base or not os.path.exists(base):
@@ -310,6 +324,7 @@ REVISIONES = {
     "cobertura_pelo": (rev_cobertura_pelo, ("personaje", "pelo")),
     "pelo_resortes": (rev_resortes, ("personaje", "pelo")),
     "integridad_gltf": (rev_integridad, TIPOS),
+    "research_brief": (rev_brief, TIPOS),
     "pesos_normalizados": (rev_pesos, ("personaje", "pelo", "ropa", "calzado", "animacion")),
     "cinco_dedos": (rev_dedos, ("personaje", "animacion")),
     "base_preservada": (rev_preservado, ("personaje", "pelo", "ropa", "calzado", "animacion")),
@@ -342,12 +357,12 @@ def reglas_skills(tipo):
     return pend, check
 
 
-def auditar(glb, tipo, reporte, ref=None, ocultar=(), salida=None, base=None):
+def auditar(glb, tipo, reporte, ref=None, ocultar=(), salida=None, base=None, brief=None):
     filas = []
     for nombre, (f, tipos) in REVISIONES.items():
         if tipo not in tipos:
             continue
-        r = f(glb=glb, ref=ref, tipo=tipo, ocultar=ocultar, salida=salida, reporte=reporte, base=base)
+        r = f(glb=glb, ref=ref, tipo=tipo, ocultar=ocultar, salida=salida, reporte=reporte, base=base, brief=brief)
         filas += r if isinstance(r, list) else [r]
     pend, check = reglas_skills(tipo)
     aplic = [f for f in filas if f["veredicto"] != "N-A"]
