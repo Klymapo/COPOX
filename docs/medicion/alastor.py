@@ -38,22 +38,27 @@ def pelo(E, carpeta):
 RIZO = dict(centro=(-0.040, 0.730), radio=0.046, z=0.190, ang=(75.0, 315.0), ancho=(0.044, 0.024), grueso=0.036, n=18)
 
 
-def _barrido(C, anchos, gruesos, eje_z=np.array([0, 0, 1.0])):
-    """Barrido de sección rectangular a lo largo de la curva C (n, 3) en el plano xy, facetado."""
+def _barrido(C, anchos, gruesos, eje_z=np.array([0, 0, 1.0]), lados=8, n_super=2.6):
+    """Barrido a lo largo de la curva C (n, 3) en el plano xy, facetado. Sección superelíptica de `lados` lados
+    (v05: Admin «redondea un poco el rizo en sus aristas»; antes era un rectángulo de 4 lados)."""
     tang = np.gradient(C, axis=0); tang /= np.linalg.norm(tang, axis=1, keepdims=True)
     nrm = np.cross(eje_z, tang); nrm /= np.maximum(np.linalg.norm(nrm, axis=1, keepdims=True), 1e-9)
+    ang = np.linspace(0, 2 * np.pi, lados, endpoint=False) + np.pi / lados
+    cu, su = np.cos(ang), np.sin(ang)
+    fu = np.sign(cu) * np.abs(cu) ** (2 / n_super); fv = np.sign(su) * np.abs(su) ** (2 / n_super)
     an = []
     for i in range(len(C)):
         a_, g_ = anchos[i] / 2, gruesos[i] / 2
-        an.append([C[i] + nrm[i] * a_ + eje_z * g_, C[i] - nrm[i] * a_ + eje_z * g_,
-                   C[i] - nrm[i] * a_ - eje_z * g_, C[i] + nrm[i] * a_ - eje_z * g_])
+        an.append([C[i] + nrm[i] * a_ * fu[k] + eje_z * g_ * fv[k] for k in range(lados)])
     V = np.array(an).reshape(-1, 3); T = []
+    L = lados
     for i in range(len(C) - 1):
-        for k in range(4):
-            a0, a1, b0, b1 = 4 * i + k, 4 * i + (k + 1) % 4, 4 * (i + 1) + k, 4 * (i + 1) + (k + 1) % 4
+        for k in range(L):
+            a0, a1, b0, b1 = L * i + k, L * i + (k + 1) % L, L * (i + 1) + k, L * (i + 1) + (k + 1) % L
             T += [(a0, b0, b1), (a0, b1, a1)]
-    T += [(0, 2, 1), (0, 3, 2)]
-    e = 4 * (len(C) - 1); T += [(e, e + 1, e + 2), (e, e + 2, e + 3)]
+    e = L * (len(C) - 1)
+    for k in range(1, L - 1):
+        T += [(0, k + 1, k), (e, e + k, e + k + 1)]
     return V, np.array(T)
 
 
@@ -71,7 +76,7 @@ def rizo(E):
     V, T = _barrido(C, an, gr)
     c0 = C.mean(0)
     fn = np.cross(V[T[:, 1]] - V[T[:, 0]], V[T[:, 2]] - V[T[:, 0]])
-    cen = np.repeat(C, 4, axis=0)
+    cen = np.repeat(C, len(V) // len(C), axis=0)
     malo = np.einsum("ij,ij->i", fn, V[T].mean(1) - cen[T].mean(1)) < 0
     T[malo] = T[malo][:, ::-1]
     V, T, N = v49._facetado(V, T)
@@ -299,6 +304,7 @@ def abrigo(E, carpeta):
     prims = [v2._prim(E, V, T, N, [pz["Torso_PIEL"], pz["Cuello"], pz["BrazoL"], pz["BrazoR"], pz["Pelvis_PIEL"],
                                    pz["PiernaL_PIEL"], pz["PiernaR_PIEL"]], nombres, mats["abrigo"], "ALASTOR_ABRIGO",
                      tt.ESCALAS["lana_cerrada"])]
+    _suavizar_falda(E, prims[0], nombres)
     # solapas: placas anchas en V sobre el abrigo, de la orilla de la abertura hacia afuera
     Vs, Ts, o = [], [], 0
     y0, y1 = a["solapa_y"]
@@ -332,6 +338,34 @@ def abrigo(E, carpeta):
     v49._nodo(E, "CAPA_CINTURON", prims_c)
     v49._limpiar(carpeta)
     return {"operacion": "abrigo + cinturón", "abrigo": int(len(T)), "cinturon": int(len(Tc))}
+
+
+def _suavizar_falda(E, prim, nombres, ancho=0.06, y_falda=0.26):
+    """Revisor (V04–V05): el borde de atrás del abrigo, entre las piernas, salía en picos: cada vértice tomaba el muslo
+    izquierdo o el derecho según la piel más cercana. En la falda, cerca del centro, el peso de los muslos pasa a Hips
+    (suave con |x|), así el bajo queda recto y sigue a la pelvis."""
+    import receta_adan_v24 as v24
+    import receta_adan_v39 as v39
+    E.b = bytes(E.out)                                                # la primitiva se acaba de escribir
+    V = v39._leer(E, prim, "POSITION").astype(float)
+    J = v39._leer(E, prim, "JOINTS_0").astype(int); W = v39._leer(E, prim, "WEIGHTS_0").astype(float)
+    ih = nombres.index("Hips")
+    piernas = {nombres.index(n) for n in nombres if any(k in n for k in ("UpperLeg", "LowerLeg"))}
+    t = np.clip(np.abs(V[:, 0]) / ancho, 0, 1); t = t * t * (3 - 2 * t)
+    a = (1 - t) * np.clip((y_falda - V[:, 1]) / 0.04, 0, 1)          # 1 en el centro de la falda, 0 a los lados
+    es_p = np.isin(J, list(piernas))
+    mover = (W * es_p).sum(1) * a
+    W = np.where(es_p, W * (1 - a[:, None]), W)
+    hay = (J == ih)
+    W[np.arange(len(W)), np.argmax(hay, 1)] += np.where(hay.any(1), mover, 0)
+    sin = ~hay.any(1) & (mover > 0)
+    if sin.any():                                                     # sin Hips en sus 4: va al menor peso
+        k = np.argmin(W[sin], 1)
+        J[np.nonzero(sin)[0], k] = ih; W[np.nonzero(sin)[0], k] += mover[sin]
+    W /= np.maximum(W.sum(1, keepdims=True), 1e-9)
+    prim["attributes"]["JOINTS_0"] = v24._add_raw(E, np.ascontiguousarray(J, np.uint16), 5123, "VEC4", 34962)
+    prim["attributes"]["WEIGHTS_0"] = v24._add_raw(E, np.ascontiguousarray(W, np.float32), 5126, "VEC4", 34962)
+    E.b = bytes(E.out)
 
 
 def _marco(cx, cy, z, w, h, r, t, d, n=3):
@@ -436,7 +470,7 @@ def gafas(E):
             "centro": [round(float(x), 4) for x in c0]}
 
 
-CARA = dict(morphs={"ceja_ceno_L": 0.85, "ceja_ceno_R": 0.85,          # v03: sin parpado_enojo (tapaba el iris)
+CARA = dict(morphs={"ceja_ceno_L": 0.50, "ceja_ceno_R": 0.50,          # v03: sin parpado_enojo (tapaba el iris)
                     "comisura_abajo_L": 1.0, "comisura_abajo_R": 1.0, "boca_tensa": 0.70, "boca_estrecha": 0.30},
             ceja_grosor=1.45, ceja_largo=1.12, rubor=False)
 
