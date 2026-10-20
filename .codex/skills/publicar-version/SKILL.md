@@ -25,3 +25,9 @@ Antes eran ~8 pasos a mano por versión (≈44 versiones; ULTIMA.txt se corrigi�
 5. Manda a Admin la HOJA, un acercamiento de la zona tocada, los GIF y el GLB (SendUserFile). Pide aprobación.
 
 Prueba sin escribir nada: `--simular`.
+
+## Revisión visual ANTES de mandar a Admin (obligatoria)
+CHXP V3 deja `<nombre>_COMPARATIVA.png` (referencia vs render por región: cabeza, hombros y torso, cadera y piernas,
+pies; frente y espalda). Lanza el agente `revisor-visual-alth` (solo lectura) con la COMPARATIVA, la HOJA y
+`<nombre>_AUDITORIA.json`. Si devuelve UNA_CORRECCIÓN o REHACER, corrige (dentro del tope de 3 iteraciones) antes de
+mandar; si mandas igual, dile a Admin exactamente qué bloqueos quedaron. Revisa tú también los acercamientos.

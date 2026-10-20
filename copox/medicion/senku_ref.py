@@ -337,6 +337,18 @@ def auditar(glb, ruta_hoja, region="objeto", ocultar=(), salida=None, cota_u=Non
         y_c = float(J["Neck"][1]) if "Neck" in J else 0.47
         V, T = malla_visible(glb, ocultar, y_min=y_c)
         r = comparar(V, T, hoja, al, "cabeza", franjas={"pelo": (y_c + 0.15, 9.0)}, salida=salida)
+    elif region == "regiones":
+        # Admin (19 oct): comparar por región, no sólo la silueta completa (ahí se escaparon los hombros blancos).
+        # Franjas por altura de articulaciones: pies (piso→tobillo), piernas (tobillo→cadera), torso (cadera→cuello),
+        # hombros (axila→cuello, incluye brazos) y cabeza (cuello→arriba).
+        def y_(n, d):
+            return float(J[n][1]) if n in J else d
+        tob = (y_("LeftFoot", 0.07) + y_("RightFoot", 0.07)) / 2
+        cad, cue = y_("Hips", 0.25), y_("Neck", 0.47)
+        hom = (y_("LeftUpperArm", 0.43) + y_("RightUpperArm", 0.43)) / 2
+        franjas = {"pies": (-1.0, tob), "piernas": (tob, cad), "torso": (cad, cue), "hombros": (hom - 0.03, cue),
+                   "cabeza": (cue, 9.0)}
+        r = comparar(V0, T0, hoja, al, "objeto", franjas=franjas, salida=salida)
     else:
         r = comparar(V0, T0, hoja, al, "objeto", salida=salida)
     return {"region": region, "hoja": ruta_hoja, "anclas": hoja["_config"].get("anclas"), "iou": r, "avisos": avisos,

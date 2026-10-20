@@ -12,7 +12,10 @@ python -m copox.avatar personajes/<nombre>.json [--rapido] [--publicar] [--salid
 ```
 
 ## Flujo con Admin
-1. **Lápiz** (no se construye): lee la referencia (`refs/personajes/…` o Drive). Propón la ficha:
+1. **Lápiz** (no se construye): lee la referencia (`refs/personajes/…` o Drive). Haz que SENKU proponga el borrador:
+   `python -m copox.medicion.senku_ficha HOJA.jpg --nombre NOMBRE_V01 --salida personajes/<nombre>.json --imagen zonas.png`
+   (colores por región llevados a la paleta con ΔE, conjunto de ropa, calzado; los colores con ΔE > 10 y el peinado
+   quedan marcados para decidir con Admin). Revisa `zonas.png` y completa la ficha:
    - prendas y conjunto del catálogo (`copox/medicion/catalogo.py`); si una prenda NO existe → skill
      `investigar-referencias` + research brief antes de inventarla (regla CLAUDE.md);
    - colores SOLO de `spec/alth_spec.json` → paleta (un color nuevo se propone a Admin antes de usarlo);
@@ -35,3 +38,9 @@ python -m copox.avatar personajes/<nombre>.json [--rapido] [--publicar] [--salid
   sutil, sin pintar; respeta el límite pantalón/zapato. Nada de colores fuera de paleta.
 - No tocar `theo_alpha.glb` ni la base congelada. Toda versión sale SIN APROBAR.
 - La prueba de reproducibilidad: `personajes/theo.json` debe dar SHA `74fc6240…` (THEO_VESTIDO_V4_1).
+
+## Revisión visual ANTES de mandar a Admin (obligatoria)
+CHXP V3 deja `<nombre>_COMPARATIVA.png` (referencia vs render por región: cabeza, hombros y torso, cadera y piernas,
+pies; frente y espalda). Lanza el agente `revisor-visual-alth` (solo lectura) con la COMPARATIVA, la HOJA y
+`<nombre>_AUDITORIA.json`. Si devuelve UNA_CORRECCIÓN o REHACER, corrige (dentro del tope de 3 iteraciones) antes de
+mandar; si mandas igual, dile a Admin exactamente qué bloqueos quedaron. Revisa tú también los acercamientos.

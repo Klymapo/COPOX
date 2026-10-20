@@ -59,6 +59,13 @@ def render(glb, salida, tipo, ref=None, ocultar=(), hoja=None, base=None, brief=
     with open(os.path.join(salida, f"{nombre}_REPORTE.json"), "w") as f:
         json.dump(rep, f, indent=2, ensure_ascii=False, default=str)
     _franja(os.path.join(salida, f"{nombre}_HOJA.png"), aud)
+    r_ref = hoja or ref
+    if r_ref and os.path.exists(os.path.splitext(r_ref)[0] + ".senku.json") and tipo in ("personaje", "ropa"):
+        from . import comparativa                     # entrada del revisor visual (agente revisor-visual-alth)
+        try:
+            rep["comparativa"] = comparativa.lamina(glb, r_ref, salida, nombre)
+        except Exception as e:                        # la lámina ayuda a revisar; no debe tumbar la auditoría
+            rep["comparativa_error"] = str(e)
     return rep, aud
 
 

@@ -33,6 +33,9 @@ def _visibilidad(f):
     vis = {}
     for clave, tabla in (("pelo", catalogo.PELO), ("calzado", catalogo.CALZADO), ("manos", catalogo.MANOS)):
         if f.get(clave):
+            if f[clave] not in tabla:
+                raise SystemExit(f"ficha: {clave}={f[clave]!r} no está en el catálogo ({', '.join(tabla)}). "
+                                 "Elige uno o crea la pieza (skills peinar-personaje / vestir-personaje).")
             vis.update(tabla[f[clave]])
     vis.update(f.get("visible", {}))
     return vis

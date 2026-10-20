@@ -103,7 +103,7 @@ Este archivo junta lo que se aprendió en el camino, para no repetirlo. La histo
 
 Hechas: `publicar-version` (`python -m copox.publicar`), chequeo de entorno (`python -m copox.entorno`; `simplificar()` ya falla si no hay Godot), CHXP `--rapido` (~35 s contra 2.5 min), `crear-avatar` (`python -m copox.avatar ficha.json`), `vestir-personaje` y `peinar-personaje` (catálogo `copox/medicion/catalogo.py`). Prueba: `personajes/theo.json` reproduce THEO_VESTIDO_V4_1 con el mismo SHA (`74fc6240…`).
 
-Pendientes: SENKU que proponga la ficha desde la referencia, comparación por región, prueba de capas sobre lo visible, revisor visual automático y mover los helpers compartidos de las recetas a `copox/medicion`.
+Hechos después (19 oct, noche): `python -m copox.medicion.senku_ficha` (la referencia propone la ficha: colores por región → paleta con ΔE, conjunto, calzado; probado en la hoja de Theo: pelo → rubio_miel ΔE 2.7, chaleco ΔE 1.0, corbata ΔE 5.2), compuerta `senku_regiones` (pisos por región), compuerta `capas_visibles` (render: la capa de abajo asomándose por la de arriba; `capas_sin_atravesar` pasa a informativa), lámina `<nombre>_COMPARATIVA.png` + agente `revisor-visual-alth` obligatorio antes de mandar, y `copox/medicion/glb_util.py` (helpers fuera de las recetas; V50_1 y Theo V4_1 conservan su SHA).
 
 Tabla original:
 

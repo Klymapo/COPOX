@@ -77,6 +77,32 @@ def rev_senku(glb, ref, tipo, ocultar=(), salida=None, **_):
     return out
 
 
+# Pisos por región (frente y espalda; el perfil sale informativo porque la hoja en T lo deforma). Calibrados el 19 oct
+# 2026 sobre Theo V4_1 (variante elegida) menos un margen: son un PISO contra regresiones regionales, no la meta.
+# Pies está bajo a propósito: las suelas miden pocos píxeles y el zapato aún difiere de la hoja (ver BITACORA).
+PISO_REGIONES = {"cabeza": 0.85, "hombros": 0.68, "torso": 0.75, "piernas": 0.75, "pies": 0.42}
+
+
+def rev_senku_regiones(glb, ref, tipo, ocultar=(), salida=None, **_):
+    from copox.medicion import senku_ref as sr
+    if not ref or not os.path.exists(os.path.splitext(ref)[0] + ".senku.json"):
+        return _r("senku_regiones", "N-A", detalle="sin hoja con .senku.json")
+    img = os.path.join(salida, "senku_regiones.png") if salida else None
+    a = sr.auditar(glb, ref, "regiones", ocultar, salida=img)
+    med, malas = {}, []
+    for v in ("frente", "espalda", "perfil"):
+        fila = a["iou"].get(v)
+        if not isinstance(fila, dict):
+            continue
+        for reg, piso in PISO_REGIONES.items():
+            x = fila.get(reg)
+            med[f"{v}.{reg}"] = x
+            if v != "perfil" and x is not None and x < piso:
+                malas.append(f"{reg} en {v}: {x} < {piso}")
+    return _r("senku_regiones", "FAIL" if malas else "PASS", med, "piso por región en frente/espalda (perfil informativo)",
+              malas or {"imagen": img}, fuente="SENKU senku_ref (regiones)")
+
+
 def rev_cobertura_pelo(glb, **_):
     """Desde el GLB: el área de pelo es la de la guía capilar (CAPA_GUIA_CAPILAR); cada dirección desde el centro de la
     cabeza debe tocar el pelo visible (o piel al nivel del pelo: oreja, cara)."""
@@ -412,8 +438,78 @@ def rev_capas(glb, umbral=0.01, tol=0.0015, **_):
                 peor = f
             if f > umbral:
                 detalle.append(f"{b} dentro de {a} en {clip or 'reposo'} {fr}: {f:.1%}")
-    return _r("capas_sin_atravesar", "FAIL" if detalle else "PASS", round(peor, 4), f"≤ {umbral:.0%} por par y pose",
+    # Desde el 19 oct 2026 es INFORMATIVA (no veta): cuenta paredes ocultas (cuello, cortes) que nadie ve. La compuerta
+    # que veta es capas_visibles (lo que se ve en el render). Se conserva la medida para diagnóstico.
+    return _r("capas_sin_atravesar", "N-A", round(peor, 4), f"informativa (≤ {umbral:.0%} por par y pose); veta capas_visibles",
               detalle[:10], fuente="vestuario.sin_clipping_poses_extremas, cloth.clipping_transiciones")
+
+
+VISTAS_CAPAS = (0.0, 90.0, 180.0, 270.0, 35.0, -35.0)      # frente, lado, espalda, lado, 3/4 y 3/4
+PARES_VISIBLES = (("piel", "CAPA_CAMISA"), ("CAPA_CAMISA", "CAPA_CHALECO"), ("piel", "CAPA_PANTALON"),
+                  ("CAPA_CAMISA", "CAPA_PANTALON"))
+
+
+def rev_capas_visibles(glb, umbral=0.01, gap=0.006, px=420, **_):
+    """Lo que SE VE (Admin, 19 oct: la prueba geométrica reprobaba por paredes ocultas). Se rasteriza el modelo
+    posado (reposo, Walk, Run, Sit) desde 6 vistas. Un píxel es 'atravesado' si lo primero que se ve es la capa de
+    ABAJO (p. ej. piel o camisa) y, quitándola, justo detrás (< 6 mm) está la capa de ARRIBA (camisa, chaleco,
+    pantalón): la de abajo se asoma a través de la de arriba. Medida: píxeles atravesados / píxeles visibles de la capa
+    de arriba, por par y pose (sumando vistas). FAIL si > 1 %."""
+    from copox.medicion.gltf import Modelo
+    from copox.render.raster import rasterizar
+    M = Modelo(glb)
+    g = _grupos(M)
+    pares = [(a, b) for a, b in PARES_VISIBLES if a in g and b in g]
+    if not pares:
+        return _r("capas_visibles", "N-A", detalle="sin prendas por capas")
+    nombres = sorted(g)
+    gid = {n: i for i, n in enumerate(nombres)}
+    peor, detalle, medidas = 0.0, [], {}
+    for clip, fr in POSES:
+        if clip and clip not in M.clips and clip.replace("-loop", "") not in M.clips:
+            continue
+        pos = M.posar(clip, fr) if clip else M.posar(None, 0.0)
+        Vs, Ts, Gs, o = [], [], [], 0
+        for n in nombres:
+            for i in g[n]:
+                Vs.append(pos[i]); Ts.append(M.prims[i].indices + o); Gs.append(np.full(len(M.prims[i].indices), gid[n]))
+                o += len(pos[i])
+        V, T, G = np.vstack(Vs), np.vstack(Ts), np.concatenate(Gs)
+        lo, hi = V.min(0), V.max(0)
+        c = (lo + hi) / 2
+        esc = (px - 20) / max(hi[1] - lo[1], np.hypot(hi[0] - lo[0], hi[2] - lo[2]))
+        cuenta = {(a, b): [0, 0] for a, b in pares}
+        for ang in VISTAS_CAPAS:
+            r = np.radians(ang)
+            x = (V[:, 0] - c[0]) * np.cos(r) + (V[:, 2] - c[2]) * np.sin(r)
+            z = -(V[:, 0] - c[0]) * np.sin(r) + (V[:, 2] - c[2]) * np.cos(r)
+            X = (x * esc + px / 2)[T]; Y = ((c[1] - V[:, 1]) * esc + px / 2)[T]; Z = z[T]
+
+            def capa(sin=None):
+                sel = np.ones(len(T), bool) if sin is None else G != gid[sin]
+                idx = np.nonzero(sel)[0]
+                tri, _, prof = rasterizar(X[idx], Y[idx], Z[idx], (px, px))
+                tri = tri.ravel(); prof = prof.ravel()
+                lab = np.where(tri >= 0, G[idx][np.maximum(tri, 0)], -1)
+                return lab, prof
+            lab, prof = capa()
+            for a in {a for a, _ in pares}:
+                lab2, prof2 = capa(sin=a)
+                for (a_, b) in pares:
+                    if a_ != a:
+                        continue
+                    with np.errstate(invalid="ignore"):
+                        cruza = (lab == gid[a]) & (lab2 == gid[b]) & (prof - prof2 < gap)
+                    cuenta[(a, b)][0] += int(cruza.sum())
+                    cuenta[(a, b)][1] += int((lab == gid[b]).sum() + cruza.sum())
+        for (a, b), (n_, d_) in cuenta.items():
+            f = n_ / max(d_, 1)
+            medidas[f"{b}/{a}@{clip or 'reposo'}"] = round(f, 4)
+            peor = max(peor, f)
+            if f > umbral:
+                detalle.append(f"{a} se asoma por {b} en {clip or 'reposo'} {fr}: {f:.1%} de lo visible")
+    return _r("capas_visibles", "FAIL" if detalle else "PASS", round(peor, 4), f"≤ {umbral:.0%} de lo visible por par y pose",
+              detalle[:10] or None, fuente="Admin 19 oct 2026, vestuario.sin_clipping_poses_extremas (render)")
 
 
 def _nodo_mundo(j, nombre):
@@ -501,11 +597,13 @@ REVISIONES = {
     "apoyo_piso": (rev_apoyo, ("personaje", "calzado", "objeto", "edificio")),
     "paleta_alth": (rev_paleta, TIPOS),
     "senku": (rev_senku, ("personaje", "pelo", "ropa", "objeto", "edificio")),
+    "senku_regiones": (rev_senku_regiones, ("personaje", "ropa")),
     "cobertura_pelo": (rev_cobertura_pelo, ("personaje", "pelo")),
     "pelo_resortes": (rev_resortes, ("personaje", "pelo")),
     "integridad_gltf": (rev_integridad, TIPOS),
     "research_brief": (rev_brief, TIPOS),
     "capas_sin_atravesar": (rev_capas, ("personaje", "ropa")),
+    "capas_visibles": (rev_capas_visibles, ("personaje", "ropa")),
     "hombro_cubierto": (rev_hombro, ("personaje", "ropa")),
     "pesos_normalizados": (rev_pesos, ("personaje", "pelo", "ropa", "calzado", "animacion")),
     "cinco_dedos": (rev_dedos, ("personaje", "animacion")),
