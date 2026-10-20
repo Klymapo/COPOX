@@ -7,6 +7,19 @@ class_name AlthResortes
 ## corriendo. CHXP V2 lo usa igual, con --fixed-fps 60 (delta fijo) para que los GIF sean deterministas.
 ## (El modo MANUAL + Skeleton3D.advance() no corre este modificador en 4.7: no usarlo.)
 
+## Piezas que no proyectan sombra (extras "sin_sombra": true; p. ej. las gafas de Alastor, cuya sombra sobre la cara
+## se leía como bigote — Admin 20 oct 2026). Llamar después de instanciar el GLB, en el juego igual que en CHXP.
+static func sombras(escena: Node) -> int:
+	var n_off := 0
+	for n in escena.find_children("*", "MeshInstance3D", true, false):
+		if n.has_meta("extras"):
+			var ex = n.get_meta("extras")
+			if typeof(ex) == TYPE_DICTIONARY and bool(ex.get("sin_sombra", false)):
+				(n as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				n_off += 1
+	return n_off
+
+
 static func aplicar(escena: Node, manual := false) -> Array:
 	var sims := []
 	for n in escena.find_children("*", "Node3D", true, false):

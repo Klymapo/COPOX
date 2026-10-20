@@ -1,5 +1,5 @@
 {
-  "nombre": "ALASTOR_V02",
+  "nombre": "ALASTOR_V03",
   "descripcion": "Alastor Kleinteil (El brillo ausente). Desde los renders originales (refs/personajes/alastor/originales/). SIN APROBAR.",
   "base": null,
   "pelo": "alastor",
@@ -17,7 +17,7 @@
       "pantalon": "#2C2320",
       "boton": "#2C2320",
       "abrigo": "#3A2F2A",
-      "solapa": "#2C2320",
+      "solapa": "#1F1916",
       "cinturon": "#5F4338",
       "hebilla": "#9A7B3C",
       "gafas": "#1F1916"
@@ -50,9 +50,6 @@
       },
       "corbata_forma": {
         "punta_y": 0.33
-      },
-      "pelo": {
-        "color": "#4A3220"
       }
     }
   },
@@ -69,9 +66,9 @@
   },
   "publicar": {
     "carpeta": "alastor",
-    "nombre": "ALASTOR_V02",
-    "nota": "ronda integral tras REHACER del revisor: cara propia (ceño, boca recta, cejas gruesas, sin rubor), pelo en bloques romos chocolate sin flequillo, rizo en C con volumen, mangas largas, cuello y solapas, hebilla grande, gafas pegadas con varillas a la oreja",
+    "nombre": "ALASTOR_V03",
+    "nota": "pelo por masas esculpidas (brief pelo_alastor rev. 2) con rizo en C que nace del copete y frente despejada; boca recta sin párpado de enojo; gafas más gruesas y sin sombra; hebilla rectangular; solapas más oscuras",
     "estado": "SIN APROBAR",
-    "pedido": "Admin: «B» (cara propia de Alastor) sobre la ronda propuesta"
+    "pedido": "Admin 20 oct: brief aprobado, gafas sin sombra, pelo chocolate #4A3220, hasta el final"
   }
 }

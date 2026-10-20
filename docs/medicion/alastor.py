@@ -35,7 +35,7 @@ def pelo(E, carpeta):
                    volumen=PELO["volumen"])
 
 
-RIZO = dict(centro=(-0.032, 0.742), radio=0.050, z=0.160, ang=(50.0, 300.0), ancho=(0.048, 0.020), grueso=0.040, n=16)
+RIZO = dict(centro=(-0.040, 0.727), radio=0.044, z=0.186, ang=(75.0, 315.0), ancho=(0.030, 0.013), grueso=0.024, n=18)
 
 
 def _barrido(C, anchos, gruesos, eje_z=np.array([0, 0, 1.0])):
@@ -65,7 +65,7 @@ def rizo(E):
     r = RIZO
     th = np.radians(np.linspace(r["ang"][0], r["ang"][1], r["n"]))
     rad = r["radio"] * np.linspace(1.0, 0.75, r["n"])
-    hund = np.interp(np.arange(r["n"]), [0, r["n"] / 3, r["n"]], [-0.022, 0.004, -0.002])   # la raíz nace DENTRO del pelo
+    hund = np.interp(np.arange(r["n"]), [0, r["n"] / 4, r["n"]], [-0.050, 0.0, 0.004])   # la raíz nace DENTRO del copete
     C = np.c_[r["centro"][0] + rad * np.cos(th), r["centro"][1] + rad * np.sin(th), r["z"] + hund]
     an = np.linspace(r["ancho"][0], r["ancho"][1], r["n"]); gr = np.linspace(r["grueso"], r["grueso"] * 0.6, r["n"])
     V, T = _barrido(C, an, gr)
@@ -86,11 +86,137 @@ def rizo(E):
     return {"operacion": "rizo en C", "tris": int(len(T)), "centro": [round(float(x), 3) for x in c0]}
 
 
+# ── pelo v03: MASAS esculpidas (brief pelo_alastor.md rev. 2, aprobado por Admin 20 oct 2026) ─────────────────────
+# Cada masa = unión suave de gotas elipsoidales (centro x, y, z; semiejes rx, ry, rz) en metros del modelo (cabeza:
+# x ±0.162, y 0.488–0.766, frente z 0.154, nuca z −0.136). Tomadas a ojo de la vista 3/4 y del ícono.
+MASAS = {
+    # v03.2: más volumen arriba (el original sube ~1/4 de la cabeza sobre el cráneo) y el copete más alto
+    "copete": [((-0.045, 0.800, 0.100), (0.080, 0.056, 0.066)), ((0.025, 0.842, 0.076), (0.096, 0.064, 0.080)),
+               ((0.100, 0.820, 0.036), (0.084, 0.060, 0.080))],
+    "lado_izq": [((0.152, 0.736, 0.018), (0.052, 0.068, 0.090)), ((0.162, 0.670, -0.012), (0.040, 0.054, 0.074))],
+    "lado_der": [((-0.150, 0.732, 0.030), (0.040, 0.058, 0.080)), ((-0.157, 0.678, 0.000), (0.030, 0.044, 0.064))],
+    "coronilla": [((0.010, 0.822, -0.040), (0.138, 0.068, 0.100)), ((0.020, 0.784, -0.104), (0.136, 0.066, 0.076))],
+    "nuca_alta": [((0.000, 0.694, -0.132), (0.152, 0.066, 0.048))],
+    "nuca_baja": [((0.000, 0.606, -0.136), (0.128, 0.052, 0.038))],
+}
+RIZO_V3 = dict(centro=(-0.040, 0.727), z=0.186, radio=0.046, ang=(75.0, 315.0), grueso=(0.0135, 0.0075), n=28)
+FRENTE = dict(z=0.095, y_linea=0.748, x=0.135)          # zona de la cara que el pelo no cruza (salvo el rizo)
+MASAS_K = 0.016                                          # unión suave entre masas
+PELO_V3 = dict(color="#4A3220", tris=2600, paso=0.0018, rigidez=7.0, arrastre=0.7, gravedad=0.06)
+
+
+def _gota(P, c, r):
+    q = (P - np.asarray(c)) / np.asarray(r)
+    return (np.linalg.norm(q, axis=1) - 1.0) * min(r)
+
+
+def _masa(P, gotas, k=0.012):
+    from copox.medicion.ropa_tubos import smin
+    d = _gota(P, *gotas[0])
+    for g_ in gotas[1:]:
+        d = smin(d, _gota(P, *g_), k)
+    return d
+
+
+def _rizo_curva():
+    r = RIZO_V3
+    th = np.radians(np.linspace(r["ang"][0], r["ang"][1], r["n"]))
+    rad = r["radio"] * np.linspace(1.0, 0.72, r["n"])
+    z = r["z"] + np.interp(np.arange(r["n"]), [0, r["n"] * 0.25, r["n"]], [-0.050, 0.0, 0.004])   # raíz dentro del copete; se despega de la frente
+    return np.c_[r["centro"][0] + rad * np.cos(th), r["centro"][1] + rad * np.sin(th), z]
+
+
+def _rizo_sdf(P, C):
+    """Tubo que se afina a lo largo de la curva C (distancia al segmento más cercano − radio)."""
+    g0, g1 = RIZO_V3["grueso"]
+    best = np.full(len(P), 9.0)
+    n = len(C) - 1
+    for i in range(n):
+        a, b = C[i], C[i + 1]
+        ab = b - a
+        t = np.clip(((P - a) @ ab) / (ab @ ab), 0, 1)
+        d = np.linalg.norm(P - (a + t[:, None] * ab), axis=1)
+        rr = g0 + (g1 - g0) * (i + t) / n
+        best = np.minimum(best, d - rr)
+    return best
+
+
+def pelo_masas(E, carpeta):
+    """Pelo de Alastor por masas esculpidas: 6 masas + rizo en «C» que nace del copete + relleno del cráneo (cobertura),
+    malla única facetada; pesos por masa a su cadena de resorte (rigidez alta: el pelo de bloque se mece poco)."""
+    import receta_adan_v36 as v36  # noqa: F401
+    import receta_adan_v39 as v39
+    import receta_adan_v41 as v41
+    import receta_adan_v49 as v49
+    import vestir_theo_v3 as v3
+    from copox.medicion import pelo_huesos as ph
+    from copox.medicion.ropa_tubos import smin
+    from scipy.spatial import cKDTree
+    P_ = v49._prims(E)
+    cab = v39._leer(E, P_["Cabeza_PIEL_EXPUESTA_v04"], "POSITION").astype(float)
+    guia = np.vstack([v39._leer(E, P_[n], "POSITION").astype(float) for n in P_ if n and n.startswith("GUIA_CAPILAR")])
+    arbol_g = cKDTree(guia)
+    c_cab = (cab.min(0) + cab.max(0)) / 2
+    C_rizo = _rizo_curva()
+    nombres_m = list(MASAS)
+
+    def campos(P):
+        return [_masa(P, MASAS[n]) for n in nombres_m]
+
+    def sdf(P):
+        d_g, _ = arbol_g.query(P)
+        relleno = d_g - 0.010                                    # capa sobre la guía capilar: cobertura total
+        d = relleno
+        for dm in campos(P):
+            d = smin(d, dm, MASAS_K)
+        f = FRENTE
+        cara = np.maximum.reduce([f["z"] - P[:, 2], P[:, 1] - f["y_linea"], np.abs(P[:, 0]) - f["x"]])
+        d = np.maximum(d, -cara)                                 # frente despejada
+        return d                                                 # el rizo va aparte (barrido nítido, no se simplifica)
+    lo = c_cab - np.array([0.25, 0.20, 0.22]); hi = c_cab + np.array([0.25, 0.30, 0.22])
+    V, T, N = v3._malla(sdf, lo, hi, PELO_V3["tris"], carpeta, paso=PELO_V3["paso"])
+    # pesos: masa más cercana → su cadena; el relleno pegado al cráneo y la parte cercana a la raíz → Head
+    M = np.stack(campos(V), 1)
+    ids = M.argmin(1)
+    sk = E.j["skins"][0]
+    nombres_j = [E.j["nodes"][k]["name"] for k in sk["joints"]]
+    curvas = []
+    for i, n in enumerate(nombres_m):
+        if True:
+            gotas = np.array([g_[0] for g_ in MASAS[n]])
+            fin = gotas.mean(0); d0 = fin - c_cab
+            raiz = c_cab + d0 / np.linalg.norm(d0) * 0.10
+            pts = np.linspace(raiz, fin + (fin - c_cab) / np.linalg.norm(fin - c_cab) * 0.02, 4)
+        curvas.append(pts)
+    cadenas, jh = ph.agregar_cadenas(E, curvas, prefijo="PeloA")
+    radio = np.linalg.norm(V - c_cab, axis=1)
+    s_ = np.clip((radio - 0.13) / 0.08, 0, 1)
+    d_g, _ = arbol_g.query(V)
+    fijo = (d_g < 0.006) | (M.min(1) > 0.004)                    # relleno pegado al cráneo
+    ids = np.where(fijo, len(cadenas), ids)
+    J, W = ph.pesos(ids, s_, cadenas, jh, n_base=0)
+    J, W = J[T].reshape(-1, 4), W[T].reshape(-1, 4)
+    Vf, Tf, Nf = v49._facetado(V, T)
+    sk_ib = __import__("copox.medicion.gltf", fromlist=["accesor"]).accesor(E.j, E.b, sk["inverseBindMatrices"]).reshape(-1, 4, 4).transpose(0, 2, 1)
+    c_local = (sk_ib[jh] @ np.append(c_cab, 1.0))[:3]
+    extras = ph.config([[nombres_j[k] if k < len(nombres_j) else E.j["nodes"][sk["joints"][k]]["name"] for k in cad]
+                        for cad in cadenas], c_local, 0.12,
+                       rigidez=PELO_V3["rigidez"], arrastre=PELO_V3["arrastre"], gravedad=PELO_V3["gravedad"])
+    mat = v41._material(E, "PELO_ALASTOR_COLOR", PELO_V3["color"])
+    E.j["materials"][mat]["doubleSided"] = False
+    v49._nodo(E, "CAPA_PELO_ALASTOR", [v41._prim_nueva(E, Vf, Tf, Nf, J, W, mat, "PELO_ALASTOR")], junto_a="CAPA_GUIA_CAPILAR")
+    E.j["nodes"][-1]["extras"] = extras
+    v49._limpiar(carpeta)
+    log_r = rizo(E)                                          # rizo en «C»: barrido explícito, raíz dentro del copete
+    return {"operacion": "pelo de Alastor por masas", "tris": int(len(T)), "masas": nombres_m, "rizo": log_r,
+            "huesos_pelo": 4 * len(cadenas)}
+
+
 def solo_pelo(src, dst):
     from copox.medicion import rostro_edicion as re
     from copox.medicion.compactar import compactar
     E = re.Editor(src)
-    log = [pelo(E, os.path.dirname(os.path.abspath(dst))), rizo(E)]
+    log = [pelo_masas(E, os.path.dirname(os.path.abspath(dst)))]
     for n in E.j["nodes"]:
         if n.get("name") == "CAPA_PELO_THEO":
             n.setdefault("extensions", {})["KHR_node_visibility"] = {"visible": False}
@@ -102,14 +228,14 @@ def solo_pelo(src, dst):
 
 # ── ropa: camisa + corbata + pantalón (traje_chaleco sin chaleco) + abrigo + cinturón + gafas ──────────────────────
 COL = {"camisa": "#FBEFE1", "corbata": "#232026", "pantalon": "#2C2320", "boton": "#2C2320",     # camisa_blanca,
-       "abrigo": "#3A2F2A", "solapa": "#2C2320", "cinturon": "#5F4338", "hebilla": "#9A7B3C",   # uniforme_policia,
+       "abrigo": "#3A2F2A", "solapa": "#1F1916", "cinturon": "#5F4338", "hebilla": "#9A7B3C",   # uniforme_policia,
        "gafas": "#1F1916"}                                                                       # negro_calido 3/4/5…
 TELA = {"abrigo": "lana_cerrada", "solapa": "lana_cerrada", "cinturon": "cuero", "hebilla": "cuero", "gafas": "cuero"}
 ABRIGO = dict(capa=0.0070, y_bajo=0.118, cintura=0.300, vuelo=0.030, k=0.012, manga=0.282, cuello=0.0110,
               abertura=((0.10, 0.062), (0.22, 0.046), (0.30, 0.040), (0.40, 0.030), (0.47, 0.040)),
               solapa_ancho=0.042, solapa_y=(0.474, 0.355), tris=8000)
 CINTURON = dict(y=0.274, alto=0.016, sobre=0.0030, hebilla=(0.028, 0.021, 0.0055))
-GAFAS = dict(ancho=0.106, alto=0.086, grueso=0.0125, fondo=0.010, radio=0.015, sobre=0.005, puente=0.012,
+GAFAS = dict(ancho=0.106, alto=0.086, grueso=0.0150, fondo=0.012, radio=0.015, sobre=0.005, puente=0.012,
              varilla=0.0070, z_oreja=0.010)
 
 
@@ -173,7 +299,12 @@ def abrigo(E, carpeta):
         return np.maximum(cp(P) - c["sobre"], np.abs(P[:, 1] - c["y"]) - c["alto"] / 2)
     Vc, Tc, Nc = v3._malla(cint, (-0.16, c["y"] - 0.02, -0.10), (0.16, c["y"] + 0.02, 0.13), 1600, carpeta)
     zc = rt.superficie_z(cint, 0.0, c["y"]) or 0.08
-    Vh, Th = rc.caja_redondeada(np.array([0.0, c["y"], zc + c["hebilla"][2] * 0.6]), np.eye(3), np.array(c["hebilla"]) / 2 * np.array([1, 1, 1]))
+    # hebilla rectangular (marco con hueco al centro, como el original): aro de sección cuadrada
+    Vh, Th = _marco(0.0, c["y"], zc + c["hebilla"][2] * 0.6, c["hebilla"][0], c["hebilla"][1], 0.003, 0.006, c["hebilla"][2], n=1)
+    fnh = np.cross(Vh[Th[:, 1]] - Vh[Th[:, 0]], Vh[Th[:, 2]] - Vh[Th[:, 0]])
+    ch_ = np.array([0.0, c["y"], zc + c["hebilla"][2] * 0.6])
+    radial = Vh[Th].mean(1) - ch_
+    Th[np.einsum("ij,ij->i", fnh, radial) < 0] = Th[np.einsum("ij,ij->i", fnh, radial) < 0][:, ::-1]
     prims_c = [v2._prim(E, Vc, Tc, Nc, [pz["Pelvis_PIEL"], pz["Torso_PIEL"]], nombres, mats["cinturon"], "ALASTOR_CINTURON", tt.ESCALAS["cuero"]),
                v2._prim(E, Vh, Th, None, [pz["Pelvis_PIEL"], pz["Torso_PIEL"]], nombres, mats["hebilla"], "ALASTOR_HEBILLA", tt.ESCALAS["cuero"])]
     v49._nodo(E, "CAPA_CINTURON", prims_c)
@@ -278,12 +409,13 @@ def gafas(E):
     E.j["materials"][mat]["doubleSided"] = False
     E.j["materials"][mat].setdefault("extras", {})["paleta"] = "negro_calido/5"
     v49._nodo(E, "ACC_GAFAS", [v41._prim_nueva(E, V, T, N, J, W, mat, "ALASTOR_GAFAS")])
+    E.j["nodes"][-1]["extras"] = {"sin_sombra": True}      # Admin 20 oct: su sombra en la cara se leía como bigote
     return {"operacion": "gafas", "tris": int(len(T)), "z": round(float(z), 4),
             "centro": [round(float(x), 4) for x in c0]}
 
 
-CARA = dict(morphs={"ceja_ceno_L": 0.85, "ceja_ceno_R": 0.85, "parpado_enojo_L": 0.20, "parpado_enojo_R": 0.20,
-                    "comisura_abajo_L": 0.35, "comisura_abajo_R": 0.35, "boca_tensa": 0.30, "boca_estrecha": 0.25},
+CARA = dict(morphs={"ceja_ceno_L": 0.85, "ceja_ceno_R": 0.85,          # v03: sin parpado_enojo (tapaba el iris)
+                    "comisura_abajo_L": 0.60, "comisura_abajo_R": 0.60, "boca_tensa": 0.45, "boca_estrecha": 0.30},
             ceja_grosor=1.45, ceja_largo=1.12, rubor=False)
 
 
@@ -336,7 +468,7 @@ def main(src, dst):
     import vestir_theo_v3 as v3
     carpeta = os.path.dirname(os.path.abspath(dst))
     E = re.Editor(src)
-    log = [cara(E), pelo(E, carpeta), rizo(E)]
+    log = [cara(E), pelo_masas(E, carpeta)]
     v3.CHA["usar"] = False
     try:
         log.append(v3.vestir(E, carpeta))

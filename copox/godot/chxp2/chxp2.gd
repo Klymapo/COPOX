@@ -97,7 +97,10 @@ func _cargar(ruta: String) -> Node3D:
 	if err != OK:
 		push_error("CHXP2: no carga " + ruta + " err=" + str(err))
 		return null
-	return doc.generate_scene(st) as Node3D
+	var escena := doc.generate_scene(st) as Node3D
+	if escena != null:
+		Resortes.sombras(escena)
+	return escena
 
 
 func _mallas(n: Node, out: Array) -> void:
