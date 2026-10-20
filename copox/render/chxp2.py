@@ -274,8 +274,15 @@ def render(glb, salida, silueta=None, ref=None, vistas="personaje", visible=None
         im.save(os.path.join(salida, f"{nombre}_{v}.png"))
         Image.fromarray((vista_previa_mascara(ids) * 255).astype(np.uint8)).save(os.path.join(salida, f"{nombre}_{v}_mascara.png"))
         np.save(os.path.join(crudo, f"{nombre}_{v}_ids.npy"), ids.astype(np.uint16))
-        cob = np.bincount(ids.ravel(), minlength=len(leyenda) + 1)
-        # bordes con antialias pueden caer en colores de rejilla sin pieza: fuera lo que no está en la leyenda o < 16 px
+        # bordes con antialias se decodifican como OTRA pieza (p. ej. una mano oculta entre piel y pelo): sólo cuentan
+        # los píxeles cuyo vecindario 3×3 es mayoritariamente de la misma pieza (revisor visual, 19 oct 2026)
+        from scipy.ndimage import uniform_filter
+        firme = np.zeros(ids.shape, bool)
+        for k_ in np.unique(ids):
+            if k_:
+                firme |= (ids == k_) & (uniform_filter((ids == k_).astype(np.float32), 3) >= 5 / 9)
+        cob = np.bincount(ids[firme].ravel(), minlength=len(leyenda) + 1)
+        # además: fuera lo que no está en la leyenda o < 16 px
         cobertura[v] = {leyenda[str(k)]: int(cob[k]) for k in range(1, len(cob)) if cob[k] >= 16 and str(k) in leyenda}
         paneles.append((v, im))
     piezas = info["piezas"]

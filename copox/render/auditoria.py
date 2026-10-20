@@ -624,6 +624,8 @@ def reglas_skills(tipo):
     hechas = set(REVISIONES) | {"senku_objeto", "senku_cabeza"}
     for s in data.get("skills", []):
         for r in s.get("reglas", []):
+            if r.get("desactivada"):                       # desactivada por Admin (queda en el JSON como historia)
+                continue
             aplica = r.get("aplica_a", ["todos"])
             if "todos" not in aplica and tipo not in aplica:
                 continue

@@ -1745,7 +1745,12 @@
           ],
           "metrica": "nodos/primitivas con pieza/nombre Lentes",
           "umbral": "0",
-          "fuente": "\"El objetivo de la cabeza es SIN montura, cristales, puente ni patillas\" (G2-C2)"
+          "fuente": "\"El objetivo de la cabeza es SIN montura, cristales, puente ni patillas\" (G2-C2)",
+          "desactivada": {
+            "fecha": "2026-10-19",
+            "por": "Admin",
+            "motivo": "Regla de la campaña G2 (Alastor Gamma sin lentes). Los renders originales de Alastor llevan gafas de pasta (brief gafas.md)."
+          }
         },
         {
           "id": "contour.residuo_lentes",
@@ -1756,7 +1761,12 @@
           ],
           "metrica": "revisión visual",
           "umbral": "-",
-          "fuente": "(G2-C2)"
+          "fuente": "(G2-C2)",
+          "desactivada": {
+            "fecha": "2026-10-19",
+            "por": "Admin",
+            "motivo": "Misma familia G2 «Alastor sin lentes»; Alastor lleva gafas (originales, brief gafas.md)."
+          }
         }
       ],
       "n_medibles": 4,
@@ -2187,7 +2197,12 @@
           ],
           "metrica": "primitivas con nombre/pieza Lentes",
           "umbral": "0",
-          "fuente": "(G2-C2 Eyewear Guardian)"
+          "fuente": "(G2-C2 Eyewear Guardian)",
+          "desactivada": {
+            "fecha": "2026-10-19",
+            "por": "Admin",
+            "motivo": "Regla de la campaña G2 (Alastor Gamma sin lentes). Los renders originales de Alastor llevan gafas de pasta (brief gafas.md)."
+          }
         }
       ],
       "n_medibles": 9,
@@ -2782,7 +2797,12 @@
           ],
           "metrica": "revisión visual",
           "umbral": "-",
-          "fuente": "(G2-C2)"
+          "fuente": "(G2-C2)",
+          "desactivada": {
+            "fecha": "2026-10-19",
+            "por": "Admin",
+            "motivo": "Regla de la campaña G2 (Alastor Gamma sin lentes). Los renders originales de Alastor llevan gafas de pasta (brief gafas.md)."
+          }
         }
       ],
       "n_medibles": 6,
