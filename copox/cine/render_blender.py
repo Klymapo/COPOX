@@ -58,6 +58,13 @@ def preparar(e, glb):
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=glb)
     sc = bpy.context.scene
+    if e.get("eje_arriba", "y").lower() == "z":                # objetos ALTH históricos (Z arriba en los datos)
+        import math as _m
+        for o in sc.objects:
+            if o.parent is None:
+                o.rotation_mode = "XYZ"
+                o.rotation_euler[0] -= _m.pi / 2
+        bpy.context.view_layer.update()
     ocultos = _ocultos(glb, e.get("visible"))
 
     def oculto(o):

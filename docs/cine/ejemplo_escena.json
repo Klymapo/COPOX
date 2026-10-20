@@ -45,5 +45,6 @@
   "luz": "estudio_alth",
   "fondo": "#E3E2E9",
   "piso": true,
-  "camara_relativa": true
+  "camara_relativa": true,
+  "eje_arriba": "z"
 }

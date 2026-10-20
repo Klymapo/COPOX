@@ -1,0 +1,17 @@
+{
+  "nombre": "humo_alastor_delta_wave",
+  "glb": "assets/alastor_delta/alastor_delta.glb",
+  "clip": "Wave",
+  "cuadros": [1, 24],
+  "fps": 24,
+  "resolucion": [640, 360],
+  "muestras": 24,
+  "camara_relativa": true,
+  "camara": [
+    {"cuadro": 1, "pos": [0.9, 0.7, 2.2], "mira": [0, 0.5, 0], "lente": 50},
+    {"cuadro": 24, "pos": [-0.6, 0.6, 2.3], "mira": [0, 0.5, 0], "lente": 55}
+  ],
+  "luz": "estudio_alth",
+  "fondo": "#E3E2E9",
+  "piso": true
+}

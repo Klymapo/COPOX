@@ -17,6 +17,8 @@ Ejemplo (docs/cine/ejemplo_escena.json):
   "piso": true
 }
 Ejes: los del GLB (Y arriba, frente +Z). render_blender.py convierte a Blender (Z arriba).
+"camara_relativa": true → pos/mira en unidades del alto del personaje, desde el centro de sus pies.
+"eje_arriba": "z" para objetos ALTH históricos (Z arriba en los datos, p. ej. theo_alpha.glb).
 """
 from __future__ import annotations
 
@@ -24,7 +26,8 @@ import json
 import os
 
 DEFECTO = {"clip": None, "cuadros": [1, 1], "fps": 24, "resolucion": [1280, 720], "muestras": 64, "visible": {},
-           "luz": "estudio_alth", "fondo": "#E3E2E9", "piso": True, "dof": None}
+           "luz": "estudio_alth", "fondo": "#E3E2E9", "piso": True, "dof": None,
+           "camara_relativa": False, "eje_arriba": "y"}
 
 
 def cargar(ruta):
