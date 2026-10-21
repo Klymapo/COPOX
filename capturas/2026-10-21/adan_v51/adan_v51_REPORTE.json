@@ -1,0 +1,116 @@
+{
+  "asset": "adan_v51",
+  "glb": "/tmp/claude-0/-home-claude/59cc66b2-3a0b-568f-960c-848ce632a548/scratchpad/v51/ADAN_V51.glb",
+  "sha256": "29a3c9177c19e6e88515a1df01e144754064b8071b571c9bc56f6c3001d05dc9",
+  "alto_u": 0.9294,
+  "caja_u": [
+    0.8868,
+    0.9294,
+    0.4147
+  ],
+  "triangulos_visibles": 102052,
+  "piezas_visibles": [
+    "ADAN_CUERPO",
+    "CAPA_SHORT",
+    "MANO_ABIERTA_L",
+    "MANO_ABIERTA_R",
+    "CAPA_PELO_THEO",
+    "PIES_ZAPATO"
+  ],
+  "piezas_ocultas": [
+    "CAPA_GUIA_CAPILAR",
+    "MANO_PUNO_L",
+    "MANO_PUNO_R",
+    "MANO_SENALAR_L",
+    "MANO_SENALAR_R",
+    "PIES_DESCALZOS",
+    "CAPA_PELO_CORTO",
+    "CAPA_PELO_MECHONES",
+    "PIES_TENIS"
+  ],
+  "cobertura_px": {
+    "frente": {
+      "ADAN_CUERPO": 115109,
+      "CAPA_SHORT": 16656,
+      "MANO_ABIERTA_L": 5066,
+      "MANO_ABIERTA_R": 5098,
+      "CAPA_PELO_THEO": 56147,
+      "PIES_ZAPATO": 12809
+    },
+    "tres_cuartos": {
+      "ADAN_CUERPO": 104657,
+      "CAPA_SHORT": 16545,
+      "MANO_ABIERTA_L": 8845,
+      "MANO_ABIERTA_R": 5657,
+      "CAPA_PELO_THEO": 69984,
+      "PIES_ZAPATO": 15862
+    },
+    "perfil": {
+      "ADAN_CUERPO": 53817,
+      "CAPA_SHORT": 6519,
+      "MANO_ABIERTA_L": 10022,
+      "CAPA_PELO_THEO": 77329,
+      "PIES_ZAPATO": 9695
+    },
+    "espalda": {
+      "ADAN_CUERPO": 59889,
+      "CAPA_SHORT": 19132,
+      "MANO_ABIERTA_L": 3608,
+      "MANO_ABIERTA_R": 3520,
+      "CAPA_PELO_THEO": 101880,
+      "PIES_ZAPATO": 10418
+    }
+  },
+  "colores_fuera_de_paleta": [
+    {
+      "material": "BOCA_INTERIOR_NEGRO",
+      "color": "#000000",
+      "cercano": "negro_calido/5",
+      "cercano_hex": "#1F1916",
+      "deltaE": 10.2
+    },
+    {
+      "material": "CEJA_BLOQUE",
+      "color": "#57351A",
+      "cercano": "marron_calido/4",
+      "cercano_hex": "#69472D",
+      "deltaE": 7.9
+    },
+    {
+      "material": "LENGUA_ALTH",
+      "color": "#C46561",
+      "cercano": "rojo_calido/3",
+      "cercano_hex": "#A8453B",
+      "deltaE": 13.5
+    }
+  ],
+  "visibilidad_pedida": {},
+  "vistas": [
+    "frente",
+    "tres_cuartos",
+    "perfil",
+    "espalda"
+  ],
+  "clip": "Idle-loop",
+  "t": 0.0,
+  "segundos_godot": 14.8,
+  "segundos_total": 19.5,
+  "archivos": [
+    "_crudo",
+    "adan_v51_HOJA.png",
+    "adan_v51_espalda.png",
+    "adan_v51_espalda_mascara.png",
+    "adan_v51_frente.png",
+    "adan_v51_frente_mascara.png",
+    "adan_v51_perfil.png",
+    "adan_v51_perfil_mascara.png",
+    "adan_v51_tres_cuartos.png",
+    "adan_v51_tres_cuartos_mascara.png"
+  ],
+  "auditoria": {
+    "veredicto": "PASS",
+    "pass": 13,
+    "fail": 0,
+    "na": 7
+  }
+}
