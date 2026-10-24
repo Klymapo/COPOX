@@ -1,0 +1,61 @@
+{
+  "id": "maniqui_craneofacial_geometry_v1",
+  "status": "EXPERIMENTAL_NOT_ENABLED",
+  "source_asset": "assets/maniqui/maniqui_v0_3_r3.glb",
+  "source_sha256": "3aec25dd8c9f758bc7b092806caf159efb073be71bbba6615c2905c692f6dd0b",
+  "focus": [
+    "craneo",
+    "frente",
+    "sienes",
+    "nuca",
+    "patillas"
+  ],
+  "coordinates": {
+    "up": "Y",
+    "front": "+Z",
+    "units": "m"
+  },
+  "frozen": [
+    "ojos",
+    "nariz",
+    "boca",
+    "orejas",
+    "cuello",
+    "torso",
+    "manos",
+    "rig",
+    "animaciones"
+  ],
+  "algorithm_family": [
+    "surface_fit",
+    "anatomic_contour",
+    "loop_bridge",
+    "selective_patch"
+  ],
+  "parameter_search": {
+    "candidates_per_campaign": 3,
+    "baseline_is_immutable": true,
+    "no_rejected_as_parent": true
+  },
+  "preflight": {
+    "coordinates": {
+      "up": "Y",
+      "front": "+Z",
+      "units": "m"
+    },
+    "requires_connected_seam": true,
+    "requires_boundary_reduction": true,
+    "min_target_visible_change_pct": 0.5,
+    "min_target_improvement_pp": 0.1,
+    "max_frozen_region_loss_pp": 0.2
+  },
+  "deep_checks": [
+    "Khronos glTF-Validator",
+    "skinning 29 clips",
+    "4 vistas + primeros planos",
+    "Godot import/poses",
+    "revision visual Admin"
+  ],
+  "no_auto_promote": true,
+  "note": "Propuesta de contrato, NO cassette ejecutable ni activado. Métricas regionales aún deben ser producidas por adaptadores confiables."
+}
