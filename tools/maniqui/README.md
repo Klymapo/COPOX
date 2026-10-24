@@ -14,8 +14,14 @@ Los scripts se importan entre sí por ruta relativa (`render.py`, `cuerpo.py`), 
 | `wrap3.py it4c beta gamma out` | trasplante de faldones/pantalón/zapatos con copia de pesos | banda hasta 3.5 cm sobre el cinturón |
 | `neck.py in out [y_cuello]` | cuello nuevo bajo la mandíbula | y = 0.47 |
 | `maniqui.py delta_v1_1 it4c maniqui_out ropa_out beta` | quita pelo y lentes, cráneo de bola, archivo de ropa | ver comentarios |
-| `cuerpo.py in out` | torso, brazos superiores y piernas sobre el esqueleto | perfiles en el código |
+| `huesos.py in out Hueso=factor…` | escala largos de huesos (Left/Right) y recalcula inverseBindMatrices; animaciones intactas | `UpperArm=0.85 LowerArm=0.85` |
+| `cuerpo.py in out` | torso, pelvis, brazos superiores y piernas sobre el esqueleto, secciones superelipse (`P_BOX`) | perfiles en el código |
 | `manos_pies.py in out` | antebrazo, palma, dedos y pies | radios en el código |
+| `medir_cara.py ref.jpg out.json [--recorte x0,y0,x1,y1] [--vista lado] [--debug png]` | mide la referencia (numpy/scipy/Pillow): caja de la cara, llenado, mandíbula, ojos, cejas, nariz, boca, orejas, proporción con la altura | ver `rasgos/*.json` |
+| `medir_gamma.py gamma.glb out.json [--debug png]` | mide la cara de Gamma en 3D (render sin luz + profundidad): cara, ojos, iris, cejas, nariz (perfil), boca, orejas | `rasgos/gamma.json` |
+| `cabeza.py in out [rasgos.json]` | cabeza canónica ALTH: superelipsoide (cajón redondeado) con las proporciones del JSON, cuencas, nariz de bloque, boca, orejas de bloque + cuello recto; reemplaza Cabeza/Craneo/Cuello | `rasgos/alastor.json`, `rasgos/theo.json` |
+| `headzoom.py in out [y_min]` / `facezoom.py in out` | acercamientos de cabeza (4 vistas) y cara (0/25/60°) | — |
+| `posturas.py in out [--render dir --refs dir_laminas]` | posturas y gestos de las láminas de referencia como clips `P<lámina>_<n>_<Nombre>` (reposo → pose en 0.3 s); FK por grados + IK de brazos (mano a un punto, codo hacia una dirección) | biblioteca `POSES` en el código |
 | `render.py in.glb out.png [zup]` | 4 vistas, sombreado plano | — |
 | `measure.py cand gamma beta prefijo` | IoU de silueta en 4 vistas + mapa de diferencias | — |
 | `pose.py in.glb clip t out.png` | posa un clip (skinning en numpy) | clips: Wave, Sit-pose, Nod… |

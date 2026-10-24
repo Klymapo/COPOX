@@ -39,12 +39,16 @@ def add_acc(bvi, ct, n, at, arr=None):
     j['accessors'].append(a); return len(j['accessors']) - 1
 gris = next(i for i, m in enumerate(j['materials']) if m['name'] == 'Maniqui')
 
-def loft(rings, weights, seg=32, cap_top=True, cap_bot=True):
-    """rings: lista de (centro(3), rx, rz, eje_x(3), eje_z(3)); weights: lista de (joints4, w4) por anillo."""
+P_BOX = 2.8   # exponente de la sección (2 = elipse, 3-4 = cajón redondeado). Estilo ALTH: cuerpos de bloques redondeados.
+def loft(rings, weights, seg=32, cap_top=True, cap_bot=True, p=None):
+    """rings: lista de (centro(3), rx, rz, eje_x(3), eje_z(3)[, p]); weights: lista de (joints4, w4) por anillo.
+    La sección es una superelipse de exponente p (por anillo, o el global P_BOX): |x/rx|^p + |z/rz|^p = 1."""
     th = np.linspace(0, 2 * np.pi, seg, endpoint=False); V, N, J, W = [], [], [], []
-    for (c, rx, rz, ex, ez), (jj, ww) in zip(rings, weights):
+    for ring, (jj, ww) in zip(rings, weights):
+        c, rx, rz, ex, ez = ring[:5]; pe = ring[5] if len(ring) > 5 else (p if p is not None else P_BOX)
         for t in th:
-            V.append(c + rx * np.cos(t) * ex + rz * np.sin(t) * ez); N.append(np.cos(t) * ex / rx + np.sin(t) * ez / rz)
+            cx = np.sign(np.cos(t)) * abs(np.cos(t)) ** (2 / pe); cz = np.sign(np.sin(t)) * abs(np.sin(t)) ** (2 / pe)
+            V.append(c + rx * cx * ex + rz * cz * ez); N.append(np.cos(t) * ex / rx + np.sin(t) * ez / rz)
             J.append(jj); W.append(ww)
     V = np.array(V); N = np.array(N); N /= np.linalg.norm(N, axis=1, keepdims=True)
     I = []
@@ -58,7 +62,10 @@ def loft(rings, weights, seg=32, cap_top=True, cap_bot=True):
         for s in range(seg):
             a_, b_ = k * seg + s, k * seg + (s + 1) % seg
             I.append([ci, a_, b_] if flip else [ci, b_, a_])
-    return V, N, np.array(J, np.uint16), np.array(W, np.float32), np.array(I)
+    I = np.array(I); fn = np.cross(V[I[:, 1]] - V[I[:, 0]], V[I[:, 2]] - V[I[:, 0]]); N = np.zeros_like(V)
+    for k in range(3): np.add.at(N, I[:, k], fn)
+    N /= np.linalg.norm(N, axis=1, keepdims=True) + 1e-12
+    return V, N, np.array(J, np.uint16), np.array(W, np.float32), I
 
 def wj(*pairs):
     jj = [0, 0, 0, 0]; ww = [0, 0, 0, 0]
@@ -70,28 +77,39 @@ pieces = []
 # ---------- TORSO (caderas → base del cuello)
 hips, spine, chest, neck = jp['Hips'], jp['Spine'], jp['Chest'], jp['Neck']
 cz = 0.022
-torso_prof = [  # (y, rx, rz, pesos)
-    (0.295, 0.125, 0.072, wj(('Hips', 1))),
+torso_prof = [  # (y, rx, rz, pesos)   · los 3 primeros anillos son la pelvis (misma pieza: sin costura ni labio)
+    (0.236, 0.128, 0.074, wj(('Hips', 1))),
+    (0.255, 0.136, 0.078, wj(('Hips', 1))),
+    (0.275, 0.135, 0.077, wj(('Hips', 1))),
+    (0.295, 0.130, 0.074, wj(('Hips', 1))),
     (0.330, 0.128, 0.074, wj(('Hips', 0.5), ('Spine', 0.5))),
     (0.370, 0.130, 0.076, wj(('Spine', 0.6), ('Chest', 0.4))),
     (0.410, 0.136, 0.078, wj(('Chest', 1))),
-    (0.445, 0.150, 0.076, wj(('Chest', 1))),
-    (0.475, 0.140, 0.070, wj(('Chest', 0.7), ('Neck', 0.3))),
-    (0.500, 0.100, 0.060, wj(('Chest', 0.3), ('Neck', 0.7))),
-    (0.515, 0.062, 0.050, wj(('Neck', 1))),
+    (0.445, 0.140, 0.076, wj(('Chest', 1))),
+    (0.470, 0.140, 0.075, wj(('Chest', 0.8), ('Neck', 0.2))),
+    (0.492, 0.132, 0.073, wj(('Chest', 0.4), ('Neck', 0.6))),     # hombros: caen redondeados hacia el cuello
+    (0.508, 0.114, 0.068, wj(('Neck', 1))),
+    (0.520, 0.088, 0.060, wj(('Neck', 1))),
 ]
 rings = [(np.array([0, y, cz]), rx, rz, EX, EZ) for y, rx, rz, _ in torso_prof]
-pieces.append(('Torso', loft(rings, [w for *_, w in torso_prof])))
+Vt, Nt, Jt, Wt, It = loft(rings, [w for *_, w in torso_prof])
+for v in range(len(Vt)):                     # borde inferior de la pelvis: cada mitad sigue un poco a su pierna (no se rasga al sentarse)
+    if Vt[v][1] < 0.262:
+        side = 'Left' if Vt[v][0] > 0 else 'Right'; f = np.clip((0.262 - Vt[v][1]) / 0.03, 0, 1) * 0.45
+        jj, ww = wj(('Hips', 1 - f), (side + 'UpperLeg', f)); Jt[v] = jj; Wt[v] = ww
+pieces.append(('Torso', (Vt, Nt, Jt, Wt, It)))
 
 # ---------- PIERNAS (cadera → tobillo), una por lado
 for side in ('Left', 'Right'):
     hip, knee, ankle = jp[side + 'UpperLeg'], jp[side + 'LowerLeg'], jp[side + 'Foot']
-    prof = [(hip + [0, 0.03, 0], 0.062, 0.062, wj((side + 'UpperLeg', 1))),
-            (hip + [0, -0.02, 0], 0.060, 0.060, wj((side + 'UpperLeg', 1))),
+    sg = 1 if side == 'Left' else -1
+    prof = [(hip + [-sg * 0.012, 0.03, 0], 0.056, 0.058, wj((side + 'UpperLeg', 1))),      # arranca dentro de la pelvis, un poco hacia el centro
+            (hip + [-sg * 0.004, -0.02, 0], 0.060, 0.060, wj((side + 'UpperLeg', 1))),
             (knee + [0, 0.02, 0], 0.052, 0.052, wj((side + 'UpperLeg', 0.6), (side + 'LowerLeg', 0.4))),
             (knee - [0, 0.02, 0], 0.050, 0.050, wj((side + 'UpperLeg', 0.3), (side + 'LowerLeg', 0.7))),
             (ankle + [0, 0.03, 0], 0.046, 0.046, wj((side + 'LowerLeg', 1))),
-            (ankle - [0, 0.005, 0], 0.044, 0.044, wj((side + 'LowerLeg', 0.5), (side + 'Foot', 0.5)))]
+            (ankle - [0, 0.005, 0], 0.044, 0.044, wj((side + 'LowerLeg', 0.5), (side + 'Foot', 0.5))),
+            (ankle - [0, 0.030, 0], 0.043, 0.043, wj((side + 'Foot', 1)))]          # la pierna baja dentro de la caña
     rings = [(np.array(c), rx, rz, EX, EZ) for c, rx, rz, _ in prof]
     pieces.append(('Pierna' + side[0], loft(rings, [w for *_, w in prof])))
 
@@ -101,13 +119,14 @@ for side, sgn in (('Left', 1), ('Right', -1)):
     la = jp.get(side + 'LowerArm', ua + [sgn * 0.09, 0, 0])
     axis = np.array([sgn, 0, 0.0]); ey = EY; ez = np.array([0, 0, 1.0])
     def at(x): return np.array([x, ua[1] + (x - ua[0]) * (la[1] - ua[1]) / max(abs(la[0] - ua[0]), 1e-6) * 0, ua[2]])
-    xs = [ua[0] - sgn * 0.045, ua[0], ua[0] + sgn * 0.05, la[0], la[0] + sgn * 0.02, sgn * (cuff_x + 0.012)]
-    prof = [(at(xs[0]), 0.036, 0.036, wj((side + 'Shoulder', 0.5), (side + 'UpperArm', 0.5))),
-            (at(xs[1]), 0.038, 0.038, wj((side + 'UpperArm', 1))),
-            (at(xs[2]), 0.036, 0.036, wj((side + 'UpperArm', 1))),
-            (at(xs[3]), 0.033, 0.033, wj((side + 'UpperArm', 0.5), (side + 'LowerArm', 0.5))),
-            (at(xs[4]), 0.032, 0.032, wj((side + 'LowerArm', 1))),
-            (at(xs[5]), 0.030, 0.030, wj((side + 'LowerArm', 1)))]
+    xs = [ua[0] - sgn * 0.050, ua[0] - sgn * 0.022, ua[0] + sgn * 0.01, ua[0] + sgn * 0.05, la[0], la[0] + sgn * 0.02, sgn * (cuff_x + 0.012)]
+    prof = [(at(xs[0]), 0.030, 0.030, wj((side + 'Shoulder', 0.5), (side + 'UpperArm', 0.5))),   # hombro: nace dentro del torso, redondeado
+            (at(xs[1]), 0.042, 0.042, wj((side + 'Shoulder', 0.3), (side + 'UpperArm', 0.7))),
+            (at(xs[2]), 0.047, 0.047, wj((side + 'UpperArm', 1))),                                 # deltoides: un poco más grueso que el brazo                                 # brazos de bloque (Theo: ~0.08 de la altura de grueso)
+            (at(xs[3]), 0.043, 0.043, wj((side + 'UpperArm', 1))),
+            (at(xs[4]), 0.040, 0.040, wj((side + 'UpperArm', 0.5), (side + 'LowerArm', 0.5))),
+            (at(xs[5]), 0.038, 0.038, wj((side + 'LowerArm', 1))),
+            (at(xs[6]), 0.036, 0.036, wj((side + 'LowerArm', 1)))]
     rings = [(np.array(c), rx, rz, ey, ez) for c, rx, rz, _ in prof]
     pieces.append(('Brazo' + side[0], loft(rings, [w for *_, w in prof])))
 

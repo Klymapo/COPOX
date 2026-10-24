@@ -1,0 +1,34 @@
+{
+ "orejas_sobresalen": 0.22093023255813954,
+ "llenado_caja": 0.9187003541008709,
+ "ancho_arriba": 0.6490486257928119,
+ "ancho_medio": 1.0116279069767442,
+ "ancho_abajo": 1.0126849894291756,
+ "radio_esquina_abajo": 0.040169133192389,
+ "alto_sobre_ancho_cara": 1.0274841437632136,
+ "ancho_cara_sobre_altura": 0.316,
+ "barbilla_sobre_altura": 0.488,
+ "ojos": {
+  "separacion": 0.5784,
+  "ancho": 0.3189,
+  "alto": 0.2973,
+  "y_desde_arriba": 0.627,
+  "y_sobre_barbilla": 0.5027,
+  "y_rel_alto": 0.5524,
+  "_nota": "tomado de Theo: en detective.jpg los lentes tapan el rasgo"
+ },
+ "cejas": {
+  "y_sobre_ojo": 0.2135,
+  "ancho": 0.3405,
+  "alto": 0.1297,
+  "_nota": "tomado de Theo: en detective.jpg los lentes tapan el rasgo"
+ },
+ "nariz": {
+  "y_bajo_ojo": 0.2297,
+  "ancho": 0.2054,
+  "alto": 0.1838,
+  "_nota": "tomado de Theo: en detective.jpg los lentes tapan el rasgo"
+ },
+ "_fuente": "refs/personajes/detective.jpg (3/4) + rasgos de Theo",
+ "_nota_ancho": "ancho_cara_sobre_altura 0.316 medido en detective.jpg (3/4, corregido −5 %). Se ve \"chica\" calva porque el pelo del estilo añade ~80 % de ancho; cara/torso da 1.09 igual que en la referencia (14 oct)."
+}

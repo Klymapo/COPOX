@@ -1,0 +1,48 @@
+{
+ "_fuente": "Gamma (alastor_gamma_30k_2k.glb), renders ortográficos sin luz + profundidad",
+ "_unidad": "fracciones del ancho de cara W",
+ "W_m": 0.3309,
+ "alto_sobre_ancho_cara": 1.0862,
+ "ancho_cara_sobre_altura": 0.2984,
+ "llenado_caja": 0.8394,
+ "ancho_abajo": 0.9545,
+ "ojos": {
+  "separacion": 0.5443,
+  "ancho": 0.2622,
+  "alto": 0.2191,
+  "y_sobre_barbilla": 0.4907,
+  "iris_ancho": 0.1585,
+  "iris_alto": 0.2156,
+  "llenado_caja": 0.765,
+  "ancho_borde_superior": 0.574
+ },
+ "cejas": {
+  "y_sobre_ojo": 0.2308,
+  "ancho": 0.3403,
+  "alto": 0.0559,
+  "ceno": -0.0125
+ },
+ "boca": {
+  "y_bajo_ojo": 0.3333,
+  "ancho": 0.1772,
+  "alto": 0.0256
+ },
+ "nariz": {
+  "y_bajo_ojo": 0.1317,
+  "ancho": 0.1888,
+  "alto": 0.1399,
+  "sale": 0.1352
+ },
+ "_ojos_hundidos": -0.0611,
+ "orejas": {
+  "sale": 0.3474,
+  "alto": 0.3951,
+  "y_sobre_barbilla": 0.3887,
+  "fondo": 0.3939,
+  "alto_lado": 0.2098,
+  "detras_de_cara": 0.4709
+ },
+ "fondo_cabeza_sobre_W": 1.6527,
+ "craneo_ancho": 1.24,
+ "_nota_craneo": "craneo_ancho estimado del render frontal de Gamma: pelo entre mejilla y oreja ≈0.12 W por lado (no medible directo: el pelo tapa el cráneo)"
+}

@@ -16,7 +16,9 @@ def load(path):
     return j, binc
 
 def acc(j, binc, i):
-    a = j['accessors'][i]; bv = j['bufferViews'][a['bufferView']]
+    a = j['accessors'][i]
+    if 'bufferView' not in a: return np.zeros((a['count'], NC[a['type']]))     # glTF: accessor sin bufferView = ceros
+    bv = j['bufferViews'][a['bufferView']]
     dt = np.dtype(CT[a['componentType']]); n = NC[a['type']]
     start = bv.get('byteOffset', 0) + a.get('byteOffset', 0)
     stride = bv.get('byteStride', 0) or dt.itemsize * n
@@ -77,7 +79,8 @@ def gather(path):
         walk(r, np.eye(4))
     return tris
 
-def render(tris, yaw_deg, W=420, H=640, bounds=None):
+def render(tris, yaw_deg, W=420, H=640, bounds=None, unlit=False, depth=False):
+    """unlit=True: color de textura sin sombreado (para medir). depth=True: devuelve (img, zbuffer, escala px/m)."""
     a = math.radians(yaw_deg)
     Ry = np.array([[math.cos(a), 0, math.sin(a)], [0, 1, 0], [-math.sin(a), 0, math.cos(a)]])
     lo, hi = bounds
@@ -91,7 +94,7 @@ def render(tris, yaw_deg, W=420, H=640, bounds=None):
         X = P[..., 0] * scale + W / 2; Y = -P[..., 1] * scale + H / 2; Z = P[..., 2]
         n = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
         nl = np.linalg.norm(n, axis=1) + 1e-12; n = n / nl[:, None]
-        shade = 0.42 + 0.58 * np.abs(n @ light)
+        shade = np.ones(len(P)) if unlit else 0.42 + 0.58 * np.abs(n @ light)
         for t in range(len(P)):
             x0, x1 = int(max(0, np.floor(X[t].min()))), int(min(W - 1, np.ceil(X[t].max())))
             y0, y1 = int(max(0, np.floor(Y[t].min()))), int(min(H - 1, np.ceil(Y[t].max())))
@@ -119,7 +122,8 @@ def render(tris, yaw_deg, W=420, H=640, bounds=None):
                 c = vc[t] if vc is not None else col
                 px = np.broadcast_to(c, (m.sum(), 3))
             img[y0:y1 + 1, x0:x1 + 1][m] = px * shade[t]
-    return Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8))
+    out = Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8))
+    return (out, zb, scale) if depth else out
 
 if __name__ == '__main__':
     src, out = sys.argv[1], sys.argv[2]
